@@ -17,6 +17,7 @@ group :assets do
 end
 
 gem 'jquery-rails'
+gem "rb-readline"
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
@@ -30,4 +31,4 @@ gem 'jquery-rails'
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
-gem "rspec-rails"
+gem "rspec-rails", "2.7.0"
