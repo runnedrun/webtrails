@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120606235815) do
+ActiveRecord::Schema.define(:version => 20120607063446) do
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
@@ -34,10 +34,15 @@ ActiveRecord::Schema.define(:version => 20120606235815) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "owner_id"
+  end
+
+  create_table "trails_users", :force => true do |t|
+    t.integer "trail_id"
+    t.integer "user_id"
   end
 
   create_table "users", :force => true do |t|
-    t.string   "login",             :null => false
     t.string   "email",             :null => false
     t.string   "crypted_password",  :null => false
     t.string   "password_salt",     :null => false

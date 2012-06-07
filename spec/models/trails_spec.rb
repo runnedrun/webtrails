@@ -13,4 +13,22 @@ describe Trail do
     @trail.reload
     @trail.sites.should == @sites
   end
+  describe "users and trails" do
+    before do
+      email = Faker::Internet.email
+      password = Faker::Name.first_name
+      @user = User.create(:email => email, :password => password, :password_confirmation => password)
+    end
+    it "should be able to save an owner" do
+
+      trail = Trail.create!(:owner => @user)
+      trail.reload
+      trail.owner.should == @user
+    end
+    it "should add the owner to the users" do
+      trail = Trail.create!(:owner => @user)
+      trail.reload
+      trail.users.should include @user
+    end
+  end
 end

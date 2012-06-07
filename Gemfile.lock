@@ -50,6 +50,8 @@ GEM
     erubis (2.7.0)
     execjs (1.4.0)
       multi_json (~> 1.0)
+    faker (1.0.1)
+      i18n (~> 0.4)
     hike (1.2.1)
     i18n (0.6.0)
     jquery-rails (1.0.19)
@@ -131,6 +133,7 @@ PLATFORMS
 DEPENDENCIES
   authlogic!
   coffee-rails (~> 3.1.1)
+  faker
   jquery-rails
   rails (= 3.1.1)
   rb-readline
