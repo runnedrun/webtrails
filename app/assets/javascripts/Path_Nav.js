@@ -1,46 +1,61 @@
-var textDisplay;
 var myFrame;
 var urlBox;
-var myFrameContent;
 var pathDisplay;
+var urlTextBox;
 
 $(function() {
     myFrame = document.getElementById("UsersPage");
     urlBox = document.getElementById("urlBox");
     pathDisplay = document.getElementById("pathDisplay");
+    urlTextBox = $("#urlText")
     $(urlBox).hide();
-    $(pathDisplay).hide();
-
-    $(document).keypress(showOrHideUrlBox);
-
-    myFrame.onload = iframeFillPage;
+    $(pathDisplay).mouseenter(maximizePathDisplay);
+    $(pathDisplay).mouseout(closePathDisplayIfNecessary);
+    $(pathDisplay).click(showOrHideTools);
+    $("#navigateButton").click(changeUserPage);
+    minimizePathDisplay();
+    $(document).keypress(verifyKeyPress);
 });
 
-function selectIframeText(){
-    myFrame = document.getElementById("UsersPage");
-    textDisplay = document.getElementById("textDisplay");
-}
-function iframeFillPage(){
-    myFrameContent = myFrame.contentWindow.document;
-    myFrame.height = myFrameContent.body.scrollHeight;
-    $(myFrameContent).keypress(showOrHideUrlBox);
-    myFrame.style.visibility = "visible";
-}
-
-function showOrHideUrlBox(e){
-    var code = (e.keyCode ? e.keyCode : e.which);
-//    use this to check if target was body: event.target.nodeName == "BODY"
-    if (code == 27){
-        if ($(urlBox).is(':hidden')){
-            $(urlBox).show();
-            $(pathDisplay).show();
-            $(urlBox).focus();
-        }
-        else{
-            $(urlBox).hide();
-            $(pathDisplay).hide();
-            $(document.body).focus();
-        }
+function closePathDisplayIfNecessary(){
+    if ($(urlBox).is(':hidden')){
+        minimizePathDisplay()
     }
 }
 
+function minimizePathDisplay(){
+    $("#pathDisplay").css("height","2%");
+}
+
+function maximizePathDisplay(){
+    $("#pathDisplay").css("height","6%");
+}
+
+function verifyKeyPress(e){
+    var code = (e.keyCode ? e.keyCode : e.which);
+//    use this to check if target was body: event.target.nodeName == "BODY"
+    if (code == 27){
+        showOrHideTools()
+    }
+}
+
+function showOrHideTools(){
+        if ($(urlBox).is(':hidden')){
+            $(urlBox).show();
+            maximizePathDisplay()
+            $(urlTextBox).focus();
+        }
+        else{
+            $(urlBox).hide();
+            minimizePathDisplay();
+            $(document.body).focus();
+        }
+}
+
+function changeUserPage(){
+    var url = urlTextBox.val()
+    if (url.search(/^http:\/\//)==-1){
+        url = "http://"+url ;
+    }
+    myFrame.src = url;
+}

@@ -1,0 +1,12 @@
+<div id="urlBox">
+<input type="text" id="urlText"/>
+<input type="button" id="navigateButton" value="Go">
+<% if current_user %>
+  <span class="userName"><%= current_user.email %></span>
+<% else %>
+   <a class="userName" href="/">Login or Signup</a>
+<% end %>
+</div>
+<iframe id="UsersPage" src="http://www.wikipedia.org" scrolling="yes">
+</iframe>
+<div id="pathDisplay">paths go here</div>

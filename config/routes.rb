@@ -61,5 +61,8 @@ Proto1::Application.routes.draw do
   root :to => "user_sessions#new"
   match 'login' => "user_sessions#new",      :as => :login
   match 'logout' => "user_sessions#destroy", :as => :logout
+  match 'create_user' => "users#create"
+  match 'new_user' => "users#new"
+  match 'new_trail' => "trails#new"
 
 end
