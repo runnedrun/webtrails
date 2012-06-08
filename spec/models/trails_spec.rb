@@ -19,16 +19,27 @@ describe Trail do
       password = Faker::Name.first_name
       @user = User.create(:email => email, :password => password, :password_confirmation => password)
     end
-    it "should be able to save an owner" do
-
+    it "should be able to save an owner by passing a user object" do
       trail = Trail.create!(:owner => @user)
       trail.reload
       trail.owner.should == @user
     end
-    it "should add the owner to the users" do
+    it "should add the owner to the users by passing a user object" do
       trail = Trail.create!(:owner => @user)
       trail.reload
       trail.users.should include @user
     end
+
+    it "should be able to save an owner by passing a user object" do
+      trail = Trail.create!(:owner => @user.id)
+      trail.reload
+      trail.owner.should == @user
+    end
+    it "should add the owner to the users by passing a user object" do
+      trail = Trail.create!(:owner => @user.id)
+      trail.reload
+      trail.users.should include @user
+    end
+
   end
 end
