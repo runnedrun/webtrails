@@ -21,15 +21,19 @@ class Trail < ActiveRecord::Base
   end
 
   def build_site_with_notes(attrs)
-    note_attrs = attrs.delete(:notes)
+    note_attrs = attrs.delete(:notes) or attrs.delete("notes")
     site_attrs = attrs
+    if note_attrs.class != String
 
-    note_array = note_attrs.inject([]) do |note_array, note|
-      note_array << Note.create!(note)
+
+      note_array = note_attrs.values.inject([]) do |note_array, note|
+        note_array << Note.create!(note)
+       end
+
+      site_attrs.merge!({:notes => note_array})
+
     end
-
-    site_attrs.merge({:notes => note_array, :trail_id => self.id})
-
+    site_attrs.merge!({:trail_id => self.id})
     site = Site.create!(site_attrs)
   end
 

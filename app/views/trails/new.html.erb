@@ -1,5 +1,10 @@
+<script type="text/javascript">
+  var userId = <%= current_user.id %>;
+</script>
+
 <div id="urlBox">
-<input type="text" id="urlText"/>
+<input type="button" id="trailButton" value="Save site to trail">
+<input type="text" id="urlText" placeholder="ex:www.wikipedia.com"/>
 <input type="button" id="navigateButton" value="Go">
 <% if current_user %>
   <span class="userName"><%= current_user.email %></span>
@@ -9,4 +14,4 @@
 </div>
 <iframe id="UsersPage" src="http://www.wikipedia.org" scrolling="yes">
 </iframe>
-<div id="pathDisplay">paths go here</div>
+<div id="trailDisplay"></div>

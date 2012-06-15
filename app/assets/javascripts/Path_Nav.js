@@ -1,34 +1,41 @@
 var myFrame;
 var urlBox;
-var pathDisplay;
+var trailDisplay;
 var urlTextBox;
+var trailButton;
+var trailName;
+var trailId;
+var currentSite;
 
 $(function() {
     myFrame = document.getElementById("UsersPage");
     urlBox = document.getElementById("urlBox");
-    pathDisplay = document.getElementById("pathDisplay");
-    urlTextBox = $("#urlText")
+    trailDisplay = document.getElementById("trailDisplay");
+    urlTextBox = $("#urlText");
+    trailButton = $("#trailButton");
+    trailButton.click(enterName);
+    myFrame.onload = function() {currentSite = myFrame.src};
     $(urlBox).hide();
-    $(pathDisplay).mouseenter(maximizePathDisplay);
-    $(pathDisplay).mouseout(closePathDisplayIfNecessary);
-    $(pathDisplay).click(showOrHideTools);
+    $(trailDisplay).mouseenter(maximizeTrailDisplay);
+    $(trailDisplay).mouseout(closeTrailDisplayIfNecessary);
+    $(trailDisplay).click(showOrHideTools);
     $("#navigateButton").click(changeUserPage);
-    minimizePathDisplay();
+    minimizeTrailDisplay();
     $(document).keypress(verifyKeyPress);
 });
 
-function closePathDisplayIfNecessary(){
+function closeTrailDisplayIfNecessary(){
     if ($(urlBox).is(':hidden')){
-        minimizePathDisplay()
+        minimizeTrailDisplay()
     }
 }
 
-function minimizePathDisplay(){
-    $("#pathDisplay").css("height","2%");
+function minimizeTrailDisplay(){
+    $("#trailDisplay").css("height","2%");
 }
 
-function maximizePathDisplay(){
-    $("#pathDisplay").css("height","6%");
+function maximizeTrailDisplay(){
+    $("#trailDisplay").css("height","6%");
 }
 
 function verifyKeyPress(e){
@@ -42,12 +49,12 @@ function verifyKeyPress(e){
 function showOrHideTools(){
         if ($(urlBox).is(':hidden')){
             $(urlBox).show();
-            maximizePathDisplay()
+            maximizeTrailDisplay()
             $(urlTextBox).focus();
         }
         else{
             $(urlBox).hide();
-            minimizePathDisplay();
+            minimizeTrailDisplay();
             $(document.body).focus();
         }
 }
@@ -58,4 +65,68 @@ function changeUserPage(){
         url = "http://"+url ;
     }
     myFrame.src = url;
+    trailButton.val("Add Site to Trail")
+    trailButton.click(addSiteToTrail)
+}
+
+function enterName() {
+    trailButton.val("Enter Trail Name --->");
+    urlTextBox.focus();
+    trailButton.click(saveToTrail)
+}
+
+function addSiteToTrail(){
+    currentSite = myFrame.src;
+    $.ajax({
+        url: "/create_site",
+        type: "post",
+        data: {
+           site: {
+                    url: currentSite,
+                    trail_id: trailId
+                },
+           notes: "none"
+                },
+        success: continueTrailSession()
+    })
+}
+
+function saveToTrail(){
+    trailName = urlTextBox.val();
+    currentSite = myFrame.src;
+    $.ajax({
+        url: "/create_trail",
+        type: "post",
+        data: {
+            "trail" : {
+                name:trailName,
+                owner: userId //declared in the html
+            },
+            sites: [{
+                    url: currentSite,
+                    notes: "none"
+                }]
+                },
+        success: startTrailSession
+    })
+}
+
+function startTrailSession(data) {
+    trailId = data["id"];
+    trailButton.val("Site added to trail");
+    trailButton.unbind("click");
+    $(trailDisplay).append("<div id='trailName'>" + trailName + "</div>");
+    addSiteFaviconToDisplay();
+}
+
+function continueTrailSession(data) {
+    trailButton.val("Site Added");
+    trailButton.unbind("click");
+    addSiteFaviconToDisplay();
+}
+
+function addSiteFaviconToDisplay() {
+    searchName = currentSite.substring(7,currentSite.length-1);
+    console.log(searchName);
+    $(trailDisplay).append("<a href='"+currentSite+"' class='siteFavicon'><img src='http://www.google.com/s2/favicons?domain=" + searchName +"'/></a>")
 }
