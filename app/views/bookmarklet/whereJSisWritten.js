@@ -3,6 +3,29 @@ var trailDisplay;
 var trailID = 3;
 var mouseDown = 0;
 var script = document.createElement("script");
+var c;
+
+var nextId = 0;
+
+var rangeIntersectsNode = (typeof window.Range != "undefined"
+        && Range.prototype.intersectsNode) ?
+
+    function(range, node) {
+        return range.intersectsNode(node);
+    } :
+
+    function(range, node) {
+        var nodeRange = node.ownerDocument.createRange();
+        try {
+            nodeRange.selectNode(node);
+        } catch (e) {
+            nodeRange.selectNodeContents(node);
+        }
+
+        return range.compareBoundaryPoints(Range.END_TO_START, nodeRange) == -1 &&
+            range.compareBoundaryPoints(Range.START_TO_END, nodeRange) == 1;
+    };
+
 
 script.src = "http://ajax.googleapis.com/ajax/libs/jquery/" + v + "/jquery.min.js";
 script.onload = script.onreadystatechange = initMyBookmarklet;
@@ -23,7 +46,7 @@ function initMyBookmarklet() {
         background: "#2E2E1F",
         color: "#CCCCA3"
     });
-    noteDisplay = $(document.createElement("div"));
+    var noteDisplay = $(document.createElement("div"));
     noteDisplay.css({
         height:"100%",
         width: "40%",
@@ -35,6 +58,10 @@ function initMyBookmarklet() {
         background: "#2E2E1F",
         color: "#CCCCA3"
     });
+    var cssStyle = $(document.createElement("style"));
+    $(document.getElementsByTagName("head")[0]).append(cssStyle);
+    cssStyle.html(".highlight { background-color: #ba9f65}");
+
     $(document.body).prepend(trailDisplay);
     trailDisplay.append(noteDisplay);
     noteDisplay.html("Select text and hold down mouse to save notes");
@@ -107,10 +134,6 @@ function includeTrailSubString(arr,subString) {
 }
 
 
-function fillTextDivWithText(){
-
-}
-
 function smartGrabHighlightedText(){
    textObject = window.getSelection().getRangeAt(0);
    var text = String(textObject);
@@ -140,9 +163,9 @@ function smartGrabHighlightedText(){
     if (text[text.length-1] == " "){
        text = rtrim(text);
    }else{
-       endIndex = textObject.endOffset;
+       var endIndex = textObject.endOffset;
        spaceIndices = [];
-       endContainerText = textObject.endContainer.textContent;
+       var endContainerText = textObject.endContainer.textContent;
        $.each(endContainerText, function(i,character){
             if (character==" ") {
                 spaceIndices.push(i);
@@ -164,12 +187,13 @@ function smartGrabHighlightedText(){
    return text
 }
 
-
 function mouseStopDetect (){
     var onmousestop = function() {
     console.log("mouse stopped");
     if (mouseDown && String(window.getSelection())){
+        window.getSelection().removeAllRanges();
         $(".noteDisplay").fadeIn(100).fadeOut(100).fadeIn(100);
+
     }
     }, thread;
 
@@ -190,3 +214,73 @@ function ltrim(stringToTrim) {
 function rtrim(stringToTrim) {
 	return stringToTrim.replace(/\s+$/,"");
 }
+
+
+function applyClassToSelection(cssClass) {
+    var uniqueCssClass = "selection_" + (++nextId);
+    var sel = window.getSelection();
+    if (sel.rangeCount < 1) {
+        return;
+    }
+    var range = sel.getRangeAt(0);
+    var startNode = range.startContainer, endNode = range.endContainer;
+
+    if (endNode.nodeType == 3) {
+        endNode.splitText(range.endOffset);
+        range.setEnd(endNode, endNode.length);
+    }
+
+    if (startNode.nodeType == 3) {
+        startNode = startNode.splitText(range.startOffset);
+        range.setStart(startNode, 0);
+    }
+
+    var containerElement = range.commonAncestorContainer;
+    if (containerElement.nodeType != 1) {
+        containerElement = containerElement.parentNode;
+    }
+
+    var treeWalker = document.createTreeWalker(
+        containerElement,
+        NodeFilter.SHOW_TEXT,
+        function(node) {
+            return rangeIntersectsNode(range, node) ?
+                NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        },
+        false
+    );
+
+    var selectedTextNodes = [];
+    while (treeWalker.nextNode()) {
+        selectedTextNodes.push(treeWalker.currentNode);
+    }
+
+    var textNode, span;
+
+    for (var i = 0, len = selectedTextNodes.length; i < len; ++i) {
+        textNode = selectedTextNodes[i];
+        span = document.createElement("span");
+        span.className = cssClass + " " + uniqueCssClass;
+        textNode.parentNode.insertBefore(span, textNode);
+        span.appendChild(textNode);
+    }
+
+    return uniqueCssClass;
+}
+
+function removeSpansWithClass(cssClass) {
+    var spans = document.body.getElementsByClassName(cssClass),
+        span, parentNode;
+
+    spans = Array.prototype.slice.call(spans, 0);
+
+    for (var i = 0, len = spans.length; i < len; ++i) {
+        span = spans[i];
+        parentNode = span.parentNode;
+        parentNode.insertBefore(span.firstChild, span);
+        parentNode.removeChild(span);
+
+        parentNode.normalize();
+    }
+}
+
