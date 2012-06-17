@@ -1,4 +1,4 @@
-class SitesController < ApplicationController
+class NotesController < ApplicationController
   skip_before_filter :verify_authenticity_token, :only => [:create,:options]
   after_filter :cors_set_access_control_headers
 
@@ -21,10 +21,8 @@ class SitesController < ApplicationController
   end
 
   def create
-    site= Site.create!(params[:site])
-    site.build_notes(params[:notes])
-    trail = Trail.find(params[:site][:trail_id])
-    render :json => trail.sites.map(&:url), :status => 200
+    @note = Note.create!(params[:note])
+    render :json => "success", :status => 200
   end
 
 end

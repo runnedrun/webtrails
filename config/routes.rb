@@ -69,4 +69,8 @@ Proto1::Application.routes.draw do
   resources :sites, :only=>[:create]
   match '/sites', :controller => 'sites', :action => 'options', :constraints => {:method => 'OPTIONS'}
 
+  resources :notes, :only=>[:create]
+  match '/notes', :controller => 'notes', :action => 'options', :constraints => {:method => 'OPTIONS'}
+
+
 end

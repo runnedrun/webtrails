@@ -1,6 +1,7 @@
 class Site < ActiveRecord::Base
   has_many :notes
-  belongs_to :trail
+  belongs_to :trail, :dependent => :destroy
+
   def build_notes(attrs)
     if attrs.class != String
       note_array = attrs.values.inject([]) do |note_array, note|
