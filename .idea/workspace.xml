@@ -27,28 +27,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="new_bookmarklet.html" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/new_bookmarklet.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="69" selection-start="1158" selection-end="1158" vertical-scroll-proportion="-19.375">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="note_controller_spec.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/spec/controllers/note_controller_spec.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="13" selection-start="98" selection-end="98" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="20120608175433_create_notes.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/db/migrate/20120608175433_create_notes.rb">
           <provider selected="true" editor-type-id="text-editor">
             <state line="1" column="0" selection-start="44" selection-end="44" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="new_bookmarklet.html" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/new_bookmarklet.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="172" column="62" selection-start="4716" selection-end="4716" vertical-scroll-proportion="0.102564104">
               <folding />
             </state>
           </provider>
@@ -72,10 +63,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="whereJSisWritten.js" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="whereJSisWritten.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWritten.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="43" selection-start="1217" selection-end="1217" vertical-scroll-proportion="0.8445596">
+            <state line="171" column="62" selection-start="4683" selection-end="4683" vertical-scroll-proportion="-5.8">
               <folding />
             </state>
           </provider>
@@ -145,8 +136,8 @@
         <option value="$PROJECT_DIR$/config/routes.rb" />
         <option value="$PROJECT_DIR$/app/controllers/notes_controller.rb" />
         <option value="$PROJECT_DIR$/spec/controllers/note_controller_spec.rb" />
-        <option value="$PROJECT_DIR$/app/views/bookmarklet/new_bookmarklet.html" />
         <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWritten.js" />
+        <option value="$PROJECT_DIR$/app/views/bookmarklet/new_bookmarklet.html" />
       </list>
     </option>
   </component>
@@ -836,13 +827,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/db/migrate/20120608175433_create_notes.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="0" selection-start="44" selection-end="44" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/notes_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="22" column="38" selection-start="781" selection-end="781" vertical-scroll-proportion="0.0">
@@ -852,21 +836,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/spec/controllers/note_controller_spec.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="13" selection-start="98" selection-end="98" vertical-scroll-proportion="0.0">
+        <state line="4" column="13" selection-start="98" selection-end="98" vertical-scroll-proportion="0.096463025">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/new_bookmarklet.html">
+    <entry file="file://$PROJECT_DIR$/db/migrate/20120608175433_create_notes.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="69" selection-start="1158" selection-end="1158" vertical-scroll-proportion="-19.375">
+        <state line="1" column="0" selection-start="44" selection-end="44" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWritten.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="43" selection-start="1217" selection-end="1217" vertical-scroll-proportion="0.8445596">
+        <state line="171" column="62" selection-start="4683" selection-end="4683" vertical-scroll-proportion="-5.8">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/new_bookmarklet.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="172" column="62" selection-start="4716" selection-end="4716" vertical-scroll-proportion="0.102564104">
           <folding />
         </state>
       </provider>

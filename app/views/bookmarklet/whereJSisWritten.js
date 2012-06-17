@@ -1,7 +1,9 @@
 var v = "1.4.1";
 var trailDisplay;
 var trailID = 3;
+var mouseDown = 0;
 var script = document.createElement("script");
+
 script.src = "http://ajax.googleapis.com/ajax/libs/jquery/" + v + "/jquery.min.js";
 script.onload = script.onreadystatechange = initMyBookmarklet;
 document.getElementsByTagName("head")[0].appendChild(script);
@@ -36,8 +38,18 @@ function initMyBookmarklet() {
     $(document.body).prepend(trailDisplay);
     trailDisplay.append(noteDisplay);
     noteDisplay.html("Select text and hold down mouse to save notes");
+    noteDisplay.addClass("noteDisplay");
     $(document.body).keypress(verifyKeyPress);
-    document.onmousemove = mouseStopDetect;
+    document.onmousemove = mouseStopDetect();
+
+    document.body.onmousedown = function() {
+     mouseDown=1;
+    };
+    document.body.onmouseup = function() {
+      mouseDown=0;
+    };
+
+
     addSiteToTrail();
 }
 
@@ -99,7 +111,8 @@ function fillTextDivWithText(){
 
 }
 
-function smartGrabHighlightedText(textObject){
+function smartGrabHighlightedText(){
+   textObject = window.getSelection().getRangeAt(0);
    var text = String(textObject);
    if (text[0] == " "){
        text = ltrim(text);
@@ -154,10 +167,18 @@ function smartGrabHighlightedText(textObject){
 
 function mouseStopDetect (){
     var onmousestop = function() {
-    console.log("mouse stopped")
+    console.log("mouse stopped");
+    if (mouseDown && String(window.getSelection())){
+        $(".noteDisplay").fadeIn(100).fadeOut(100).fadeIn(100);
+    }
     }, thread;
 
     return function() {
+        if (mouseDown && String(window.getSelection())){
+            var text = smartGrabHighlightedText();
+            console.log(text);
+            $(".noteDisplay").html(text);
+        }
         clearTimeout(thread);
         thread = setTimeout(onmousestop, 1000);
     };
@@ -169,10 +190,3 @@ function ltrim(stringToTrim) {
 function rtrim(stringToTrim) {
 	return stringToTrim.replace(/\s+$/,"");
 }
-
-
-
-
-
-
-
