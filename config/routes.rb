@@ -72,5 +72,8 @@ Proto1::Application.routes.draw do
   resources :notes, :only=>[:create]
   match '/notes', :controller => 'notes', :action => 'options', :constraints => {:method => 'OPTIONS'}
 
+  match "/bookmarklet_js", :controller => 'bookmarklets', :action => "get_js"
+  match '/bookmarklet_js', :controller => 'bookmarklets', :action => 'options', :constraints => {:method => 'OPTIONS'}
+
 
 end

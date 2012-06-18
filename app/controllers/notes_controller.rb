@@ -22,7 +22,7 @@ class NotesController < ApplicationController
 
   def create
     @note = Note.create!(params[:note])
-    render :json => "success", :status => 200
+    render :json => @note.content, :status => 200
   end
 
 end

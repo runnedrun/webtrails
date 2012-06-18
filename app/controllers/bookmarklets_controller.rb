@@ -22,7 +22,8 @@ class BookmarkletsController < ApplicationController
 
 
   def get_js
-    render :js => File.open("")
+    render :js => File.open(File.dirname(__FILE__) + "/../views/bookmarklet/whereJSisWritten.js").read()
+
   end
 
 end

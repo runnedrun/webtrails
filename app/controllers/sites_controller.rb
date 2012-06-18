@@ -24,7 +24,7 @@ class SitesController < ApplicationController
     site= Site.create!(params[:site])
     site.build_notes(params[:notes])
     trail = Trail.find(params[:site][:trail_id])
-    render :json => trail.sites.map(&:url), :status => 200
+    render :json => {"sites" => trail.sites.map(&:url), "site_id" => site.id}, :status => 200
   end
 
 end

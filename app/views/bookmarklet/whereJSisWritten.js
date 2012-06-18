@@ -1,12 +1,12 @@
-var v = "1.4.1";
 var trailDisplay;
 var trailID = 3;
 var mouseDown = 0;
-var script = document.createElement("script");
-var c;
+var noteDisplay;
+var previousNoteDisplay;
+var noteDisplayWrapper;
+var currentSiteTrailID;
 
 var nextId = 0;
-
 var rangeIntersectsNode = (typeof window.Range != "undefined"
         && Range.prototype.intersectsNode) ?
 
@@ -26,28 +26,23 @@ var rangeIntersectsNode = (typeof window.Range != "undefined"
             range.compareBoundaryPoints(Range.START_TO_END, nodeRange) == 1;
     };
 
-
-script.src = "http://ajax.googleapis.com/ajax/libs/jquery/" + v + "/jquery.min.js";
-script.onload = script.onreadystatechange = initMyBookmarklet;
-document.getElementsByTagName("head")[0].appendChild(script);
-
-
 function initMyBookmarklet() {
     trailDisplay = $(document.createElement("div"));
     trailDisplay.css({
-        height:"6%",
+        height:"10%",
         width: "100%",
         position:"fixed",
         top:"0px",
         "text-align":"left",
-        float:"left",
         "z-index": "1000",
+        "padding-left":"10px",
         opacity: ".8",
         background: "#2E2E1F",
         color: "#CCCCA3"
     });
-    var noteDisplay = $(document.createElement("div"));
-    noteDisplay.css({
+
+    noteDisplayWrapper = $(document.createElement("div"));
+    noteDisplayWrapper.css({
         height:"100%",
         width: "40%",
         top:"0px",
@@ -58,14 +53,62 @@ function initMyBookmarklet() {
         background: "#2E2E1F",
         color: "#CCCCA3"
     });
+
+    noteDisplay = $(document.createElement("div"));
+    noteDisplay.css({
+        height:"40%%",
+        width: "100%",
+        position: "absolute",
+        top:"5%",
+        "padding-left": "5px",
+        "border-left": "solid",
+        "text-align":"left",
+        "z-index": "0",
+        opacity: ".8",
+        background: "#2E2E1F",
+        color: "#CCCCA3"
+    });
+
+    previousNoteDisplay = $(document.createElement("div"));
+    previousNoteDisplay.css({
+        height:"40%%",
+        width: "100%",
+        position: "absolute",
+        bottom:"5%",
+        "padding-left": "5px",
+        "border-top": "solid",
+        "border-left": "solid",
+        "text-align":"left",
+        "z-index": "0",
+        opacity: ".8",
+        background: "#2E2E1F",
+        color: "#CCCCA3",
+        "overflow": "hidden",
+        "text-overflow": "ellipsis"
+    });
+
+    //inserting global stylings
     var cssStyle = $(document.createElement("style"));
     $(document.getElementsByTagName("head")[0]).append(cssStyle);
-    cssStyle.html(".highlight { background-color: #ba9f65}");
+    cssStyle.html(".siteFavicon {" +
+        "padding-right: 5px;" +
+        "padding-top: 10px;" +
+        "float: left;"
+    );
 
+    //adding all the toolbar elements to the DOM.
     $(document.body).prepend(trailDisplay);
-    trailDisplay.append(noteDisplay);
+    trailDisplay.append(noteDisplayWrapper);
+    noteDisplayWrapper.append(noteDisplay);
+    noteDisplayWrapper.append(previousNoteDisplay);
     noteDisplay.html("Select text and hold down mouse to save notes");
+    previousNoteDisplay.html("Your last saved note will appear here");
     noteDisplay.addClass("noteDisplay");
+
+    initializeJqueryEllipsis();
+    noteDisplay.ellipsis();
+    previousNoteDisplay.ellipsis();
+
     $(document.body).keypress(verifyKeyPress);
     document.onmousemove = mouseStopDetect();
 
@@ -75,6 +118,8 @@ function initMyBookmarklet() {
     document.body.onmouseup = function() {
       mouseDown=0;
     };
+
+
 
 
     addSiteToTrail();
@@ -112,7 +157,8 @@ function addSiteToTrail(){
     })
 }
 function addFaviconsToDisplay(data){
-    $.each(data, function(i,site){
+    currentSiteTrailID = data["site_id"]
+    $.each(data["sites"], function(i,site){
         addSiteFaviconToDisplay(site.slice(7,site.length-1).split("/")[0],site);
         }
     )
@@ -189,23 +235,39 @@ function smartGrabHighlightedText(){
 
 function mouseStopDetect (){
     var onmousestop = function() {
-    console.log("mouse stopped");
     if (mouseDown && String(window.getSelection())){
         window.getSelection().removeAllRanges();
-        $(".noteDisplay").fadeIn(100).fadeOut(100).fadeIn(100);
-
+        var noteContent = noteDisplay.html();
+        $.ajax({
+        url: "http://192.168.1.3:3000/notes",
+        type: "post",
+        crossDomain: true,
+        data: {
+           "note[content]":noteContent,
+           "note[site_id]":currentSiteTrailID
+        }
+        })
+        moveNoteToPrevious(noteContent);
     }
     }, thread;
 
     return function() {
         if (mouseDown && String(window.getSelection())){
             var text = smartGrabHighlightedText();
-            console.log(text);
             $(".noteDisplay").html(text);
         }
         clearTimeout(thread);
         thread = setTimeout(onmousestop, 1000);
     };
+}
+
+function moveNoteToPrevious(noteContent){
+    noteDisplay.fadeOut(100);
+    noteDisplay.html("Great! Now go ahead and select more notes.");
+    previousNoteDisplay.fadeOut(100);
+    previousNoteDisplay.html(noteContent);
+    previousNoteDisplay.fadeIn(100);
+    noteDisplay.fadeIn(100);
 }
 
 function ltrim(stringToTrim) {
@@ -215,6 +277,7 @@ function rtrim(stringToTrim) {
 	return stringToTrim.replace(/\s+$/,"");
 }
 
+//this is for adding a css class, in case I want to do text highlighting.
 
 function applyClassToSelection(cssClass) {
     var uniqueCssClass = "selection_" + (++nextId);
@@ -283,4 +346,72 @@ function removeSpansWithClass(cssClass) {
         parentNode.normalize();
     }
 }
+
+
+// This is for ellipsing on Firefox
+
+/*
+ * MIT LICENSE
+ * Copyright (c) 2009-2011 Devon Govett.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions
+ * of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+function initializeJqueryEllipsis(){
+    (function($) {
+        $.fn.ellipsis = function(enableUpdating){
+            var s = document.documentElement.style;
+            if (!('textOverflow' in s || 'OTextOverflow' in s)) {
+                return this.each(function(){
+                    var el = $(this);
+                    if(el.css("overflow") == "hidden"){
+                        var originalText = el.html();
+                        var w = el.width();
+
+                        var t = $(this.cloneNode(true)).hide().css({
+                            'position': 'absolute',
+                            'width': 'auto',
+                            'overflow': 'visible',
+                            'max-width': 'inherit'
+                        });
+                        el.after(t);
+
+                        var text = originalText;
+                        while(text.length > 0 && t.width() > el.width()){
+                            text = text.substr(0, text.length - 1);
+                            t.html(text + "...");
+                        }
+                        el.html(t.html());
+
+                        t.remove();
+
+                        if(enableUpdating == true){
+                            var oldW = el.width();
+                            setInterval(function(){
+                                if(el.width() != oldW){
+                                    oldW = el.width();
+                                    el.html(originalText);
+                                    el.ellipsis();
+                                }
+                            }, 200);
+                        }
+                    }
+                });
+            } else return this;
+        };
+    })(jQuery);
+}
+
+
 

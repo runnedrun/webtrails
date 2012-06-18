@@ -14,5 +14,12 @@ describe NotesController do
       Note.last.site.should == @site
     end
 
+    it "should respond with the note content of the note created" do
+      note_content = Faker::Lorem.paragraph
+      post :create, :note => {:content => note_content, :site_id => @site.id}
+      response.body.should == note_content
+
+    end
+
   end
 end
