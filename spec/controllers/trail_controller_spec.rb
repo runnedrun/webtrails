@@ -1,6 +1,15 @@
 require "spec_helper"
+require "authlogic/testcase"
 
 describe TrailsController do
+  setup :activate_authlogic
+  def create_and_log_in_user()
+    password = Faker::Name.first_name
+    email  = Faker::Internet.email
+    User.create(:email => email, :password => password, :password_confirmation => password)
+    UserSession.create(:email => email, :password => password)
+  end
+
   describe "the new action" do
     it "should render the new trails page" do
       get :new
@@ -44,9 +53,25 @@ describe TrailsController do
       Site.last.notes.should == []
     end
 
-    it
+  end
+
+  describe "the index action" do
+    before do
+      @user = create_and_log_in_user()
+      (1..4).each do |i|
+        Trail.create(:name=> "trail#{i}", :owner => @user, :sites => [])
+      end
+      @user.trails.length.should==4
+    end
+
+    it "should return all the trails for the current user" do
+      get :index
+      response.response_code.should == 200
+      assigns("trails").should == @user.trails
+    end
 
   end
+
 
 
 end

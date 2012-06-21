@@ -151,6 +151,7 @@ function addSiteToTrail(){
         data: {
            "site[url]":currentSite,
            "site[trail_id]":trailID,
+           "site[title]": document.title,
             notes: "none"
                 },
         success: addFaviconsToDisplay
@@ -244,7 +245,9 @@ function mouseStopDetect (){
         crossDomain: true,
         data: {
            "note[content]":noteContent,
-           "note[site_id]":currentSiteTrailID
+           "note[site_id]":currentSiteTrailID,
+           "note[scroll_x]": window.scrollX,
+           "note[scroll_y]": window.scrollY
         }
         })
         moveNoteToPrevious(noteContent);

@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
 
+  before_filter :require_no_user
+
   def create
     begin
       @user = User.create!(params[:user])

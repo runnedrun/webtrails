@@ -64,8 +64,7 @@ Proto1::Application.routes.draw do
   match 'create_user' => "users#create"
   match 'new_user' => "users#new"
   match 'new_trail' => "trails#new"
-  match 'create_trail' => "trails#create"
-  #match 'create_site' => "sites#create"
+  resources :trails, :only => [:create, :show, :new, :index]
   resources :sites, :only=>[:create]
   match '/sites', :controller => 'sites', :action => 'options', :constraints => {:method => 'OPTIONS'}
 

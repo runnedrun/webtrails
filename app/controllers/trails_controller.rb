@@ -1,5 +1,7 @@
 class TrailsController < ApplicationController
 
+  before_filter :require_user, :only => [:index, :show]
+
   def new
 
   end
@@ -13,13 +15,15 @@ class TrailsController < ApplicationController
         end
       end
       render :json => {"id" => trail.id}, :status =>200
-    #rescue
-      #render :nothing => true, :status => 500
     end
   end
 
-  def update
+  def show
 
+  end
+
+  def index
+    @trails = current_user.trails
   end
 
 end
