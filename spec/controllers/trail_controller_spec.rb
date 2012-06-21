@@ -1,8 +1,6 @@
 require "spec_helper"
-require "authlogic/testcase"
 
 describe TrailsController do
-  setup :activate_authlogic
   def create_and_log_in_user()
     password = Faker::Name.first_name
     email  = Faker::Internet.email

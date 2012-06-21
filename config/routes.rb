@@ -1,4 +1,6 @@
 Proto1::Application.routes.draw do
+  devise_for :users
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -58,11 +60,7 @@ Proto1::Application.routes.draw do
 
   resources :user_sessions
 
-  root :to => "user_sessions#new"
-  match 'login' => "user_sessions#new",      :as => :login
-  match 'logout' => "user_sessions#destroy", :as => :logout
-  match 'create_user' => "users#create"
-  match 'new_user' => "users#new"
+  root :to => "users#new"
   match 'new_trail' => "trails#new"
   resources :trails, :only => [:create, :show, :new, :index]
   resources :sites, :only=>[:create]

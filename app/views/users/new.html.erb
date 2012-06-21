@@ -1,14 +1,28 @@
-<div class="logIn" >
-  <% form_for @user, :as => :user, :url => { :action => "create" }, :html => {:class => "loginForm"} do |f| %>
-        <%= f.label :email %><br />
-        <%= f.text_field :email %><br />
-    <br />
-        <%= f.label :password %><br />
-        <%= f.password_field :password %><br />
-    <br />
-        <%= f.label :password_confirmation %>
-        <%= f.password_field :password_confirmation %><br />
-    <br />
-  <%= f.submit "Sign Up!" %>
+<div id="signUpOrLogin">
+<div id="logInArea">
+  <a class="labelText">Log In</a>
+<div class="logIn">
+<%= form_for @user, :as => :user_session, :url => { :controller => "user_sessions",:action => "create" } do |f| %>
+  <%= f.text_field :email, :class => "loginField", :placeholder => "Email" %>
+  <%= f.password_field :password, :class => "loginField", :placeholder => "Password" %>
+  <div id="checkBox">
+  <%= f.check_box :remember_me %><%= f.label :remember_me %>
+  </div>
+  <%= f.submit "Login", :class => "loginField" %>
 <% end %>
+</div>
+</div>
+
+<div id="signUpArea">
+  <a class="labelText">Sign Up</a>
+  <div class="logIn" >
+  <%= form_for @user, :as => :user, :url => { :controller => "users", :action => "create" } do |f| %>
+        <%= f.text_field :email, :class => "loginField", :placeholder => "Email" %>
+        <%= f.password_field :password, :class => "loginField", :placeholder => "Password" %>
+        <%= f.password_field :password_confirmation, :class => "loginField", :placeholder => "Confirm Password" %>
+  <%= f.submit "Sign Up!", :class => "loginField" %>
+<% end %>
+</div>
+</div>
+<div class="clear"></div>
 </div>
