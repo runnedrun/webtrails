@@ -1,6 +1,6 @@
 class TrailsController < ApplicationController
 
-  before_filter :require_user, :only => [:index, :show]
+  before_filter :authenticated_or_redirect, :only => [:index, :show]
 
   def new
 

@@ -58,10 +58,8 @@ Proto1::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id(.:format)))'
 
-  resources :user_sessions
-
-  root :to => "users#new"
-  match 'new_trail' => "trails#new"
+  root :to => "trails", :action => "new"
+  match 'users/new', :controller => 'users', :action => "new"
   resources :trails, :only => [:create, :show, :new, :index]
   resources :sites, :only=>[:create]
   match '/sites', :controller => 'sites', :action => 'options', :constraints => {:method => 'OPTIONS'}

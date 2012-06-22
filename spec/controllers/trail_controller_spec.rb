@@ -1,11 +1,10 @@
 require "spec_helper"
 
 describe TrailsController do
-  def create_and_log_in_user()
-    password = Faker::Name.first_name
+  def create_user()
+    password = '123456'
     email  = Faker::Internet.email
-    User.create(:email => email, :password => password, :password_confirmation => password)
-    UserSession.create(:email => email, :password => password)
+    @user = User.create(:email => email, :password => password, :password_confirmation => password)
   end
 
   describe "the new action" do
@@ -18,7 +17,8 @@ describe TrailsController do
   describe "the create or update action" do
 
     before do
-      @user = User.create(:email => "d@d.com", :password=> "12345", :password_confirmation => "12345")
+      @user = create_user()
+      sign_in @user
       @existing_site = Site.create(:notes => [Note.create(:content => Faker::Lorem.paragraph)], :url => "www.foo.com")
       @existing_trail = Trail.create(:sites => [@existing_site], :name => "my trail", :owner => @user  )
       @trail_count = Trail.count
@@ -55,7 +55,7 @@ describe TrailsController do
 
   describe "the index action" do
     before do
-      @user = create_and_log_in_user()
+      @user = create_user()
       (1..4).each do |i|
         Trail.create(:name=> "trail#{i}", :owner => @user, :sites => [])
       end
@@ -63,13 +63,16 @@ describe TrailsController do
     end
 
     it "should return all the trails for the current user" do
+      sign_in @user
       get :index
       response.response_code.should == 200
       assigns("trails").should == @user.trails
     end
 
+    it "should redirect to the login page if the user is not signed in" do
+      get :index
+      response.response_code.should == 302
+      response.should redirect_to("/users/new")
+    end
   end
-
-
-
 end
