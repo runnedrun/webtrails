@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120621061759) do
+ActiveRecord::Schema.define(:version => 20120628062033) do
 
   create_table "notes", :force => true do |t|
     t.text     "content"
@@ -28,6 +28,8 @@ ActiveRecord::Schema.define(:version => 20120621061759) do
     t.datetime "updated_at"
     t.integer  "trail_id"
     t.string   "title"
+    t.string   "domain"
+    t.string   "archive_location"
   end
 
   create_table "trails", :force => true do |t|

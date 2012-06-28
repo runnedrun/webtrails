@@ -1,10 +1,11 @@
 var trailDisplay;
-var trailID = 3;
 var mouseDown = 0;
 var noteDisplay;
 var previousNoteDisplay;
 var noteDisplayWrapper;
 var currentSiteTrailID;
+var trailID = window.trailID;
+var userID = window.userID;
 
 var nextId = 0;
 var rangeIntersectsNode = (typeof window.Range != "undefined"
@@ -152,6 +153,7 @@ function addSiteToTrail(){
            "site[url]":currentSite,
            "site[trail_id]":trailID,
            "site[title]": document.title,
+           "user": userID,
             notes: "none"
                 },
         success: addFaviconsToDisplay

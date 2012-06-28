@@ -1,6 +1,4 @@
-
-
-#UsersPage {
+.usersPage {
     position: relative;
     top: 0px;
     height: 98%;
@@ -14,7 +12,8 @@
     color: #CCCCA3;
     height: 55px;
 }
-#navigateButton, #trailButton{
+
+#navigateButton{
     cursor: pointer;
     background: #2E2E1F;
     color: #CCCCA3;
@@ -26,10 +25,12 @@
     border-top: none;
     border-bottom: none;
     border-left: solid 6px #CCCCA3;
+    position: fixed;
+    right: 0;
 
 }
 
-#urlBox {
+#trailDisplay {
     opacity: 0.8;
     background: #2E2E1F;
     border: none;
@@ -39,21 +40,9 @@
     height: 60px;
     text-align: center;
     position: fixed;
+    bottom: 0;
     float:left;
     z-index: 1000;
-}
-
-#trailDisplay {
-    height:2%;
-    width: 100%;
-    position:fixed;
-    bottom:0px;
-    text-align:left;
-    float:left;
-    z-index: 1000;
-    opacity: .8;
-    background: #2E2E1F;
-    color: #CCCCA3;
 }
 
 .userName {
@@ -64,13 +53,12 @@
     top: 5%;
 }
 
-#trailButton {
-    border-left:solid 2px #CCCCA3;
-    border-right: solid 6px #CCCCA3;
-}
-
 #trailName, .siteFavicon {
     margin-top:5px;
     margin-right: 10px;
     float: left;
+}
+
+.hiddenSite.usersPage{
+    display:none;
 }
