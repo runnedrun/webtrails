@@ -1,0 +1,15 @@
+<div class="container_12">
+    <div class="grid_12 title-bar">Your Trails</div>
+  <div class="clear"></div>
+  <%- @trails.each do |trail|%>
+        <div class="grid_4"><%= link_to(trail.name,trail) %></div>
+        <div class="grid_6 push">
+          <%- trail.sites.each do |site| %>
+              <div class="site-title">
+                <%= site.title %>
+             </div>
+          <%- end %>
+        </div>
+      <div class="clear"></div>
+  <%- end %>
+</div>
