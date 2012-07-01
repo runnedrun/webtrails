@@ -26,11 +26,10 @@ class SitesController < ApplicationController
       remote = RemoteDocument.new(params[:site][:url])
       url = params[:site][:url]
       http_end = (url =~ (/:\/\//)) + 3
-      path = Rails.root.to_s + "/saved_sites/"+params[:site][:trail_id]
-      file_path = path  + "/" + url[http_end..-1] + ".html"
+      path = "/"+params[:site][:trail_id]
       remote.mirror(path)
 
-      site= Site.create!(params[:site].merge({:archive_location => file_path.to_s}))
+      site= Site.create!(params[:site].merge({:archive_location => remote.asset_path.to_s}))
       site.build_notes(params[:notes])
       trail = Trail.find(params[:site][:trail_id])
 
@@ -65,7 +64,7 @@ class SitesController < ApplicationController
     require 'open-uri'
 
 
-    attr_reader :uri
+    attr_reader :uri, :save_path, :bucket, :asset_path
     attr_reader :contents
     attr_reader :css_tags, :js_tags, :img_tags, :meta, :links
 
@@ -73,6 +72,8 @@ class SitesController < ApplicationController
 
     def initialize(uri)
       @uri = URI(uri)
+      s3 = AWS::S3.new
+      @bucket = s3.buckets["TrailsSitesProto"]
     end
 
 
@@ -82,7 +83,7 @@ class SitesController < ApplicationController
   #=end
     def mirror(dir)
       source = html_get_site(uri)
-      @contents = Nokogiri::HTML( source )
+        @contents = Nokogiri::HTML( source )
       process_contents
       save_locally(dir)
     end
@@ -187,16 +188,17 @@ class SitesController < ApplicationController
   #Download a remote file and save it to the specified path
   #=end
     def download_resource(url, path)
-      FileUtils.mkdir_p File.dirname(path)
       the_uri = URI.parse(url)
       if the_uri
         data = html_get the_uri
         begin
-          File.open(path, 'wb') { |f| f.write(data) } if data
+          newFile = @bucket.objects[path]
+          newFile.write(data)
         rescue
 
         end
       end
+      newFile
     end
 
 
@@ -209,8 +211,11 @@ class SitesController < ApplicationController
       url = tag[sym]
       resource_url = url_for(url)
       dest = localize_url(url, dir)
-      download_resource(resource_url, dest)
-      tag[sym.to_s] = dest.partition(File.dirname(dir) + File::SEPARATOR).last
+      s3file = download_resource(resource_url, dest)
+      if s3file
+        s3file.acl = :public_read
+        tag[sym.to_s] = s3file.public_url().to_s
+      end
     end
 
 
@@ -228,7 +233,7 @@ class SitesController < ApplicationController
   #Creates destination directory if it does not exist.
   #=end
     def save_locally(dir)
-      Dir.mkdir(dir) if (! File.exist? dir)
+      #Dir.mkdir(dir) if (! File.exist? dir)
 
       # remove HTML BASE tag if it exists
       @contents.xpath('//base').each { |t| t.remove }
@@ -239,13 +244,17 @@ class SitesController < ApplicationController
       @js_tags.each { |tag| localize(tag, :src, File.join(dir, 'js')) }
       @css_tags.each { |tag| localize(tag, :href, File.join(dir, 'css')) }
       #@links.keys.each do |link|
-      #   link[:href] = uri.to_s + (uri.path == "" ? link[:href] : link[:href][1..-1]) if link[:href][0] == "/"
+         #link[:href] = uri.to_s + (uri.path == "" ? link[:href] : link[:href][1..-1]) if link[:href][0] == "/"
       #end
 
 
-      save_path = File.join(dir, File.basename(uri.to_s))
-      save_path += '.html' if save_path !~ /\.((html?)|(txt))$/
-      File.open(save_path, 'w') { |f| f.write(@contents.to_html) }
+      @save_path = File.join(dir, File.basename(uri.to_s))
+      @save_path += '.html' if @save_path !~ /\.((html?)|(txt))$/
+      #File.open(@save_path, 'w') { |f| f.write(@contents.to_html) }
+      newFile = @bucket.objects[@save_path]
+      newFile.write(@contents.to_html)
+      newFile.acl = :public_read
+      @asset_path = newFile.public_url().to_s
     end
   end
 

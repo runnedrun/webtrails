@@ -146,7 +146,7 @@ function showOrHidePathDisplay(){
 function addSiteToTrail(){
     currentSite = window.location.href;
     $.ajax({
-        url: "http://192.168.1.3:3000/sites",
+        url: "http://localhost:3000/sites",
         type: "post",
         crossDomain: true,
         data: {
@@ -242,7 +242,7 @@ function mouseStopDetect (){
         window.getSelection().removeAllRanges();
         var noteContent = noteDisplay.html();
         $.ajax({
-        url: "http://192.168.1.3:3000/notes",
+        url: "http://localhost:3000/notes",
         type: "post",
         crossDomain: true,
         data: {

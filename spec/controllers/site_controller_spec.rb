@@ -62,7 +62,7 @@ describe SitesController do
           4.times do
             @notes.push(Note.create(:content => @content, :scroll_x => @scroll_x, :scroll_y => @scroll_y))
           end
-          @site = Site.create(:url => "http://www.google.com", :title => "google, you know what it is", :notes => @notes, :domain => "google.com", :archive_location => "/home/david/proto1/saved_sites/www.google.com.html")
+          @site = Site.create(:url => "http://www.google.com", :title => "google, you know what it is", :notes => @notes, :domain => "google.com", :archive_location => "/home/david/webtrails/proto1/saved_sites/www.google.com.html")
         end
 
         it "should respond with the html for a site" do

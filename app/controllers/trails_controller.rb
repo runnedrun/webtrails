@@ -24,6 +24,7 @@ class TrailsController < ApplicationController
       search_name = ((site.url[7] == "/") ? site.url[8..-1]: site.url[7..-1]) #check if the url is https
       urls.push(["http://www.google.com/s2/favicons?domain=" + search_name, site.id])
     end
+    puts @favicon_urls_with_ids
     @first_site_url
   end
 

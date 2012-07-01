@@ -37,4 +37,5 @@ gem 'nokogiri'
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
-gem "rspec-rails", "2.7.0"
+gem "rspec-rails"
+gem "aws-sdk"
