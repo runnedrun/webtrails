@@ -11,6 +11,7 @@ describe SitesController do
     before do
       @user = create_user
       @trail = Trail.create(:owner => @user)
+      @site = Site.create()
       @site_count = Site.count
       @note_count = Note.count
 
@@ -18,9 +19,9 @@ describe SitesController do
 
     context "with the correct user" do
 
-      it "should create a new site belonging to the given trail" do
-        post :create, :site => {"trail_id" => @trail.id, :url => "http://www.google.com"}, :notes => "none", :user => @user.id
-        Site.count.should == @site_count + 1
+      it "should update the site so it belongs to the given trail" do
+        post :create, :site => {:id => @site.id,  :trail_id => @trail.id, :url => "http://www.google.com" }, :notes => "none", :user => @user.id
+        Site.count.should == @site_count
         Site.last.trail.should == @trail
         Note.count.should == @note_count
       end
@@ -33,9 +34,9 @@ describe SitesController do
         Note.last.site.should == Site.last
       end
 
-      it "should return the id for the site that was made, and the list of all sites" do
+      it "should return status 200" do
         post :create, :site => {"trail_id" => @trail.id, :url => "http://www.google.com"}, :notes => {0=>{:content => Faker::Lorem.paragraph}}, :user => @user.id
-        response.body.should == {"sites" => ["www.foo.com"], "site_id" => Site.last.id}.to_json
+        response.body.should == "done"
       end
 
       it "should save the site locally" do

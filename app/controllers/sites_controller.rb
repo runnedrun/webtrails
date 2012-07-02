@@ -29,11 +29,12 @@ class SitesController < ApplicationController
       path = "/"+params[:site][:trail_id]
       remote.mirror(path)
 
-      site= Site.create!(params[:site].merge({:archive_location => remote.asset_path.to_s}))
+      site = Site.find(params[:site][:id])
+      site.update_attributes(params[:site].merge({:archive_location => remote.asset_path.to_s}))
       site.build_notes(params[:notes])
       trail = Trail.find(params[:site][:trail_id])
 
-      render :json => {"sites" => trail.sites.map(&:url), "site_id" => site.id}, :status => 200
+      render :json => "done", :status => 200
     else
       render :status => 404, :nothing => true
     end
@@ -51,7 +52,7 @@ class SitesController < ApplicationController
 
     src = open(site.archive_location).read
 
-    render :json => {"src" => src, "notes" => notes, "site_id" => site.id, "domain" => site.domain, "url" => site.url}
+    render :json => {"src" => src, "notes" => notes, "site_id" => site.id, "domain" => site.domain, "url" => site.url}, :status => 200
   end
 
   private

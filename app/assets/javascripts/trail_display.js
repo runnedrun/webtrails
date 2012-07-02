@@ -2,8 +2,8 @@ var notes = {};
 var heights = {};
 var srcs = {};
 var currentSiteIndex=0;
-var currentFrame;
-var Notes = [];
+var currentSite;
+var Notes = {};
 var currentNoteIndex=0;
 $(function(){
     makeIframes();
@@ -42,6 +42,7 @@ function makeIframes(){
         currentFrame.load(function(){
             $(this).removeClass("notCurrent").addClass("currentSite")
         });
+        currentSite = currentFrame;
     }
 })
 }
@@ -49,13 +50,13 @@ function makeIframes(){
 function readySite(data){
     var iframe = $("#"+String(data.site_id));
     insertHTMLIntoIframe(data.src,iframe);
-    Notes.push(data.notes);
+    Notes[data.site_id] = data.notes;
 }
 function nextSite(){
-    $(".currentSite").addClass("notCurrent").removeClass("currentSite");
+    currentSite.addClass("notCurrent").removeClass("currentSite");
     currentSiteID = siteIDs[currentSiteIndex+1];
-    currentFrame = $("#"+String(currentSiteID));
-    currentFrame.removeClass("notCurrent").addClass("currentSite");
+    currentSite = $("#"+String(currentSiteID));
+    currentSite.removeClass("notCurrent").addClass("currentSite");
     if (currentSiteIndex < siteIDs.length-1){
         currentSiteIndex+=1;
         currentNoteIndex = 0;
@@ -64,14 +65,22 @@ function nextSite(){
 }
 
 function nextNote(){
-    var currentNote = Notes[currentSiteIndex][currentNoteIndex];
-    var contWindow = $(".currentSite")[0].contentWindow
-    $(contWindow).scrollTop(currentNote.scroll_y);
-    $(contWindow.document.body).removeHighlight();
-    console.log(currentNote.content);
-    doHighlight(contWindow.document,"highlight",currentNote.content);
-    $(contWindow.document.body).find(".highlight").css("background-color","yellow");
-    if (currentNoteIndex < (Object.keys(Notes).length-1)){
-        currentNoteIndex += 1;
+    ID = currentSite.attr("id");
+    var currentNote = Notes[ID][currentNoteIndex];
+    if(currentNote){
+        var contWindow = $(".currentSite")[0].contentWindow
+        $(contWindow).scrollTop(currentNote.scroll_y);
+        removeHighlight($(contWindow.document.body));
+        console.log(currentNote.content);
+        doHighlight(contWindow.document,"highlight",currentNote.content);
+        $(contWindow.document.body).find(".highlight").css("background-color","yellow");
+        console.log(currentNoteIndex);
+        if (currentNoteIndex < (Object.keys(Notes).length-1)){
+            currentNoteIndex += 1;
+        }
     }
+}
+
+function removeHighlight(node){
+    node.find(".highlight").css("background-color","transparent").removeClass("highlight");
 }

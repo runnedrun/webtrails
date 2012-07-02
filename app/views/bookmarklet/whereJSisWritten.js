@@ -142,10 +142,7 @@ function initMyBookmarklet() {
       mouseDown=0;
     };
 
-
-
-
-    addSiteToTrail();
+    fetchFavicons();
 }
 
 function verifyKeyPress(e){
@@ -166,32 +163,48 @@ function showOrHidePathDisplay(){
 }
 
 function addSiteToTrail(){
-    currentSite = window.location.href;
+    var currentSite = window.location.href;
     $.ajax({
         url: "http://localhost:3000/sites",
         type: "post",
         crossDomain: true,
         data: {
+           "site[id]":currentSiteTrailID,
            "site[url]":currentSite,
            "site[trail_id]":trailID,
            "site[title]": document.title,
            "user": userID,
             notes: "none"
-                },
+            }
+    })
+}
+
+function fetchFavicons(){
+    var currentSite = window.location.href;
+    $.ajax({
+        url: "http://localhost:3000/trail/site_list",
+        type: "get",
+        crossDomain: true,
+        data: {
+            "trail_id": trailID,
+            "current_url": currentSite
+        },
         success: addFaviconsToDisplay
     })
 }
+
 function addFaviconsToDisplay(data){
     currentSiteTrailID = data["site_id"]
-    $.each(data["sites"], function(i,site){
-        addSiteFaviconToDisplay(site.slice(7,site.length-1).split("/")[0],site);
+    $.each(data.favicons_and_urls, function(i,favicon_and_url){
+            addSiteFaviconToDisplay(favicon_and_url[0],favicon_and_url[1]);
         }
     )
+    addSiteToTrail();
 }
 
 
 function addSiteFaviconToDisplay(domain,url) {
-    trailDisplay.prepend("<a href="+ url+ "\" class=\"siteFavicon\"><img src=\"http://www.google.com/s2/favicons?domain=" + domain + "\"/></a>")
+    trailDisplay.prepend("<a href="+ url+ "\" class=\"siteFavicon\"><img src='"+ domain + "'></a>")
 }
 
 function includeTrailSubString(arr,subString) {
@@ -225,11 +238,15 @@ function smartGrabHighlightedText(){
        });
        nextSpaceIndex= spaceIndices.pop();
        previousSpaceIndex = spaceIndices.pop();
-
+       if (nextSpaceIndex && previousSpaceIndex){
         if ((previousSpaceIndex + 1) !== startIndex){
             var wholeWord = startContainerText.slice(previousSpaceIndex+1,nextSpaceIndex);
             text = wholeWord.concat(text.substr(nextSpaceIndex-startIndex, text.length -1));
-        }
+            }
+        }else{
+           var wholeWord = startContainerText;
+           text = wholeWord.concat(text.substr(startContainerText.length-startIndex, text.length -1));
+       }
    }
     if (text[text.length-1] == " "){
        text = rtrim(text);
@@ -249,9 +266,14 @@ function smartGrabHighlightedText(){
        nextSpaceIndex= spaceIndices.pop();
        previousSpaceIndex = spaceIndices.pop();
 
-        if ((nextSpaceIndex - 1) !== endIndex){
-            var wholeWord = endContainerText.slice(previousSpaceIndex+1,nextSpaceIndex);
-            text = text.substr(0, text.length - (endIndex-previousSpaceIndex)).concat(" " + wholeWord);
+        if (nextSpaceIndex && previousSpaceIndex){
+            if ((nextSpaceIndex - 1) !== endIndex){
+                var wholeWord = endContainerText.slice(previousSpaceIndex+1,nextSpaceIndex);
+                text = text.substr(0, text.length - (endIndex-previousSpaceIndex)).concat(" " + wholeWord);
+                }
+        }else{
+            var wholeWord = endContainerText;
+            text = text.substr(0, text.length - endIndex).concat(" " + wholeWord);
         }
 
    }
@@ -303,77 +325,6 @@ function ltrim(stringToTrim) {
 function rtrim(stringToTrim) {
 	return stringToTrim.replace(/\s+$/,"");
 }
-
-//this is for adding a css class, in case I want to do text highlighting.
-
-function applyClassToSelection(cssClass) {
-    var uniqueCssClass = "selection_" + (++nextId);
-    var sel = window.getSelection();
-    if (sel.rangeCount < 1) {
-        return;
-    }
-    var range = sel.getRangeAt(0);
-    var startNode = range.startContainer, endNode = range.endContainer;
-
-    if (endNode.nodeType == 3) {
-        endNode.splitText(range.endOffset);
-        range.setEnd(endNode, endNode.length);
-    }
-
-    if (startNode.nodeType == 3) {
-        startNode = startNode.splitText(range.startOffset);
-        range.setStart(startNode, 0);
-    }
-
-    var containerElement = range.commonAncestorContainer;
-    if (containerElement.nodeType != 1) {
-        containerElement = containerElement.parentNode;
-    }
-
-    var treeWalker = document.createTreeWalker(
-        containerElement,
-        NodeFilter.SHOW_TEXT,
-        function(node) {
-            return rangeIntersectsNode(range, node) ?
-                NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-        },
-        false
-    );
-
-    var selectedTextNodes = [];
-    while (treeWalker.nextNode()) {
-        selectedTextNodes.push(treeWalker.currentNode);
-    }
-
-    var textNode, span;
-
-    for (var i = 0, len = selectedTextNodes.length; i < len; ++i) {
-        textNode = selectedTextNodes[i];
-        span = document.createElement("span");
-        span.className = cssClass + " " + uniqueCssClass;
-        textNode.parentNode.insertBefore(span, textNode);
-        span.appendChild(textNode);
-    }
-
-    return uniqueCssClass;
-}
-
-function removeSpansWithClass(cssClass) {
-    var spans = document.body.getElementsByClassName(cssClass),
-        span, parentNode;
-
-    spans = Array.prototype.slice.call(spans, 0);
-
-    for (var i = 0, len = spans.length; i < len; ++i) {
-        span = spans[i];
-        parentNode = span.parentNode;
-        parentNode.insertBefore(span.firstChild, span);
-        parentNode.removeChild(span);
-
-        parentNode.normalize();
-    }
-}
-
 
 // This is for ellipsing on Firefox
 
