@@ -3,6 +3,7 @@ var mouseDown = 0;
 var noteDisplay;
 var previousNoteDisplay;
 var noteDisplayWrapper;
+var linkToTrail;
 var currentSiteTrailID;
 var trailID = window.trailID;
 var userID = window.userID;
@@ -57,9 +58,8 @@ function initMyBookmarklet() {
 
     noteDisplay = $(document.createElement("div"));
     noteDisplay.css({
-        height:"40%%",
+        height:"40%",
         width: "100%",
-        position: "absolute",
         top:"5%",
         "padding-left": "5px",
         "border-left": "solid",
@@ -67,12 +67,13 @@ function initMyBookmarklet() {
         "z-index": "0",
         opacity: ".8",
         background: "#2E2E1F",
-        color: "#CCCCA3"
+        color: "#CCCCA3",
+        float: "right"
     });
 
     previousNoteDisplay = $(document.createElement("div"));
     previousNoteDisplay.css({
-        height:"40%%",
+        height:"40%",
         width: "100%",
         position: "absolute",
         bottom:"5%",
@@ -88,6 +89,20 @@ function initMyBookmarklet() {
         "text-overflow": "ellipsis"
     });
 
+    linkToTrail = $(document.createElement("a"));
+    linkToTrail.css({
+        height:"100%",
+        width: "40%",
+        top:"0px",
+        "text-align":"left",
+        "float":"right",
+        "z-index": "0",
+        opacity: ".8",
+        background: "#2E2E1F",
+        "font-size": "24",
+        color: "#CCCCA3"
+    });
+
     //inserting global stylings
     var cssStyle = $(document.createElement("style"));
     $(document.getElementsByTagName("head")[0]).append(cssStyle);
@@ -99,12 +114,19 @@ function initMyBookmarklet() {
 
     //adding all the toolbar elements to the DOM.
     $(document.body).prepend(trailDisplay);
+
     trailDisplay.append(noteDisplayWrapper);
     noteDisplayWrapper.append(noteDisplay);
     noteDisplayWrapper.append(previousNoteDisplay);
     noteDisplay.html("Select text and hold down mouse to save notes");
     previousNoteDisplay.html("Your last saved note will appear here");
     noteDisplay.addClass("noteDisplay");
+
+    $(trailDisplay).append(linkToTrail);
+    $(linkToTrail).html("View Trail");
+    $(linkToTrail).attr('href',"http://localhost:3000/trails/"+trailID);
+
+
 
     initializeJqueryEllipsis();
     noteDisplay.ellipsis();

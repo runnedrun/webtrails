@@ -21,7 +21,7 @@ class TrailsController < ApplicationController
   def show
     @trail = Trail.find(params[:id])
     @favicon_urls_with_ids = @trail.sites.inject([]) do |urls, site|
-      search_name = ((site.url[7] == "/") ? site.url[8..-1]: site.url[7..-1]) #check if the url is https
+      search_name = URI(site.url).host
       urls.push(["http://www.google.com/s2/favicons?domain=" + search_name, site.id])
     end
     puts @favicon_urls_with_ids

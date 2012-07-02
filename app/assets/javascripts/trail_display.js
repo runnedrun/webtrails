@@ -58,15 +58,19 @@ function nextSite(){
     currentFrame.removeClass("notCurrent").addClass("currentSite");
     if (currentSiteIndex < siteIDs.length-1){
         currentSiteIndex+=1;
+        currentNoteIndex = 0;
+        console.log(currentNoteIndex);
     }
 }
 
 function nextNote(){
     var currentNote = Notes[currentSiteIndex][currentNoteIndex];
-    console.log(currentNote);
-    console.log(currentNote.scroll_y);
-    console.log($(".currentSite")[0]);
-    $($(".currentSite")[0].contentWindow).scrollTop(currentNote.scroll_y);
+    var contWindow = $(".currentSite")[0].contentWindow
+    $(contWindow).scrollTop(currentNote.scroll_y);
+    $(contWindow.document.body).removeHighlight();
+    console.log(currentNote.content);
+    doHighlight(contWindow.document,"highlight",currentNote.content);
+    $(contWindow.document.body).find(".highlight").css("background-color","yellow");
     if (currentNoteIndex < (Object.keys(Notes).length-1)){
         currentNoteIndex += 1;
     }
