@@ -65,7 +65,7 @@ Proto1::Application.routes.draw do
 
   match 'users/new', :controller => 'users', :action => "new"
 
-  resources :sites, :only=>[:create]
+  resources :sites, :only=>[:create,:show]
   match '/sites', :controller => 'sites', :action => 'options', :constraints => {:method => 'OPTIONS'}
   match '/async_site_load', :controller => 'sites', :action => 'async_site_load'
 

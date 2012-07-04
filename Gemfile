@@ -39,3 +39,4 @@ gem 'nokogiri'
 
 gem "rspec-rails"
 gem "aws-sdk"
+gem "charlock_holmes"

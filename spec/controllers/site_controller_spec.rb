@@ -94,6 +94,18 @@ describe SitesController do
 
   end
 
+  describe "the show action" do
+
+    before do
+      @site = Site.create(:archive_location => File.join(Rails.root,"wiki.html"))
+    end
+
+    it "should return the html for the specified site" do
+      get :show, :id => @site.id
+      response.body.should_not == ""
+    end
+  end
+
 
 
 

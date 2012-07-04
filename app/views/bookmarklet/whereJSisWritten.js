@@ -273,7 +273,7 @@ function smartGrabHighlightedText(){
                 }
         }else{
             var wholeWord = endContainerText;
-            text = text.substr(0, text.length - endIndex).concat(" " + wholeWord);
+            text = text.substr(0, text.length - endIndex).concat(wholeWord);
         }
 
    }

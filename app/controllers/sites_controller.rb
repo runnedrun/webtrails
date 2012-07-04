@@ -30,7 +30,7 @@ class SitesController < ApplicationController
       remote.mirror(path)
 
       site = Site.find(params[:site][:id])
-      site.update_attributes(params[:site].merge({:archive_location => remote.asset_path.to_s}))
+      site.update_attributes(params[:site].merge({:archive_location => remote.asset_path.to_s, :html_encoding => remote.encoding}))
       site.build_notes(params[:notes])
       trail = Trail.find(params[:site][:trail_id])
 
@@ -50,9 +50,16 @@ class SitesController < ApplicationController
 
     puts site.archive_location
 
-    src = open(site.archive_location).read
+    src = open(site.archive_location).read.force_encoding('utf-8')
+
 
     render :json => {"src" => src, "notes" => notes, "site_id" => site.id, "domain" => site.domain, "url" => site.url}, :status => 200
+  end
+
+  def show
+    site = Site.find(params[:id])
+    @html = open(site.archive_location).read.force_encoding(site.html_encoding).html_safe
+    render :layout => false, :text => @html
   end
 
   private
@@ -60,12 +67,14 @@ class SitesController < ApplicationController
   class RemoteDocument
     require 'nokogiri'
     require 'net/http'
+    require 'net/https'
     require 'fileutils'
     require 'uri'
     require 'open-uri'
+    require 'charlock_holmes'
 
 
-    attr_reader :uri, :save_path, :bucket, :asset_path
+    attr_reader :uri, :save_path, :bucket, :asset_path, :encoding
     attr_reader :contents
     attr_reader :css_tags, :js_tags, :img_tags, :meta, :links
 
@@ -84,7 +93,8 @@ class SitesController < ApplicationController
   #=end
     def mirror(dir)
       source = html_get_site(uri)
-        @contents = Nokogiri::HTML( source )
+      @encoding = CharlockHolmes::EncodingDetector.detect(source)[:encoding]
+      @contents = Nokogiri::HTML( source, nil ,@encoding )
       process_contents
       save_locally(dir)
     end
@@ -129,9 +139,12 @@ class SitesController < ApplicationController
   #Generate a Hash URL -> Title of all (unique) links in document.
   #=end
     def find_links
-      @links = {}
       @contents.xpath('//a[@href]').each do |tag|
-        @links[tag[:href]] = (tag[:title] || '') if (! @links.include? tag[:href])
+        begin
+          tag[:href] = @uri.scheme.to_s + "://" + @uri.host.to_s + tag[:href].to_s if !(URI(tag[:href]).scheme)
+        rescue
+          Rails.logger.error("#{tag[:href]} is probably invalid")
+        end
       end
     end
 
@@ -154,7 +167,7 @@ class SitesController < ApplicationController
     def url_for(str)
       return str if str =~ /^[|[:alpha:]]+:\/\//
       return (uri.scheme+"://"+ str[2..-1]) if str =~ /^\/\//
-      File.join((uri.path.empty?) ? uri.to_s : File.dirname(uri.to_s), str)
+      File.join((uri.path.empty? or (uri.path == "/")) ? uri.to_s : File.dirname(uri.to_s), str)
     end
 
 
@@ -164,24 +177,32 @@ class SitesController < ApplicationController
     def html_get_site(url)
       user_agent = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:13.0) Gecko/20100101 Firefox/13.0"
       Rails.logger.error(url)
-      resp = open(url, "User-Agent" => user_agent)
-      if resp.status[0].to_i >= 400
-        $stderr.puts "[#{resp.code}] #{url}"
-        return
+      begin
+        resp = open(url, "User-Agent" => user_agent)
+        return resp.read
+      rescue
+        $stderr.puts "400 or something"
       end
-      resp.read
     end
 
     def html_get(url)
       Rails.logger.error(url)
-      resp = Net::HTTP.get_response(url)
-      if ['301', '302', '307'].include? resp.code
-        url = URI.parse resp['location']
-      elsif resp.code.to_i >= 400
-        $stderr.puts "[#{resp.code}] #{url}"
-        return
+                                                      add_htm
+      http = Net::HTTP.new(url.host, 80)
+      if url.scheme == "https"
+        http.use_ssl = true
       end
-      Net::HTTP.get url
+      request = Net::HTTP::Get.new(url.request_uri)
+      resp = http.request(request)
+
+      #if ['301', '302', '307'].include? resp.code
+      #  url = URI.parse resp['location']
+      #elsif resp.code.to_i >= 400
+      #  $stderr.puts "[#{resp.code}] #{url}"
+      #  return
+      #end
+
+      http.request(request)
     end
 
 
@@ -191,7 +212,7 @@ class SitesController < ApplicationController
     def download_resource(url, path)
       the_uri = URI.parse(url)
       if the_uri
-        data = html_get the_uri
+        data = html_get_site the_uri
         begin
           newFile = @bucket.objects[path]
           newFile.write(data)
@@ -244,18 +265,15 @@ class SitesController < ApplicationController
       @img_tags.each { |tag| localize(tag, :src, File.join(dir, 'images')) }
       @js_tags.each { |tag| localize(tag, :src, File.join(dir, 'js')) }
       @css_tags.each { |tag| localize(tag, :href, File.join(dir, 'css')) }
-      #@links.keys.each do |link|
-         #link[:href] = uri.to_s + (uri.path == "" ? link[:href] : link[:href][1..-1]) if link[:href][0] == "/"
-      #end
-
 
       @save_path = File.join(dir, File.basename(uri.to_s))
       @save_path += '.html' if @save_path !~ /\.((html?)|(txt))$/
       #File.open(@save_path, 'w') { |f| f.write(@contents.to_html) }
       newFile = @bucket.objects[@save_path]
-      newFile.write(@contents.to_html)
+      newFile.write(@contents.to_html.force_encoding(@encoding))
       newFile.acl = :public_read
       @asset_path = newFile.public_url().to_s
+      return
     end
   end
 

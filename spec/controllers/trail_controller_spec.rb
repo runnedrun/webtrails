@@ -76,7 +76,8 @@ describe TrailsController do
     end
   end
 
-  describe "the site_list action" do
+  describe "the methods which return sites" do
+
     before do
       @trail = Trail.create()
       1..4.times do
@@ -84,11 +85,13 @@ describe TrailsController do
       end
     end
 
-    it "should return a list of favicon urls for the all the trails sites" do
-      get :site_list, :trail_id => @trail.id, :current_url => "www.google.com"
-      JSON.parse(response.body)["favicons_and_urls"].length.should == 5
-      JSON.parse(response.body)["favicons_and_urls"][0][1].should == "www.google.com"
-      JSON.parse(response.body)["site_id"].should == Site.last.id
+    describe "the site_list action" do
+      it "should return a list of favicon urls for the all the trails sites" do
+        get :site_list, :trail_id => @trail.id, :current_url => "www.google.com"
+        JSON.parse(response.body)["favicons_and_urls"].length.should == 5
+        JSON.parse(response.body)["favicons_and_urls"][0][1].should == "www.google.com"
+        JSON.parse(response.body)["site_id"].should == Site.last.id
+      end
     end
   end
 
