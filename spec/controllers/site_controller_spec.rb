@@ -1,5 +1,6 @@
 require "spec_helper"
 require  "json"
+require "open-uri"
 
 describe SitesController do
   describe "the create method" do
@@ -48,10 +49,8 @@ describe SitesController do
       end
 
       it "should save the location of the local archive on the site object" do
-        get :create, :site => {"trail_id" => @trail.id, :url => "http://www.google.com"}, :notes => {0=>{:content => Faker::Lorem.paragraph}}, :user => @user.id
-        path = Rails.root.to_s + "/saved_sites/" + @trail.id.to_s + "/www.google.com.html"
-        Site.last.archive_location.should == path
-        File.open(Site.last.archive_location).read.should_not == ""
+        get :create, :site => {:trail_id => @trail.id, :id => @site.id, :url => "http://www.google.com"}, :notes => {0=>{:content => Faker::Lorem.paragraph}}, :user => @user.id, :html => "this is html"
+        open(Site.last.archive_location).read.should_not == ""
       end
 
       describe "async_site_load" do

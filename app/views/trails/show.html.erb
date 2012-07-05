@@ -11,6 +11,9 @@
 <% end %>
 </div>
 <div class=siteDisplayDiv>
+  <%- @sites.each_with_index do |site,i| %>
+  <iframe src=http://localhost:3000/sites/<%= site.id %> class="siteDisplay <%= i==0 ? "currentSite":"notCurrent"  %>" />
+  <%- end %>
 </div>
 <div id="trailDisplay">
     <%- @favicon_urls_with_ids.each do |favicon_and_id| %>

@@ -46,7 +46,7 @@ class TrailsController < ApplicationController
       urls.push(["http://www.google.com/s2/favicons?domain=" + search_name, site.id])
     end
     puts @favicon_urls_with_ids
-    @first_site_url
+    @sites = @trail.sites
   end
 
 

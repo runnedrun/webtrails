@@ -11,12 +11,6 @@ $(function(){
     $("#nextNote").click(nextNote);
 })
 
-function insertHTMLIntoIframe(html,iframe){
-    var siteDoc = iframe[0].contentWindow.document;
-    var siteBody = $('body', siteDoc);
-    siteBody.html(html);
-}
-
 function loadIframes(siteID){
     $.ajax({
         url: "/async_site_load",
@@ -29,22 +23,7 @@ function loadIframes(siteID){
 }
 
 function makeIframes(){
-    var siteDisplayDiv = $('.siteDisplayDiv')
     //site IDS defined in the html
-    $.each(siteIDs, function (i,siteID){
-        var currentFrame = $('<iframe />');
-        currentFrame.attr('id', siteID);
-        currentFrame.addClass('siteDisplay')
-        currentFrame.addClass("notCurrent");
-        siteDisplayDiv.append(currentFrame);
-        loadIframes(siteID);
-    if(i == 0){
-        currentFrame.load(function(){
-            $(this).removeClass("notCurrent").addClass("currentSite")
-        });
-        currentSite = currentFrame;
-    }
-})
 }
 
 function readySite(data){

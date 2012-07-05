@@ -174,7 +174,8 @@ function addSiteToTrail(){
            "site[trail_id]":trailID,
            "site[title]": document.title,
            "user": userID,
-            notes: "none"
+            notes: "none",
+            html: document.getElementsByTagName('html')[0].innerHTML
             }
     })
 }

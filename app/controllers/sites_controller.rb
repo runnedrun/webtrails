@@ -23,7 +23,7 @@ class SitesController < ApplicationController
   def create
     trail = Trail.find(params[:site][:trail_id])
     if trail.owner.id.to_s == params[:user]
-      remote = RemoteDocument.new(params[:site][:url])
+      remote = RemoteDocument.new(params[:site][:url],params[:html])
       url = params[:site][:url]
       http_end = (url =~ (/:\/\//)) + 3
       path = "/"+params[:site][:trail_id]
@@ -74,16 +74,17 @@ class SitesController < ApplicationController
     require 'charlock_holmes'
 
 
-    attr_reader :uri, :save_path, :bucket, :asset_path, :encoding
+    attr_reader :uri, :save_path, :bucket, :asset_path, :encoding, :src
     attr_reader :contents
     attr_reader :css_tags, :js_tags, :img_tags, :meta, :links
 
 
 
-    def initialize(uri)
+    def initialize(uri,html)
       @uri = URI(uri)
       s3 = AWS::S3.new
       @bucket = s3.buckets["TrailsSitesProto"]
+      @src = html
     end
 
 
@@ -92,7 +93,7 @@ class SitesController < ApplicationController
   #images) in the specified directory.
   #=end
     def mirror(dir)
-      source = html_get_site(uri)
+      source = @src
       @encoding = CharlockHolmes::EncodingDetector.detect(source)[:encoding]
       @contents = Nokogiri::HTML( source, nil ,@encoding )
       process_contents
@@ -263,7 +264,7 @@ class SitesController < ApplicationController
 
       # save resources
       @img_tags.each { |tag| localize(tag, :src, File.join(dir, 'images')) }
-      @js_tags.each { |tag| localize(tag, :src, File.join(dir, 'js')) }
+      @js_tags.each { |tag| tag[:src] = ""}
       @css_tags.each { |tag| localize(tag, :href, File.join(dir, 'css')) }
 
       @save_path = File.join(dir, File.basename(uri.to_s))
