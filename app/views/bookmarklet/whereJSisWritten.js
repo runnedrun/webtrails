@@ -8,6 +8,7 @@ var currentSiteTrailID;
 var trailID = window.trailID;
 var userID = window.userID;
 
+
 var nextId = 0;
 var rangeIntersectsNode = (typeof window.Range != "undefined"
         && Range.prototype.intersectsNode) ?
@@ -175,7 +176,7 @@ function addSiteToTrail(){
            "site[title]": document.title,
            "user": userID,
             notes: "none",
-            html: document.getElementsByTagName('html')[0].innerHTML
+            html: siteHTML
             }
     })
 }

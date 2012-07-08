@@ -21,23 +21,22 @@ class SitesController < ApplicationController
   end
 
   def create
-    trail = Trail.find(params[:site][:trail_id])
-    if trail.owner.id.to_s == params[:user]
-      remote = RemoteDocument.new(params[:site][:url],params[:html])
-      url = params[:site][:url]
-      http_end = (url =~ (/:\/\//)) + 3
-      path = "/"+params[:site][:trail_id]
-      remote.mirror(path)
+    #trail = Trail.find(params[:site][:trail_id])
+    #if trail.owner.id.to_s == params[:user]
+    remote = RemoteDocument.new(params[:site][:url],params[:html])
+    url = params[:site][:url]
+    http_end = (url =~ (/:\/\//)) + 3
+    path = "/"+params[:site][:trail_id]
+    remote.mirror(path)
 
-      site = Site.find(params[:site][:id])
-      site.update_attributes(params[:site].merge({:archive_location => remote.asset_path.to_s, :html_encoding => remote.encoding}))
-      site.build_notes(params[:notes])
-      trail = Trail.find(params[:site][:trail_id])
+    site = Site.find(params[:site][:id])
+    site.update_attributes(params[:site].merge({:archive_location => remote.asset_path.to_s, :html_encoding => remote.encoding}))
+    site.build_notes(params[:notes])
 
-      render :json => "done", :status => 200
-    else
-      render :status => 404, :nothing => true
-    end
+    render :json => "done", :status => 200
+  #else
+  #  render :status => 404, :nothing => true
+    #end
   end
 
   def async_site_load
@@ -106,7 +105,7 @@ class SitesController < ApplicationController
   #=end
     def process_contents
       @css_tags = @contents.xpath( '//link[@rel="stylesheet"]' )
-      @js_tags = @contents.xpath('//script[@src]')
+      @js_tags = @contents.xpath('//script')
       @img_tags = @contents.xpath( '//img[@src]' )
       # Note: meta tags and links are unused in this example
       find_meta_tags
@@ -171,24 +170,28 @@ class SitesController < ApplicationController
       File.join((uri.path.empty? or (uri.path == "/")) ? uri.to_s : File.dirname(uri.to_s), str)
     end
 
+    def relative_url_for(str,relative_dir)
+      relative_uri = URI(relative_dir)
+      return str if str =~ /^[|[:alpha:]]+:\/\//
+      return (relative_uri.scheme+"://"+ str[2..-1]) if str =~ /^\/\//
+      File.join((relative_uri.path.empty? or (relative_uri.path == "/")) ? relative_uri.to_s : File.dirname(relative_uri.to_s), str)
+    end
+
 
   #=begin rdoc
   #Send GET to url, following redirects if required.
   #=end
     def html_get_site(url)
       user_agent = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:13.0) Gecko/20100101 Firefox/13.0"
-      Rails.logger.error(url)
       begin
         resp = open(url, "User-Agent" => user_agent)
         return resp.read
       rescue
-        $stderr.puts "400 or something"
+        $stderr.puts url.to_s+" returned 400 or something"
       end
     end
 
     def html_get(url)
-      Rails.logger.error(url)
-                                                      add_htm
       http = Net::HTTP.new(url.host, 80)
       if url.scheme == "https"
         http.use_ssl = true
@@ -212,13 +215,16 @@ class SitesController < ApplicationController
   #=end
     def download_resource(url, path)
       the_uri = URI.parse(url)
+      newFile = false
       if the_uri
         data = html_get_site the_uri
-        begin
-          newFile = @bucket.objects[path]
-          newFile.write(data)
-        rescue
+        if data
+          begin
+            newFile = @bucket.objects[path]
+            newFile.write(data)
+          rescue
 
+          end
         end
       end
       newFile
@@ -234,10 +240,64 @@ class SitesController < ApplicationController
       url = tag[sym]
       resource_url = url_for(url)
       dest = localize_url(url, dir)
-      s3file = download_resource(resource_url, dest)
-      if s3file
-        s3file.acl = :public_read
-        tag[sym.to_s] = s3file.public_url().to_s
+      s3File = download_resource(resource_url, dest)
+      if s3File
+        s3File.acl = :public_read
+        tag[sym.to_s] = s3File.public_url().to_s
+      end
+    end
+
+    def localize_css_recursively(tag, sym, dir)
+      delay
+      url = tag[sym]
+      resource_url = url_for(url)
+      dest = localize_url(url, dir)
+
+      css_string = html_get_site resource_url
+      if css_string
+        localized_css_string = save_css_urls_to_s3(css_string,dir,resource_url)
+        newFile = false
+
+        if localized_css_string
+          begin
+            newFile = @bucket.objects[dest]
+            newFile.write(localized_css_string)
+          rescue
+            newFile = false
+            $stderr.puts resource_url.to_s+"had a problem saving"
+          end
+        end
+
+        if newFile
+          newFile.acl = :public_read
+          tag[sym.to_s] = newFile.public_url().to_s
+        end
+      end
+    end
+
+    def save_css_urls_to_s3(css_string,dir,css_file_url)
+      beginning_of_url = css_string.index("url(")
+      if beginning_of_url
+        url_onward = css_string[beginning_of_url+4..-1]
+        end_of_url = url_onward.index(")")
+        url = url_onward[0..end_of_url-1].gsub(/\s+/, "")
+        url = url[1..-2] if ((url[0] == "'") or (url[0] == '"'))
+        new_url = ""
+        if !url.index("data:")
+          dest = localize_url(url,dir)
+          source = relative_url_for(url,css_file_url)
+          s3File = download_resource(source,dest)
+
+          if s3File
+            s3File.acl = :public_read
+            new_url = s3File.public_url().to_s
+          end
+        end
+        first_half = css_string[0..beginning_of_url+3]
+        second_half = save_css_urls_to_s3(url_onward[end_of_url..-1],dir,css_file_url)
+        return (first_half + new_url + second_half)
+      else
+        return css_string
       end
     end
 
@@ -264,8 +324,8 @@ class SitesController < ApplicationController
 
       # save resources
       @img_tags.each { |tag| localize(tag, :src, File.join(dir, 'images')) }
-      @js_tags.each { |tag| tag[:src] = ""}
-      @css_tags.each { |tag| localize(tag, :href, File.join(dir, 'css')) }
+      @js_tags.each { |tag| tag.remove }
+      @css_tags.each { |tag| localize_css_recursively(tag, :href, File.join(dir, 'css')) }
 
       @save_path = File.join(dir, File.basename(uri.to_s))
       @save_path += '.html' if @save_path !~ /\.((html?)|(txt))$/

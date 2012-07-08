@@ -1,0 +1,23 @@
+.test1 {
+    background-color: yellow;
+    background-image: url(htpp://www.google.com);
+    font-size: 57px;
+}
+
+#test2{
+    border:none;
+    width: 300;
+    height: 100%;
+}
+
+p {
+    border-image: url(/miami/beach);
+}
+
+div {
+    border-image: url( '/venice/beach');
+}
+
+div {
+    border-image: url( "/cali/beach"  );
+}
