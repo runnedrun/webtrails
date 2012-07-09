@@ -94,7 +94,8 @@ class SitesController < ApplicationController
     def mirror(dir)
       source = @src
       @encoding = CharlockHolmes::EncodingDetector.detect(source)[:encoding]
-      @contents = Nokogiri::HTML( source, nil ,@encoding )
+      inline_css_parsed  = save_css_urls_to_s3(source,File.join(dir,"images"),@uri)
+      @contents = Nokogiri::HTML( inline_css_parsed, nil ,@encoding )
       process_contents
       save_locally(dir)
     end
@@ -165,16 +166,27 @@ class SitesController < ApplicationController
   #to convert a relative URL ('/doc') to an absolute one ('http://foo.com/doc').
   #=end
     def url_for(str)
+      url_base = uri.scheme + "://" +  uri.host
       return str if str =~ /^[|[:alpha:]]+:\/\//
       return (uri.scheme+"://"+ str[2..-1]) if str =~ /^\/\//
-      File.join((uri.path.empty? or (uri.path == "/")) ? uri.to_s : File.dirname(uri.to_s), str)
+      if str[0] != "/"
+        return File.join(File.dirname(uri.to_s),str) if uri.path.index(".")
+        return File.join(uri.to_s,str)
+      end
+      File.join(url_base, str)
     end
 
     def relative_url_for(str,relative_dir)
+      relative_dir = relative_dir.to_s
       relative_uri = URI(relative_dir)
+      url_base = relative_uri.scheme + "://" +  relative_uri.host
       return str if str =~ /^[|[:alpha:]]+:\/\//
       return (relative_uri.scheme+"://"+ str[2..-1]) if str =~ /^\/\//
-      File.join((relative_uri.path.empty? or (relative_uri.path == "/")) ? relative_uri.to_s : File.dirname(relative_uri.to_s), str)
+      if str[0] != "/"
+        return File.join(File.dirname(relative_dir),str) if relative_uri.path.index(".")
+        return File.join(relative_dir,str)
+      end
+      File.join(url_base, str)
     end
 
 
@@ -282,7 +294,7 @@ class SitesController < ApplicationController
         end_of_url = url_onward.index(")")
         url = url_onward[0..end_of_url-1].gsub(/\s+/, "")
         url = url[1..-2] if ((url[0] == "'") or (url[0] == '"'))
-        new_url = ""
+        new_url = url
         if !url.index("data:")
           dest = localize_url(url,dir)
           source = relative_url_for(url,css_file_url)
@@ -316,13 +328,10 @@ class SitesController < ApplicationController
   #Creates destination directory if it does not exist.
   #=end
     def save_locally(dir)
-      #Dir.mkdir(dir) if (! File.exist? dir)
-
       # remove HTML BASE tag if it exists
       @contents.xpath('//base').each { |t| t.remove }
-
-
       # save resources
+
       @img_tags.each { |tag| localize(tag, :src, File.join(dir, 'images')) }
       @js_tags.each { |tag| tag.remove }
       @css_tags.each { |tag| localize_css_recursively(tag, :href, File.join(dir, 'css')) }
@@ -334,7 +343,7 @@ class SitesController < ApplicationController
       newFile.write(@contents.to_html.force_encoding(@encoding))
       newFile.acl = :public_read
       @asset_path = newFile.public_url().to_s
-      return
+      return true
     end
   end
 

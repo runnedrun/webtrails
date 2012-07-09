@@ -29,4 +29,7 @@ Proto1::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+
+  ENV["AJAX_BASE"] = "http://localhost:3000"
+
 end

@@ -4,19 +4,13 @@
   <%- end %>
   ];
 </script>
-<% if current_user %>
-  <span class="userName"><%= current_user.email %></span>
-<% else %>
-   <a class="userName" href="/">Login or Signup</a>
-<% end %>
-</div>
-<div class=siteDiesplayDiv>
+<div class=siteDisplayDiv>
   <%- @sites.each_with_index do |site,i| %>
-  <iframe src=http://localhost:3000/sites/<%= site.id %> class="siteDisplay <%= i==0 ? "currentSite":"notCurrent"  %>" />
+    <iframe src=http://localhost:3000/sites/<%= site.id %> id=<%= site.id %> class="siteDisplay <%= i==0 ? "currentSite":"notCurrent"  %>"></iframe>
   <%- end %>
 </div>
 <div id="trailDisplay">
-    <%- @favicon_eurls_with_ids.each do |favicon_and_id| %>
+    <%- @favicon_urls_with_ids.each do |favicon_and_id| %>
       <div class=siteFavicon id="<%= favicon_and_id[1] %>">
         <img src="<%= favicon_and_id[0] %>"/>
       </div>

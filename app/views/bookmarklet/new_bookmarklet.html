@@ -1,10 +1,10 @@
 <a href='Javascript:(function(){
+window.siteHTML = document.getElementsByTagName("html")[0].innerHTML;
 var v = "1.4.1";
 var script = document.createElement("script");
 var myScript = document.createElement("script");
 window.userID = 1;
 window.trailID = 1;
-window.siteHTML = document.getElementsByTagName("html")[0].innerHTML;
 
 myScript.src = "http://localhost:3000/bookmarklet_js";
 myScript.onload = function (){

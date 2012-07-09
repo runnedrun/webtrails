@@ -6,6 +6,7 @@ var currentSite;
 var Notes = {};
 var currentNoteIndex=0;
 $(function(){
+    currentSite = $("#"+String(siteIDs[0]));
     makeIframes();
     $("#nextSite").click(nextSite);
     $("#nextNote").click(nextNote);
@@ -24,19 +25,23 @@ function loadIframes(siteID){
 
 function makeIframes(){
     //site IDS defined in the html
+    $.each(siteIDs,function (i,siteID){
+      loadIframes(siteID)
+    })
+
 }
 
 function readySite(data){
-    var iframe = $("#"+String(data.site_id));
-    insertHTMLIntoIframe(data.src,iframe);
-    $(iframe[0].contentWindow.document.head).prepend('<meta http-equiv="Content-type" content="text/html;charset=UTF-8">')
     Notes[data.site_id] = data.notes;
 }
 function nextSite(){
     currentSite.addClass("notCurrent").removeClass("currentSite");
     currentSiteID = siteIDs[currentSiteIndex+1];
+    console.log(currentSiteID);
     currentSite = $("#"+String(currentSiteID));
     currentSite.removeClass("notCurrent").addClass("currentSite");
+    console.log(currentSiteIndex)
+    console.log("look here")
     if (currentSiteIndex < siteIDs.length-1){
         currentSiteIndex+=1;
         currentNoteIndex = 0;
@@ -55,7 +60,7 @@ function nextNote(){
         doHighlight(contWindow.document,"highlight",currentNote.content);
         $(contWindow.document.body).find(".highlight").css("background-color","yellow");
         console.log(currentNoteIndex);
-        if (currentNoteIndex < (Object.keys(Notes).length-1)){
+        if (currentNoteIndex < (Object.keys(Notes[ID]).length-1)){
             currentNoteIndex += 1;
         }
     }
