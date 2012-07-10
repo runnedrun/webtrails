@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fb8eb5d4-35de-4314-8fc1-a569da60a725" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/assets/javascripts/trail_display.js" afterPath="$PROJECT_DIR$/app/assets/javascripts/trail_display.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/assets/stylesheets/Path_Nav.css" afterPath="$PROJECT_DIR$/app/assets/stylesheets/Path_Nav.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/trails/show.html.erb" afterPath="$PROJECT_DIR$/app/views/trails/show.html.erb" />
     </list>
     <ignored path="proto1.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -79,7 +76,7 @@
       <file leaf-file-name="trail_display.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/assets/javascripts/trail_display.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="76" column="66" selection-start="2135" selection-end="2135" vertical-scroll-proportion="0.38900203">
+            <state line="76" column="86" selection-start="2155" selection-end="2155" vertical-scroll-proportion="0.38900203">
               <folding />
             </state>
           </provider>
@@ -1040,7 +1037,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/assets/javascripts/trail_display.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="66" selection-start="2135" selection-end="2135" vertical-scroll-proportion="0.38900203">
+        <state line="76" column="86" selection-start="2155" selection-end="2155" vertical-scroll-proportion="0.38900203">
           <folding />
         </state>
       </provider>

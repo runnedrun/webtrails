@@ -74,7 +74,8 @@ function nextNote(){
         var highlights = $(contWindow.document.body).find(".highlight")
         highlights.css("background-color","yellow");
         if (presentationMode){
-            highlights.css({"z-index": "99999", position:"relative"});
+            highlights.css({"z-index": "99999", position:"relative", "font-size": "1.4em"});
+            highlights.css("background-color","white");
         }
         console.log(currentNoteIndex);
         if (currentNoteIndex < (Object.keys(Notes[ID]).length-1)){
