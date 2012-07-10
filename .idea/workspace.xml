@@ -2,18 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fb8eb5d4-35de-4314-8fc1-a569da60a725" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/assets/javascripts/new_trail_on_index.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/assets/javascripts/trail_display.js" afterPath="$PROJECT_DIR$/app/assets/javascripts/trail_display.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/assets/stylesheets/trail_index_style.css" afterPath="$PROJECT_DIR$/app/assets/stylesheets/trail_index_style.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/sites_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/sites_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/trails_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/trails_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/bookmarklet/new_bookmarklet.html" afterPath="$PROJECT_DIR$/app/views/bookmarklet/new_bookmarklet.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/trails/index.html.erb" afterPath="$PROJECT_DIR$/app/views/trails/index.html.erb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/assets/stylesheets/Path_Nav.css" afterPath="$PROJECT_DIR$/app/assets/stylesheets/Path_Nav.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/trails/show.html.erb" afterPath="$PROJECT_DIR$/app/views/trails/show.html.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/environments/development.rb" afterPath="$PROJECT_DIR$/config/environments/development.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/controllers/trail_controller_spec.rb" afterPath="$PROJECT_DIR$/spec/controllers/trail_controller_spec.rb" />
     </list>
     <ignored path="proto1.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -51,16 +43,16 @@
       <file leaf-file-name="show.html.erb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/trails/show.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="8" column="76" selection-start="317" selection-end="317" vertical-scroll-proportion="-5.0">
+            <state line="20" column="55" selection-start="875" selection-end="875" vertical-scroll-proportion="-12.5">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name=".gitignore" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name=".gitignore" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="3" selection-start="52" selection-end="52" vertical-scroll-proportion="0.14880952">
+            <state line="6" column="0" selection-start="76" selection-end="76" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -78,16 +70,25 @@
       <file leaf-file-name="Path_Nav.css" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/Path_Nav.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="74" column="7" selection-start="1142" selection-end="1142" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="trail_display.js" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="trail_display.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/assets/javascripts/trail_display.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="40" column="32" selection-start="879" selection-end="879" vertical-scroll-proportion="0.0">
+            <state line="76" column="66" selection-start="2135" selection-end="2135" vertical-scroll-proportion="0.38900203">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="jq_highlight.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/assets/javascripts/jq_highlight.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="184" column="0" selection-start="6368" selection-end="6368" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -96,7 +97,16 @@
       <file leaf-file-name="index.html.erb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/trails/index.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="29" selection-start="821" selection-end="821" vertical-scroll-proportion="-10.375">
+            <state line="3" column="0" selection-start="108" selection-end="108" vertical-scroll-proportion="-1.875">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="new_bookmarklet.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/new_bookmarklet.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="2" column="69" selection-start="119" selection-end="119" vertical-scroll-proportion="-1.25">
               <folding />
             </state>
           </provider>
@@ -106,24 +116,6 @@
         <entry file="file://$PROJECT_DIR$/app/controllers/trails_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
             <state line="32" column="50" selection-start="1073" selection-end="1073" vertical-scroll-proportion="-7.58">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="sites_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/sites_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="58" column="0" selection-start="1885" selection-end="1885" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="trail_controller_spec.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/spec/controllers/trail_controller_spec.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="34" column="39" selection-start="1089" selection-end="1089" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -142,7 +134,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/Gemfile" />
         <option value="$PROJECT_DIR$/test.css" />
         <option value="$PROJECT_DIR$/test_css_recurse.rb" />
         <option value="$PROJECT_DIR$/config/initializers/initialize_urls.rb" />
@@ -155,9 +146,10 @@
         <option value="$PROJECT_DIR$/app/assets/javascripts/new_trail_on_index.js" />
         <option value="$PROJECT_DIR$/spec/controllers/trail_controller_spec.rb" />
         <option value="$PROJECT_DIR$/app/controllers/trails_controller.rb" />
-        <option value="$PROJECT_DIR$/app/assets/javascripts/trail_display.js" />
-        <option value="$PROJECT_DIR$/app/views/trails/show.html.erb" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/app/assets/stylesheets/Path_Nav.css" />
+        <option value="$PROJECT_DIR$/app/views/trails/show.html.erb" />
+        <option value="$PROJECT_DIR$/app/assets/javascripts/trail_display.js" />
       </list>
     </option>
   </component>
@@ -329,25 +321,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="config" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="proto1" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="proto1" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="config" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="initializers" />
+              <option name="myItemId" value="app" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -959,13 +933,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWritten.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="167" column="2" selection-start="4239" selection-end="4239" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/spec/controllers/site_controller_spec.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="18" column="21" selection-start="124" selection-end="498" vertical-scroll-proportion="0.0">
@@ -994,13 +961,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/new_bookmarklet.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="16" selection-start="565" selection-end="565" vertical-scroll-proportion="-8.125">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/spec/controllers/trail_controller_spec.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="34" column="39" selection-start="1089" selection-end="1089" vertical-scroll-proportion="0.0">
@@ -1022,37 +982,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/trails/index.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="29" selection-start="821" selection-end="821" vertical-scroll-proportion="-10.375">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/assets/javascripts/new_trail_on_index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="17" column="59" selection-start="386" selection-end="386" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/Path_Nav.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/assets/javascripts/trail_display.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="32" selection-start="879" selection-end="879" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/trails/show.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="76" selection-start="317" selection-end="317" vertical-scroll-proportion="-5.0">
           <folding />
         </state>
       </provider>
@@ -1066,7 +998,49 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="3" selection-start="52" selection-end="52" vertical-scroll-proportion="0.14880952">
+        <state line="6" column="0" selection-start="76" selection-end="76" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/trails/index.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="0" selection-start="108" selection-end="108" vertical-scroll-proportion="-1.875">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/new_bookmarklet.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="69" selection-start="119" selection-end="119" vertical-scroll-proportion="-1.25">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/Path_Nav.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="74" column="7" selection-start="1142" selection-end="1142" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/trails/show.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="55" selection-start="875" selection-end="875" vertical-scroll-proportion="-12.5">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/assets/javascripts/jq_highlight.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="184" column="0" selection-start="6368" selection-end="6368" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/assets/javascripts/trail_display.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="76" column="66" selection-start="2135" selection-end="2135" vertical-scroll-proportion="0.38900203">
           <folding />
         </state>
       </provider>

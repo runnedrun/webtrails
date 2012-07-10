@@ -68,3 +68,9 @@
 .highlight {
     background-color: yellow !important;
 }
+
+.checkBoxLabel{
+    float:right;
+    font-size: 20px;
+    margin-right: 5px;
+}
