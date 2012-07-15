@@ -178,11 +178,11 @@ module WebDownloader
     def download_resource(url, path)
       the_uri = URI.parse(url)
       newFile = false
+      $stderr.puts url
       if the_uri
         data = html_get_site the_uri
         if data
           begin
-            $stderr.puts data
             newFile = @bucket.objects[path]
             newFile.write(data)
           rescue
@@ -321,6 +321,8 @@ module WebDownloader
       @save_path = File.join(dir, File.basename(uri.to_s))
       @save_path += '.html' if @save_path !~ /\.((html?)|(txt))$/
       #File.open(@save_path, 'w') { |f| f.write(@contents.to_html) }
+
+      $stderr.puts
 
       newFile = @bucket.objects[@save_path]
       newFile.write(@contents.to_html.force_encoding(@encoding))

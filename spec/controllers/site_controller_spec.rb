@@ -11,23 +11,26 @@ describe SitesController do
     end
 
     def make_create_request
-      post :create, :site => {:id => @site.id,  :trail_id => @trail.id, :url => "http://www.google.com", :title => "this is cool no?" }, :notes => "none", :user => @user.id, :html => @html
+      post :create, :site => {:id => @site.id,  :trail_id => @trail.id, :url => @html_url, :title => "this is cool no?" }, :notes => "none", :user => @user.id, :html => @html
     end
 
     def setup_aws_mocks
-
-
       @file_mock = double(AWS::S3::S3Object)
       @file_mock.should_receive(:write).exactly(7).times
       @file_mock.should_receive(:acl=).exactly(7).times.with(:public_read)
       @file_mock.should_receive(:public_url).exactly(7).times {@only_url_in_the_doc}
 
+      file_hash_mock = double(Hash)
+      file_hash_mock.stub(:[]) {@file_mock}
 
       @bucket_mock = double(AWS::S3::Bucket)
-      @bucket_mock.should_receive(:objects) {{}.stubs(:[]){@file_mock}}
+      @bucket_mock.stub(:objects) {file_hash_mock}
+
+      bucket_hash_mock = double(Hash)
+      bucket_hash_mock.stub(:[]) {@bucket_mock}
 
       @s3_mock = double(AWS::S3)
-      @s3_mock.should_receive(:buckets){{}.stub(:[]){@bucket_mock}}
+      @s3_mock.stub(:buckets){bucket_hash_mock}
 
       AWS::S3.stub(:new) { @s3_mock }
 
@@ -41,7 +44,7 @@ describe SitesController do
       @note_count = Note.count
 
       @html_url = File.join(Rails.root, "spec/test_statics/test.html")
-      @html = File.open(@html_url)
+      @html = File.read(@html_url)
       @only_url_in_the_doc
 
       setup_aws_mocks
@@ -50,10 +53,12 @@ describe SitesController do
 
     context "with the correct user" do
 
-      describe "the create method" do
+      it "should save a site and suceed" do
         make_create_request
         response.response_code.should == 200
       end
+
+      it
 
       describe "async_site_load" do
         before do
