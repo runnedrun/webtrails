@@ -16,7 +16,7 @@ describe SitesController do
 
     def setup_aws_mocks
       @file_mock = double(AWS::S3::S3Object)
-      @file_mock.should_receive(:write).exactly(7).times
+
       @file_mock.should_receive(:acl=).exactly(7).times.with(:public_read)
       @file_mock.should_receive(:public_url).exactly(7).times {@only_url_in_the_doc}
 
@@ -54,11 +54,42 @@ describe SitesController do
     context "with the correct user" do
 
       it "should save a site and suceed" do
+        @file_mock.should_receive(:write).exactly(7).times
         make_create_request
         response.response_code.should == 200
       end
 
-      it
+      it "should save @import tags correctly" do
+        @file_mock.should_receive(:write) do |args|
+          args.should include "sameLevel3ShouldSave"
+        end
+        @file_mock.should_receive(:write).exactly(6).times
+        make_create_request
+      end
+
+      it "should save url() tags correctly" do
+        @file_mock.should_receive(:write).exactly(1).times
+        @file_mock.should_receive(:write) do |args|
+          args.should include "same level 4 should save"
+        end
+        @file_mock.should_receive(:write).exactly(5).times
+        make_create_request
+      end
+
+      it "should correctly replace references to external resources" do
+        @file_mock.should_receive(:write).exactly(7).times
+        make_create_request
+        response.body.scan(/#{@only_url_in_the_doc}/).length.should == 5
+      end
+
+      it "should remove all script tags" do
+        @file_mock.should_receive(:write).exactly(7).times
+        make_create_request
+        response.body.scan(/thisShouldNotExist/).length.should == 0
+        response.body.scan(/this should get cut out.  fo sho/).length.should == 0
+      end
+
+
 
       describe "async_site_load" do
         before do
