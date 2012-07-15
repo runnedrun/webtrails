@@ -1,0 +1,43 @@
+<html>
+<head>
+    <script type="script/javascript" class=thisShouldNotExist></script>
+    <script type="script/javascript" class="thisShouldNotExist" src="//exJS"></script>
+
+    <link href="sameLevel1.css" rel="stylesheet">
+    <link href="/home/david/webtrails/proto1/spec/test_statics/sameLevel2.css" rel="stylesheet">
+    <link href="one_level_deep/oneLevel.css" rel="stylesheet">
+
+    <script type="text/javascript">
+        var funkyVar = "this should get cut out.  fo sho";
+    </script>
+
+    <style type="text/css">
+        @import  "sameLevel3.css";
+    </style>
+    <style type="text/css">
+        p {
+            background-image: url("sameLevel4.txt")
+        }
+        a {
+            color:yellow;
+        }
+        .shouldExist{
+            background-image: url(data:image/gif;base64,dataShouldExist)
+        }
+        .shouldExist{
+            background-image: url("data:image/gif;base64,dataShouldExist")
+        }
+    </style>
+
+</head>
+<body>
+<div>
+    Look for me 1
+</div>
+
+<p>
+    Look for me 2
+</p>
+
+</body>
+</html>

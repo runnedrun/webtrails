@@ -70,11 +70,11 @@ function nextNote(){
         $(contWindow).scrollTop(currentNote.scroll_y);
         removeHighlight($(contWindow.document.body));
         console.log(currentNote.content);
-        doHighlight(contWindow.document,"highlight",currentNote.content);
-        var highlights = $(contWindow.document.body).find(".highlight")
+        doHighlight(contWindow.document,"trailHighlight",currentNote.content);
+        var highlights = $(contWindow.document.body).find(".trailHighlight")
         highlights.css("background-color","yellow");
         if (presentationMode){
-            highlights.css({"z-index": "99999", position:"relative", "font-size": "1.4em"});
+            highlights.css({"z-index": "99999", position:"relative", "font-size": "1.5em"});
             highlights.css("background-color","white");
         }
         console.log(currentNoteIndex);
@@ -85,7 +85,7 @@ function nextNote(){
 }
 
 function removeHighlight(node){
-    node.find(".highlight").css("background-color","transparent").removeClass("highlight");
+    node.find(".trailHighlight").css({"background-color":"transparent", "font-size": "1em","z-index":"0"}).removeClass("trailHighlight");
 }
 
 function switchToPresentationMode(){
