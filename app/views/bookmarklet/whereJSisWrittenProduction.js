@@ -11,7 +11,7 @@ var userID = window.userID;
 
 var nextId = 0;
 var rangeIntersectsNode = (typeof window.Range != "undefined"
-        && Range.prototype.intersectsNode) ?
+    && Range.prototype.intersectsNode) ?
 
     function(range, node) {
         return range.intersectsNode(node);
@@ -125,7 +125,7 @@ function initMyBookmarklet() {
 
     $(trailDisplay).append(linkToTrail);
     $(linkToTrail).html("View Trail");
-    $(linkToTrail).attr('href',"http://localhost:3000/trails/"+trailID);
+    $(linkToTrail).attr('href',"http://webtrails.co/trails/"+trailID);
 
 
 
@@ -137,26 +137,26 @@ function initMyBookmarklet() {
     document.onmousemove = mouseStopDetect();
 
     document.body.onmousedown = function() {
-     mouseDown=1;
+        mouseDown=1;
     };
     document.body.onmouseup = function() {
-      mouseDown=0;
+        mouseDown=0;
     };
 
     fetchFavicons();
 }
 
 function verifyKeyPress(e){
-var code = (e.keyCode ? e.keyCode : e.which);
-if (code == 27){
-    showOrHidePathDisplay();
-}
+    var code = (e.keyCode ? e.keyCode : e.which);
+    if (code == 27){
+        showOrHidePathDisplay();
+    }
 }
 
 function showOrHidePathDisplay(){
     if (trailDisplay.is(":hidden")){
         trailDisplay.show();
-     }
+    }
     else {
         trailDisplay.hide();
     }
@@ -166,25 +166,25 @@ function showOrHidePathDisplay(){
 function addSiteToTrail(){
     var currentSite = window.location.href;
     $.ajax({
-        url: "http://localhost:3000/sites",
+        url: "http://webtrails.co/sites",
         type: "post",
         crossDomain: true,
         data: {
-           "site[id]":currentSiteTrailID,
-           "site[url]":currentSite,
-           "site[trail_id]":trailID,
-           "site[title]": document.title,
-           "user": userID,
+            "site[id]":currentSiteTrailID,
+            "site[url]":currentSite,
+            "site[trail_id]":trailID,
+            "site[title]": document.title,
+            "user": userID,
             notes: "none",
             html: siteHTML
-            }
+        }
     })
 }
 
 function fetchFavicons(){
     var currentSite = window.location.href;
     $.ajax({
-        url: "http://localhost:3000/trail/site_list",
+        url: "http://webtrails.co/trail/site_list",
         type: "get",
         crossDomain: true,
         data: {
@@ -221,85 +221,85 @@ function includeTrailSubString(arr,subString) {
 
 
 function smartGrabHighlightedText(){
-   textObject = window.getSelection().getRangeAt(0);
-   var text = String(textObject);
-   if (text[0] == " "){
-       text = ltrim(text);
-   }else{
+    textObject = window.getSelection().getRangeAt(0);
+    var text = String(textObject);
+    if (text[0] == " "){
+        text = ltrim(text);
+    }else{
 
-       var startIndex = textObject.startOffset;
-       var spaceIndices = [];
-       var startContainerText = textObject.startContainer.textContent;
-       $.each(startContainerText, function(i,character){
+        var startIndex = textObject.startOffset;
+        var spaceIndices = [];
+        var startContainerText = textObject.startContainer.textContent;
+        $.each(startContainerText, function(i,character){
             if (character==" ") {
                 spaceIndices.push(i);
                 if (i >= startIndex){
                     return false
                 }
             }
-       });
-       nextSpaceIndex= spaceIndices.pop();
-       previousSpaceIndex = spaceIndices.pop();
-       if (nextSpaceIndex && previousSpaceIndex){
-        if ((previousSpaceIndex + 1) !== startIndex){
-            var wholeWord = startContainerText.slice(previousSpaceIndex+1,nextSpaceIndex);
-            text = wholeWord.concat(text.substr(nextSpaceIndex-startIndex, text.length -1));
+        });
+        nextSpaceIndex= spaceIndices.pop();
+        previousSpaceIndex = spaceIndices.pop();
+        if (nextSpaceIndex && previousSpaceIndex){
+            if ((previousSpaceIndex + 1) !== startIndex){
+                var wholeWord = startContainerText.slice(previousSpaceIndex+1,nextSpaceIndex);
+                text = wholeWord.concat(text.substr(nextSpaceIndex-startIndex, text.length -1));
             }
         }else{
-           var wholeWord = startContainerText;
-           text = wholeWord.concat(text.substr(startContainerText.length-startIndex, text.length -1));
-       }
-   }
+            var wholeWord = startContainerText;
+            text = wholeWord.concat(text.substr(startContainerText.length-startIndex, text.length -1));
+        }
+    }
     if (text[text.length-1] == " "){
-       text = rtrim(text);
-   }else{
-       var endIndex = textObject.endOffset;
-       spaceIndices = [];
-       var endContainerText = textObject.endContainer.textContent;
-       $.each(endContainerText, function(i,character){
+        text = rtrim(text);
+    }else{
+        var endIndex = textObject.endOffset;
+        spaceIndices = [];
+        var endContainerText = textObject.endContainer.textContent;
+        $.each(endContainerText, function(i,character){
             if (character==" ") {
                 spaceIndices.push(i);
                 if (i>=endIndex){
                     return false
                 }
             }
-       });
+        });
 
-       nextSpaceIndex= spaceIndices.pop();
-       previousSpaceIndex = spaceIndices.pop();
+        nextSpaceIndex= spaceIndices.pop();
+        previousSpaceIndex = spaceIndices.pop();
 
         if (nextSpaceIndex && previousSpaceIndex){
             if ((nextSpaceIndex - 1) !== endIndex){
                 var wholeWord = endContainerText.slice(previousSpaceIndex+1,nextSpaceIndex);
                 text = text.substr(0, text.length - (endIndex-previousSpaceIndex)).concat(" " + wholeWord);
-                }
+            }
         }else{
             var wholeWord = endContainerText;
             text = text.substr(0, text.length - endIndex).concat(wholeWord);
         }
 
-   }
-   return text
+    }
+    return text
 }
 
 function mouseStopDetect (){
     var onmousestop = function() {
-    if (mouseDown && String(window.getSelection())){
-        window.getSelection().removeAllRanges();
-        var noteContent = noteDisplay.html();
-        $.ajax({
-        url: "http://localhost:3000/notes",
-        type: "post",
-        crossDomain: true,
-        data: {
-           "note[content]":noteContent,
-           "note[site_id]":currentSiteTrailID,
-           "note[scroll_x]": window.scrollX,
-           "note[scroll_y]": window.scrollY
+        if (mouseDown && String(window.getSelection())){
+            window.getSelection().removeAllRanges();
+            var noteContent = noteDisplay.html();
+            $.ajax({
+                url: "http://webtrails.co/notes",
+                type: "post",
+                crossDomain: true,
+                data: {
+                    "note[content]":noteContent,
+                    "note[site_id]":currentSiteTrailID,
+                    "note[scroll_x]": window.scrollX,
+                    "note[scroll_y]": window.scrollY
+                }
+            })
+            moveNoteToPrevious(noteContent);
         }
-        })
-        moveNoteToPrevious(noteContent);
-    }
     }, thread;
 
     return function() {
@@ -308,7 +308,7 @@ function mouseStopDetect (){
             $(".noteDisplay").html(text);
         }
         clearTimeout(thread);
-        thread = setTimeout(onmousestop, 1000);
+        thread = setTimeout(onmousestop, 700);
     };
 }
 
@@ -322,10 +322,10 @@ function moveNoteToPrevious(noteContent){
 }
 
 function ltrim(stringToTrim) {
-	return stringToTrim.replace(/^\s+/,"");
+    return stringToTrim.replace(/^\s+/,"");
 }
 function rtrim(stringToTrim) {
-	return stringToTrim.replace(/\s+$/,"");
+    return stringToTrim.replace(/\s+$/,"");
 }
 
 // This is for ellipsing on Firefox

@@ -75,7 +75,7 @@ class TrailsController < ApplicationController
       window.userID = #{user_id};
       window.trailID = #{trail_id};
 
-      myScript.src = 'http://localhost:3000/bookmarklet_js';
+      myScript.src = '#{Proto1::Application::AJAX_REQUEST_URL}/bookmarklet_js';
       myScript.onload = function (){
       script.src = 'http://ajax.googleapis.com/ajax/libs/jquery/' + v + '/jquery.min.js';
       script.onload = script.onreadystatechange = initMyBookmarklet;

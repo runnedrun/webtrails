@@ -22,7 +22,12 @@ class BookmarkletsController < ApplicationController
 
 
   def get_js
-    render :js => File.open(File.dirname(__FILE__) + "/../views/bookmarklet/whereJSisWritten.js").read()
+
+    if ENV["RAILS_ENV"] == "development"
+      render :js => File.open(File.dirname(__FILE__) + "/../views/bookmarklet/whereJSisWrittenLocal.js").read()
+    elsif ENV["RAILS_ENV"] == "production"
+      render :js => File.open(File.dirname(__FILE__) + "/../views/bookmarklet/whereJSisWrittenProduction.js").read()
+    end
 
   end
 
