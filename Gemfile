@@ -11,7 +11,7 @@ end
 
 
 group :development, :testing do
-  gem 'sqlite3'
+  #gem 'sqlite3'
 end
 
 
@@ -46,4 +46,3 @@ gem 'nokogiri'
 
 gem "rspec-rails"
 gem "aws-sdk"
-gem 'css_parser'

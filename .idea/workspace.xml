@@ -6,7 +6,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/RemoteDocument.rb" afterPath="$PROJECT_DIR$/lib/RemoteDocument.rb" />
     </list>
     <ignored path="proto1.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -94,7 +93,7 @@
       <file leaf-file-name="Gemfile" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Gemfile">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="48" column="51" selection-start="825" selection-end="825" vertical-scroll-proportion="0.8725212">
+            <state line="28" column="45" selection-start="511" selection-end="511" vertical-scroll-proportion="0.59490085">
               <folding />
             </state>
           </provider>
@@ -140,8 +139,8 @@
         <option value="$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb" />
         <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js" />
         <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" />
-        <option value="$PROJECT_DIR$/Gemfile" />
         <option value="$PROJECT_DIR$/lib/RemoteDocument.rb" />
+        <option value="$PROJECT_DIR$/Gemfile" />
       </list>
     </option>
   </component>
@@ -862,7 +861,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Gemfile">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="48" column="51" selection-start="825" selection-end="825" vertical-scroll-proportion="0.8725212">
+        <state line="28" column="45" selection-start="511" selection-end="511" vertical-scroll-proportion="0.59490085">
           <folding />
         </state>
       </provider>
