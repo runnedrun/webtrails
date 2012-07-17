@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Procfile" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/proto1.iml" afterPath="$PROJECT_DIR$/.idea/proto1.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js" afterPath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js" />
     </list>
     <ignored path="proto1.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -92,19 +87,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name=".gitignore" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name=".gitignore" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="4" selection-start="80" selection-end="80" vertical-scroll-proportion="0.12747875">
+            <state line="7" column="56" selection-start="81" selection-end="81" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="whereJSisWrittenProduction.js" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="whereJSisWrittenProduction.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="310" column="44" selection-start="8801" selection-end="8801" vertical-scroll-proportion="0.0">
+            <state line="290" column="33" selection-start="8133" selection-end="8133" vertical-scroll-proportion="0.33187774">
               <folding />
             </state>
           </provider>
@@ -139,12 +134,12 @@
         <option value="$PROJECT_DIR$/config/environments/production.rb" />
         <option value="$PROJECT_DIR$/app/controllers/trails_controller.rb" />
         <option value="$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb" />
-        <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js" />
         <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" />
         <option value="$PROJECT_DIR$/lib/RemoteDocument.rb" />
         <option value="$PROJECT_DIR$/Procfile" />
         <option value="$PROJECT_DIR$/Gemfile" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js" />
       </list>
     </option>
   </component>
@@ -722,7 +717,7 @@
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32934928" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32934928" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25862068" sideWeight="0.6706507" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -837,13 +832,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="310" column="44" selection-start="8801" selection-end="8801" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="30" column="58" selection-start="1103" selection-end="1109" vertical-scroll-proportion="0.0" />
@@ -879,7 +867,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="4" selection-start="80" selection-end="80" vertical-scroll-proportion="0.12747875">
+        <state line="7" column="56" selection-start="81" selection-end="81" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="290" column="33" selection-start="8133" selection-end="8133" vertical-scroll-proportion="0.33187774">
           <folding />
         </state>
       </provider>

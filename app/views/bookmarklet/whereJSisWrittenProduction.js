@@ -125,7 +125,7 @@ function initMyBookmarklet() {
 
     $(trailDisplay).append(linkToTrail);
     $(linkToTrail).html("View Trail");
-    $(linkToTrail).attr('href',"http://webtrails.co/trails/"+trailID);
+    $(linkToTrail).attr('href',"http://www.webtrails.co/trails/"+trailID);
 
 
 
@@ -166,7 +166,7 @@ function showOrHidePathDisplay(){
 function addSiteToTrail(){
     var currentSite = window.location.href;
     $.ajax({
-        url: "http://webtrails.co/sites",
+        url: "http://www.webtrails.co/sites",
         type: "post",
         crossDomain: true,
         data: {
@@ -184,7 +184,7 @@ function addSiteToTrail(){
 function fetchFavicons(){
     var currentSite = window.location.href;
     $.ajax({
-        url: "http://webtrails.co/trail/site_list",
+        url: "http://www.webtrails.co/trail/site_list",
         type: "get",
         crossDomain: true,
         data: {
@@ -288,7 +288,7 @@ function mouseStopDetect (){
             window.getSelection().removeAllRanges();
             var noteContent = noteDisplay.html();
             $.ajax({
-                url: "http://webtrails.co/notes",
+                url: "http://www.webtrails.co/notes",
                 type: "post",
                 crossDomain: true,
                 data: {
