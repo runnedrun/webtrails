@@ -11,7 +11,7 @@ end
 
 
 group :development, :testing do
-  #gem 'sqlite3'
+  gem 'sqlite3'
 end
 
 
@@ -23,6 +23,7 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
+gem "thin"
 gem 'jquery-rails'
 gem "rb-readline"
 gem 'faker'

@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Procfile" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/proto1.iml" afterPath="$PROJECT_DIR$/.idea/proto1.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
@@ -45,24 +47,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="production.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/environments/production.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="41" selection-start="160" selection-end="160" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="index.html.erb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/trails/index.html.erb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="21" column="0" selection-start="955" selection-end="955" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="trail_controller_spec.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/spec/controllers/trail_controller_spec.rb">
           <provider selected="true" editor-type-id="text-editor">
@@ -90,10 +74,28 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Gemfile" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="Gemfile" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Gemfile">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="45" selection-start="511" selection-end="511" vertical-scroll-proportion="0.59490085">
+            <state line="14" column="8" selection-start="243" selection-end="243" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Procfile" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Procfile">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="52" selection-start="52" selection-end="52" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="6" column="4" selection-start="80" selection-end="80" vertical-scroll-proportion="0.12747875">
               <folding />
             </state>
           </provider>
@@ -140,7 +142,9 @@
         <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js" />
         <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" />
         <option value="$PROJECT_DIR$/lib/RemoteDocument.rb" />
+        <option value="$PROJECT_DIR$/Procfile" />
         <option value="$PROJECT_DIR$/Gemfile" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -673,15 +677,15 @@
       <method />
     </configuration>
     <list size="9">
-      <item index="0" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should save a site and suceed" />
-      <item index="1" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should save @import tags correctly" />
-      <item index="2" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should save url() tags correctly" />
-      <item index="3" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should correctly replace references to external resources" />
-      <item index="4" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should remove all script tags" />
-      <item index="5" class="java.lang.String" itemvalue="Rake.test" />
-      <item index="6" class="java.lang.String" itemvalue="Rake.spec" />
-      <item index="7" class="java.lang.String" itemvalue="Rails.Production: proto1" />
-      <item index="8" class="java.lang.String" itemvalue="Rails.Development: proto1" />
+      <item index="0" class="java.lang.String" itemvalue="Rake.test" />
+      <item index="1" class="java.lang.String" itemvalue="Rake.spec" />
+      <item index="2" class="java.lang.String" itemvalue="Rails.Production: proto1" />
+      <item index="3" class="java.lang.String" itemvalue="Rails.Development: proto1" />
+      <item index="4" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should save a site and suceed" />
+      <item index="5" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should save @import tags correctly" />
+      <item index="6" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should save url() tags correctly" />
+      <item index="7" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should correctly replace references to external resources" />
+      <item index="8" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should remove all script tags" />
     </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
@@ -861,7 +865,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Gemfile">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="45" selection-start="511" selection-end="511" vertical-scroll-proportion="0.59490085">
+        <state line="14" column="8" selection-start="243" selection-end="243" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Procfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="52" selection-start="52" selection-end="52" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="4" selection-start="80" selection-end="80" vertical-scroll-proportion="0.12747875">
           <folding />
         </state>
       </provider>
