@@ -6,7 +6,6 @@ module WebDownloader
     require 'fileutils'
     require 'uri'
     require 'open-uri'
-    require 'charlock_holmes'
 
 
     attr_reader :uri, :save_path, :bucket, :asset_path, :encoding, :src
@@ -29,7 +28,7 @@ module WebDownloader
     #=end
     def mirror(dir)
       source = @src
-      @encoding = CharlockHolmes::EncodingDetector.detect(source)[:encoding]
+      @encoding = source.encoding
       inline_css_parsed  = save_css_urls_to_s3(source,File.join(dir,"images"),@uri)
       @contents = Nokogiri::HTML( inline_css_parsed, nil ,@encoding )
       process_contents
