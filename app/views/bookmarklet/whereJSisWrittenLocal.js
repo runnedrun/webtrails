@@ -143,7 +143,7 @@ function initMyBookmarklet() {
       mouseDown=0;
     };
 
-    fetchFavicons();
+//    fetchFavicons();
 }
 
 function verifyKeyPress(e){
@@ -282,33 +282,59 @@ function smartGrabHighlightedText(){
    return text
 }
 
+function makeCommentOverlay(xPos, yPos, spacing){
+    console.log(xPos);
+    console.log(yPos);
+
+    var overlayHeight = 50;
+    var overlayWidth = 400;
+
+    var topPosition  = yPos > overlayHeight + spacing ? (yPos - overlayHeight-spacing) : yPos + spacing;
+    var leftPosition = xPos > overlayWidth ? (xPos - overlayWidth) : xPos;
+
+    commentOverlay = $(document.createElement("div"));
+    commentOverlay.css({
+        "position":"absolute",
+        "height": String(overlayHeight)+"px",
+        "width": String(overlayWidth)+"px",
+        "backgroundColor": "#2E2E1F",
+        "opacity": .7
+    });
+
+    commentOverlay.css("top", topPosition+"px");
+    commentOverlay.css("left", leftPosition+"px");
+    $(document.body).append(commentOverlay);
+}
+
 function mouseStopDetect (){
-    var onmousestop = function() {
-    if (mouseDown && String(window.getSelection())){
-        window.getSelection().removeAllRanges();
-        var noteContent = noteDisplay.html();
-        $.ajax({
-        url: "http://localhost:3000/notes",
-        type: "post",
-        crossDomain: true,
-        data: {
-           "note[content]":noteContent,
-           "note[site_id]":currentSiteTrailID,
-           "note[scroll_x]": window.scrollX,
-           "note[scroll_y]": window.scrollY
-        }
-        })
+    var onmousestop = function(e) {
+        if (mouseDown && String(window.getSelection())){
+            var textNodeLineHeight = getComputedStyleOfElement(window.getSelection().getRangeAt(0),"line-height");
+            window.getSelection().removeAllRanges();
+            var noteContent = noteDisplay.html();
+            $.ajax({
+            url: "http://localhost:3000/notes",
+            type: "post",
+            crossDomain: true,
+            data: {
+               "note[content]":noteContent,
+               "note[site_id]":currentSiteTrailID,
+               "note[scroll_x]": window.scrollX,
+               "note[scroll_y]": window.scrollY
+            }
+            })
         moveNoteToPrevious(noteContent);
-    }
+        makeCommentOverlay(e.pageX, e.pageY,textNodeLineHeight);
+        }
     }, thread;
 
-    return function() {
+    return function(e) {
         if (mouseDown && String(window.getSelection())){
             var text = smartGrabHighlightedText();
             $(".noteDisplay").html(text);
         }
         clearTimeout(thread);
-        thread = setTimeout(onmousestop, 700);
+        thread = setTimeout(function(){onmousestop(e)}, 700);
     };
 }
 
@@ -393,5 +419,9 @@ function initializeJqueryEllipsis(){
     })(jQuery);
 }
 
+function getComputedStyleOfElement(element,stylename){
+    console.log(element);
+    console.log(stylename);
 
-
+    document.defaultView.getComputedStyle(element,null)[stylename];
+}

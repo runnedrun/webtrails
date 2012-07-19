@@ -282,8 +282,28 @@ function smartGrabHighlightedText(){
     return text
 }
 
+function commentOverlay(xPos,yPos){
+    var overlayHeight = 100;
+    var overlayWidth = 250;
+
+    var bottomPositione  = yPos > overlayHeight;
+    var rightPositione = xPos > overlayWidth;
+
+    commentOverlay = $(document.createElement("div"));
+    commentOverlay.css({
+        "position":"absolute",
+        "height": String(overlayHeight)+"px",
+         "width": String(overlayWidth)+"px",
+        "backgroundColor": "#2E2E1F"
+    });
+
+   commentOverlay.css(bottomPosition ? "bottom" : "top", String(yPos)+"px");
+   commentOverlay.css(rightPositione ? "right" : "left", String(xPos)+"px");
+   $(document.body).append(commentOverlay);
+}
+
 function mouseStopDetect (){
-    var onmousestop = function() {
+    var onmousestop = function(e) {
         if (mouseDown && String(window.getSelection())){
             window.getSelection().removeAllRanges();
             var noteContent = noteDisplay.html();
@@ -299,6 +319,7 @@ function mouseStopDetect (){
                 }
             })
             moveNoteToPrevious(noteContent);
+            commentOverlay(e.pageX, e.pageY)
         }
     }, thread;
 
@@ -306,9 +327,10 @@ function mouseStopDetect (){
         if (mouseDown && String(window.getSelection())){
             var text = smartGrabHighlightedText();
             $(".noteDisplay").html(text);
+            clearTimeout(thread);
+            thread = setTimeout(function(){onmousestop(e)}, 700);
         }
-        clearTimeout(thread);
-        thread = setTimeout(onmousestop, 700);
+
     };
 }
 
