@@ -292,7 +292,7 @@ function makeCommentOverlay(xPos, yPos, spacing){
     var topPosition  = yPos > overlayHeight + spacing ? (yPos - overlayHeight-spacing) : yPos + spacing;
     var leftPosition = xPos > overlayWidth ? (xPos - overlayWidth) : xPos;
 
-    commentOverlay = $(document.createElement("div"));
+    var commentOverlay = $(document.createElement("div"));
     commentOverlay.css({
         "position":"absolute",
         "height": String(overlayHeight)+"px",
@@ -303,13 +303,28 @@ function makeCommentOverlay(xPos, yPos, spacing){
 
     commentOverlay.css("top", topPosition+"px");
     commentOverlay.css("left", leftPosition+"px");
-    $(document.body).append(commentOverlay);
+
+    var commentBox = $(document.createElement("textarea"));
+    commentBox.css({
+        "font-size":"12px",
+        "height" : "100%",
+        "width" : "100%",
+        "background": "transparent",
+        "overflow": "hidden",
+        "resize": "none",
+        "border": "none",
+        "color": "white"
+    })
+    commentBox.type = "text";
+
+    $(document.body).append(commentOverlay.append(commentBox));
 }
 
 function mouseStopDetect (){
     var onmousestop = function(e) {
         if (mouseDown && String(window.getSelection())){
-            var textNodeLineHeight = getComputedStyleOfElement(window.getSelection().getRangeAt(0),"line-height");
+            var textNodeLineHeight = getComputedStyleOfElement(window.getSelection().getRangeAt(0).startContainer.parentNode,"lineHeight");
+            console.log(textNodeLineHeight);
             window.getSelection().removeAllRanges();
             var noteContent = noteDisplay.html();
             $.ajax({
@@ -323,8 +338,8 @@ function mouseStopDetect (){
                "note[scroll_y]": window.scrollY
             }
             })
-        moveNoteToPrevious(noteContent);
-        makeCommentOverlay(e.pageX, e.pageY,textNodeLineHeight);
+            moveNoteToPrevious(noteContent);
+            makeCommentOverlay(e.pageX, e.pageY,parseInt(textNodeLineHeight.replace("px","")));
         }
     }, thread;
 
@@ -354,6 +369,10 @@ function rtrim(stringToTrim) {
 	return stringToTrim.replace(/\s+$/,"");
 }
 
+function getComputedStyleOfElement(element,stylename){
+    return document.defaultView.getComputedStyle(element,null)[stylename];
+}
+
 // This is for ellipsing on Firefox
 
 /*
@@ -370,7 +389,7 @@ function rtrim(stringToTrim) {
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
  * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES Oppeared in the early 1960s, teenagers in superhero comic books were usually relegaR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
@@ -419,9 +438,3 @@ function initializeJqueryEllipsis(){
     })(jQuery);
 }
 
-function getComputedStyleOfElement(element,stylename){
-    console.log(element);
-    console.log(stylename);
-
-    document.defaultView.getComputedStyle(element,null)[stylename];
-}
