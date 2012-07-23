@@ -1,14 +1,3 @@
-// Author: Raymond Hill
-// Version: 2011-01-17
-// Title: HTML text hilighter
-// Permalink: http://www.raymondhill.net/blog/?p=272
-// Purpose: Hilight portions of text inside a specified element, according to a search expression.
-// Key feature: Can safely hilight text across HTML tags.
-// History:
-//   2012-01-29
-//     fixed a bug which caused special regex characters in the
-//     search string to break the highlighter
-
 function doHighlight(node,className,searchFor,which){
     var doc = document;
 

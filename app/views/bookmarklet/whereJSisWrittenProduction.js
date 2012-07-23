@@ -286,8 +286,8 @@ function commentOverlay(xPos,yPos){
     var overlayHeight = 100;
     var overlayWidth = 250;
 
-    var bottomPositione  = yPos > overlayHeight;
-    var rightPositione = xPos > overlayWidth;
+    var bottomPosition  = yPos > overlayHeight;
+    var rightPosition = xPos > overlayWidth;
 
     commentOverlay = $(document.createElement("div"));
     commentOverlay.css({
@@ -298,7 +298,7 @@ function commentOverlay(xPos,yPos){
     });
 
    commentOverlay.css(bottomPosition ? "bottom" : "top", String(yPos)+"px");
-   commentOverlay.css(rightPositione ? "right" : "left", String(xPos)+"px");
+   commentOverlay.css(rightPosition ? "right" : "left", String(xPos)+"px");
    $(document.body).append(commentOverlay);
 }
 

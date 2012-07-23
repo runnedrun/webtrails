@@ -22,7 +22,17 @@ class NotesController < ApplicationController
 
   def create
     @note = Note.create!(params[:note])
-    render :json => @note.content, :status => 200
+    render :json => {"content" => @note.content, "id" => @note.id}, :status => 200
+  end
+
+  def delete
+    note = Note.find(params[:id])
+    site = note.site
+    note.delete
+    previous_note = site.reload.notes.find(:first, :order => "created_at DESC")
+    previous_note_id = previous_note ? previous_note.id : "none"
+    previous_note_content = previous_note ? previous_note.content : "none"
+    render :json => {"id" => previous_note_id, "content" => previous_note_content}
   end
 
 end

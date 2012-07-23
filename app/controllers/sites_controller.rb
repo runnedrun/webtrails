@@ -23,8 +23,6 @@ class SitesController < ApplicationController
   end
 
   def create
-    #trail = Trail.find(params[:site][:trail_id])
-    #if trail.owner.id.to_s == params[:user]
     remote = RemoteDocument.new(params[:site][:url],params[:html])
     path = "/"+params[:site][:trail_id]
     remote.mirror(path)
@@ -34,9 +32,6 @@ class SitesController < ApplicationController
     site.build_notes(params[:notes])
 
     render :json => "done", :status => 200
-  #else
-  #  render :status => 404, :nothing => true
-    #end
   end
 
   def async_site_load

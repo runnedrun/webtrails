@@ -28,7 +28,7 @@ module WebDownloader
     #=end
     def mirror(dir)
       source = @src
-      @encoding = source.encoding
+      @encoding = source.encoding.to_s
       inline_css_parsed  = save_css_urls_to_s3(source,File.join(dir,"images"),@uri)
       @contents = Nokogiri::HTML( inline_css_parsed, nil ,@encoding )
       process_contents
@@ -152,32 +152,12 @@ module WebDownloader
       end
     end
 
-    def html_get(url)
-      http = Net::HTTP.new(url.host, 80)
-      if url.scheme == "https"
-        http.use_ssl = true
-      end
-      request = Net::HTTP::Get.new(url.request_uri)
-      resp = http.request(request)
-
-      #if ['301', '302', '307'].include? resp.code
-      #  url = URI.parse resp['location']
-      #elsif resp.code.to_i >= 400
-      #  $stderr.puts "[#{resp.code}] #{url}"
-      #  return
-      #end
-
-      http.request(request)
-    end
-
-
     #=begin rdoc
     #Download a remote file and save it to the specified path
     #=end
     def download_resource(url, path)
       the_uri = URI.parse(url)
       newFile = false
-      $stderr.puts url
       if the_uri
         data = html_get_site the_uri
         if data
@@ -320,8 +300,6 @@ module WebDownloader
       @save_path = File.join(dir, File.basename(uri.to_s))
       @save_path += '.html' if @save_path !~ /\.((html?)|(txt))$/
       #File.open(@save_path, 'w') { |f| f.write(@contents.to_html) }
-
-      $stderr.puts
 
       newFile = @bucket.objects[@save_path]
       newFile.write(@contents.to_html.force_encoding(@encoding))
