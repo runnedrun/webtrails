@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="" />
+    <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" afterPath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" />
+    </list>
     <ignored path="proto1.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -34,7 +36,7 @@
       <file leaf-file-name="whereJSisWrittenLocal.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="84" column="25" selection-start="2323" selection-end="2323" vertical-scroll-proportion="0.40358743">
+            <state line="199" column="6" selection-start="4856" selection-end="5236" vertical-scroll-proportion="0.6053812">
               <folding>
                 <element signature="n#!!block;n#initializeJqueryEllipsis#0" expanded="false" />
                 <element signature="n#!!block;n#initializeAutoResize#0" expanded="false" />
@@ -902,7 +904,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="84" column="25" selection-start="2323" selection-end="2323" vertical-scroll-proportion="0.40358743">
+        <state line="199" column="6" selection-start="4856" selection-end="5236" vertical-scroll-proportion="0.6053812">
           <folding>
             <element signature="n#!!block;n#initializeJqueryEllipsis#0" expanded="false" />
             <element signature="n#!!block;n#initializeAutoResize#0" expanded="false" />

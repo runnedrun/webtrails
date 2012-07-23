@@ -154,7 +154,6 @@ function initMyBookmarklet() {
     //document bindings
 
     $(document.body).keypress(verifyKeyPress);
-    document.onmousemove = mouseStopDetect();
 
     document.body.onmousedown = function() {
      mouseDown=1;
@@ -185,21 +184,22 @@ function showOrHidePathDisplay(){
 
 function addSiteToTrail(){
     var currentSite = window.location.href;
-//    $.ajax({
-//        url: "http://localhost:3000/sites",
-//        type: "post",
-//        crossDomain: true,
-//        data: {
-//           "site[id]":currentSiteTrailID,
-//           "site[url]":currentSite,
-//           "site[trail_id]":trailID,
-//           "site[title]": document.title,
-//           "user": userID,
-//            notes: "none",
-//            html: siteHTML
-//            }
-//    })
-    saveSiteToTrailButton.attr("disabled","disabled")
+    $.ajax({
+        url: "http://localhost:3000/sites",
+        type: "post",
+        crossDomain: true,
+        data: {
+           "site[id]":currentSiteTrailID,
+           "site[url]":currentSite,
+           "site[trail_id]":trailID,
+           "site[title]": document.title,
+           "user": userID,
+            notes: "none",
+            html: siteHTML
+            }
+    })
+    document.onmousemove = mouseStopDetect();
+    saveSiteToTrailButton.attr("disabled","disabled");
     saveSiteToTrailButton.html("Site saved");
     noteDisplayWrapper.fadeTo(200,1);
     deleteNoteButton.fadeTo(200,1);
@@ -245,6 +245,9 @@ function includeTrailSubString(arr,subString) {
 function smartGrabHighlightedText(){
    textObject = window.getSelection().getRangeAt(0);
    var text = String(textObject);
+   return text
+
+   //this is still a bit sketchy, another days work.
    if (text[0] == " "){
        text = ltrim(text);
    }else{
@@ -413,9 +416,14 @@ function deletePreviousNote(){
 }
 
 function updateNoteDisplay(data){
-    previousNoteID = data.id;
-    moveNoteToPrevious(data.content);
-    deleteNoteButton.attr("disabled","");
+    if (data.id == "none") {
+        moveNoteToPrevious("No more notes on this page.  Go ahead and take a few.");
+        deleteNoteButton.attr("disabled","disabled");
+    }else{
+        previousNoteID = data.id;
+        moveNoteToPrevious(data.content);
+        deleteNoteButton.attr("disabled","");
+    }
 }
 
 function ltrim(stringToTrim) {
