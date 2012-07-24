@@ -1,5 +1,5 @@
 class Trail < ActiveRecord::Base
-  has_many :sites
+  has_many :sites, :dependent => :delete_all
   has_and_belongs_to_many :users
 
   def owner=(user)

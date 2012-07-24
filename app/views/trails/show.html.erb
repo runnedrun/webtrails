@@ -9,15 +9,16 @@
     <iframe src=http://localhost:3000/sites/<%= site.id %> id=<%= site.id %> class="siteDisplay <%= i==0 ? "currentSite":"notCurrent"  %>"></iframe>
   <%- end %>
 </div>
-<div id="trailDisplay">
+<div class="trailDisplay">
     <%- @favicon_urls_with_ids.each do |favicon_and_id| %>
-      <div class=siteFavicon id="<%= favicon_and_id[1] %>">
-        <img src="<%= favicon_and_id[0] %>"/>
+      <div class="siteFavicon" id="<%= favicon_and_id[1] %>">
+        <img class="faviconImage" src="<%= favicon_and_id[0] %>"/>
       </div>
     <%- end %>
     <span id="urlText"></span>
-    <input type="button" class="navigateButton" id="nextNote" value="Next Note">
-    <input type="button" class="navigateButton" id="nextSite" value="Next Site">
-    <input type="checkbox" class="navigateButton" id="presentationMode">
-    <span class=checkBoxLabel>Presentation Mode</span>
+    <button class="navigateButton" id="nextNote">Next Note</button>
+    <button class="navigateButton" id="nextSite">Next Site</button>
+    <input type="checkbox" class="presentationCheckbox" id="presentationMode">
+
+    <div class=checkBoxLabel>Presentation Mode</div>
 </div>

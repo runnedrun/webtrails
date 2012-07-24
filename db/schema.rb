@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120719053841) do
+ActiveRecord::Schema.define(:version => 20120724053022) do
 
   create_table "notes", :force => true do |t|
     t.text     "content"
@@ -21,6 +21,8 @@ ActiveRecord::Schema.define(:version => 20120719053841) do
     t.integer  "scroll_x"
     t.integer  "scroll_y"
     t.text     "comment"
+    t.integer  "comment_location_x"
+    t.integer  "comment_location_y"
   end
 
   create_table "sites", :force => true do |t|

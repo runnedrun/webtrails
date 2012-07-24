@@ -8,7 +8,7 @@ describe NotesController do
     end
 
     it "should create a new note" do
-      post :create, :note => {:content => Faker::Lorem.paragraph, :site_id => @site.id, :comment => "well this is interesting..."}
+      post :create, :note => {:content => Faker::Lorem.paragraph, :site_id => @site.id, :comment => "well this is interesting...", :comment_location_x => "54", :comment_location_y => "89"}
       Note.count.should == @note_count + 1
       @site.notes.length.should == 1
       Note.last.site.should == @site

@@ -308,9 +308,6 @@ function smartGrabHighlightedText(){
 }
 
 function makeCommentOverlay(xPos, yPos, spacing,noteContent){
-    console.log(xPos);
-    console.log(yPos);
-
     var overlayHeight =spacing;
     var overlayWidth = 400;
 
@@ -349,8 +346,8 @@ function makeCommentOverlay(xPos, yPos, spacing,noteContent){
     $(document.body).append(commentOverlay);
     $(commentOverlay).append(commentDescription);
     $(commentOverlay).append(commentBox);
-    commentBox.keydown((function(noteContent,commentOverlay){return (function (e){postNoteAndComment(e,noteContent,commentOverlay)})})(noteContent,commentOverlay));
-    $(document).mousedown((function(noteContent,commentOverlay){return (function (e){clickAway(e,noteContent,commentOverlay)})})(noteContent,commentOverlay));
+    commentBox.keydown((function(noteContent,commentOverlay,xPos){return (function (e){postNoteAndComment(e,noteContent,commentOverlay,xPos,yPos)})})(noteContent,commentOverlay,xPos));
+    $(document).mousedown((function(noteContent,commentOverlay,yPos){return (function (e){clickAway(e,noteContent,commentOverlay,xPos,yPos)})})(noteContent,commentOverlay,yPos));
     commentBox.autosize();
     commentBox.focus();
 //    commentBox.val("Hit enter, click away or type a comment now");
@@ -359,9 +356,9 @@ function makeCommentOverlay(xPos, yPos, spacing,noteContent){
 //    makePlaceholder(commentBox);
 }
 
-function postNoteAndComment(e,content,commentOverlay){
+function postNoteAndComment(e,content,commentOverlay,xPos,yPos){
     if (e.keyCode == 13){
-        submitNote(content,commentOverlay.find("textarea").val());
+        submitNote(content,commentOverlay.find("textarea").val(),xPos,yPos);
         closeOverlay(commentOverlay);
     }
 }
@@ -387,7 +384,7 @@ function moveNoteToPrevious(noteContent){
     previousNoteDisplay.fadeIn(100);
 }
 
-function submitNote(content,comment){
+function submitNote(content,comment,commentLocationX,commentLocationY){
     $.ajax({
         url: "http://localhost:3000/notes",
         type: "post",
@@ -395,6 +392,8 @@ function submitNote(content,comment){
         data: {
             "note[content]": content,
             "note[comment]": comment,
+            "note[comment_location_x]": commentLocationX,
+            "note[comment_location_y]": commentLocationY,
             "note[site_id]": currentSiteTrailID,
             "note[scroll_x]": window.scrollX,
             "note[scroll_y]": window.scrollY
@@ -868,10 +867,10 @@ function unHighlight(){
     $(".trailHighlight").attr("style","").removeClass("trailHighlight");
 }
 
-function clickAway(e,content,commentOverlay){
+function clickAway(e,content,commentOverlay,xPos,yPos){
     var clickedNode = $(e.target);
     if (clickedNode != commentOverlay && ($.inArray(e.target,commentOverlay.children())==-1)){
-        submitNote(content,commentOverlay.find("textarea").val())
+        submitNote(content,commentOverlay.find("textarea").val(),xPos,yPos)
         closeOverlay(commentOverlay)
     }
 }

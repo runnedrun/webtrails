@@ -9,38 +9,36 @@
     border: none;
     font-size: 12px;
     background: #2E2E1F;
-    color: #CCCCA3;
     float: left;
 }
 
-.navigateButton{
+.trailDisplay .navigateButton{
     cursor: pointer;
-    background: #2E2E1F;
-    color: #CCCCA3;
-    height:100%;
+    color: inherit;
+    background: inherit;
+    font: inherit;
     margin: 0;
     padding: 0;
-    font-size: 32px;
-    border:  2px solid #CCCCA3;
-    border-top: none;
-    border-bottom: none;
-    border-left: solid 6px #CCCCA3;
     float: right;
-
 }
 
-#trailDisplay {
+.trailDisplay {
     opacity: 0.8;
     background: #2E2E1F;
     border: none;
-    font-size: 40px;
-    color: #CCCCA3;
+    font-size: 14px;
+    color: white;
     width: 100%;
-    /*height: 3.7%;*/
+    line-height: 25px;
+    height: 25px;
     text-align: center;
     position: fixed;
     bottom: 0;
     z-index: 1000;
+}
+
+.navigateButtong#nextNote{
+    margin-right: 10%;
 }
 
 .userName {
@@ -52,10 +50,17 @@
 }
 
 #trailName, .siteFavicon {
-
     margin-right: 2px;
     float: left;
 }
+
+.faviconImage {
+    height: 15px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+
 
 .notCurrent.siteDisplay{
     display:none;
@@ -71,6 +76,15 @@
 
 .checkBoxLabel{
     float:right;
-    font-size: 20px;
-    margin-right: 5px;
+    font-size: 14px;
+    margin-right: 1%;
+    display: block
+}
+
+.presentationCheckbox{
+    display: block;
+    height: 15px;
+    margin-top: 5px;
+    margin-right: 10%;
+    float: right;
 }

@@ -1,6 +1,6 @@
 class Site < ActiveRecord::Base
-  has_many :notes
-  belongs_to :trail, :dependent => :destroy
+  has_many :notes, :dependent => :delete_all
+  belongs_to :trail
 
   def build_notes(attrs)
     if attrs.class != String
