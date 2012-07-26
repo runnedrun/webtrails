@@ -37,8 +37,17 @@
     z-index: 1000;
 }
 
-.navigateButtong#nextNote{
-    margin-right: 10%;
+.navigateButton#nextSite{
+    /*margin-right: 10%;*/
+}
+
+.navigateButton#showNoteList{
+    width: 200px;
+    margin: 0 25px 0 25px;
+    border: none;
+    border-right: none;
+    border-bottom: none;
+    border-top: 2px solid white;
 }
 
 .userName {
@@ -87,4 +96,32 @@
     margin-top: 5px;
     margin-right: 10%;
     float: right;
+}
+
+.noteLists {
+    position: fixed;
+    z-index: 100;
+    right:0;
+    bottom:25px;
+    width: 250px;
+    background-color: #2E2E1F;
+    opacity: .9;
+}
+
+.noteList {
+    border: #c2c2c2 solid 2px;
+    display: none;
+}
+
+.noteContent {
+    max-height: 28px;
+    line-height: 14px;
+    font-size: 12px;
+    color: white;
+    overflow: hidden;
+    margin: 4px
+}
+
+.noteWrapper {
+    border-bottom: 2px solid #c2c2c2;
 }

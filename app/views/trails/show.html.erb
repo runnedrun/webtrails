@@ -9,6 +9,18 @@
     <iframe src=http://localhost:3000/sites/<%= site.id %> id=<%= site.id %> class="siteDisplay <%= i==0 ? "currentSite":"notCurrent"  %>"></iframe>
   <%- end %>
 </div>
+
+<div class="noteLists">
+  <%- @site_note_hash.each do |site_id, note_contents_and_id| %>
+      <div class="noteList" id=site<%= site_id %>>
+        <%- note_contents_and_id.each do |content, id| %>
+            <div class="noteWrapper">
+                <div class="noteContent" id="note<%= id %>"><%= content %></div>
+            </div>
+        <%-	end %>
+      </div>
+  <%- end %>
+</div>
 <div class="trailDisplay">
     <%- @favicon_urls_with_ids.each do |favicon_and_id| %>
       <div class="siteFavicon" id="<%= favicon_and_id[1] %>">
@@ -16,8 +28,9 @@
       </div>
     <%- end %>
     <span id="urlText"></span>
-    <button class="navigateButton" id="nextNote">Next Note</button>
-    <button class="navigateButton" id="nextSite">Next Site</button>
+    <button class="navigateButton" id="showNoteList" href="#">Show note list</button>
+    <button class="navigateButton" id="nextNote">Next note</button>
+    <button class="navigateButton" id="nextSite">Next site</button>
     <input type="checkbox" class="presentationCheckbox" id="presentationMode">
 
     <div class=checkBoxLabel>Presentation Mode</div>

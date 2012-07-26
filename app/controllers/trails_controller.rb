@@ -41,6 +41,8 @@ class TrailsController < ApplicationController
     end
     @favicon_urls_with_ids
     @sites = @trail.sites
+    @site_note_hash = {}
+    @sites.each {|site| @site_note_hash[site.id] = site.notes.map {|note| [note.content,note.id] }}
   end
 
 
