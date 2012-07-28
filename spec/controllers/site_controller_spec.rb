@@ -16,8 +16,8 @@ describe SitesController do
     def setup_aws_mocks
       @file_mock = double(AWS::S3::S3Object)
 
-      @file_mock.should_receive(:acl=).exactly(7).times.with(:public_read)
-      @file_mock.should_receive(:public_url).exactly(7).times {@only_url_in_the_doc}
+      @file_mock.should_receive(:acl=).exactly(8).times.with(:public_read)
+      @file_mock.should_receive(:public_url).exactly(8).times {@only_url_in_the_doc}
 
       file_hash_mock = double(Hash)
       file_hash_mock.stub(:[]) {@file_mock}
@@ -62,7 +62,7 @@ describe SitesController do
         @file_mock.should_receive(:write) do |args|
           args.should include "sameLevel3ShouldSave"
         end
-        @file_mock.should_receive(:write).exactly(6).times
+        @file_mock.should_receive(:write).exactly(7).times
         make_create_request
       end
 
@@ -71,21 +71,35 @@ describe SitesController do
         @file_mock.should_receive(:write) do |args|
           args.should include "same level 4 should save"
         end
-        @file_mock.should_receive(:write).exactly(5).times
+        @file_mock.should_receive(:write).exactly(6).times
         make_create_request
       end
 
       it "should correctly replace references to external resources" do
-        @file_mock.should_receive(:write).exactly(7).times
+        @file_mock.should_receive(:write).exactly(8).times
         make_create_request
         response.body.scan(/#{@only_url_in_the_doc}/).length.should == 5
       end
 
       it "should remove all script tags" do
-        @file_mock.should_receive(:write).exactly(7).times
+        @file_mock.should_receive(:write).exactly(8).times
         make_create_request
         response.body.scan(/thisShouldNotExist/).length.should == 0
         response.body.scan(/this should get cut out.  fo sho/).length.should == 0
+      end
+
+      it "should properly save iframes recursively" do
+        @file_mock.should_receive(:write).exactly(2).times
+        @file_mock.should_receive(:write) do |args|
+          args.should include "same level 5 should save"
+        end
+        @file_mock.should_receive(:write).exactly(5).times
+      end
+
+      it "should remove all the noscript tags" do
+        @file_mock.should_not(:write) do |args|
+          args.should include "same level 5 should save"
+        end
       end
 
     end

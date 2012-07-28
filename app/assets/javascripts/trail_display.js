@@ -87,7 +87,8 @@ function scrollToAndHighlightNote(noteID){
             highlights.css({"z-index": "99999", position:"relative", "font-size": "1.5em"});
             highlights.css("background-color","white");
         }
-        showComment(currentNote);
+        var offsets = highlights.offset()
+        showComment(currentNote,offsets.left,offsets.top);
         if (currentNoteIndex < (Object.keys(Notes[noteID]).length-1)){
             currentNoteIndex += 1;
         }
@@ -96,12 +97,6 @@ function scrollToAndHighlightNote(noteID){
 
 function removeHighlight(node){
     node.find(".trailHighlight").css({"background-color":"transparent", "font-size": "1em","z-index":"0"}).removeClass("trailHighlight");
-}
-
-function switchToPresentationMode(){
-//    $(currentSite[0].contentWindow.documenon-wrapping div full screennt.body).css({"height": "100%","width": "100%","z-index":"0"});
-    insertHTMLInIframe("<div class=overlay style='background-color: #666666;z-index:99998; height: 100%; width: 100%;position: fixed; top:0; right: 0; opacity: .6;'>", currentSite);
-    presentationMode = true
 }
 
 function expandOrCloseNoteList(){
@@ -122,18 +117,14 @@ function clickJumpToNote(e){
     scrollToAndHighlightNote(noteID);
 }
 
-function showComment(note){
+function showComment(note,xPos,yPos){
     removeComments();
-    createCommentOverlay(note.comment,note.comment_location_x,note.comment_location_y);
+    createCommentOverlay(note.comment,xPos,yPos);
 }
 
 function createCommentOverlay(commentText,xPos,yPos){
     var spacing = 25;
-    var overlayWidth = 400;
-
-    var topPosition  =  yPos + spacing
-    var leftPosition = xPos > overlayWidth ? (xPos - overlayWidth) : xPos;
-
+    var overlayMaxWidth = 400;
 
     var commentOverlay = $(document.createElement("div"));
     commentOverlay.css({
@@ -141,17 +132,35 @@ function createCommentOverlay(commentText,xPos,yPos){
         "opacity": .9,
         "color":"black",
         "position":"absolute",
-        "max-width": overlayWidth,
+        "max-width": overlayMaxWidth,
         "border": "2px solid black"
     });
     commentOverlay.html(commentText);
-    commentOverlay.css("top", topPosition+"px");
-
-    commentOverlay.css("left", leftPosition+"px");
     commentOverlay.addClass("commentOverlay");
     insertHTMLInIframe(commentOverlay,currentSite);
+
+//    var overlayWidth = getComputedStyleOfElementInIframe(commentOverlay,"width");
+    var overlayHeightString = getComputedStyleOfElementInIframe(commentOverlay[0],"height");
+    var overlayHeightFloat = parseFloat(overlayHeightString.slice(0,overlayHeightString.length -2));
+    console.log(overlayHeightFloat);
+    var topPosition  =  yPos - spacing - overlayHeightFloat;
+    var leftPosition = xPos;
+
+    commentOverlay.css("top", topPosition+"px");
+    commentOverlay.css("left", leftPosition+"px");
+    console.log(commentOverlay);
 }
 
 function removeComments(){
     $(currentSite[0].contentWindow.document).find(".commentOverlay").remove();
+}
+
+function getComputedStyleOfElementInIframe(element,stylename){
+    return $(".currentSite")[0].contentWindow.document.defaultView.getComputedStyle(element,null)[stylename];
+}
+
+function switchToPresentationMode(){
+//    $(currentSite[0].contentWindow.documenon-wrapping div full screennt.body).css({"height": "100%","width": "100%","z-index":"0"});
+    insertHTMLInIframe("<div class=overlay style='background-color: #666666;z-index:99998; height: 100%; width: 100%;position: fixed; top:0; right: 0; opacity: .6;'>", currentSite);
+    presentationMode = true
 }
