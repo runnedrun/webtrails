@@ -8,6 +8,7 @@ var userID = window.userID;
 var saveSiteToTrailButton;
 var deleteNoteButton;
 var previousNoteID;
+var notes = [];
 
 
 var nextId = 0;
@@ -385,6 +386,7 @@ function moveNoteToPrevious(noteContent){
 }
 
 function submitNote(content,comment,commentLocationX,commentLocationY){
+    addNoteClientSide(content);
     $.ajax({
         url: "http://localhost:3000/notes",
         type: "post",
@@ -397,30 +399,37 @@ function submitNote(content,comment,commentLocationX,commentLocationY){
             "note[site_id]": currentSiteTrailID,
             "note[scroll_x]": window.scrollX,
             "note[scroll_y]": window.scrollY
-        },
-        success: updateNoteDisplay
+        }
     })
 }
 
 function deletePreviousNote(){
+    deletePreviousNoteClientSide();
     $.ajax({
         url: "http://localhost:3000/notes/delete",
         type: "post",
         crossDomain: true,
         data: {
-            "id": previousNoteID
-        },
-        success: updateNoteDisplay
+            "noteNumber": notes.length-1,
+            "siteID": currentSiteTrailID
+        }
     })
 }
 
-function updateNoteDisplay(data){
-    if (data.id == "none") {
+function addNoteClientSide(content){
+    notes.push(content);
+    moveNoteToPrevious(content);
+    deleteNoteButton.attr("disabled","");
+}
+
+function deletePreviousNoteClientSide(){
+    notes.pop();
+    var newNote = notes[notes.length-1];
+    if (!newNote) {
         moveNoteToPrevious("No more notes on this page.  Go ahead and take a few.");
         deleteNoteButton.attr("disabled","disabled");
     }else{
-        previousNoteID = data.id;
-        moveNoteToPrevious(data.content);
+        moveNoteToPrevious(newNote);
         deleteNoteButton.attr("disabled","");
     }
 }

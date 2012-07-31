@@ -26,13 +26,19 @@ class NotesController < ApplicationController
   end
 
   def delete
-    note = Note.find(params[:id])
-    site = note.site
-    note.delete
-    previous_note = site.reload.notes.find(:first, :order => "created_at DESC")
-    previous_note_id = previous_note ? previous_note.id : "none"
-    previous_note_content = previous_note ? previous_note.content : "none"
-    render :json => {"id" => previous_note_id, "content" => previous_note_content}
+    site = Site.find(params[:siteID].to_i)
+    site_notes = site.notes
+    note_number = params[:noteNumber].to_i
+    note = site_notes[note_number]
+    if note
+      note.delete
+      previous_note = site.reload.notes.find(:first, :order => "created_at DESC")
+      previous_note_id = previous_note ? previous_note.id : "none"
+      previous_note_content = previous_note ? previous_note.content : "none"
+      render :json => {"id" => previous_note_id, "content" => previous_note_content}
+    else
+      render :json => "note probably doesn't exist yet"
+    end
   end
 
 end
