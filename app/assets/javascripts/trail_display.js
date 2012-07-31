@@ -1,17 +1,24 @@
 var currentSiteIndex=0;
 var currentSite;
 var Notes = {};
-var currentNoteIndex=0;
+var currentNoteIndex=-1;
 var presentationMode = false;
 var noteIDs=[];
+var siteHash = {};
 $(function(){
-    currentSite = $("#"+String(siteIDs[0]));
+    var currentSiteID = String(siteIDs[currentSiteIndex]);
+    currentSite = $("#"+currentSiteID);
+    higlightCurrentSiteFavicon(currentSiteID);
     makeIframes();
     $("#nextSite").click(nextSite);
+    $("#previousSite").click(previousSite);
     $("#nextNote").click(nextNote);
-    $("#presentationMode").click(switchToPresentationMode);
+    $("#previousNote").click(previousNote);
+    $("#turnOffCommentsCheckbox").click(showOrHideCurrentComment);
     $("#showNoteList").click(expandOrCloseNoteList);
     $(".noteWrapper").click(clickJumpToNote);
+    $(".siteFavicon").click(clickJumpToSite);
+
 })
 
 function loadIframes(siteID){
@@ -48,50 +55,96 @@ function insertHTMLInIframe(html,iframe){
 
 
 function readySite(data){
-    console.log(data.notes);
+    var noteIDs=[];
     $.each(data.notes, function(i,note){
-        noteIDs.push(note.note_id);
+        noteIDs.push(String(note.note_id));
         Notes[note.note_id] = note;
     })
+    var siteAttributes = {"noteIDs": noteIDs, "title" : data.title, "url" : data.url};
+    siteHash[data.site_id]=siteAttributes;
+    addMouseOverToFavicons();
 }
 function nextSite(){
-    expandOrCloseNoteList();
-    currentSite.addClass("notCurrent").removeClass("currentSite");
-    var currentSiteID = siteIDs[currentSiteIndex+1];
-    currentSite = $("#"+String(currentSiteID));
-    currentSite.removeClass("notCurrent").addClass("currentSite");
     if (currentSiteIndex < siteIDs.length-1){
+        closeNoteList();
+        var switchingToSiteID = siteIDs[currentSiteIndex+1];
+        switchToSite(switchingToSiteID);
         currentSiteIndex+=1;
         currentNoteIndex = 0;
-        console.log(currentNoteIndex);
     }
 }
 
+function previousSite(){
+    if (currentSiteIndex > 0){
+        closeNoteList();
+        var switchingToSiteID = siteIDs[currentSiteIndex-1];
+        switchToSite(switchingToSiteID);
+        currentSiteIndex-=1;
+        currentNoteIndex = 0;
+    }
+}
+
+function clickJumpToSite(e){
+    closeNoteList();
+    var switchingToSiteWithExtraName = $(e.currentTarget).attr("id");
+    var switchingToSiteID = switchingToSiteWithExtraName.replace(/\D+/,"");
+    switchToSite(switchingToSiteID);
+    currentSiteIndex = siteIDs.indexOf(switchingToSiteID);
+    console.log(typeof siteIDs[0]);
+    console.log(typeof switchingToSiteID);
+    console.log(currentSiteIndex);
+    currentNoteIndex = 0;
+}
+
+function switchToSite(siteID){
+    currentSite.addClass("notCurrent").removeClass("currentSite");
+    currentSite = $("#"+String(siteID));
+    currentSite.removeClass("notCurrent").addClass("currentSite");
+    higlightCurrentSiteFavicon(siteID);
+}
+
 function nextNote(){
-    var currentSiteID = noteIDs[currentNoteIndex];
-    scrollToAndHighlightNote(currentSiteID);
+    var currentSiteID = getCurrentSiteID();
+    if (currentNoteIndex < (Object.keys(siteHash[currentSiteID]["noteIDs"]).length-1)){
+        currentNoteIndex+=1;
+        var currentSiteID = getCurrentSiteID();
+        var currentNoteID = siteHash[currentSiteID]["noteIDs"][currentNoteIndex];
+        scrollToAndHighlightNote(currentNoteID);
+    }
+}
+
+function previousNote(){
+    if (currentNoteIndex > -1){
+        currentNoteIndex-=1;
+        var currentSiteID = getCurrentSiteID();
+        var currentNoteID = siteHash[currentSiteID]["noteIDs"][currentNoteIndex];
+        scrollToAndHighlightNote(currentNoteID);
+    }
 }
 
 function scrollToAndHighlightNote(noteID){
-    console.log(noteID);
+    var contWindow = iframeContentWindow();
     var currentNote = Notes[noteID];
-    console.log(currentNote);
     if(currentNote){
-        var contWindow = $(".currentSite")[0].contentWindow
         $(contWindow).scrollTop(currentNote.scroll_y);
         removeHighlight($(contWindow.document.body));
         doHighlight(contWindow.document,"trailHighlight",currentNote.content);
         var highlights = $(contWindow.document.body).find(".trailHighlight")
         highlights.css("background-color","yellow");
-        if (presentationMode){
-            highlights.css({"z-index": "99999", position:"relative", "font-size": "1.5em"});
-            highlights.css("background-color","white");
+//        if (){
+//            highlights.css({"z-index": "99999", position:"relative", "font-size": "1.5em"});
+//            highlights.css("background-color","white");
+//        }
+        var offsets = highlights.offset();
+        var commentDisplay = showComment(currentNote.comment,offsets.left,offsets.top);
+        if ($("#turnOffCommentsCheckbox").is(":checked")){
+            console.log("erhereer");
+            commentDisplay.hide();
         }
-        var offsets = highlights.offset()
-        showComment(currentNote,offsets.left,offsets.top);
-        if (currentNoteIndex < (Object.keys(Notes[noteID]).length-1)){
-            currentNoteIndex += 1;
-        }
+        currentNoteIndex = siteHash[getCurrentSiteID()]["noteIDs"].indexOf(String(noteID));
+    }else{
+        removeComments();
+        removeHighlight($(contWindow.document.body));
     }
 }
 
@@ -99,16 +152,37 @@ function removeHighlight(node){
     node.find(".trailHighlight").css({"background-color":"transparent", "font-size": "1em","z-index":"0"}).removeClass("trailHighlight");
 }
 
+function iframeContentWindow(){
+    return $(".currentSite")[0].contentWindow
+}
+
+function higlightCurrentSiteFavicon(currentSiteID){
+    $(".activeFavicon").removeClass("activeFavicon");
+    var currentSiteFavicon = $("#favicon"+String(currentSiteID)).find("img");
+    console.log(currentSiteID);
+    console.log(currentSiteFavicon);
+    currentSiteFavicon.addClass("activeFavicon");
+}
+
 function expandOrCloseNoteList(){
     var currentSiteID = siteIDs[currentSiteIndex];
     var currentNoteList = $(".noteList#site"+currentSiteID);
     if (currentNoteList.hasClass("open")){
-        currentNoteList.slideUp(300);
-        currentNoteList.removeClass("open");
+        closeNoteList();
     }else{
-        currentNoteList.slideDown(300);
-        currentNoteList.addClass("open");
+        openNoteList(currentNoteList);
     }
+}
+
+function closeNoteList(){
+    var allNoteLists = $(".noteList");
+    allNoteLists.slideUp(200);
+    allNoteLists.removeClass("open");
+}
+
+function openNoteList(noteList){
+    noteList.slideDown(200);
+    noteList.addClass("open");
 }
 
 function clickJumpToNote(e){
@@ -119,7 +193,9 @@ function clickJumpToNote(e){
 
 function showComment(note,xPos,yPos){
     removeComments();
-    createCommentOverlay(note.comment,xPos,yPos);
+    if (note && (typeof note) == "string" && note != ""){
+        return createCommentOverlay(note,xPos,yPos);
+    }
 }
 
 function createCommentOverlay(commentText,xPos,yPos){
@@ -142,17 +218,25 @@ function createCommentOverlay(commentText,xPos,yPos){
 //    var overlayWidth = getComputedStyleOfElementInIframe(commentOverlay,"width");
     var overlayHeightString = getComputedStyleOfElementInIframe(commentOverlay[0],"height");
     var overlayHeightFloat = parseFloat(overlayHeightString.slice(0,overlayHeightString.length -2));
-    console.log(overlayHeightFloat);
     var topPosition  =  yPos - spacing - overlayHeightFloat;
     var leftPosition = xPos;
 
     commentOverlay.css("top", topPosition+"px");
     commentOverlay.css("left", leftPosition+"px");
-    console.log(commentOverlay);
+    return commentOverlay;
 }
 
 function removeComments(){
     $(currentSite[0].contentWindow.document).find(".commentOverlay").remove();
+}
+
+function showOrHideCurrentComment(){
+    if($("#turnOffCommentsCheckbox").is(":checked")){
+        $(iframeContentWindow().document).find(".commentOverlay").hide();
+        console.log($(".commentOverlay"));
+    }else{
+        $(iframeContentWindow().document).find(".commentOverlay").show();
+    }
 }
 
 function getComputedStyleOfElementInIframe(element,stylename){
@@ -163,4 +247,14 @@ function switchToPresentationMode(){
 //    $(currentSite[0].contentWindow.documenon-wrapping div full screennt.body).css({"height": "100%","width": "100%","z-index":"0"});
     insertHTMLInIframe("<div class=overlay style='background-color: #666666;z-index:99998; height: 100%; width: 100%;position: fixed; top:0; right: 0; opacity: .6;'>", currentSite);
     presentationMode = true
+}
+
+function getCurrentSiteID(){
+    return siteIDs[currentSiteIndex];
+}
+
+function addMouseOverToFavicons(){
+    $.each($(".siteFavicon"),function(i,favicon){
+
+    })
 }

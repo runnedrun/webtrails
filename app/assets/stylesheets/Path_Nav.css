@@ -19,11 +19,18 @@
     font: inherit;
     margin: 0;
     padding: 0;
+}
+
+.rightNavigateButton {
     float: right;
 }
 
+.leftNavigateButton {
+    float: left;
+}
+
 .trailDisplay {
-    opacity: 0.8;
+    opacity: .9;
     background: #2E2E1F;
     border: none;
     font-size: 14px;
@@ -66,9 +73,18 @@
 .faviconImage {
     height: 15px;
     margin-top: 5px;
-    margin-bottom: 5px;
+}
+.activeFavicon{
+    margin-top: 2.5px;
+    height:20px;
 }
 
+.siteFavicons{
+    display:inline-block;
+    position: relative;
+    /*padding-left: 100px;*/
+    width: 10%;
+}
 
 
 .notCurrent.siteDisplay{
@@ -90,12 +106,13 @@
     display: block
 }
 
-.presentationCheckbox{
+.turnOffComments{
     display: block;
     height: 15px;
     margin-top: 5px;
-    margin-right: 10%;
     float: right;
+    margin-right: 5px ;
+
 }
 
 .noteLists {
@@ -125,3 +142,24 @@
 .noteWrapper {
     border-bottom: 2px solid #c2c2c2;
 }
+
+.siteTitleDisplay {
+    margin-left: -999em;
+    position: absolute;
+}
+
+.tooltip:hover span.siteTitleDisplay {
+    /*font-family: Calibri, Tahoma, Geneva, sans-serif;*/
+    position:absolute;
+    bottom: 35px;
+    right:15px;
+    line-height: 13px;
+    z-index: 9999;
+    margin-left: 0;
+    font-size:11px;
+    background: black;
+    opacity: .9;
+    width:auto;
+    display: inline-block;
+}
+

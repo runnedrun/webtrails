@@ -1,6 +1,6 @@
 <script type="text/javascript">
-  var siteIDs = [ <%- @favicon_urls_with_ids.each do |favicon_url_and_id|%>
-    <%= favicon_url_and_id[1] %>,
+  var siteIDs = [ <%- @favicon_urls_with_ids_and_titles.each do |favicon_url_and_id|%>
+    "<%= favicon_url_and_id[1] %>",
   <%- end %>
   ];
 </script>
@@ -22,16 +22,21 @@
   <%- end %>
 </div>
 <div class="trailDisplay">
-    <%- @favicon_urls_with_ids.each do |favicon_and_id| %>
-      <div class="siteFavicon" id="<%= favicon_and_id[1] %>">
-        <img class="faviconImage" src="<%= favicon_and_id[0] %>"/>
+<button class="leftNavigateButton navigateButton" id="previousSite">Previous Site</button>
+<button class="leftNavigateButton navigateButton" id="nextSite">Next site</button>
+<div class="siteFavicons">
+    <%- @favicon_urls_with_ids_and_titles.each do |favicon_id_and_title| %>
+      <div class="siteFavicon tooltip" id="favicon<%= favicon_id_and_title[1] %>">
+        <img class="faviconImage" src="<%= favicon_id_and_title[0] %>"/>
+        <span class="siteTitleDisplay"><%= favicon_id_and_title[2] %></span>
       </div>
     <%- end %>
-    <span id="urlText"></span>
-    <button class="navigateButton" id="showNoteList" href="#">Show note list</button>
-    <button class="navigateButton" id="nextNote">Next note</button>
-    <button class="navigateButton" id="nextSite">Next site</button>
-    <input type="checkbox" class="presentationCheckbox" id="presentationMode">
+</div>
+<span id="urlText"></span>
+<button class="rightNavigateButton navigateButton" id="showNoteList" href="#">Show note list</button>
+<button class="rightNavigateButton navigateButton" id="nextNote">Next note</button>
+<button class="rightNavigateButton navigateButton" id="previousNote">Previous Note</button>
+<input type="checkbox" class="turnOffComments" id="turnOffCommentsCheckbox">
 
-    <div class=checkBoxLabel>Presentation Mode</div>
+<div class=checkBoxLabel>Turn off comments</div>
 </div>

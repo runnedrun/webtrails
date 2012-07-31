@@ -35,11 +35,11 @@ class TrailsController < ApplicationController
 
   def show
     @trail = Trail.find(params[:id])
-    @favicon_urls_with_ids = @trail.sites.inject([]) do |urls, site|
+    @favicon_urls_with_ids_and_titles = @trail.sites.inject([]) do |urls, site|
       search_name = URI(site.url).host
-      urls.push(["http://www.google.com/s2/favicons?domain=" + search_name, site.id])
+      urls.push(["http://www.google.com/s2/favicons?domain=" + search_name, site.id, site.title])
     end
-    @favicon_urls_with_ids
+    @favicon_urls_with_ids_and_titles
     @sites = @trail.sites
     @site_note_hash = {}
     @sites.each {|site| @site_note_hash[site.id] = site.notes.map {|note| [note.content,note.id] }}
@@ -61,7 +61,7 @@ class TrailsController < ApplicationController
     favicons_and_urls = trail.sites.inject([]) do |fav_list, site|
       fav_list.push(["http://www.google.com/s2/favicons?domain=" + URI(site.url).host.to_s,site.url])
     end
-    favicons_and_urls.push(["http://www.google.com/s2/favicons?domain=" + URI(params[:current_url]).host.to_s,"#"])
+    favicons_and_urls.push(["http://www.google.com/s2/favicons?domain=" + URI(params[:current_url]).host.split(".")[-2..-1].to_s,"#"])
     site = Site.create!()
     render :json => {"favicons_and_urls" => favicons_and_urls, :site_id => site.id}
   end

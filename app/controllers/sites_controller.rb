@@ -48,7 +48,7 @@ class SitesController < ApplicationController
     src = open(site.archive_location).read.force_encoding('utf-8')
 
 
-    render :json => {"src" => src, "notes" => notes, "site_id" => site.id, "domain" => site.domain, "url" => site.url}, :status => 200
+    render :json => {"src" => src, "notes" => notes, "site_id" => site.id, "domain" => site.domain, "url" => site.url, "title" => site.title}, :status => 200
   end
 
   def show

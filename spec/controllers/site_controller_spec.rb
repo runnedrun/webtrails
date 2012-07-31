@@ -94,12 +94,18 @@ describe SitesController do
           args.should include "same level 5 should save"
         end
         @file_mock.should_receive(:write).exactly(5).times
+        @file_mock.should_receive(:write).exactly(1) do |args|
+          args.scan(/look for me iframe/).length.should == 1
+        end
+        make_create_request
       end
 
       it "should remove all the noscript tags" do
-        @file_mock.should_not(:write) do |args|
-          args.should include "same level 5 should save"
+        @file_mock.should_receive(:write).exactly(7).times
+        @file_mock.should_receive(:write).exactly(1) do |args|
+          args.scan(/noscript should not exist/).length.should == 0
         end
+        make_create_request
       end
 
     end
@@ -129,6 +135,7 @@ describe SitesController do
       resp_hash["site_id"].should == @site.id
       resp_hash["domain"].should == @site.domain
       resp_hash["url"].should == @site.url
+      resp_hash["title"].should == @site.title
 
     end
 
@@ -142,6 +149,7 @@ describe SitesController do
       resp_hash["notes"]["2"]["comment_location_x"].should == @comment_location_x
       resp_hash["notes"]["2"]["comment_location_y"].should == @comment_location_y
     end
+
   end
 
   describe "the show action" do

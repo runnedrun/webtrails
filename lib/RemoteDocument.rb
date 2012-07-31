@@ -27,10 +27,10 @@ module WebDownloader
     #images) in the specified directory.
     #=end
     def mirror(dir)
+      @dir = dir
       source = @src
       @encoding = source.encoding.to_s
-      inline_css_parsed  = save_css_urls_to_s3(source,File.join(dir,"images"),@uri)
-      @contents = Nokogiri::HTML( inline_css_parsed, nil ,@encoding )
+      @contents = Nokogiri::HTML( source, nil ,@encoding )
       process_contents
       save_locally(dir)
     end
@@ -43,9 +43,17 @@ module WebDownloader
       @css_tags = @contents.xpath( '//link[@rel="stylesheet"]' )
       @js_tags = @contents.xpath('//script')
       @img_tags = @contents.xpath( '//img[@src]' )
+      @noscript_tags = @contents.xpath( '//noscript' )
+
+      @js_tags.each { |tag| tag.remove }
+      @noscript_tags.each { |tag| tag.remove }
+
+      css_parsed_src  = save_css_urls_to_s3(@contents.to_html,File.join(@dir,"images"),@uri)
+      @contents = Nokogiri::HTML(css_parsed_src,nil,@encoding)
       # Note: meta tags and links are unused in this example
-      find_meta_tags
-      find_links
+      #
+      #find_meta_tags
+      #find_links
     end
 
 
@@ -294,7 +302,6 @@ module WebDownloader
       # save resources
 
       @img_tags.each { |tag| localize(tag, :src, File.join(dir, 'images')) }
-      @js_tags.each { |tag| tag.remove }
       @css_tags.each { |tag| localize_css_recursively(tag, :href, File.join(dir, 'css')) }
 
       @save_path = File.join(dir, File.basename(uri.to_s))
