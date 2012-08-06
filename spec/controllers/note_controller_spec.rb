@@ -25,16 +25,16 @@ describe NotesController do
 
   describe "the delete action " do
     before do
-      @site = Site.create()
+      site = Site.create()
       @note_count = Note.count
-      @note1 = Note.create(:site => @site,:content => "hello")
-      @note2 = Note.create(:site => @site,:content => "hello again")
-      @note3 = Note.create(:site => @site,:content => "hello again again")
+      @note1 = Note.create(:site => site,:content => "hello")
+      @note2 = Note.create(:site => site,:content => "hello again")
+      @note3 = Note.create(:site => site,:content => "hello again again")
       Note.count.should == @note_count+3
     end
 
     it "should delete the note with the given id" do
-      post :delete, :noteNumber => 2, :siteID => @site.id
+      post :delete, :id => @note3.id
       Note.count.should == @note_count+2
     end
 

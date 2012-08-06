@@ -38,7 +38,7 @@
       <file leaf-file-name="note_controller_spec.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/spec/controllers/note_controller_spec.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="45" selection-start="1340" selection-end="1340" vertical-scroll-proportion="0.0">
+            <state line="39" column="4" selection-start="1377" selection-end="1377" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -57,7 +57,9 @@
         <entry file="file://$PROJECT_DIR$/app/assets/javascripts/trail_display.js">
           <provider selected="true" editor-type-id="text-editor">
             <state line="139" column="23" selection-start="4336" selection-end="4336" vertical-scroll-proportion="0.0">
-              <folding />
+              <folding>
+                <marker date="1343720000000" expanded="true" signature="1384:1695" placeholder="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -71,10 +73,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="notes_controller.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="notes_controller.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/notes_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="42" selection-start="654" selection-end="654" vertical-scroll-proportion="0.03253796">
+            <state line="18" column="24" selection-start="707" selection-end="707" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -107,10 +109,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="whereJSisWrittenLocal.js" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="whereJSisWrittenLocal.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="412" column="31" selection-start="12394" selection-end="12394" vertical-scroll-proportion="0.0">
+            <state line="368" column="46" selection-start="10997" selection-end="10997" vertical-scroll-proportion="0.40401787">
               <folding />
             </state>
           </provider>
@@ -142,9 +144,9 @@
         <option value="$PROJECT_DIR$/app/views/trails/show.html.erb" />
         <option value="$PROJECT_DIR$/app/assets/stylesheets/Path_Nav.css" />
         <option value="$PROJECT_DIR$/app/assets/javascripts/trail_display.js" />
+        <option value="$PROJECT_DIR$/app/controllers/notes_controller.rb" />
         <option value="$PROJECT_DIR$/spec/controllers/note_controller_spec.rb" />
         <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" />
-        <option value="$PROJECT_DIR$/app/controllers/notes_controller.rb" />
       </list>
     </option>
   </component>
@@ -561,6 +563,24 @@
       <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="FULL_BACKTRACE" VALUE="false" />
       <method />
     </configuration>
+    <configuration default="true" type="RubyRunConfigurationType" factoryName="Ruby">
+      <module name="" />
+      <RUBY_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <RUBY_RUN_CONFIG NAME="WORK DIR" VALUE="" />
+      <RUBY_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RUBY_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RUBY_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <RUBY_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="" />
+      <RUBY_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="" />
+      <method />
+    </configuration>
     <configuration default="true" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest">
       <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
       <module name="" />
@@ -880,13 +900,22 @@
     <entry file="file://$PROJECT_DIR$/app/assets/javascripts/trail_display.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="139" column="23" selection-start="4336" selection-end="4336" vertical-scroll-proportion="0.0">
-          <folding />
+          <folding>
+            <marker date="1343720000000" expanded="true" signature="1384:1695" placeholder="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/sites_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="47" column="116" selection-start="1724" selection-end="1724" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/notes_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="24" selection-start="707" selection-end="707" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -898,23 +927,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="412" column="31" selection-start="12394" selection-end="12394" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/spec/controllers/note_controller_spec.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="45" selection-start="1340" selection-end="1340" vertical-scroll-proportion="0.0">
+        <state line="39" column="4" selection-start="1377" selection-end="1377" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/notes_controller.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="42" selection-start="654" selection-end="654" vertical-scroll-proportion="0.03253796">
+        <state line="368" column="46" selection-start="10997" selection-end="10997" vertical-scroll-proportion="0.40401787">
           <folding />
         </state>
       </provider>
