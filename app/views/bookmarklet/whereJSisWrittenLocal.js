@@ -8,6 +8,10 @@ var userID = window.userID;
 var saveSiteToTrailButton;
 var deleteNoteButton;
 var previousNoteID;
+String.prototype.splice = function( idx, rem, s ) {
+    return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
+};
+
 
 
 var nextId = 0;
@@ -161,6 +165,7 @@ function initMyBookmarklet() {
     document.body.onmouseup = function() {
       mouseDown=0;
     };
+    document.body.onmouseup = highlightedTextDetect;
 
     fetchFavicons();
 }
@@ -184,20 +189,20 @@ function showOrHidePathDisplay(){
 
 function addSiteToTrail(){
     var currentSite = window.location.href;
-    $.ajax({
-        url: "http://localhost:3000/sites",
-        type: "post",
-        crossDomain: true,
-        data: {
-           "site[id]":currentSiteTrailID,
-           "site[url]":currentSite,
-           "site[trail_id]":trailID,
-           "site[title]": document.title,
-           "user": userID,
-            notes: "none",
-            html: siteHTML
-            }
-    })
+//    $.ajax({
+//        url: "http://localhost:3000/sites",
+//        type: "post",
+//        crossDomain: true,
+//        data: {
+//           "site[id]":currentSiteTrailID,
+//           "site[url]":currentSite,
+//           "site[trail_id]":trailID,
+//           "site[title]": document.title,
+//           "user": userID,
+//            notes: "none",
+//            html: siteHTML
+//            }
+//    })
     document.onmousemove = mouseStopDetect();
     saveSiteToTrailButton.attr("disabled","disabled");
     saveSiteToTrailButton.html("Site saved");
@@ -376,6 +381,13 @@ function mouseStopDetect (){
         clearTimeout(thread);
         thread = setTimeout(function(){onmousestop(e)}, 500);
     };
+}
+
+function highlightedTextDetect(e){
+    var highlightedText = window.getSelection().getRangeAt(0);
+    if (highlightedText.toString() !== ""){
+        addSaveButtonNextToNote(highlightedText);
+    }
 }
 
 function moveNoteToPrevious(noteContent){
@@ -875,10 +887,31 @@ function clickAway(e,content,commentOverlay,xPos,yPos){
     }
 }
 
-function addDeleteButton(textNode){
-
+function addSaveButtonNextToNote(highlightedTextRange){
+    var endNode = highlightedTextRange.endContainer;
+    var textNodeContent = endNode.textContent;
+    var newNodeReadyForInsert = insertSaveButtonIntoNodeContent(textNodeContent,highlightedTextRange.endOffset);
+    endNode.parentNode.replaceChild(newNodeReadyForInsert,endNode);
+//    endNode.parentNode.innerHTML = textNodeContenteWithSaveButton;
 }
 
 function getHighlightedTextNode(){
     return window.getSelection().getRangeAt(0);
+}
+
+function insertSaveButtonIntoNodeContent(textNodeContent,splitPoint){
+    var firstHalfOfNode =  textNodeContent.slice(0,splitPoint);
+    var secondHalfOfNode =  textNodeContent.slice(splitPoint);
+
+    var saveSpan = $("<span class='inlineSaveButton'></span>");
+    saveSpan.html("Save note");
+    saveSpan.css({
+        "position":"relative"
+    })
+    var textWithButtonContainer = document.createElement("span");
+    textWithButtonContainer.appendChild(document.createTextNode(firstHalfOfNode))
+    textWithButtonContainer.appendChild(saveSpan[0]);
+    textWithButtonContainer.appendChild(document.createTextNode(secondHalfOfNode))
+    console.log(saveSpan);
+    return textWithButtonContainer;
 }

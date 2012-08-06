@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="" />
+    <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" afterPath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" />
+    </list>
     <ignored path="proto1.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -60,15 +63,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="sites_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/sites_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="47" column="116" selection-start="1724" selection-end="1724" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="notes_controller.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/notes_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
@@ -99,7 +93,7 @@
       <file leaf-file-name="show.html.erb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/trails/show.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="52" selection-start="1741" selection-end="1741" vertical-scroll-proportion="-23.75">
+            <state line="38" column="52" selection-start="1741" selection-end="1741" vertical-scroll-proportion="-22.166666">
               <folding />
             </state>
           </provider>
@@ -108,7 +102,19 @@
       <file leaf-file-name="whereJSisWrittenLocal.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="368" column="46" selection-start="10997" selection-end="10997" vertical-scroll-proportion="0.40401787">
+            <state line="915" column="34" selection-start="31521" selection-end="31521" vertical-scroll-proportion="0.9550898">
+              <folding>
+                <element signature="n#!!block;n#smartGrabHighlightedText#0" expanded="false" />
+                <element signature="e#14785#16381#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sites_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/sites_controller.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="47" column="116" selection-start="1724" selection-end="1724" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -603,7 +609,7 @@
     </configuration>
     <configuration default="true" type="JavascriptDebugSession" factoryName="Remote">
       <JSRemoteDebuggerConfigurationSettings>
-        <option name="engineId" />
+        <option name="engineId" value="embedded" />
         <option name="fileUrl" />
       </JSRemoteDebuggerConfigurationSettings>
       <method />
@@ -710,15 +716,15 @@
       <method />
     </configuration>
     <list size="9">
-      <item index="0" class="java.lang.String" itemvalue="Rake.test" />
-      <item index="1" class="java.lang.String" itemvalue="Rake.spec" />
-      <item index="2" class="java.lang.String" itemvalue="Rails.Production: proto1" />
-      <item index="3" class="java.lang.String" itemvalue="Rails.Development: proto1" />
-      <item index="4" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should remove all script tags" />
-      <item index="5" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should save url() tags correctly" />
-      <item index="6" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should remove all the noscript tags" />
-      <item index="7" class="java.lang.String" itemvalue="RSpec.SitesController async_site_load should respond with the html for a site" />
-      <item index="8" class="java.lang.String" itemvalue="RSpec.NotesController the delete action  should delete the note with the given id" />
+      <item index="0" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should remove all script tags" />
+      <item index="1" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should save url() tags correctly" />
+      <item index="2" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should remove all the noscript tags" />
+      <item index="3" class="java.lang.String" itemvalue="RSpec.SitesController async_site_load should respond with the html for a site" />
+      <item index="4" class="java.lang.String" itemvalue="RSpec.NotesController the delete action  should delete the note with the given id" />
+      <item index="5" class="java.lang.String" itemvalue="Rake.test" />
+      <item index="6" class="java.lang.String" itemvalue="Rake.spec" />
+      <item index="7" class="java.lang.String" itemvalue="Rails.Production: proto1" />
+      <item index="8" class="java.lang.String" itemvalue="Rails.Development: proto1" />
     </list>
     <recent_temporary>
       <list size="2">
@@ -766,7 +772,7 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32934928" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32536522" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3251928" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -838,9 +844,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/spec/test_statics/test.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="30" selection-start="1136" selection-end="1154" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="40" column="30" selection-start="1136" selection-end="1154" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/spec/test_statics/sameLevel6.txt">
@@ -860,9 +864,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/application.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="64" selection-start="519" selection-end="519" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="13" column="64" selection-start="519" selection-end="519" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/RemoteDocument.rb">
@@ -882,13 +884,6 @@
     <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/Path_Nav.css">
       <provider selected="true" editor-type-id="text-editor">
         <state line="101" column="14" selection-start="1501" selection-end="1501" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/trails/show.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="52" selection-start="1741" selection-end="1741" vertical-scroll-proportion="-23.75">
           <folding />
         </state>
       </provider>
@@ -930,10 +925,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/trails/show.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="52" selection-start="1741" selection-end="1741" vertical-scroll-proportion="-22.166666">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="368" column="46" selection-start="10997" selection-end="10997" vertical-scroll-proportion="0.40401787">
-          <folding />
+        <state line="915" column="34" selection-start="31521" selection-end="31521" vertical-scroll-proportion="0.9550898">
+          <folding>
+            <element signature="n#!!block;n#smartGrabHighlightedText#0" expanded="false" />
+            <element signature="e#14785#16381#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
