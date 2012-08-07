@@ -22,13 +22,27 @@ class BookmarkletsController < ApplicationController
 
 
   def get_js
-
+    extra_modules = ["rangy-core"]
+    compiled_modules = build_extra_modules(extra_modules)
     if ENV["RAILS_ENV"] == "development"
-      render :js => File.open(File.dirname(__FILE__) + "/../views/bookmarklet/whereJSisWrittenLocal.js").read()
-    elsif ENV["RAILS_ENV"] == "production"
-      render :js => File.open(File.dirname(__FILE__) + "/../views/bookmarklet/whereJSisWrittenProduction.js").read()
-    end
+      jsFile = compiled_modules + File.open(File.dirname(__FILE__) + "/../views/bookmarklet/whereJSisWrittenLocal.js").read()
 
+    elsif ENV["RAILS_ENV"] == "production"
+      jsFile = compiled_modules + File.open(File.dirname(__FILE__) + "/../views/bookmarklet/whereJSisWritten.js").read()
+    end
+    render :js => jsFile
+  end
+
+  private
+
+  def build_extra_modules(extra_modules)
+    compiled_js = ""
+    extra_modules.each do |extra_module|
+      module_content = File.open(File.join(Rails.root,"app/assets/javascripts/"+extra_module+".js")).read()
+      module_content +="\n;\n"
+      compiled_js += module_content
+    end
+    return compiled_js
   end
 
 end

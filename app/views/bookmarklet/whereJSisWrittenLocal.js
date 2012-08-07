@@ -379,7 +379,7 @@ function mouseStopDetect (){
 
     return function(e) {
         clearTimeout(thread);
-        thread = setTimeout(function(){onmousestop(e)}, 500);
+        thread = setTimeout(function(){onmousestop(e)}, 700);
     };
 }
 
@@ -888,10 +888,18 @@ function clickAway(e,content,commentOverlay,xPos,yPos){
 }
 
 function addSaveButtonNextToNote(highlightedTextRange){
+    $(".inlineSaveButton").remove();
     var endNode = highlightedTextRange.endContainer;
     var textNodeContent = endNode.textContent;
-    var newNodeReadyForInsert = insertSaveButtonIntoNodeContent(textNodeContent,highlightedTextRange.endOffset);
+    var newNodeReadyForInsertandSaveButton = insertSaveButtonIntoNodeContent(textNodeContent,highlightedTextRange.endOffset);
+    var newNodeReadyForInsert = newNodeReadyForInsertandSaveButton[0]
+    var saveButton = newNodeReadyForInsertandSaveButton[1]
     endNode.parentNode.replaceChild(newNodeReadyForInsert,endNode);
+    var saveButtonPosition = saveButton.offset();
+    var saveButtonTop = saveButtonPosition.top;
+    var saveButtonLeft = saveButtonPosition.left;
+    saveButton.remove();
+    insertAbsolutelyPositionedSaveButton(saveButtonLeft, saveButtonTop);
 //    endNode.parentNode.innerHTML = textNodeContenteWithSaveButton;
 }
 
@@ -902,16 +910,27 @@ function getHighlightedTextNode(){
 function insertSaveButtonIntoNodeContent(textNodeContent,splitPoint){
     var firstHalfOfNode =  textNodeContent.slice(0,splitPoint);
     var secondHalfOfNode =  textNodeContent.slice(splitPoint);
-
     var saveSpan = $("<span class='inlineSaveButton'></span>");
     saveSpan.html("Save note");
-    saveSpan.css({
-        "position":"relative"
-    })
+
     var textWithButtonContainer = document.createElement("span");
     textWithButtonContainer.appendChild(document.createTextNode(firstHalfOfNode))
     textWithButtonContainer.appendChild(saveSpan[0]);
     textWithButtonContainer.appendChild(document.createTextNode(secondHalfOfNode))
-    console.log(saveSpan);
-    return textWithButtonContainer;
+    return [textWithButtonContainer,saveSpan];
+}
+
+function insertAbsolutelyPositionedSaveButton(left,top){
+    var saveSpan = $("<span class='inlineSaveButton'></span>");
+    saveSpan.html("Save note");
+    saveSpan.addClass("inlineSaveButton");
+    saveSpan.css({
+        "background" : "black",
+        "font-size" : "10px",
+        "color" : "white",
+        "position" : "absolute",
+        "top" : top,
+        "left" : left
+    });
+    $(document.body).append(saveSpan)
 }
