@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" afterPath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" />
     </list>
     <ignored path="proto1.iws" />
@@ -44,17 +42,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="trail_display.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/assets/javascripts/trail_display.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="139" column="23" selection-start="4336" selection-end="4336" vertical-scroll-proportion="0.0">
-              <folding>
-                <marker date="1343720000000" expanded="true" signature="1384:1695" placeholder="{...}" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="notes_controller.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/notes_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
@@ -76,13 +63,21 @@
       <file leaf-file-name="whereJSisWrittenLocal.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="902" column="4" selection-start="31096" selection-end="31096" vertical-scroll-proportion="0.86089647">
+            <state line="937" column="29" selection-start="32468" selection-end="32468" vertical-scroll-proportion="0.57589287">
               <folding>
-                <element signature="n#!!block;n#smartGrabHighlightedText#0" expanded="false" />
-                <element signature="e#14785#16381#0" expanded="false" />
-                <element signature="e#23337#23421#0" expanded="false" />
-                <element signature="e#23957#24005#0" expanded="false" />
+                <element signature="e#14803#16399#0" expanded="false" />
+                <element signature="e#23355#23439#0" expanded="false" />
+                <element signature="e#23975#24023#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="rangy-core.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/assets/javascripts/rangy-core.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -90,7 +85,7 @@
       <file leaf-file-name="rangy-selectionsaverestore.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/assets/javascripts/rangy-selectionsaverestore.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="128" column="50" selection-start="4736" selection-end="4736" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -149,8 +144,8 @@
         <option value="$PROJECT_DIR$/app/assets/javascripts/trail_display.js" />
         <option value="$PROJECT_DIR$/app/controllers/notes_controller.rb" />
         <option value="$PROJECT_DIR$/spec/controllers/note_controller_spec.rb" />
-        <option value="$PROJECT_DIR$/app/assets/javascripts/rangy-selectionsaverestore.js" />
         <option value="$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb" />
+        <option value="$PROJECT_DIR$/app/assets/javascripts/rangy-selectionsaverestore.js" />
         <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" />
       </list>
     </option>
@@ -774,6 +769,7 @@
     <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
     <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
     <option name="FORCE_UPDATE" value="false" />
+    <option name="IGNORE_EXTERNALS" value="false" />
     <configuration useDefault="false">$USER_HOME$/.subversion_IDEA</configuration>
     <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
   </component>
@@ -862,11 +858,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/spec/test_statics/sameLevel5.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="24" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/spec/test_statics/sameLevel4.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="24" selection-start="0" selection-end="24" vertical-scroll-proportion="0.0" />
@@ -902,7 +893,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="139" column="23" selection-start="4336" selection-end="4336" vertical-scroll-proportion="0.0">
           <folding>
-            <marker date="1343720000000" expanded="true" signature="1384:1695" placeholder="{...}" />
+            <marker date="1343720000000" expanded="true" signature="-1:-1" placeholder="{...}" />
           </folding>
         </state>
       </provider>
@@ -951,7 +942,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/assets/javascripts/rangy-selectionsaverestore.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="128" column="50" selection-start="4736" selection-end="4736" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -963,14 +954,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/assets/javascripts/rangy-core.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="902" column="4" selection-start="31096" selection-end="31096" vertical-scroll-proportion="0.86089647">
+        <state line="937" column="29" selection-start="32468" selection-end="32468" vertical-scroll-proportion="0.57589287">
           <folding>
-            <element signature="n#!!block;n#smartGrabHighlightedText#0" expanded="false" />
-            <element signature="e#14785#16381#0" expanded="false" />
-            <element signature="e#23337#23421#0" expanded="false" />
-            <element signature="e#23957#24005#0" expanded="false" />
+            <element signature="e#14803#16399#0" expanded="false" />
+            <element signature="e#23355#23439#0" expanded="false" />
+            <element signature="e#23975#24023#0" expanded="false" />
           </folding>
         </state>
       </provider>
