@@ -166,7 +166,6 @@ function initMyBookmarklet() {
     document.body.onmouseup = function() {
       mouseDown=0;
     };
-    document.body.onmouseup = highlightedTextDetect;
 
     fetchFavicons();
 }
@@ -204,7 +203,8 @@ function addSiteToTrail(){
 //            html: siteHTML
 //            }
 //    })
-    document.onmousemove = mouseStopDetect();
+//    document.onmousemove = mouseStopDetect();
+    $(document).mouseup(highlightedTextDetect);
     saveSiteToTrailButton.attr("disabled","disabled");
     saveSiteToTrailButton.html("Site saved");
     noteDisplayWrapper.fadeTo(200,1);
@@ -360,6 +360,7 @@ function makeCommentOverlay(xPos, yPos, spacing,noteContent){
     doHighlight(document,"trailHighlight",noteContent);
     $(".trailHighlight").css("background-color","yellow");
 //    makePlaceholder(commentBox);
+    return commentBox;
 }
 
 function postNoteAndComment(e,content,commentOverlay,xPos,yPos){
@@ -889,6 +890,8 @@ function clickAway(e,content,commentOverlay,xPos,yPos){
 }
 
 function addSaveButtonNextToNote(highlightedTextRange){
+    $(document).unbind("mouseup");
+    var highlightedContent = String(window.getSelection());
     var endNode = highlightedTextRange.endContainer;
     var textNodeContent = endNode.textContent;
     var newNodeReadyForInsertandSaveButton = insertSaveButtonIntoNodeContent(textNodeContent,highlightedTextRange.endOffset);
@@ -906,9 +909,12 @@ function addSaveButtonNextToNote(highlightedTextRange){
     var saveButtonTop = saveButtonPosition.top;
     var saveButtonLeft = saveButtonPosition.left;
     saveButton.remove();
-    insertAbsolutelyPositionedSaveButton(saveButtonLeft, saveButtonTop);
+    var saveSpan = insertAbsolutelyPositionedSaveButton(saveButtonLeft, saveButtonTop);
+    var nodeLineHeight = parseInt(getComputedStyleOfElement(currentSelection.getRangeAt(0).endContainer.parentNode, "lineHeight").replace("px",""));
 
-//    endNode.parentNode.innerHTML = textNodeContenteWithSaveButton;
+    console.log(highlightedContent);
+    $(document).mousedown(function(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent){ return function(e){removeInlineSaveButton(e,saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent)} }(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent));
+
 }
 
 function getHighlightedTextRange(){
@@ -943,11 +949,17 @@ function insertAbsolutelyPositionedSaveButton(left,top){
         "border-radius": "4px"
     });
     $(document.body).append(saveSpan)
-    $(document).mousedown(removeInlineSaveButton);
+    return saveSpan
 }
 
-function removeInlineSaveButton(){
+function removeInlineSaveButton(e,overlayLeft,overlayTop,overLaySpacing,noteContent){
+    console.log("in remove");
+    console.log(noteContent);
     $(".inlineSaveButton").remove();
-    console.log("removed save button");
     $(document).unbind("mousedown");
+    setTimeout(function(){console.log("setting up mouseup again");$(document).mouseup(highlightedTextDetect)},200);
+    if ($(e.target).is(".inlineSaveButton")){
+        var commentBox = makeCommentOverlay(overlayLeft, overlayTop,overLaySpacing,noteContent);
+        commentBox.focus();
+    }
 }
