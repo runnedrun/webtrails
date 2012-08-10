@@ -357,7 +357,11 @@ function makeCommentOverlay(xPos, yPos, spacing,noteContent){
     commentBox.autosize();
     commentBox.focus();
 //    commentBox.val("Hit enter, click away or type a comment now");
-    doHighlight(document,"trailHighlight",noteContent);
+    var parsedNoteContent = noteContent.replace(/\r\r/gm,"\r ");
+    parsedNoteContent = parsedNoteContent.replace(/\n\n/gm,"\n ");
+    parsedNoteContent = parsedNoteContent.replace(/\r\n\r\n/gm,"\r\n ");
+    console.log(parsedNoteContent);
+    doHighlight(document,"trailHighlight",parsedNoteContent);
     $(".trailHighlight").css("background-color","yellow");
 //    makePlaceholder(commentBox);
     return commentBox;
@@ -732,6 +736,8 @@ function doHighlight(node,className,searchFor,which){
                 indices.push({i:textLength, n:child});
                 nodeText = child.nodeValue;
                 text.push(nodeText);
+                if (nodeText == "\n"){
+                }
                 textLength += nodeText.length;
             }
             // element: collect text of child elements,
