@@ -58,7 +58,8 @@ function initMyBookmarklet() {
         "float":"right",
         "margin-left": "10%",
         "border-left": "solid",
-        "opacity": "0"
+        "opacity": "0",
+        overflow: "hidden"
     });
     noteDisplayWrapper.addClass("noteDisplayWrapper");
 
@@ -919,7 +920,8 @@ function addSaveButtonNextToNote(highlightedTextRange){
     var nodeLineHeight = parseInt(getComputedStyleOfElement(currentSelection.getRangeAt(0).endContainer.parentNode, "lineHeight").replace("px",""));
 
     console.log(highlightedContent);
-    $(document).mousedown(function(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent){ return function(e){removeInlineSaveButton(e,saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent)} }(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent));
+    saveSpan.click(function(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent){ return function(e){clickAndRemoveSaveButton(e,saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent)} }(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent));
+    $(document).mousedown(removeInlineSaveButton);
 
 }
 
@@ -958,14 +960,18 @@ function insertAbsolutelyPositionedSaveButton(left,top){
     return saveSpan
 }
 
-function removeInlineSaveButton(e,overlayLeft,overlayTop,overLaySpacing,noteContent){
-    console.log("in remove");
-    console.log(noteContent);
+function removeInlineSaveButton(e){
+    if (!$(e.target).is(".inlineSaveButton")){
+        $(".inlineSaveButton").remove();
+        $(document).unbind("mousedown");
+        setTimeout(function(){console.log("setting up mouseup again");$(document).mouseup(highlightedTextDetect)},200);
+    }
+}
+
+function clickAndRemoveSaveButton(e,overlayLeft,overlayTop,overLaySpacing,noteContent){
+    var commentBox = makeCommentOverlay(overlayLeft, overlayTop,overLaySpacing,noteContent);
     $(".inlineSaveButton").remove();
     $(document).unbind("mousedown");
     setTimeout(function(){console.log("setting up mouseup again");$(document).mouseup(highlightedTextDetect)},200);
-    if ($(e.target).is(".inlineSaveButton")){
-        var commentBox = makeCommentOverlay(overlayLeft, overlayTop,overLaySpacing,noteContent);
-        commentBox.focus();
-    }
 }
+
