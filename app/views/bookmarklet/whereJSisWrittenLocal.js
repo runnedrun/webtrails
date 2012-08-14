@@ -205,7 +205,8 @@ function addSiteToTrail(){
 //            }
 //    })
 //    document.onmousemove = mouseStopDetect();
-    $(document).mouseup(highlightedTextDetect);
+    console.log("binding");
+    $(document).mousedown(possibleHighlightStart);
     saveSiteToTrailButton.attr("disabled","disabled");
     saveSiteToTrailButton.html("Site saved");
     noteDisplayWrapper.fadeTo(200,1);
@@ -390,12 +391,31 @@ function mouseStopDetect (){
     };
 }
 
-function highlightedTextDetect(e){
-    var highlightedText = window.getSelection().getRangeAt(0);
-    if (highlightedText.toString() !== ""){
-        addSaveButtonNextToNote(highlightedText);
+function possibleHighlightStart(){
+    console.log("starting Highlight");
+    var startingSelectionCopy = window.getSelection().toString().slice(0);
+    console.log(startingSelectionCopy);
+    $(document).mouseup(function(){highlightedTextDetect(startingSelectionCopy)});
+}
+
+function highlightedTextDetect(startingHighlight){
+    $(document).unbind("mouseup");
+    console.log("checking for if highlight is complete")
+    var currentSelection = window.getSelection();
+    console.log(!window.getSelection().isCollapsed);
+    if (!window.getSelection().isCollapsed){
+        console.log("highlight complete")
+        console.log(window.getSelection().getRangeAt(0).endContainer);
+        addSaveButtonNextToNote(window.getSelection().getRangeAt(0));
     }
 }
+//onmouusedown
+//function preventDoubleHighlightBug(e){
+//    var highlightedText = window.getSelection().getRangeAt(0);
+//    if (!highlightedText.isCollapsed){
+//        $(document.mouseUpaddSaveButtonNextToNote(highlightedText);
+//    }
+//}
 
 function moveNoteToPrevious(noteContent){
     previousNoteDisplay.fadeOut(100);
@@ -879,6 +899,7 @@ function doHighlight(node,className,searchFor,which){
 function closeOverlay(overlay){
     $(document).unbind("mousedown");
     $(document).mousedown(function(){mouseDown=1});
+    $(document).mousedown(possibleHighlightStart);
     overlay.remove();
     unHighlight();
 
@@ -897,21 +918,20 @@ function clickAway(e,content,commentOverlay,xPos,yPos){
 }
 
 function addSaveButtonNextToNote(highlightedTextRange){
-    $(document).unbind("mouseup");
-    var highlightedContent = String(window.getSelection());
-    var endNode = highlightedTextRange.endContainer;
-    var textNodeContent = endNode.textContent;
-    var newNodeReadyForInsertandSaveButton = insertSaveButtonIntoNodeContent(textNodeContent,highlightedTextRange.endOffset);
-    var newNodeReadyForInsert = newNodeReadyForInsertandSaveButton[0]
-    var saveButton = newNodeReadyForInsertandSaveButton[1]
-    var nodeToHighlight = newNodeReadyForInsertandSaveButton[2]
-    endNode.parentNode.replaceChild(newNodeReadyForInsert,endNode);
+    console.log("\n starting note adding \n");
+    var currentSelection = window.getSelection();
+    var highlightedContent = String(currentSelection);
+    var newNodeReadyForInsertandSaveButton = insertSaveButtonIntoNodeContent(highlightedTextRange);
+    var newNodeReadyForInsert = newNodeReadyForInsertandSaveButton[0];
+    var saveButton = newNodeReadyForInsertandSaveButton[1];
+    var nodeToHighlight = newNodeReadyForInsertandSaveButton[2];
+    var nodeToReplace = newNodeReadyForInsertandSaveButton[3];
 
+    nodeToReplace.parentNode.replaceChild(newNodeReadyForInsert,nodeToReplace);
     var newSelectionRange = document.createRange();
     newSelectionRange.selectNode(nodeToHighlight);
-    var currentSelection = window.getSelection();
-    currentSelection.addRange(newSelectionRange);
 
+    currentSelection.addRange(newSelectionRange);
     var saveButtonPosition = saveButton.offset();
     var saveButtonTop = saveButtonPosition.top;
     var saveButtonLeft = saveButtonPosition.left;
@@ -919,28 +939,71 @@ function addSaveButtonNextToNote(highlightedTextRange){
     var saveSpan = insertAbsolutelyPositionedSaveButton(saveButtonLeft, saveButtonTop);
     var nodeLineHeight = parseInt(getComputedStyleOfElement(currentSelection.getRangeAt(0).endContainer.parentNode, "lineHeight").replace("px",""));
 
-    console.log(highlightedContent);
     saveSpan.click(function(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent){ return function(e){clickAndRemoveSaveButton(e,saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent)} }(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent));
     $(document).mousedown(removeInlineSaveButton);
-
+    console.log("\n ending note adding \n");
 }
 
 function getHighlightedTextRange(){
     return window.getSelection().getRangeAt(0);
 }
 
-function insertSaveButtonIntoNodeContent(textNodeContent,splitPoint){
-    var firstHalfOfNode =  textNodeContent.slice(0,splitPoint);
-    var secondHalfOfNode =  textNodeContent.slice(splitPoint);
+function isTextNode(){
+    return this.nodeType === 3
+}
+
+function getLastNode(node){
+    var $node = $(node);
+    var contents = $node.contents();
+    if (contents.length===0){
+        console.log(node.nodeType);
+        if (node.nodeType === 3){
+            return node
+        } else {
+            var newNode = document.createTextNode("");
+            node.appendChild(newNode);
+            return newNode;
+        }
+    } else {
+        return getLastNode(contents.last()[0])
+    }
+}
+
+function insertSaveButtonIntoNodeContent(highlightedTextRange){
+    var startContainer = highlightedTextRange.startContainer
+    var endContainer = highlightedTextRange.endContainer
+    var startOffset = highlightedTextRange.startOffset
+    var endOffset = highlightedTextRange.endOffset
+    var insertionNode;
+    if ($(endContainer).contents().length === 0){
+        insertionNode = endContainer;
+        console.log("no chillun")
+    } else {
+        insertionNode = getLastNode(endContainer);
+        console.log("chillun")
+    }
+    console.log(insertionNode);
+    var textNodeContent = insertionNode.textContent;
+    var firstHalfOfNode =  textNodeContent.slice(0,endOffset);
+    var secondHalfOfNode =  textNodeContent.slice(endOffset);
     var saveSpan = $("<span class='inlineSaveButton'></span>");
     saveSpan.html("Save note");
+    saveSpan.css("width", "0");
 
     var textWithButtonContainer = document.createElement("span");
-    var nodeToHighlight = document.createTextNode(firstHalfOfNode);
+    var nodeToHighlight;
+    if (endContainer === startContainer){
+        nodeToHighlight = document.createTextNode(firstHalfOfNode.slice(startOffset));
+        var nodeToHighlightPrefix = document.createTextNode(firstHalfOfNode.slice(0,startOffset));
+        textWithButtonContainer.appendChild(nodeToHighlightPrefix)
+
+    }else{
+        nodeToHighlight = document.createTextNode(firstHalfOfNode);
+    }
     textWithButtonContainer.appendChild(nodeToHighlight);
     textWithButtonContainer.appendChild(saveSpan[0]);
     textWithButtonContainer.appendChild(document.createTextNode(secondHalfOfNode))
-    return [textWithButtonContainer,saveSpan,nodeToHighlight];
+    return [textWithButtonContainer,saveSpan,nodeToHighlight,insertionNode];
 }
 
 function insertAbsolutelyPositionedSaveButton(left,top){
@@ -963,15 +1026,11 @@ function insertAbsolutelyPositionedSaveButton(left,top){
 function removeInlineSaveButton(e){
     if (!$(e.target).is(".inlineSaveButton")){
         $(".inlineSaveButton").remove();
-        $(document).unbind("mousedown");
-        setTimeout(function(){console.log("setting up mouseup again");$(document).mouseup(highlightedTextDetect)},200);
     }
 }
 
 function clickAndRemoveSaveButton(e,overlayLeft,overlayTop,overLaySpacing,noteContent){
     var commentBox = makeCommentOverlay(overlayLeft, overlayTop,overLaySpacing,noteContent);
     $(".inlineSaveButton").remove();
-    $(document).unbind("mousedown");
-    setTimeout(function(){console.log("setting up mouseup again");$(document).mouseup(highlightedTextDetect)},200);
 }
 

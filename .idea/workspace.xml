@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" afterPath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" />
     </list>
     <ignored path="proto1.iws" />
@@ -63,10 +64,10 @@
       <file leaf-file-name="whereJSisWrittenLocal.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="964" column="25" selection-start="33687" selection-end="33687" vertical-scroll-proportion="0.5887446">
+            <state line="966" column="45" selection-start="33686" selection-end="33686" vertical-scroll-proportion="0.3030303">
               <folding>
-                <element signature="e#15098#16694#0" expanded="false" />
-                <element signature="e#23650#23734#0" expanded="false" />
+                <element signature="e#15930#17526#0" expanded="false" />
+                <element signature="e#24482#24566#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -962,10 +963,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="964" column="25" selection-start="33687" selection-end="33687" vertical-scroll-proportion="0.5887446">
+        <state line="966" column="45" selection-start="33686" selection-end="33686" vertical-scroll-proportion="0.3030303">
           <folding>
-            <element signature="e#15098#16694#0" expanded="false" />
-            <element signature="e#23650#23734#0" expanded="false" />
+            <element signature="e#15930#17526#0" expanded="false" />
+            <element signature="e#24482#24566#0" expanded="false" />
           </folding>
         </state>
       </provider>
