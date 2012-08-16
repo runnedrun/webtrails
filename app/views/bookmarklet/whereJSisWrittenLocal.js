@@ -222,7 +222,6 @@ function addSiteToTrail(){
 //            }
 //    })
 //    document.onmousemove = mouseStopDetect();
-    console.log("binding");
     $(document).mousedown(possibleHighlightStart);
     saveSiteToTrailButton.attr("disabled","disabled");
     saveSiteToTrailButton.html("Site saved");
@@ -284,67 +283,44 @@ function revealTrailURL(e){
 }
 
 function smartGrabHighlightedText(){
-   textObject = window.getSelection().getRangeAt(0);
+   var textObject = window.getSelection().getRangeAt(0);
    var text = String(textObject);
-   return text
+//   return text
 
    //this is still a bit sketchy, another days work.
    if (text[0] == " "){
        text = ltrim(text);
    }else{
-
        var startIndex = textObject.startOffset;
-       var spaceIndices = [];
        var startContainerText = textObject.startContainer.textContent;
-       $.each(startContainerText, function(i,character){
+       var textToAddToStartOfHighlight = ""
+       for (i=startIndex-1;i > -1; i--){
+           var character = startContainerText[i];
             if (character==" ") {
-                spaceIndices.push(i);
-                if (i >= startIndex){
-                    return false
-                }
+                break
             }
-       });
-       nextSpaceIndex= spaceIndices.pop();
-       previousSpaceIndex = spaceIndices.pop();
-       if (nextSpaceIndex && previousSpaceIndex){
-        if ((previousSpaceIndex + 1) !== startIndex){
-            var wholeWord = startContainerText.slice(previousSpaceIndex+1,nextSpaceIndex);
-            text = wholeWord.concat(text.substr(nextSpaceIndex-startIndex, text.length -1));
-            }
-        }else{
-           var wholeWord = startContainerText;
-           text = wholeWord.concat(text.substr(startContainerText.length-startIndex, text.length -1));
+           textToAddToStartOfHighlight = character + textToAddToStartOfHighlight;
        }
+       console.log(textToAddToStartOfHighlight);
+       text = textToAddToStartOfHighlight + text;
+       console.log(text);
    }
     if (text[text.length-1] == " "){
        text = rtrim(text);
    }else{
-       var endIndex = textObject.endOffset;
-       spaceIndices = [];
-       var endContainerText = textObject.endContainer.textContent;
-       $.each(endContainerText, function(i,character){
+        var endIndex = textObject.endOffset;
+        var endContainerText = textObject.endContainer.textContent;
+        var textToAddToEndOfHighlight = ""
+        for (i=endIndex;i < endContainerText.length;i++){
+            var character = endContainerText[i];
             if (character==" ") {
-                spaceIndices.push(i);
-                if (i>=endIndex){
-                    return false
-                }
+                break
             }
-       });
-
-       nextSpaceIndex= spaceIndices.pop();
-       previousSpaceIndex = spaceIndices.pop();
-
-        if (nextSpaceIndex && previousSpaceIndex){
-            if ((nextSpaceIndex - 1) !== endIndex){
-                var wholeWord = endContainerText.slice(previousSpaceIndex+1,nextSpaceIndex);
-                text = text.substr(0, text.length - (endIndex-previousSpaceIndex)).concat(" " + wholeWord);
-                }
-        }else{
-            var wholeWord = endContainerText;
-            text = text.substr(0, text.length - endIndex).concat(wholeWord);
+            textToAddToEndOfHighlight += character;
         }
-
-   }
+        console.log(textToAddToEndOfHighlight);
+        text += textToAddToEndOfHighlight;
+    }
    return text
 }
 
@@ -395,7 +371,7 @@ function makeCommentOverlay(xPos, yPos, spacing,noteContent){
     var parsedNoteContent = noteContent.replace(/\r\r/gm,"\r ");
     parsedNoteContent = parsedNoteContent.replace(/\n\n/gm,"\n ");
     parsedNoteContent = parsedNoteContent.replace(/\r\n\r\n/gm,"\r\n ");
-    console.log(parsedNoteContent);
+
     doHighlight(document,"trailHighlight",parsedNoteContent);
     $(".trailHighlight").css("background-color","yellow");
 //    makePlaceholder(commentBox);
@@ -425,20 +401,13 @@ function mouseStopDetect (){
 }
 
 function possibleHighlightStart(){
-    console.log("starting Highlight");
     var startingSelectionCopy = window.getSelection().toString().slice(0);
-    console.log(startingSelectionCopy);
     $(document).mouseup(function(){highlightedTextDetect(startingSelectionCopy)});
 }
 
 function highlightedTextDetect(startingHighlight){
     $(document).unbind("mouseup");
-    console.log("checking for if highlight is complete")
-    var currentSelection = window.getSelection();
-    console.log(!window.getSelection().isCollapsed);
     if (!window.getSelection().isCollapsed){
-        console.log("highlight complete")
-        console.log(window.getSelection().getRangeAt(0).endContainer);
         addSaveButtonNextToNote(window.getSelection().getRangeAt(0));
     }
 }
@@ -951,9 +920,9 @@ function clickAway(e,content,commentOverlay,xPos,yPos){
 }
 
 function addSaveButtonNextToNote(highlightedTextRange){
-    console.log("\n starting note adding \n");
     var currentSelection = window.getSelection();
-    var highlightedContent = String(currentSelection);
+    var highlightedContent = smartGrabHighlightedText();
+    console.log(highlightedContent);
     var newNodeReadyForInsertandSaveButton = insertSaveButtonIntoNodeContent(highlightedTextRange);
     var newNodeReadyForInsert = newNodeReadyForInsertandSaveButton[0];
     var saveButton = newNodeReadyForInsertandSaveButton[1];
@@ -974,22 +943,16 @@ function addSaveButtonNextToNote(highlightedTextRange){
 
     saveSpan.click(function(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent){ return function(e){clickAndRemoveSaveButton(e,saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent)} }(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent));
     $(document).mousedown(removeInlineSaveButton);
-    console.log("\n ending note adding \n");
 }
 
 function getHighlightedTextRange(){
     return window.getSelection().getRangeAt(0);
 }
 
-function isTextNode(){
-    return this.nodeType === 3
-}
-
 function getLastNode(node){
     var $node = $(node);
     var contents = $node.contents();
     if (contents.length===0){
-        console.log(node.nodeType);
         if (node.nodeType === 3){
             return node
         } else {
@@ -1001,7 +964,6 @@ function getLastNode(node){
         return getLastNode(contents.last()[0])
     }
 }
-                                            s
 function insertSaveButtonIntoNodeContent(highlightedTextRange){
     var startContainer = highlightedTextRange.startContainer
     var endContainer = highlightedTextRange.endContainer

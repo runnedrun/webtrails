@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" afterPath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" />
     </list>
     <ignored path="proto1.iws" />
@@ -55,10 +54,9 @@
       <file leaf-file-name="whereJSisWrittenLocal.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="298" column="2" selection-start="8081" selection-end="8081" vertical-scroll-proportion="0.30389223">
+            <state line="296" column="10" selection-start="8080" selection-end="8080" vertical-scroll-proportion="0.13852814">
               <folding>
-                <element signature="e#16896#18492#0" expanded="false" />
-                <element signature="e#25448#25532#0" expanded="false" />
+                <element signature="e#24168#24252#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -953,10 +951,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="298" column="2" selection-start="8081" selection-end="8081" vertical-scroll-proportion="0.30389223">
+        <state line="296" column="10" selection-start="8080" selection-end="8080" vertical-scroll-proportion="0.13852814">
           <folding>
-            <element signature="e#16896#18492#0" expanded="false" />
-            <element signature="e#25448#25532#0" expanded="false" />
+            <element signature="e#24168#24252#0" expanded="false" />
           </folding>
         </state>
       </provider>
