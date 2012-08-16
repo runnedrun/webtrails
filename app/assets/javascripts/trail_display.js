@@ -70,7 +70,7 @@ function nextSite(){
         var switchingToSiteID = siteIDs[currentSiteIndex+1];
         switchToSite(switchingToSiteID);
         currentSiteIndex+=1;
-        currentNoteIndex = 0;
+        currentNoteIndex = -1;
     }
 }
 
@@ -80,7 +80,7 @@ function previousSite(){
         var switchingToSiteID = siteIDs[currentSiteIndex-1];
         switchToSite(switchingToSiteID);
         currentSiteIndex-=1;
-        currentNoteIndex = 0;
+        currentNoteIndex = -1;
     }
 }
 
@@ -90,10 +90,7 @@ function clickJumpToSite(e){
     var switchingToSiteID = switchingToSiteWithExtraName.replace(/\D+/,"");
     switchToSite(switchingToSiteID);
     currentSiteIndex = siteIDs.indexOf(switchingToSiteID);
-    console.log(typeof siteIDs[0]);
-    console.log(typeof switchingToSiteID);
-    console.log(currentSiteIndex);
-    currentNoteIndex = 0;
+    currentNoteIndex = -1;
 }
 
 function switchToSite(siteID){
@@ -127,6 +124,7 @@ function scrollToAndHighlightNote(noteID){
     var currentNote = Notes[noteID];
     if(currentNote){
         $(contWindow).scrollTop(currentNote.scroll_y);
+        console.log(currentNote.scroll_y);
         removeHighlight($(contWindow.document.body));
         doHighlight(contWindow.document,"trailHighlight",currentNote.content);
         var highlights = $(contWindow.document.body).find(".trailHighlight")
@@ -136,9 +134,14 @@ function scrollToAndHighlightNote(noteID){
 //            highlights.css("background-color","white");
 //        }
         var offsets = highlights.offset();
+        highlights.each(function(i,highlight){
+            if ($(highlight).offset().top > currentNote.scroll_y){
+                offsets = $(highlight).offset();
+                return false
+            }
+        });
         var commentDisplay = showComment(currentNote.comment,offsets.left,offsets.top);
         if ($("#turnOffCommentsCheckbox").is(":checked")){
-            console.log("erhereer");
             commentDisplay.hide();
         }
         currentNoteIndex = siteHash[getCurrentSiteID()]["noteIDs"].indexOf(String(noteID));
@@ -159,8 +162,6 @@ function iframeContentWindow(){
 function higlightCurrentSiteFavicon(currentSiteID){
     $(".activeFavicon").removeClass("activeFavicon");
     var currentSiteFavicon = $("#favicon"+String(currentSiteID)).find("img");
-    console.log(currentSiteID);
-    console.log(currentSiteFavicon);
     currentSiteFavicon.addClass("activeFavicon");
 }
 
@@ -212,6 +213,7 @@ function createCommentOverlay(commentText,xPos,yPos){
         "border": "2px solid black"
     });
     commentOverlay.html(commentText);
+    console.log(commentText);
     commentOverlay.addClass("commentOverlay");
     insertHTMLInIframe(commentOverlay,currentSite);
 
@@ -233,7 +235,6 @@ function removeComments(){
 function showOrHideCurrentComment(){
     if($("#turnOffCommentsCheckbox").is(":checked")){
         $(iframeContentWindow().document).find(".commentOverlay").hide();
-        console.log($(".commentOverlay"));
     }else{
         $(iframeContentWindow().document).find(".commentOverlay").show();
     }

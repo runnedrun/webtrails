@@ -1,6 +1,6 @@
 class TrailsController < ApplicationController
 
-  before_filter :authenticated_or_redirect, :only => [:index, :show]
+  before_filter :authenticated_or_redirect, :only => [:index]
   skip_before_filter :verify_authenticity_token, :only => [:create,:options]
   after_filter :cors_set_access_control_headers
 
@@ -20,11 +20,6 @@ class TrailsController < ApplicationController
   def options
     cors_preflight_check
     render :text => '', :content_type => 'text/plain'
-  end
-
-
-  def new
-
   end
 
   def create

@@ -151,7 +151,7 @@
 .tooltip:hover span.siteTitleDisplay {
     /*font-family: Calibri, Tahoma, Geneva, sans-serif;*/
     position:absolute;
-    bottom: 35px;
+    bottom: 60px;
     right:15px;
     line-height: 13px;
     z-index: 9999;
