@@ -56,7 +56,7 @@ function initMyBookmarklet() {
         height:"100%",
         width: "40%",
         "float":"right",
-        "margin-left": "10%",
+        "margin-left": "3%",
         "border-left": "solid",
         "opacity": "0",
         overflow: "hidden"
@@ -120,6 +120,20 @@ function initMyBookmarklet() {
 
     saveSiteToTrailButton.html("Save site");
 
+    var shareTrailButton = $(document.createElement("button"));
+    shareTrailButton.css({
+        "font-size": "12px",
+        "color": "white",
+        "background-color": "transparent",
+        "font-weight": "bold",
+        height:"100%",
+        width: "10%",
+        "float": "right",
+        "margin-left": "2%"
+    })
+
+    shareTrailButton.html("Share Trail");
+
     //inserting global stylings
     var cssStyle = $(document.createElement("style"));
     $(document.getElementsByTagName("head")[0]).append(cssStyle);
@@ -145,6 +159,9 @@ function initMyBookmarklet() {
     $(trailDisplay).append(noteDisplayWrapper);
 
     $(noteDisplayWrapper).append(previousNoteDisplay);
+
+    $(trailDisplay).append(shareTrailButton);
+    shareTrailButton.click(revealTrailURL);
 
     $(trailDisplay).append(saveSiteToTrailButton);
     saveSiteToTrailButton.click(addSiteToTrail);
@@ -249,6 +266,22 @@ function includeTrailSubString(arr,subString) {
     return ""
 }
 
+function revealTrailURL(e){
+    var urlDisplay = $(document.createElement("span"));
+    urlDisplay.css({
+        "font-size": "12px",
+        "color": "white",
+        "background-color": "transparent",
+        "font-weight": "bold",
+        height:"100%",
+        "max-width": "15%",
+        "float": "right",
+        "margin-left": "2%",
+        border: "solid white 2px"
+    })
+    urlDisplay.html("http://localhost:3000/trails/"+trailID);
+    e.target.parentNode.replaceChild(urlDisplay[0],e.target)
+}
 
 function smartGrabHighlightedText(){
    textObject = window.getSelection().getRangeAt(0);
@@ -968,7 +1001,7 @@ function getLastNode(node){
         return getLastNode(contents.last()[0])
     }
 }
-
+                                            s
 function insertSaveButtonIntoNodeContent(highlightedTextRange){
     var startContainer = highlightedTextRange.startContainer
     var endContainer = highlightedTextRange.endContainer
@@ -977,12 +1010,9 @@ function insertSaveButtonIntoNodeContent(highlightedTextRange){
     var insertionNode;
     if ($(endContainer).contents().length === 0){
         insertionNode = endContainer;
-        console.log("no chillun")
     } else {
         insertionNode = getLastNode(endContainer);
-        console.log("chillun")
     }
-    console.log(insertionNode);
     var textNodeContent = insertionNode.textContent;
     var firstHalfOfNode =  textNodeContent.slice(0,endOffset);
     var secondHalfOfNode =  textNodeContent.slice(endOffset);
@@ -1017,7 +1047,8 @@ function insertAbsolutelyPositionedSaveButton(left,top){
         "position" : "absolute",
         "top" : top,
         "left" : left +5,
-        "border-radius": "4px"
+        "border-radius": "4px",
+        "cursor": "pointer"
     });
     $(document.body).append(saveSpan)
     return saveSpan
