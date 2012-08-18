@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/proto1.iml" afterPath="$PROJECT_DIR$/.idea/proto1.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
-    </list>
+    <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="" />
     <ignored path="proto1.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -86,16 +81,16 @@
       <file leaf-file-name="trails_controller.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/trails_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="68" column="0" selection-start="2445" selection-end="2445" vertical-scroll-proportion="0.0">
+            <state line="55" column="0" selection-start="1836" selection-end="1836" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Gemfile" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="Gemfile" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Gemfile">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="48" column="13" selection-start="820" selection-end="820" vertical-scroll-proportion="0.8686131">
+            <state line="32" column="90" selection-start="552" selection-end="552" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -110,10 +105,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="bookmarklets_controller.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="bookmarklets_controller.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="33" selection-start="1041" selection-end="1041" vertical-scroll-proportion="0.0">
+            <state line="38" column="33" selection-start="1318" selection-end="1318" vertical-scroll-proportion="0.6651786">
               <folding />
             </state>
           </provider>
@@ -957,13 +952,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="33" selection-start="1041" selection-end="1041" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/spec/controllers/trail_controller_spec.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="80" column="3" selection-start="2401" selection-end="2401" vertical-scroll-proportion="0.0">
@@ -971,16 +959,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/trails_controller.rb">
+    <entry file="file://$PROJECT_DIR$/Gemfile">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="68" column="0" selection-start="2445" selection-end="2445" vertical-scroll-proportion="0.0">
+        <state line="32" column="90" selection-start="552" selection-end="552" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Gemfile">
+    <entry file="file://$PROJECT_DIR$/app/controllers/trails_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="48" column="13" selection-start="820" selection-end="820" vertical-scroll-proportion="0.8686131">
+        <state line="55" column="0" selection-start="1836" selection-end="1836" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="33" selection-start="1318" selection-end="1318" vertical-scroll-proportion="0.6651786">
           <folding />
         </state>
       </provider>
