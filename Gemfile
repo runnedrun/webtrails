@@ -11,7 +11,7 @@ end
 
 
 group :development, :testing do
-  gem 'sqlite3'
+  #gem 'sqlite3'
 end
 
 

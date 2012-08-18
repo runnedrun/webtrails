@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/proto1.iml" afterPath="$PROJECT_DIR$/.idea/proto1.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" afterPath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js" afterPath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
     </list>
     <ignored path="proto1.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -82,10 +83,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="trails_controller.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="trails_controller.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/trails_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="68" column="0" selection-start="2445" selection-end="2445" vertical-scroll-proportion="0.48660713">
+            <state line="68" column="0" selection-start="2445" selection-end="2445" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Gemfile" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Gemfile">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="48" column="13" selection-start="820" selection-end="820" vertical-scroll-proportion="0.8686131">
               <folding />
             </state>
           </provider>
@@ -95,15 +105,6 @@
         <entry file="file://$PROJECT_DIR$/spec/controllers/trail_controller_spec.rb">
           <provider selected="true" editor-type-id="text-editor">
             <state line="80" column="3" selection-start="2401" selection-end="2401" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="rangy-core.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/assets/javascripts/rangy-core.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -131,7 +132,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/spec/test_statics/sameLevel6.txt" />
         <option value="$PROJECT_DIR$/lib/RemoteDocument.rb" />
         <option value="$PROJECT_DIR$/app/assets/stylesheets/application.css" />
         <option value="$PROJECT_DIR$/app/assets/stylesheets/bootstrap.css" />
@@ -147,6 +147,7 @@
         <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" />
         <option value="$PROJECT_DIR$/app/assets/javascripts/trail_display.js" />
         <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js" />
+        <option value="$PROJECT_DIR$/Gemfile" />
       </list>
     </option>
   </component>
@@ -876,11 +877,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/controllers/sites_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="116" selection-start="1724" selection-end="1724" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/notes_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="18" column="24" selection-start="707" selection-end="707" vertical-scroll-proportion="0.0" />
@@ -977,7 +973,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/trails_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="68" column="0" selection-start="2445" selection-end="2445" vertical-scroll-proportion="0.48660713">
+        <state line="68" column="0" selection-start="2445" selection-end="2445" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gemfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="48" column="13" selection-start="820" selection-end="820" vertical-scroll-proportion="0.8686131">
           <folding />
         </state>
       </provider>
