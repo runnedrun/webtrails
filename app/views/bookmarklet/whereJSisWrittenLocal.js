@@ -357,8 +357,9 @@ function makeCommentOverlay(xPos, yPos, spacing,noteContent){
         "border-radius": "4px",
         "color": "black",
         "height": String(overlayHeight)+"px",
-        "width": String(overlayWidth)+"px"
-    })
+        "width": String(overlayWidth)+"px",
+        "z-index": "9999"
+    });
 
     $(document.body).append(commentOverlay);
     $(commentOverlay).append(commentDescription);
@@ -922,14 +923,10 @@ function clickAway(e,content,commentOverlay,xPos,yPos){
 function addSaveButtonNextToNote(highlightedTextRange){
     var currentSelection = window.getSelection();
     var highlightedContent = smartGrabHighlightedText();
-    console.log(highlightedContent);
     var newNodeReadyForInsertandSaveButton = insertSaveButtonIntoNodeContent(highlightedTextRange);
-    var newNodeReadyForInsert = newNodeReadyForInsertandSaveButton[0];
-    var saveButton = newNodeReadyForInsertandSaveButton[1];
-    var nodeToHighlight = newNodeReadyForInsertandSaveButton[2];
-    var nodeToReplace = newNodeReadyForInsertandSaveButton[3];
+    var saveButton = newNodeReadyForInsertandSaveButton[0];
+    var nodeToHighlight = newNodeReadyForInsertandSaveButton[1];
 
-    nodeToReplace.parentNode.replaceChild(newNodeReadyForInsert,nodeToReplace);
     var newSelectionRange = document.createRange();
     newSelectionRange.selectNode(nodeToHighlight);
 
@@ -982,20 +979,19 @@ function insertSaveButtonIntoNodeContent(highlightedTextRange){
     saveSpan.html("Save note");
     saveSpan.css("width", "0");
 
-    var textWithButtonContainer = document.createElement("span");
     var nodeToHighlight;
     if (endContainer === startContainer){
-        nodeToHighlight = document.createTextNode(firstHalfOfNode.slice(startOffset));
         var nodeToHighlightPrefix = document.createTextNode(firstHalfOfNode.slice(0,startOffset));
-        textWithButtonContainer.appendChild(nodeToHighlightPrefix)
-
+        nodeToHighlight = document.createTextNode(firstHalfOfNode.slice(startOffset));
+        insertionNode.parentNode.replaceChild(nodeToHighlightPrefix,insertionNode)
+        $(nodeToHighlight).insertAfter(nodeToHighlightPrefix);
     }else{
         nodeToHighlight = document.createTextNode(firstHalfOfNode);
+        insertionNode.parentNode.replaceChild(nodeToHighlight,insertionNode)
     }
-    textWithButtonContainer.appendChild(nodeToHighlight);
-    textWithButtonContainer.appendChild(saveSpan[0]);
-    textWithButtonContainer.appendChild(document.createTextNode(secondHalfOfNode))
-    return [textWithButtonContainer,saveSpan,nodeToHighlight,insertionNode];
+    saveSpan.insertAfter(nodeToHighlight);
+    $(document.createTextNode(secondHalfOfNode)).insertAfter(saveSpan);
+    return [saveSpan,nodeToHighlight,insertionNode];
 }
 
 function insertAbsolutelyPositionedSaveButton(left,top){
@@ -1010,7 +1006,9 @@ function insertAbsolutelyPositionedSaveButton(left,top){
         "top" : top,
         "left" : left +5,
         "border-radius": "4px",
-        "cursor": "pointer"
+        "cursor": "pointer",
+        "z-index": "9999"
+
     });
     $(document.body).append(saveSpan)
     return saveSpan
@@ -1023,6 +1021,7 @@ function removeInlineSaveButton(e){
 }
 
 function clickAndRemoveSaveButton(e,overlayLeft,overlayTop,overLaySpacing,noteContent){
+    console.log("here");
     var commentBox = makeCommentOverlay(overlayLeft, overlayTop,overLaySpacing,noteContent);
     $(".inlineSaveButton").remove();
 }
