@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="" />
+    <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb" />
+    </list>
     <ignored path="proto1.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -108,7 +110,7 @@
       <file leaf-file-name="bookmarklets_controller.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="33" selection-start="1318" selection-end="1318" vertical-scroll-proportion="0.6651786">
+            <state line="31" column="4" selection-start="1220" selection-end="1220" vertical-scroll-proportion="0.5089286">
               <folding />
             </state>
           </provider>
@@ -135,7 +137,6 @@
         <option value="$PROJECT_DIR$/app/views/trails/show.html.erb" />
         <option value="$PROJECT_DIR$/app/controllers/notes_controller.rb" />
         <option value="$PROJECT_DIR$/spec/controllers/note_controller_spec.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb" />
         <option value="$PROJECT_DIR$/app/assets/javascripts/rangy-selectionsaverestore.js" />
         <option value="$PROJECT_DIR$/app/controllers/trails_controller.rb" />
         <option value="$PROJECT_DIR$/app/assets/stylesheets/Path_Nav.css" />
@@ -143,6 +144,7 @@
         <option value="$PROJECT_DIR$/app/assets/javascripts/trail_display.js" />
         <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js" />
         <option value="$PROJECT_DIR$/Gemfile" />
+        <option value="$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb" />
       </list>
     </option>
   </component>
@@ -975,7 +977,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="33" selection-start="1318" selection-end="1318" vertical-scroll-proportion="0.6651786">
+        <state line="31" column="4" selection-start="1220" selection-end="1220" vertical-scroll-proportion="0.5089286">
           <folding />
         </state>
       </provider>

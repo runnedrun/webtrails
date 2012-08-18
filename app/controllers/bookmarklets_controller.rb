@@ -28,7 +28,7 @@ class BookmarkletsController < ApplicationController
       jsFile = compiled_modules + File.open(File.dirname(__FILE__) + "/../views/bookmarklet/whereJSisWrittenLocal.js").read()
 
     elsif ENV["RAILS_ENV"] == "production"
-      jsFile = compiled_modules + File.open(File.dirname(__FILE__) + "/../views/bookmarklet/whereJSisWritten.js").read()
+      jsFile = compiled_modules + File.open(File.dirname(__FILE__) + "/../views/bookmarklet/whereJSisWrittenProduction.js").read()
     end
     render :js => jsFile
   end
