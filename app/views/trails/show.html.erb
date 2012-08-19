@@ -6,7 +6,7 @@
 </script>
 <div class=siteDisplayDiv>
   <%- @sites.each_with_index do |site,i| %>
-    <iframe src=http://localhost:3000/sites/<%= site.id %> id=<%= site.id %> class="siteDisplay <%= i==0 ? "currentSite":"notCurrent"  %>"></iframe>
+    <iframe src=<%= Proto1::Application::AJAX_REQUEST_URL %>/sites/<%= site.id %> id=<%= site.id %> class="siteDisplay <%= i==0 ? "currentSite":"notCurrent"  %>"></iframe>
   <%- end %>
 </div>
 

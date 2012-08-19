@@ -43,12 +43,12 @@ class SitesController < ApplicationController
                   "comment" => note.comment, "comment_location_x" => note.comment_location_x, "comment_location_y" => note.comment_location_y}
     end
 
-    puts site.archive_location
+    $stderr.puts site.archive_location
 
-    src = open(site.archive_location).read.force_encoding('utf-8')
+    #src = open(site.archive_location).read.force_encoding('utf-8')
 
 
-    render :json => {"src" => src, "notes" => notes, "site_id" => site.id, "domain" => site.domain, "url" => site.url, "title" => site.title}, :status => 200
+    render :json => {"notes" => notes, "site_id" => site.id, "domain" => site.domain, "url" => site.url, "title" => site.title}, :status => 200
   end
 
   def show
