@@ -1,10 +1,12 @@
+siteHTML = document.getElementsByTagName('html')[0].innerHTML;
+
 var trailDisplay;
 var mouseDown = 0;
 var previousNoteDisplay;
 var noteDisplayWrapper;
 var currentSiteTrailID;
-var trailID = window.trailID;
-var userID = window.userID;
+var trailID = 4;
+var userID = 3;
 var saveSiteToTrailButton;
 var deleteNoteButton;
 var previousNoteID;
@@ -12,38 +14,19 @@ String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
 };
 
-
-
-var nextId = 0;
-var rangeIntersectsNode = (typeof window.Range != "undefined"
-    && Range.prototype.intersectsNode) ?
-
-    function(range, node) {
-        return range.intersectsNode(node);
-    } :
-
-    function(range, node) {
-        var nodeRange = node.ownerDocument.createRange();
-        try {
-            nodeRange.selectNode(node);
-        } catch (e) {
-            nodeRange.selectNodeContents(node);
-        }
-
-        return range.compareBoundaryPoints(Range.END_TO_START, nodeRange) == -1 &&
-            range.compareBoundaryPoints(Range.START_TO_END, nodeRange) == 1;
-    };
+initMyBookmarklet();
 
 function initMyBookmarklet() {
     var displayHeight = "25px";
     trailDisplay = $(document.createElement("div"));
+    trailDisplay.addClass("trailDisplay");
     trailDisplay.css({
         height:displayHeight,
         width: "100%",
         position:"fixed",
         top:"0px",
         "text-align":"left",
-        "z-index": "9999",
+        "z-index": "1000",
         "padding-left":"10px",
         opacity: ".8",
         background: "#2E2E1F",
@@ -90,7 +73,7 @@ function initMyBookmarklet() {
     });
 
     $(linkToTrail).html("View Trail");
-    $(linkToTrail).attr('href',"http://www.webtrails.co/trails/"+trailID);
+    $(linkToTrail).attr('href',"http://localhost:3000/trails/"+trailID);
 
     deleteNoteButton = $(document.createElement("button"));
     deleteNoteButton.css({
@@ -179,26 +162,26 @@ function initMyBookmarklet() {
     $(document.body).keypress(verifyKeyPress);
 
     document.body.onmousedown = function() {
-        mouseDown=1;
+     mouseDown=1;
     };
     document.body.onmouseup = function() {
-        mouseDown=0;
+      mouseDown=0;
     };
 
     fetchFavicons();
 }
 
 function verifyKeyPress(e){
-    var code = (e.keyCode ? e.keyCode : e.which);
-    if (code == 27){
-        showOrHidePathDisplay();
-    }
+var code = (e.keyCode ? e.keyCode : e.which);
+if (code == 27){
+    showOrHidePathDisplay();
+}
 }
 
 function showOrHidePathDisplay(){
     if (trailDisplay.is(":hidden")){
         trailDisplay.show();
-    }
+     }
     else {
         trailDisplay.hide();
     }
@@ -208,18 +191,18 @@ function showOrHidePathDisplay(){
 function addSiteToTrail(){
     var currentSite = window.location.href;
     $.ajax({
-        url: "http://www.webtrails.co/sites",
+        url: "http://localhost:3000/sites",
         type: "post",
         crossDomain: true,
         data: {
-            "site[id]":currentSiteTrailID,
-            "site[url]":currentSite,
-            "site[trail_id]":trailID,
-            "site[title]": document.title,
-            "user": userID,
+           "site[id]":currentSiteTrailID,
+           "site[url]":currentSite,
+           "site[trail_id]":trailID,
+           "site[title]": document.title,
+           "user": userID,
             notes: "none",
             html: siteHTML
-        }
+            }
     })
 //    document.onmousemove = mouseStopDetect();
     $(document).mousedown(possibleHighlightStart);
@@ -232,7 +215,7 @@ function addSiteToTrail(){
 function fetchFavicons(){
     var currentSite = window.location.href;
     $.ajax({
-        url: "http://www.webtrails.co/trail/site_list",
+        url: "http://localhost:3000/trail/site_list",
         type: "get",
         crossDomain: true,
         data: {
@@ -278,36 +261,36 @@ function revealTrailURL(e){
         "margin-left": "2%",
         border: "solid white 2px"
     })
-    urlDisplay.html("http://www.webtrails.co/trails/"+trailID);
+    urlDisplay.html("http://localhost:3000/trails/"+trailID);
     e.target.parentNode.replaceChild(urlDisplay[0],e.target)
 }
 
 function smartGrabHighlightedText(){
-    var textObject = window.getSelection().getRangeAt(0);
-    var text = String(textObject);
+   var textObject = window.getSelection().getRangeAt(0);
+   var text = String(textObject);
 //   return text
 
-    //this is still a bit sketchy, another days work.
-    if (text[0] == " "){
-        text = ltrim(text);
-    }else{
-        var startIndex = textObject.startOffset;
-        var startContainerText = textObject.startContainer.textContent;
-        var textToAddToStartOfHighlight = ""
-        for (i=startIndex-1;i > -1; i--){
-            var character = startContainerText[i];
+   //this is still a bit sketchy, another days work.
+   if (text[0] == " "){
+       text = ltrim(text);
+   }else{
+       var startIndex = textObject.startOffset;
+       var startContainerText = textObject.startContainer.textContent;
+       var textToAddToStartOfHighlight = ""
+       for (i=startIndex-1;i > -1; i--){
+           var character = startContainerText[i];
             if (character==" ") {
                 break
             }
-            textToAddToStartOfHighlight = character + textToAddToStartOfHighlight;
-        }
-        console.log(textToAddToStartOfHighlight);
-        text = textToAddToStartOfHighlight + text;
-        console.log(text);
-    }
+           textToAddToStartOfHighlight = character + textToAddToStartOfHighlight;
+       }
+       console.log(textToAddToStartOfHighlight);
+       text = textToAddToStartOfHighlight + text;
+       console.log(text);
+   }
     if (text[text.length-1] == " "){
-        text = rtrim(text);
-    }else{
+       text = rtrim(text);
+   }else{
         var endIndex = textObject.endOffset;
         var endContainerText = textObject.endContainer.textContent;
         var textToAddToEndOfHighlight = ""
@@ -321,7 +304,7 @@ function smartGrabHighlightedText(){
         console.log(textToAddToEndOfHighlight);
         text += textToAddToEndOfHighlight;
     }
-    return text
+   return text
 }
 
 function makeCommentOverlay(xPos, yPos, spacing,noteContent){
@@ -336,8 +319,7 @@ function makeCommentOverlay(xPos, yPos, spacing,noteContent){
         "background": "#2E2E1F",
         "opacity": .9,
         "color":"white",
-        "position":"absolute",
-        "z-index": "9999"
+        "position":"absolute"
     });
     commentOverlay.css("top", topPosition+"px");
     commentOverlay.css("left", leftPosition+"px");
@@ -429,7 +411,7 @@ function moveNoteToPrevious(noteContent){
 
 function submitNote(content,comment,commentLocationX,commentLocationY){
     $.ajax({
-        url: "http://www.webtrails.co/notes",
+        url: "http://localhost:3000/notes",
         type: "post",
         crossDomain: true,
         data: {
@@ -447,7 +429,7 @@ function submitNote(content,comment,commentLocationX,commentLocationY){
 
 function deletePreviousNote(){
     $.ajax({
-        url: "http://www.webtrails.co/notes/delete",
+        url: "http://localhost:3000/notes/delete",
         type: "post",
         crossDomain: true,
         data: {
@@ -469,10 +451,10 @@ function updateNoteDisplay(data){
 }
 
 function ltrim(stringToTrim) {
-    return stringToTrim.replace(/^\s+/,"");
+	return stringToTrim.replace(/^\s+/,"");
 }
 function rtrim(stringToTrim) {
-    return stringToTrim.replace(/\s+$/,"");
+	return stringToTrim.replace(/\s+$/,"");
 }
 
 function getComputedStyleOfElement(element,stylename){
@@ -692,7 +674,7 @@ function initializeAutoResize(){
             // Makes no changes for older browsers (FireFox3- and Safari4-)
             $.fn.autosize = function () {
                 return this;
-                color:"white";   };
+          color:"white";   };
         }
 
     }(jQuery));
@@ -700,23 +682,23 @@ function initializeAutoResize(){
 
 function makePlaceholder(element){
     element.keydown(function (e) {
-            var input = $(e.target);
+        var input = $(e.target);
 
-            if (input && !input.data('data-entered')) {
-                input.data('data-entered', true);
-                input.val("");
-            }
+        if (input && !input.data('data-entered')) {
+            input.data('data-entered', true);
+            input.val("");
+        }
         }
     )
 
     // Restore the default text if empty on blur
     element.blur(function (e) {
-            var input = $(e.target);
+        var input = $(e.target);
 
-            if (input && input.val() === "") {
-                input.data('data-entered', false);
-                input.val(input.data('blank-value'));
-            }
+        if (input && input.val() === "") {
+            input.data('data-entered', false);
+            input.val(input.data('blank-value'));
+        }
         }
     )
 

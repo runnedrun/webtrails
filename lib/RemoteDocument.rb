@@ -7,15 +7,15 @@ module WebDownloader
     require 'uri'
     require 'open-uri'
 
-
     attr_reader :uri, :save_path, :bucket, :asset_path, :encoding, :src
     attr_reader :contents
     attr_reader :css_tags, :js_tags, :img_tags, :meta, :links
 
 
 
-    def initialize(uri,html)
+    def initialize(uri,html, iframe=false)
       @uri = URI(uri)
+      @is_iframe= iframe
       s3 = AWS::S3.new
       @bucket = s3.buckets["TrailsSitesProto"]
       @src = html
@@ -40,16 +40,37 @@ module WebDownloader
     #Extract resources (CSS, JS, Image files) from the parsed html document.
     #=end
     def process_contents
-      @css_tags = @contents.xpath( '//link[@rel="stylesheet"]' )
-      @js_tags = @contents.xpath('//script')
-      @img_tags = @contents.xpath( '//img[@src]' )
-      @noscript_tags = @contents.xpath( '//noscript' )
+      @contents.xpath('//base').each do |base|
+        if base.parent.node_name == "head"
+          @uri = URI(base.attribute("href"))
+        end
+        if base.parent.node_name != "iframe"
+          base.remove
+        end
+      end
+      @iframe_srcs = []
+      @contents.xpath('//iframe').each do |iframe|
+        new_uri_base = iframe.attribute("src") || @uri.to_s
+        iframe_doc = RemoteDocument.new(new_uri_base,iframe.inner_html, true)
+        iframe_contents = iframe_doc.mirror(@dir)
+        @iframe_srcs.push(iframe_contents)
+        iframe.inner_html=""
+        iframe.set_attribute("src","")
+      end
 
-      @js_tags.each { |tag| tag.remove }
+      @noscript_tags = @contents.xpath( '//noscript' )
+      @js_tags = @contents.xpath('//script')
       @noscript_tags.each { |tag| tag.remove }
+      @js_tags.each { |tag| tag.remove }
 
       css_parsed_src  = save_css_urls_to_s3(@contents.to_html,File.join(@dir,"images"),@uri)
       @contents = Nokogiri::HTML(css_parsed_src,nil,@encoding)
+
+      @css_tags = @contents.xpath( '//link[@rel="stylesheet"]' )
+      @img_tags = @contents.xpath( '//img[@src]' )
+
+
+
       # Note: meta tags and links are unused in this example
       #
       #find_meta_tags
@@ -156,35 +177,38 @@ module WebDownloader
         resp = open(url.to_s, "User-Agent" => user_agent)
         return resp.read
       rescue
-        $stderr.puts url.to_s+" returned 400 or something"
+          $stderr.puts url.to_s+" returned 400 or something"
+          return false
       end
     end
+
 
     #=begin rdoc
     #Download a remote file and save it to the specified path
     #=end
     def download_resource(url, path)
-      the_uri = URI.parse(url)
       newFile = false
-      if the_uri
-        data = html_get_site the_uri
-        if data
-          begin
-            newFile = @bucket.objects[path]
-            newFile.write(data)
-          rescue
-
+        begin
+          the_uri = URI.parse(url)
+        rescue
+          $stderr.puts("something went very wrong, a url was probably completely invalid")
+          return newFile
+        end
+        if the_uri
+          data = html_get_site the_uri
+          if data
+              newFile = @bucket.objects[path]
+              newFile.write(data)
+              return newFile
           end
         end
-      end
-      newFile
     end
 
 
     #=begin rdoc
     #Download resource for attribute 'sym' in 'tag' (e.g. :src in IMG), saving it to
     #'dir' and modifying the tag attribute to reflect the new, local location.
-    #=end
+    #=end                                                                                                                        b
     def localize(tag, sym, dir)
       delay
       url = tag[sym]
@@ -202,12 +226,10 @@ module WebDownloader
       url = tag[sym]
       resource_url = url_for(url)
       dest = localize_url(url, dir)
-
       css_string = html_get_site resource_url
       if css_string
         localized_css_string = save_css_urls_to_s3(css_string,dir,resource_url)
         newFile = false
-
         if localized_css_string
           begin
             newFile = @bucket.objects[dest]
@@ -220,7 +242,7 @@ module WebDownloader
 
         if newFile
           newFile.acl = :public_read
-          tag[sym.to_s] = newFile.public_url().to_s
+          tag[sym] = newFile.public_url().to_s
         end
       end
     end
@@ -261,18 +283,22 @@ module WebDownloader
       if beginning_of_url
         url_onward = css_string[beginning_of_url+4..-1]
         end_of_url = url_onward.index(")")
-        url = url_onward[0..end_of_url-1].gsub(/\s+/, "")
-        url = url[1..-2] if ((url[0] == "'") or (url[0] == '"'))
-        new_url = url
-        if !url.index("data:")
-          dest = localize_url(url,dir)
-          source = relative_url_for(url,css_file_url)
-          s3File = download_resource(source,dest)
+        if end_of_url != 0
+          url = url_onward[0..end_of_url-1].gsub(/\s+/, "")
+          url = url[1..-2] if ((url[0] == "'") or (url[0] == '"'))
+          new_url = url
+          if !url.index("data:")
+            dest = localize_url(url,dir)
+            source = relative_url_for(url,css_file_url)
+            s3File = download_resource(source,dest)
 
-          if s3File
-            s3File.acl = :public_read
-            new_url = s3File.public_url().to_s
+            if s3File
+              s3File.acl = :public_read
+              new_url = s3File.public_url().to_s
+            end
           end
+        else
+          new_url = ""
         end
         first_half = css_string[0..beginning_of_url+3]
         second_half = save_css_urls_to_s3(url_onward[end_of_url..-1],dir,css_file_url)
@@ -303,16 +329,21 @@ module WebDownloader
 
       @img_tags.each { |tag| localize(tag, :src, File.join(dir, 'images')) }
       @css_tags.each { |tag| localize_css_recursively(tag, :href, File.join(dir, 'css')) }
+      @contents.xpath('//iframe').each_with_index {|iframe,i| iframe.inner_html = @iframe_srcs[i] }
 
-      @save_path = File.join(dir, File.basename(uri.to_s))
-      @save_path += '.html' if @save_path !~ /\.((html?)|(txt))$/
-      #File.open(@save_path, 'w') { |f| f.write(@contents.to_html) }
 
-      newFile = @bucket.objects[@save_path]
-      newFile.write(@contents.to_html.force_encoding(@encoding))
-      newFile.acl = :public_read
-      @asset_path = newFile.public_url().to_s
-      return true
+      if !@is_iframe
+        @save_path = File.join(dir, File.basename(uri.to_s))
+        @save_path += '.html' if @save_path !~ /\.((html?)|(txt))$/
+
+        newFile = @bucket.objects[@save_path]
+        newFile.write(@contents.to_html.force_encoding(@encoding))
+        newFile.acl = :public_read
+        @asset_path = newFile.public_url().to_s
+        return true
+      else
+        return @contents.to_html
+      end
     end
   end
 end

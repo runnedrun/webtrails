@@ -1,0 +1,12 @@
+{
+    "name": "Webtrails",
+    "version": "1.0",
+    "manifest_version": 2,
+    "description": "The chrome extension for webtrails",
+    "browser_action": {
+        "default_icon": "icon.png"
+    },
+    "background":{
+        "scripts": ["chrome_extension_js/whereJSisWrittenLocalChrome.js",'http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js']
+    }
+}

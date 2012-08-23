@@ -44,7 +44,7 @@ describe SitesController do
 
       @html_url = File.join(Rails.root, "spec/test_statics/test.html")
       @html = File.read(@html_url)
-      @only_url_in_the_doc
+      @only_url_in_the_doc = "www.onlyurl.com"
 
       setup_aws_mocks
 
@@ -76,27 +76,28 @@ describe SitesController do
       end
 
       it "should correctly replace references to external resources" do
-        @file_mock.should_receive(:write).exactly(8).times
+        @file_mock.should_receive(:write).exactly(7).times
+        @file_mock.should_receive(:write).exactly(1) do |args|
+          $stderr.puts(args)
+          args.scan(/#{@only_url_in_the_doc}/).length.should == 6
+        end
         make_create_request
-        response.body.scan(/#{@only_url_in_the_doc}/).length.should == 5
       end
 
       it "should remove all script tags" do
-        @file_mock.should_receive(:write).exactly(8).times
+        @file_mock.should_receive(:write).exactly(7).times
+        @file_mock.should_receive(:write).exactly(1) do |args|
+          args.scan(/thisShouldNotExist/).length.should == 0
+          args.scan(/this should get cut out.  fo sho/).length.should == 0
+        end
         make_create_request
-        response.body.scan(/thisShouldNotExist/).length.should == 0
-        response.body.scan(/this should get cut out.  fo sho/).length.should == 0
       end
 
       it "should properly save iframes recursively" do
-        @file_mock.should_receive(:write).exactly(2).times
         @file_mock.should_receive(:write) do |args|
           args.should include "same level 5 should save"
         end
-        @file_mock.should_receive(:write).exactly(5).times
-        @file_mock.should_receive(:write).exactly(1) do |args|
-          args.scan(/look for me iframe/).length.should == 1
-        end
+        @file_mock.should_receive(:write).exactly(7).times
         make_create_request
       end
 
@@ -107,6 +108,8 @@ describe SitesController do
         end
         make_create_request
       end
+
+
 
     end
   end

@@ -2,8 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/sites_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/sites_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/trails/show.html.erb" afterPath="$PROJECT_DIR$/app/views/trails/show.html.erb" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_css/trail_tool_bar.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/whereJSisWrittenLocalChrome.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/whereJSisWrittenProductionChrome.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/manifest.json" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/test_statics/sameLevel7.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/proto1.iml" afterPath="$PROJECT_DIR$/.idea/proto1.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js" afterPath="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/RemoteDocument.rb" afterPath="$PROJECT_DIR$/lib/RemoteDocument.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/controllers/site_controller_spec.rb" afterPath="$PROJECT_DIR$/spec/controllers/site_controller_spec.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/test_statics/test.html" afterPath="$PROJECT_DIR$/spec/test_statics/test.html" />
     </list>
     <ignored path="proto1.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -25,28 +36,64 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="whereJSisWrittenProduction.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js">
+      <file leaf-file-name="RemoteDocument.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/RemoteDocument.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="0" selection-start="86" selection-end="86" vertical-scroll-proportion="0.0">
+            <state line="67" column="86" selection-start="1984" selection-end="1984" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="new_bookmarklet.html" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/new_bookmarklet.html">
+      <file leaf-file-name="sites_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/sites_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0">
+            <state line="45" column="12" selection-start="1638" selection-end="1638" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="trail_display.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/assets/javascripts/trail_display.js">
+      <file leaf-file-name="bucket.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.rvm/gems/ruby-1.9.3-p194/gems/aws-sdk-1.5.6/lib/aws/s3/bucket.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="58" column="9" selection-start="1415" selection-end="1415" vertical-scroll-proportion="0.0">
+            <state line="175" column="0" selection-start="5219" selection-end="5219" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="site_controller_spec.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/spec/controllers/site_controller_spec.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="100" column="39" selection-start="3276" selection-end="3276" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="manifest.json" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/manifest.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="9" column="8" selection-start="226" selection-end="226" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="whereJSisWrittenLocalChrome.js" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/whereJSisWrittenLocalChrome.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="45" column="29" selection-start="1185" selection-end="1185" vertical-scroll-proportion="0.7835498">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="trail_tool_bar.css" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_css/trail_tool_bar.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="8" column="51" selection-start="165" selection-end="165" vertical-scroll-proportion="-2.4">
               <folding />
             </state>
           </provider>
@@ -55,61 +102,25 @@
       <file leaf-file-name="trails_controller.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/trails_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="74" column="24" selection-start="2671" selection-end="2708" vertical-scroll-proportion="0.0">
+            <state line="80" column="75" selection-start="2375" selection-end="3069" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="show.html.erb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/trails/show.html.erb">
+      <file leaf-file-name="test.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/spec/test_statics/test.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="113" selection-start="644" selection-end="644" vertical-scroll-proportion="-8.791667">
+            <state line="42" column="68" selection-start="1424" selection-end="1424" vertical-scroll-proportion="-12.857142">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="routes.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/routes.rb">
+      <file leaf-file-name="oneLevel.css" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/spec/test_statics/one_level_deep/oneLevel.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="67" column="15" selection-start="2178" selection-end="2178" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Gemfile" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Gemfile">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="32" column="90" selection-start="552" selection-end="552" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="trail_controller_spec.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/spec/controllers/trail_controller_spec.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="80" column="3" selection-start="2401" selection-end="2401" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="bookmarklets_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="4" selection-start="919" selection-end="919" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="sites_controller.rb" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/controllers/sites_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="45" column="12" selection-start="1638" selection-end="1638" vertical-scroll-proportion="0.4640235">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -128,22 +139,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/lib/RemoteDocument.rb" />
-        <option value="$PROJECT_DIR$/app/assets/stylesheets/application.css" />
-        <option value="$PROJECT_DIR$/app/assets/stylesheets/bootstrap.css" />
-        <option value="$PROJECT_DIR$/spec/controllers/site_controller_spec.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/notes_controller.rb" />
-        <option value="$PROJECT_DIR$/spec/controllers/note_controller_spec.rb" />
-        <option value="$PROJECT_DIR$/app/assets/javascripts/rangy-selectionsaverestore.js" />
-        <option value="$PROJECT_DIR$/app/controllers/trails_controller.rb" />
-        <option value="$PROJECT_DIR$/app/assets/stylesheets/Path_Nav.css" />
-        <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" />
-        <option value="$PROJECT_DIR$/app/assets/javascripts/trail_display.js" />
         <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js" />
         <option value="$PROJECT_DIR$/Gemfile" />
-        <option value="$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb" />
-        <option value="$PROJECT_DIR$/app/views/trails/show.html.erb" />
-        <option value="$PROJECT_DIR$/app/controllers/sites_controller.rb" />
+        <option value="$PROJECT_DIR$/spec/test_statics/sameLevel6.txt" />
+        <option value="$PROJECT_DIR$/spec/test_statics/sameLevel7.txt" />
+        <option value="$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js" />
+        <option value="$USER_HOME$/.rvm/gems/ruby-1.9.3-p194/gems/aws-sdk-1.5.6/lib/aws/core/model.rb" />
+        <option value="$USER_HOME$/.rvm/gems/ruby-1.9.3-p194/gems/aws-sdk-1.5.6/lib/aws/s3/object_collection.rb" />
+        <option value="$USER_HOME$/.rvm/gems/ruby-1.9.3-p194/gems/aws-sdk-1.5.6/lib/aws/s3/s3_object.rb" />
+        <option value="$USER_HOME$/.rvm/gems/ruby-1.9.3-p194/gems/aws-sdk-1.5.6/lib/aws/s3/bucket.rb" />
+        <option value="$PROJECT_DIR$/spec/test_statics/test.html" />
+        <option value="$PROJECT_DIR$/lib/RemoteDocument.rb" />
+        <option value="$PROJECT_DIR$/spec/controllers/site_controller_spec.rb" />
+        <option value="$PROJECT_DIR$/app/assets/javascripts/chrome_extension_js/whereJSisWrittenLocalChrome.js" />
+        <option value="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/manifest.json" />
+        <option value="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/whereJSisWrittenLocalChrome.js" />
+        <option value="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_css/trail_tool_bar.css" />
       </list>
     </option>
   </component>
@@ -192,16 +203,6 @@
             <PATH_ELEMENT USER_OBJECT="Root">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="RailsProjectView">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="proto1" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -266,11 +267,141 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="spec" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test_statics" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="one_level_deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proto1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proto1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="app" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proto1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proto1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bookmarklet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proto1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proto1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bookmarklet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="chrome_extension" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proto1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proto1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bookmarklet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="chrome_extension" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="chrome_extension_js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proto1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proto1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bookmarklet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="chrome_extension" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="chrome_extension_css" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -352,6 +483,16 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="RailsProjectView">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proto1" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -360,7 +501,49 @@
     <property name="RakeTaksPopup.undocumentedIncluded" value="false" />
     <property name="GoToClass.includeJavaFiles" value="false" />
   </component>
-  <component name="RunManager" selected="RSpec.NotesController the delete action  should delete the note with the given id">
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/assets/javascripts/chrome_extension_js" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension" />
+      <recent name="$PROJECT_DIR$/spec/test_statics" />
+    </key>
+  </component>
+  <component name="RunManager" selected="RSpec.SitesController the create method with the correct user should properly save iframes recursively">
+    <configuration default="false" name="SitesController the create method with the correct user should properly save iframes recursively" type="RSpecRunConfigurationType" factoryName="RSpec" temporary="true">
+      <predefined_log_file id="RUBY_RSPEC" enabled="true" />
+      <module name="proto1" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$PROJECT_DIR$" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
+      <envs>
+        <env name="RAILS_ENV" value="test" />
+        <env name="JRUBY_OPTS" value="-X+O" />
+      </envs>
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$PROJECT_DIR$/spec/controllers/site_controller_spec.rb" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_RUNNER_PATH" VALUE="" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/*_spec.rb" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_EXAMPLE_NAME" VALUE="SitesController the create method with the correct user should properly save iframes recursively" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_ARGS" VALUE="" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_VERSION" VALUE="" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="USE_CUSTOM_SPEC_RUNNER" VALUE="false" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="FULL_BACKTRACE" VALUE="false" />
+      <RunnerSettings RunnerId="RubyRunner" />
+      <ConfigurationWrapper RunnerId="RubyRunner" />
+      <method />
+    </configuration>
     <configuration default="false" name="SitesController the create method with the correct user should remove all script tags" type="RSpecRunConfigurationType" factoryName="RSpec" temporary="true">
       <predefined_log_file id="RUBY_RSPEC" enabled="true" />
       <module name="proto1" />
@@ -394,7 +577,7 @@
       <ConfigurationWrapper RunnerId="RubyRunner" />
       <method />
     </configuration>
-    <configuration default="false" name="SitesController the create method with the correct user should save url() tags correctly" type="RSpecRunConfigurationType" factoryName="RSpec" temporary="true">
+    <configuration default="false" name="SitesController the create method with the correct user should correctly replace references to external resources" type="RSpecRunConfigurationType" factoryName="RSpec" temporary="true">
       <predefined_log_file id="RUBY_RSPEC" enabled="true" />
       <module name="proto1" />
       <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
@@ -416,7 +599,7 @@
       <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$PROJECT_DIR$/spec/controllers/site_controller_spec.rb" />
       <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_RUNNER_PATH" VALUE="" />
       <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/*_spec.rb" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_EXAMPLE_NAME" VALUE="SitesController the create method with the correct user should save url() tags correctly" />
+      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_EXAMPLE_NAME" VALUE="SitesController the create method with the correct user should correctly replace references to external resources" />
       <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
       <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_ARGS" VALUE="" />
       <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_VERSION" VALUE="" />
@@ -460,68 +643,22 @@
       <ConfigurationWrapper RunnerId="RubyRunner" />
       <method />
     </configuration>
-    <configuration default="false" name="SitesController async_site_load should respond with the html for a site" type="RSpecRunConfigurationType" factoryName="RSpec" temporary="true">
-      <predefined_log_file id="RUBY_RSPEC" enabled="true" />
+    <configuration default="false" name="RemoteDocument" type="RubyRunConfigurationType" factoryName="Ruby" temporary="true">
       <module name="proto1" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$PROJECT_DIR$" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs>
-        <env name="RAILS_ENV" value="test" />
-        <env name="JRUBY_OPTS" value="-X+O" />
-      </envs>
+      <RUBY_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <RUBY_RUN_CONFIG NAME="WORK DIR" VALUE="$PROJECT_DIR$/lib" />
+      <RUBY_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RUBY_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RUBY_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
       <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
         <COVERAGE_PATTERN ENABLED="true">
           <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
         </COVERAGE_PATTERN>
       </EXTENSION>
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$PROJECT_DIR$/spec/controllers/site_controller_spec.rb" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_RUNNER_PATH" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/*_spec.rb" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_EXAMPLE_NAME" VALUE="SitesController async_site_load should respond with the html for a site" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_ARGS" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_VERSION" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="USE_CUSTOM_SPEC_RUNNER" VALUE="false" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="FULL_BACKTRACE" VALUE="false" />
-      <RunnerSettings RunnerId="RubyRunner" />
-      <ConfigurationWrapper RunnerId="RubyRunner" />
-      <method />
-    </configuration>
-    <configuration default="false" name="NotesController the delete action  should delete the note with the given id" type="RSpecRunConfigurationType" factoryName="RSpec" temporary="true">
-      <predefined_log_file id="RUBY_RSPEC" enabled="true" />
-      <module name="proto1" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$PROJECT_DIR$" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs>
-        <env name="RAILS_ENV" value="test" />
-        <env name="JRUBY_OPTS" value="-X+O" />
-      </envs>
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
-      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
-        <COVERAGE_PATTERN ENABLED="true">
-          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
-        </COVERAGE_PATTERN>
-      </EXTENSION>
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$PROJECT_DIR$/spec/controllers/note_controller_spec.rb" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_RUNNER_PATH" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/*_spec.rb" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_EXAMPLE_NAME" VALUE="NotesController the delete action  should delete the note with the given id" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_ARGS" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_VERSION" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="USE_CUSTOM_SPEC_RUNNER" VALUE="false" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="FULL_BACKTRACE" VALUE="false" />
+      <RUBY_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$PROJECT_DIR$/lib/RemoteDocument.rb" />
+      <RUBY_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="" />
       <RunnerSettings RunnerId="RubyRunner" />
       <ConfigurationWrapper RunnerId="RubyRunner" />
       <method />
@@ -751,20 +888,23 @@
       <method />
     </configuration>
     <list size="9">
-      <item index="0" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should remove all script tags" />
-      <item index="1" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should save url() tags correctly" />
-      <item index="2" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should remove all the noscript tags" />
-      <item index="3" class="java.lang.String" itemvalue="RSpec.SitesController async_site_load should respond with the html for a site" />
-      <item index="4" class="java.lang.String" itemvalue="RSpec.NotesController the delete action  should delete the note with the given id" />
-      <item index="5" class="java.lang.String" itemvalue="Rake.test" />
-      <item index="6" class="java.lang.String" itemvalue="Rake.spec" />
-      <item index="7" class="java.lang.String" itemvalue="Rails.Production: proto1" />
-      <item index="8" class="java.lang.String" itemvalue="Rails.Development: proto1" />
+      <item index="0" class="java.lang.String" itemvalue="Rake.test" />
+      <item index="1" class="java.lang.String" itemvalue="Rake.spec" />
+      <item index="2" class="java.lang.String" itemvalue="Rails.Production: proto1" />
+      <item index="3" class="java.lang.String" itemvalue="Rails.Development: proto1" />
+      <item index="4" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should properly save iframes recursively" />
+      <item index="5" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should remove all script tags" />
+      <item index="6" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should correctly replace references to external resources" />
+      <item index="7" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should remove all the noscript tags" />
+      <item index="8" class="java.lang.String" itemvalue="Ruby.RemoteDocument" />
     </list>
     <recent_temporary>
-      <list size="2">
-        <item index="0" class="java.lang.String" itemvalue="RSpec.NotesController the delete action  should delete the note with the given id" />
-        <item index="1" class="java.lang.String" itemvalue="RSpec.SitesController async_site_load should respond with the html for a site" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should properly save iframes recursively" />
+        <item index="1" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should correctly replace references to external resources" />
+        <item index="2" class="java.lang.String" itemvalue="Ruby.RemoteDocument" />
+        <item index="3" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should remove all the noscript tags" />
+        <item index="4" class="java.lang.String" itemvalue="RSpec.SitesController the create method with the correct user should remove all script tags" />
       </list>
     </recent_temporary>
   </component>
@@ -802,19 +942,19 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32934928" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32934928" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.6719788" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3457676" sideWeight="0.0" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3457676" sideWeight="0.6706507" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32934928" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3251928" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31341302" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32934928" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -873,112 +1013,112 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/spec/controllers/site_controller_spec.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="157" column="46" selection-start="5431" selection-end="5431" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/spec/controllers/note_controller_spec.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="4" selection-start="1377" selection-end="1377" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/assets/javascripts/rangy-selectionsaverestore.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="128" column="50" selection-start="4736" selection-end="4736" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/assets/javascripts/rangy-core.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/Path_Nav.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="157" column="76" selection-start="2407" selection-end="2407" vertical-scroll-proportion="0.0">
+        <state line="339" column="25" selection-start="9512" selection-end="9512" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenLocal.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="35460" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#24168#24252#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/whereJSisWrittenProduction.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="0" selection-start="86" selection-end="86" vertical-scroll-proportion="0.0">
+        <state line="221" column="45" selection-start="5861" selection-end="5861" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/new_bookmarklet.html">
+    <entry file="file://$USER_HOME$/.rvm/rubies/ruby-1.9.3-p194/lib/ruby/1.9.1/rexml/text.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="290" column="8" selection-start="10080" selection-end="10080" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/spec/controllers/trail_controller_spec.rb">
+    <entry file="file://$USER_HOME$/.rvm/gems/ruby-1.9.3-p194/gems/aws-sdk-1.5.6/lib/aws/core/model.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="3" selection-start="2401" selection-end="2401" vertical-scroll-proportion="0.0">
+        <state line="40" column="10" selection-start="1326" selection-end="1326" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Gemfile">
+    <entry file="file://$USER_HOME$/.rvm/gems/ruby-1.9.3-p194/gems/aws-sdk-1.5.6/lib/aws/s3/s3_object.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="90" selection-start="552" selection-end="552" vertical-scroll-proportion="0.0">
+        <state line="327" column="11" selection-start="11782" selection-end="11782" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/bookmarklets_controller.rb">
+    <entry file="file://$USER_HOME$/.rvm/gems/ruby-1.9.3-p194/gems/aws-sdk-1.5.6/lib/aws/s3/object_collection.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="4" selection-start="919" selection-end="919" vertical-scroll-proportion="0.0">
+        <state line="84" column="21" selection-start="2627" selection-end="2627" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/routes.rb">
+    <entry file="file://$USER_HOME$/.rvm/gems/ruby-1.9.3-p194/gems/aws-sdk-1.5.6/lib/aws/s3/bucket.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="67" column="15" selection-start="2178" selection-end="2178" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/trails_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="74" column="24" selection-start="2671" selection-end="2708" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/trails/show.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="113" selection-start="644" selection-end="644" vertical-scroll-proportion="-8.791667">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/assets/javascripts/trail_display.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="9" selection-start="1415" selection-end="1415" vertical-scroll-proportion="0.0">
+        <state line="175" column="0" selection-start="5219" selection-end="5219" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/sites_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="12" selection-start="1638" selection-end="1638" vertical-scroll-proportion="0.4640235">
+        <state line="45" column="12" selection-start="1638" selection-end="1638" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/spec/test_statics/test.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="68" selection-start="1424" selection-end="1424" vertical-scroll-proportion="-12.857142">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/RemoteDocument.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="67" column="86" selection-start="1984" selection-end="1984" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/spec/controllers/site_controller_spec.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="100" column="39" selection-start="3276" selection-end="3276" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/trails_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="80" column="75" selection-start="2375" selection-end="3069" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/manifest.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="8" selection-start="226" selection-end="226" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_css/trail_tool_bar.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="51" selection-start="165" selection-end="165" vertical-scroll-proportion="-2.4">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/spec/test_statics/one_level_deep/oneLevel.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/whereJSisWrittenLocalChrome.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="29" selection-start="1185" selection-end="1185" vertical-scroll-proportion="0.7835498">
           <folding />
         </state>
       </provider>
