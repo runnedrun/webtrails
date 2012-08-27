@@ -5,14 +5,14 @@ gem 'rails', '3.1.1'
 # Bundle edge Rails instead:
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
-group :production, :staging do
-  gem "pg"
-end
+#group :production, :staging do
+#
+#end
 
 
-group :development, :testing do
-  gem 'sqlite3'
-end
+#group :development, :testing do
+#  gem 'sqlite3'
+#end
 
 
 # Gems used only for assets and not required
@@ -23,6 +23,7 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
+gem "pg"
 gem "thin"
 gem 'jquery-rails'
 gem "rb-readline"
@@ -30,6 +31,8 @@ gem 'faker'
 gem 'devise'
 gem 'hpricot'
 gem 'nokogiri'
+gem "queue_classic", "2.0.1"
+
 
 
 

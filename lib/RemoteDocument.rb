@@ -26,7 +26,9 @@ module WebDownloader
     #Download, parse, and save the RemoteDocument and all resources (JS, CSS,
     #images) in the specified directory.
     #=end
-    def mirror(dir)
+    def mirror(dir,shallow_save=false)
+      @shallow_save = shallow_save
+      $stderr.puts shallow_save
       @dir = dir
       source = @src
       @encoding = source.encoding.to_s
@@ -52,7 +54,7 @@ module WebDownloader
       @contents.xpath('//iframe').each do |iframe|
         new_uri_base = iframe.attribute("src") || @uri.to_s
         iframe_doc = RemoteDocument.new(new_uri_base,iframe.inner_html, true)
-        iframe_contents = iframe_doc.mirror(@dir)
+        iframe_contents = iframe_doc.mirror(@dir,@shallow_save)
         @iframe_srcs.push(iframe_contents)
         iframe.inner_html=""
         iframe.set_attribute("src","")
@@ -204,46 +206,57 @@ module WebDownloader
         end
     end
 
+    def generate_AWS_URL(dir)
+      "https://s3.amazonaws.com/TrailsSitesProto/"+dir
+    end
 
     #=begin rdoc
     #Download resource for attribute 'sym' in 'tag' (e.g. :src in IMG), saving it to
     #'dir' and modifying the tag attribute to reflect the new, local location.
     #=end                                                                                                                        b
     def localize(tag, sym, dir)
-      delay
       url = tag[sym]
       resource_url = url_for(url)
       dest = localize_url(url, dir)
-      s3File = download_resource(resource_url, dest)
-      if s3File
-        s3File.acl = :public_read
-        tag[sym.to_s] = s3File.public_url().to_s
+      if !@shallow_save
+        delay
+        s3File = download_resource(resource_url, dest)
+        if s3File
+          s3File.acl = :public_read
+          tag[sym.to_s] = s3File.public_url().to_s
+        end
+      else
+        tag[sym.to_s] = generate_AWS_URL(dest)
       end
     end
 
     def localize_css_recursively(tag, sym, dir)
-      delay
       url = tag[sym]
       resource_url = url_for(url)
       dest = localize_url(url, dir)
-      css_string = html_get_site resource_url
-      if css_string
-        localized_css_string = save_css_urls_to_s3(css_string,dir,resource_url)
-        newFile = false
-        if localized_css_string
-          begin
-            newFile = @bucket.objects[dest]
-            newFile.write(localized_css_string)
-          rescue
-            newFile = false
-            $stderr.puts resource_url.to_s+"had a problem saving"
+      if !@shallow_save
+        delay
+        css_string = html_get_site resource_url
+        if css_string
+          localized_css_string = save_css_urls_to_s3(css_string,dir,resource_url)
+          newFile = false
+          if localized_css_string
+            begin
+              newFile = @bucket.objects[dest]
+              newFile.write(localized_css_string)
+            rescue
+              newFile = false
+              $stderr.puts resource_url.to_s+"had a problem saving"
+            end
+          end
+
+          if newFile
+            newFile.acl = :public_read
+            tag[sym] = newFile.public_url().to_s
           end
         end
-
-        if newFile
-          newFile.acl = :public_read
-          tag[sym] = newFile.public_url().to_s
-        end
+      else
+        tag[sym] = generate_AWS_URL(dest)
       end
     end
 
@@ -264,11 +277,15 @@ module WebDownloader
         url = everything_after_url_start[0...url_end]
         localized_url = url_for(url)
         dest = localize_url(url,dir)
-        s3File = download_resource(localized_url,dest)
         new_url = url
-        if s3File
-          s3File.acl = :public_read
-          new_url = s3File.public_url().to_s
+        if !@shallow_save
+          s3File = download_resource(localized_url,dest)
+          if s3File
+            s3File.acl = :public_read
+            new_url = s3File.public_url().to_s
+          end
+        else
+          new_url= generate_AWS_URL(dest)
         end
         new_string = everything_before_url + new_url + everything_after_url
         return new_string
@@ -289,12 +306,16 @@ module WebDownloader
           new_url = url
           if !url.index("data:")
             dest = localize_url(url,dir)
-            source = relative_url_for(url,css_file_url)
-            s3File = download_resource(source,dest)
+            if !@shallow_save
+              source = relative_url_for(url,css_file_url)
+              s3File = download_resource(source,dest)
 
-            if s3File
-              s3File.acl = :public_read
-              new_url = s3File.public_url().to_s
+              if s3File
+                s3File.acl = :public_read
+                new_url = s3File.public_url().to_s
+              end
+            else
+              new_url = generate_AWS_URL(dest)
             end
           end
         else
@@ -330,7 +351,6 @@ module WebDownloader
       @img_tags.each { |tag| localize(tag, :src, File.join(dir, 'images')) }
       @css_tags.each { |tag| localize_css_recursively(tag, :href, File.join(dir, 'css')) }
       @contents.xpath('//iframe').each_with_index {|iframe,i| iframe.inner_html = @iframe_srcs[i] }
-
 
       if !@is_iframe
         @save_path = File.join(dir, File.basename(uri.to_s))

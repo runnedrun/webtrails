@@ -25,7 +25,8 @@ class SitesController < ApplicationController
   def create
     remote = RemoteDocument.new(params[:site][:url],params[:html])
     path = "/"+params[:site][:trail_id]
-    remote.mirror(path)
+    shallow_save = params[:shallow_save]
+    remote.mirror(path,shallow_save)
 
     site = Site.find(params[:site][:id])
     site.update_attributes(params[:site].merge({:archive_location => remote.asset_path.to_s, :html_encoding => remote.encoding}))

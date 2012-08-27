@@ -1,15 +1,17 @@
-siteHTML = document.getElementsByTagName('html')[0].innerHTML;
+var trailDisplay,
+    mouseDown = 0,
+    previousNoteDisplay,
+    noteDisplayWrapper,
+    currentSiteTrailID,
+    trailID = 1,
+    userID = 1,
+    saveSiteToTrailButton,
+    deleteNoteButton,
+    previousNoteID,
+    siteHTML = document.getElementsByTagName('html')[0].innerHTML;
+    savedAlready = false;
 
-var trailDisplay;
-var mouseDown = 0;
-var previousNoteDisplay;
-var noteDisplayWrapper;
-var currentSiteTrailID;
-var trailID = 4;
-var userID = 3;
-var saveSiteToTrailButton;
-var deleteNoteButton;
-var previousNoteID;
+
 String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
 };
@@ -19,7 +21,6 @@ initMyBookmarklet();
 function initMyBookmarklet() {
     var displayHeight = "25px";
     trailDisplay = $(document.createElement("div"));
-    trailDisplay.addClass("trailDisplay");
     trailDisplay.css({
         height:displayHeight,
         width: "100%",
@@ -31,7 +32,8 @@ function initMyBookmarklet() {
         opacity: ".8",
         background: "#2E2E1F",
         color: "white",
-        "line-height": "25px"
+        "line-height": "25px",
+        "display":"none"
     });
 
     noteDisplayWrapper = $(document.createElement("div"));
@@ -41,7 +43,7 @@ function initMyBookmarklet() {
         "float":"right",
         "margin-left": "3%",
         "border-left": "solid",
-        "opacity": "0",
+        "opacity": "1",
         overflow: "hidden"
     });
     noteDisplayWrapper.addClass("noteDisplayWrapper");
@@ -122,13 +124,15 @@ function initMyBookmarklet() {
     $(document.getElementsByTagName("head")[0]).append(cssStyle);
     cssStyle.html(".siteFavicon {" +
         "padding-right: 2.5px;" +
-        "padding-top: 2.5px;" +
         "float: left;" +
         "overflow: hidden;" +
         "display: block;" +
+        "height: 20px;" +
+        "border: none;" +
         "}" +
         ".siteFavicon img { " +
         "height: 20px;" +
+        "margin: 0" +
         "}"
     );
 
@@ -147,28 +151,29 @@ function initMyBookmarklet() {
     shareTrailButton.click(revealTrailURL);
 
     $(trailDisplay).append(saveSiteToTrailButton);
-    saveSiteToTrailButton.click(addSiteToTrail);
+    saveSiteToTrailButton.click(saveSiteToTrail);
 
     $(trailDisplay).append(linkToTrailWrapper);
     $(linkToTrailWrapper).append(linkToTrail);
 
     initializeAutoResize();
     initializeJqueryEllipsis();
-    rangy.init();
+//    rangy.init();
     previousNoteDisplay.ellipsis();
 
     //document bindings
 
-    $(document.body).keypress(verifyKeyPress);
+    document.onkeydown = verifyKeyPress;
 
     document.body.onmousedown = function() {
-     mouseDown=1;
+        mouseDown=1;
     };
     document.body.onmouseup = function() {
-      mouseDown=0;
+        mouseDown=0;
     };
 
     fetchFavicons();
+    $(document).mousedown(possibleHighlightStart);
 }
 
 function verifyKeyPress(e){
@@ -188,7 +193,9 @@ function showOrHidePathDisplay(){
 
 }
 
-function addSiteToTrail(){
+
+
+function saveSiteToTrail(){
     var currentSite = window.location.href;
     $.ajax({
         url: "http://localhost:3000/sites",
@@ -200,16 +207,19 @@ function addSiteToTrail(){
            "site[trail_id]":trailID,
            "site[title]": document.title,
            "user": userID,
-            notes: "none",
-            html: siteHTML
+            "notes": "none",
+            "html": siteHTML,
+            "shallow_save": savedAlready
             }
-    })
+    });
 //    document.onmousemove = mouseStopDetect();
-    $(document).mousedown(possibleHighlightStart);
-    saveSiteToTrailButton.attr("disabled","disabled");
-    saveSiteToTrailButton.html("Site saved");
-    noteDisplayWrapper.fadeTo(200,1);
-    deleteNoteButton.fadeTo(200,1);
+    if (!savedAlready){
+        savedAlready = true;
+        saveSiteToTrailButton.attr("disabled","disabled");
+        saveSiteToTrailButton.html("Site saved");
+//        noteDisplayWrapper.fadeTo(200,1);
+        deleteNoteButton.fadeTo(200,1);
+    }
 }
 
 function fetchFavicons(){
@@ -284,9 +294,7 @@ function smartGrabHighlightedText(){
             }
            textToAddToStartOfHighlight = character + textToAddToStartOfHighlight;
        }
-       console.log(textToAddToStartOfHighlight);
        text = textToAddToStartOfHighlight + text;
-       console.log(text);
    }
     if (text[text.length-1] == " "){
        text = rtrim(text);
@@ -301,7 +309,6 @@ function smartGrabHighlightedText(){
             }
             textToAddToEndOfHighlight += character;
         }
-        console.log(textToAddToEndOfHighlight);
         text += textToAddToEndOfHighlight;
     }
    return text
@@ -448,6 +455,7 @@ function updateNoteDisplay(data){
         moveNoteToPrevious(data.content);
         deleteNoteButton.attr("disabled","");
     }
+    saveSiteToTrail()
 }
 
 function ltrim(stringToTrim) {
