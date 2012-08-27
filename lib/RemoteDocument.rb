@@ -27,6 +27,7 @@ module WebDownloader
     #images) in the specified directory.
     #=end
     def mirror(dir,shallow_save=false)
+      $stderr.puts "saving now"
       @shallow_save = shallow_save
       $stderr.puts shallow_save
       @dir = dir
@@ -347,7 +348,6 @@ module WebDownloader
       # remove HTML BASE tag if it exists
       @contents.xpath('//base').each { |t| t.remove }
       # save resources
-
       @img_tags.each { |tag| localize(tag, :src, File.join(dir, 'images')) }
       @css_tags.each { |tag| localize_css_recursively(tag, :href, File.join(dir, 'css')) }
       @contents.xpath('//iframe').each_with_index {|iframe,i| iframe.inner_html = @iframe_srcs[i] }

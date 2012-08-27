@@ -23,16 +23,24 @@ class SitesController < ApplicationController
   end
 
   def create
-    remote = RemoteDocument.new(params[:site][:url],params[:html])
-    path = "/"+params[:site][:trail_id]
+    html = params[:html]
+    url = params[:site][:url]
+    trail_id = params[:site][:trail_id]
     shallow_save = params[:shallow_save]
-    remote.mirror(path,shallow_save)
 
-    site = Site.find(params[:site][:id])
-    site.update_attributes(params[:site].merge({:archive_location => remote.asset_path.to_s, :html_encoding => remote.encoding}))
-    site.build_notes(params[:notes])
-
-    render :json => "done", :status => 200
+    if shallow_save
+      site_id = params[:site][:id]
+    else
+      site_id = Site.create(params[:site]).id
+    end
+    $stderr.puts "\n"
+    $stderr.puts "herere before enqueue"
+    $stderr.puts "\n"
+    QC.enqueue("Site.save_site_to_aws",html,url,trail_id,shallow_save,site_id)
+    $stderr.puts "\n"
+    $stderr.puts "herere after enqueue"
+    $stderr.puts "\n"
+    render :json => {:site_id => site_id}, :status => 200
   end
 
   def async_site_load
@@ -57,10 +65,6 @@ class SitesController < ApplicationController
     @html = open(site.archive_location).read.force_encoding(site.html_encoding).html_safe
     render :layout => false, :text => @html
   end
-
-  private
-
-  include WebDownloader
 
 end
 

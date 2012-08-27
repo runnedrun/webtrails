@@ -16,7 +16,12 @@ String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
 };
 
+
 initMyBookmarklet();
+
+function getCurrentSiteHTML(){
+    return document.getElementsByTagName('html')[0].innerHTML;
+}
 
 function initMyBookmarklet() {
     var displayHeight = "25px";
@@ -193,9 +198,12 @@ function showOrHidePathDisplay(){
 
 }
 
+function setSiteID(response){
+    currentSiteTrailID = response.site_id
+}
 
 
-function saveSiteToTrail(){
+function saveSiteToTrail(successFunction){
     var currentSite = window.location.href;
     $.ajax({
         url: "http://localhost:3000/sites",
@@ -208,10 +216,12 @@ function saveSiteToTrail(){
            "site[title]": document.title,
            "user": userID,
             "notes": "none",
-            "html": siteHTML,
+            "html": getCurrentSiteHTML(),
             "shallow_save": savedAlready
-            }
+            },
+        success: successFunction
     });
+    console.log(successFunction);
 //    document.onmousemove = mouseStopDetect();
     if (!savedAlready){
         savedAlready = true;
@@ -237,7 +247,6 @@ function fetchFavicons(){
 }
 
 function addFaviconsToDisplay(data){
-    currentSiteTrailID = data["site_id"]
     $.each(data.favicons_and_urls, function(i,favicon_and_url){
             addSiteFaviconToDisplay(favicon_and_url[0],favicon_and_url[1]);
         }
@@ -371,7 +380,7 @@ function makeCommentOverlay(xPos, yPos, spacing,noteContent){
 
 function postNoteAndComment(e,content,commentOverlay,xPos,yPos){
     if (e.keyCode == 13){
-        submitNote(content,commentOverlay.find("textarea").val(),xPos,yPos);
+        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos);
         closeOverlay(commentOverlay);
     }
 }
@@ -416,7 +425,12 @@ function moveNoteToPrevious(noteContent){
     previousNoteDisplay.fadeIn(100);
 }
 
-function submitNote(content,comment,commentLocationX,commentLocationY){
+function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY){
+    saveSiteToTrail(function(site_data){submitNote(site_data,content,comment,commentLocationX,commentLocationY)})
+}
+
+function submitNote(site_data,content,comment,commentLocationX,commentLocationY){
+    currentSiteTrailID = site_data.site_id;
     $.ajax({
         url: "http://localhost:3000/notes",
         type: "post",
@@ -906,7 +920,7 @@ function unHighlight(){
 function clickAway(e,content,commentOverlay,xPos,yPos){
     var clickedNode = $(e.target);
     if (clickedNode != commentOverlay && ($.inArray(e.target,commentOverlay.children())==-1)){
-        submitNote(content,commentOverlay.find("textarea").val(),xPos,yPos)
+        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos)
         closeOverlay(commentOverlay)
     }
 }
@@ -1012,7 +1026,6 @@ function removeInlineSaveButton(e){
 }
 
 function clickAndRemoveSaveButton(e,overlayLeft,overlayTop,overLaySpacing,noteContent){
-    console.log("here");
     var commentBox = makeCommentOverlay(overlayLeft, overlayTop,overLaySpacing,noteContent);
     $(".inlineSaveButton").remove();
 }

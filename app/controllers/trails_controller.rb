@@ -57,8 +57,7 @@ class TrailsController < ApplicationController
       fav_list.push(["http://www.google.com/s2/favicons?domain=" + URI(site.url).host.to_s,site.url])
     end
     favicons_and_urls.push(["http://www.google.com/s2/favicons?domain=" + URI(params[:current_url]).host.split(".")[-2..-1].to_s,"#"])
-    site = Site.create!()
-    render :json => {"favicons_and_urls" => favicons_and_urls, :site_id => site.id}
+    render :json => {"favicons_and_urls" => favicons_and_urls}
   end
 
   private

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120724053022) do
+ActiveRecord::Schema.define(:version => 20120827032502) do
 
   create_table "notes", :force => true do |t|
     t.text     "content"
@@ -24,6 +24,15 @@ ActiveRecord::Schema.define(:version => 20120724053022) do
     t.integer  "comment_location_x"
     t.integer  "comment_location_y"
   end
+
+  create_table "queue_classic_jobs", :force => true do |t|
+    t.string   "q_name"
+    t.string   "method"
+    t.text     "args"
+    t.datetime "locked_at"
+  end
+
+  add_index "queue_classic_jobs", ["q_name", "id"], :name => "idx_qc_on_name_only_unlocked"
 
   create_table "sites", :force => true do |t|
     t.string   "url"

@@ -8,6 +8,9 @@ describe SitesController do
     email  = Faker::Internet.email
     @user = User.create(:email => email, :password => password, :password_confirmation => password)
   end
+  def QC.enqueue(function_call, *args)
+    eval("#{function_call} *#{args.inspect}")
+  end
   describe "the create method" do
     def make_deep_save_create_request
       post :create, :site => {:id => @site.id,  :trail_id => @trail.id, :url => @html_url, :title => "this is cool no?" },
