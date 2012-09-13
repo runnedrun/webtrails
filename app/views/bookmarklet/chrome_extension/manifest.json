@@ -11,6 +11,8 @@
         "css": ["chrome_extension_css/trail_tool_bar.css"],
         "matches": ["*://*/*"]
     }],
-    "web_accessible_resources" : ["chrome_extension_js/whereJSisWrittenLocalChrome.js","chrome_extension_js/toolbar_ui.js"]
+    "web_accessible_resources" : ["chrome_extension_js/whereJSisWrittenLocalChrome.js","chrome_extension_js/toolbar_ui.js"
+        ,"chrome_extension_js/ajax_fns.js","chrome_extension_js/smart_grab.js","chrome_extension_js/jquery_elipsis.js",
+        "chrome_extension_js/search_and_highlight.js","chrome_extension_js/autoresize.js"]
 
 }

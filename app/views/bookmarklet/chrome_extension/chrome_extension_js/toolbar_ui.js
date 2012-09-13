@@ -1,4 +1,4 @@
-console.log('this thing is being loaded');
+console.log('toolbar ui loaded');
 
 function initMyBookmarklet() {
     var displayHeight = "25px";
