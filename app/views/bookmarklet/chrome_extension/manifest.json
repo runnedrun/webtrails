@@ -9,7 +9,7 @@
     "content_scripts":[{
         "js": ["chrome_extension_js/init_chrome_toolbar.js","chrome_extension_js/jquery141.js"],
         "css": ["chrome_extension_css/trail_tool_bar.css"],
-        "matches": ["http://*/*"]
+        "matches": ["*://*/*"]
     }],
     "web_accessible_resources" : ["chrome_extension_js/whereJSisWrittenLocalChrome.js"]
 

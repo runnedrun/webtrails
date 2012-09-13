@@ -6,7 +6,6 @@ class Site < ActiveRecord::Base
     remote = RemoteDocument.new(url,html)
     path = "/" + trail_id
     remote.mirror(path,shallow_save)
-
     site = Site.find(site_id)
     site.update_attributes({:archive_location => remote.asset_path.to_s, :html_encoding => remote.encoding})
   end
@@ -19,7 +18,4 @@ class Site < ActiveRecord::Base
       end
     end
   end
-
-  include WebDownloader
-
 end

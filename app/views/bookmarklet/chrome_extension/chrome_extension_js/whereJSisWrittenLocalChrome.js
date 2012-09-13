@@ -2,14 +2,13 @@ var trailDisplay,
     mouseDown = 0,
     previousNoteDisplay,
     noteDisplayWrapper,
-    currentSiteTrailID,
+    currentSiteTrailID="",
     trailID = 1,
     userID = 1,
     saveSiteToTrailButton,
     deleteNoteButton,
     previousNoteID,
     siteHTML = document.getElementsByTagName('html')[0].innerHTML;
-    savedAlready = false;
 
 
 String.prototype.splice = function( idx, rem, s ) {
@@ -156,7 +155,7 @@ function initMyBookmarklet() {
     shareTrailButton.click(revealTrailURL);
 
     $(trailDisplay).append(saveSiteToTrailButton);
-    saveSiteToTrailButton.click(saveSiteToTrail);
+    saveSiteToTrailButton.click(function(){saveSiteToTrail(setSiteID)});
 
     $(trailDisplay).append(linkToTrailWrapper);
     $(linkToTrailWrapper).append(linkToTrail);
@@ -205,6 +204,8 @@ function setSiteID(response){
 
 function saveSiteToTrail(successFunction){
     var currentSite = window.location.href;
+    var currentHTML = getCurrentSiteHTML();
+    console.log(currentHTML);
     $.ajax({
         url: "http://localhost:3000/sites",
         type: "post",
@@ -216,15 +217,14 @@ function saveSiteToTrail(successFunction){
            "site[title]": document.title,
            "user": userID,
             "notes": "none",
-            "html": getCurrentSiteHTML(),
-            "shallow_save": savedAlready
+            "html": currentHTML,
+            "shallow_save": currentSiteTrailID
             },
         success: successFunction
     });
     console.log(successFunction);
 //    document.onmousemove = mouseStopDetect();
-    if (!savedAlready){
-        savedAlready = true;
+    if (!currentSiteTrailID){
         saveSiteToTrailButton.attr("disabled","disabled");
         saveSiteToTrailButton.html("Site saved");
 //        noteDisplayWrapper.fadeTo(200,1);
@@ -426,10 +426,10 @@ function moveNoteToPrevious(noteContent){
 }
 
 function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY){
-    saveSiteToTrail(function(site_data){submitNote(site_data,content,comment,commentLocationX,commentLocationY)})
+    saveSiteToTrail(function(site_data){submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY)})
 }
 
-function submitNote(site_data,content,comment,commentLocationX,commentLocationY){
+function submitNoteAfterSave(e,site_data,content,comment,commentLocationX,commentLocationY){
     currentSiteTrailID = site_data.site_id;
     $.ajax({
         url: "http://localhost:3000/notes",
@@ -469,7 +469,6 @@ function updateNoteDisplay(data){
         moveNoteToPrevious(data.content);
         deleteNoteButton.attr("disabled","");
     }
-    saveSiteToTrail()
 }
 
 function ltrim(stringToTrim) {

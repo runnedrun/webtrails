@@ -1,5 +1,3 @@
-require File.join(Rails.root,"lib/RemoteDocument.rb")
-
 class SitesController < ApplicationController
   skip_before_filter :verify_authenticity_token, :only => [:create,:options]
   after_filter :cors_set_access_control_headers
@@ -28,18 +26,14 @@ class SitesController < ApplicationController
     trail_id = params[:site][:trail_id]
     shallow_save = params[:shallow_save]
 
-    if shallow_save
+    if shallow_save != ""
       site_id = params[:site][:id]
+      shallow_save=true
     else
-      site_id = Site.create(params[:site]).id
+      site_id = Site.create!(params[:site]).id
+      shallow_save=false
     end
-    $stderr.puts "\n"
-    $stderr.puts "herere before enqueue"
-    $stderr.puts "\n"
-    QC.enqueue("Site.save_site_to_aws",html,url,trail_id,shallow_save,site_id)
-    $stderr.puts "\n"
-    $stderr.puts "herere after enqueue"
-    $stderr.puts "\n"
+    Site.delay.save_site_to_aws(html,url,trail_id,shallow_save,site_id)
     render :json => {:site_id => site_id}, :status => 200
   end
 

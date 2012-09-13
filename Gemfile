@@ -23,7 +23,7 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-gem "pg"
+gem "pg", "0.11.0"
 gem "thin"
 gem 'jquery-rails'
 gem "rb-readline"
@@ -31,8 +31,9 @@ gem 'faker'
 gem 'devise'
 gem 'hpricot'
 gem 'nokogiri'
-gem "queue_classic", "2.0.1"
-
+gem "delayed_job_active_record"
+gem "thin"
+gem "daemons"
 
 
 
