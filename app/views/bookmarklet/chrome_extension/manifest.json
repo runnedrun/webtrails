@@ -11,6 +11,6 @@
         "css": ["chrome_extension_css/trail_tool_bar.css"],
         "matches": ["*://*/*"]
     }],
-    "web_accessible_resources" : ["chrome_extension_js/whereJSisWrittenLocalChrome.js"]
+    "web_accessible_resources" : ["chrome_extension_js/whereJSisWrittenLocalChrome.js","chrome_extension_js/toolbar_ui.js"]
 
 }
