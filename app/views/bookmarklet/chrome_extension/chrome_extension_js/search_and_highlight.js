@@ -175,3 +175,7 @@ function doHighlight(node,className,searchFor,which){
         }
     }
 }
+
+function unHighlight(){
+    $(".trailHighlight").attr("style","").removeClass("trailHighlight");
+}

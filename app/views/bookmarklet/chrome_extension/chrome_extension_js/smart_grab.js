@@ -38,3 +38,10 @@ function smartGrabHighlightedText(){
     }
     return text
 }
+
+function ltrim(stringToTrim) {
+    return stringToTrim.replace(/^\s+/,"");
+}
+function rtrim(stringToTrim) {
+    return stringToTrim.replace(/\s+$/,"");
+}

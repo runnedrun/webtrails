@@ -140,7 +140,6 @@ function initMyBookmarklet() {
 
     initializeAutoResize();
     initializeJqueryEllipsis();
-//    rangy.init();
     previousNoteDisplay.ellipsis();
 
     //document bindings

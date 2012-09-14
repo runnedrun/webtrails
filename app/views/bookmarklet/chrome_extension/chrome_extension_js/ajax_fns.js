@@ -62,3 +62,15 @@ function submitNoteAfterSave(e,site_data,content,comment,commentLocationX,commen
         success: updateNoteDisplay
     })
 }
+
+function deletePreviousNote(){
+    $.ajax({
+        url: "http://localhost:3000/notes/delete",
+        type: "post",
+        crossDomain: true,
+        data: {
+            "id": previousNoteID
+        },
+        success: updateNoteDisplay
+    })
+}
