@@ -1,3 +1,5 @@
+console.log("initializing the toolbar");
+
 var trailDisplay,
     mouseDown = 0,
     previousNoteDisplay,
