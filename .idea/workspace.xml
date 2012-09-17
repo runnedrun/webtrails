@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f3cd57ab-d625-4e15-a351-db271cee148c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/commenting_fns.js" afterPath="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/commenting_fns.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/inline_save_button_fns.js" afterPath="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/inline_save_button_fns.js" />
     </list>
@@ -29,7 +28,7 @@
       <file leaf-file-name="commenting_fns.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/commenting_fns.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="106" column="1" selection-start="4218" selection-end="4218" vertical-scroll-proportion="0.96666664">
+            <state line="67" column="8" selection-start="2716" selection-end="2716" vertical-scroll-proportion="0.016666668">
               <folding />
             </state>
           </provider>
@@ -83,7 +82,7 @@
       <file leaf-file-name="inline_save_button_fns.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/inline_save_button_fns.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="119" column="0" selection-start="4725" selection-end="4725" vertical-scroll-proportion="0.0">
+            <state line="62" column="29" selection-start="2723" selection-end="2723" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -134,8 +133,8 @@
         <option value="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/whereJSisWrittenLocalChrome.js" />
         <option value="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/manifest.json" />
         <option value="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/init_chrome_toolbar.js" />
-        <option value="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/commenting_fns.js" />
         <option value="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/inline_save_button_fns.js" />
+        <option value="$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/commenting_fns.js" />
       </list>
     </option>
   </component>
@@ -982,14 +981,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/inline_save_button_fns.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="119" column="0" selection-start="4725" selection-end="4725" vertical-scroll-proportion="0.0">
+        <state line="62" column="29" selection-start="2723" selection-end="2723" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/bookmarklet/chrome_extension/chrome_extension_js/commenting_fns.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="106" column="1" selection-start="4218" selection-end="4218" vertical-scroll-proportion="0.96666664">
+        <state line="67" column="8" selection-start="2716" selection-end="2716" vertical-scroll-proportion="0.016666668">
           <folding />
         </state>
       </provider>

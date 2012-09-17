@@ -30,7 +30,7 @@ function addSaveButtonNextToNote(highlightedTextRange){
     var saveSpan = insertAbsolutelyPositionedSaveButton(saveButtonLeft, saveButtonTop);
     var nodeLineHeight = parseInt(getComputedStyleOfElement(currentSelection.getRangeAt(0).endContainer.parentNode, "lineHeight").replace("px",""));
 
-    saveSpan.click(function(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent){ return function(e){clickAndRemoveSaveButton(e,saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent)} }(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedContent));
+    saveSpan.click(function(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedRange){ return function(e){clickAndRemoveSaveButton(e,saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedRange)} }(saveButtonLeft,saveButtonTop,nodeLineHeight,rangy.getSelection().getRangeAt(0)));
     $(document).mousedown(removeInlineSaveButton);
 }
 
@@ -112,8 +112,9 @@ function removeInlineSaveButton(e){
     }
 }
 
-function clickAndRemoveSaveButton(e,overlayLeft,overlayTop,overLaySpacing,noteContent){
-    var commentBox = makeCommentOverlay(overlayLeft, overlayTop,overLaySpacing,noteContent);
+function clickAndRemoveSaveButton(e,overlayLeft,overlayTop,overLaySpacing,highlightedRange){
+    console.log(highlightedRange);
+    var commentBox = makeCommentOverlay(overlayLeft, overlayTop,overLaySpacing,highlightedRange);
     $(".inlineSaveButton").remove();
 }
 
