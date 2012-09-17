@@ -116,3 +116,4 @@ function clickAndRemoveSaveButton(e,overlayLeft,overlayTop,overLaySpacing,noteCo
     var commentBox = makeCommentOverlay(overlayLeft, overlayTop,overLaySpacing,noteContent);
     $(".inlineSaveButton").remove();
 }
+

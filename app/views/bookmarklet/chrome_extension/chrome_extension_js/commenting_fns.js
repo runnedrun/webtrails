@@ -83,3 +83,25 @@ function clickAway(e,content,commentOverlay,xPos,yPos){
     }
 }
 
+function markNodeForHighlight(node,start_offset, end_offset){
+    if (node.nodeType === "3"){
+        var contents = node.nodeValue;
+        var highlighted_contents = contents.slice(start_offset,end_offset);
+        var unhighlighted_prepend = contents.slice(start_offset);
+        var unhighlighted_append = contents.slice(end_offset,contents.length);
+
+        var new_marker = $(document.createElement("<wtHighlight></wtHighlight>"));
+        new_marker.html(highlighted_contents);
+        node.parentNode.replaceChild(new_marker,node);
+        if (unhighlighted_prepend.length !== 0 ){
+            var text_before_marker = $(document.createTextNode(unhighlighted_prepend));
+            text_before_marker.insertBefore(new_marker);
+        }
+        if (unhighlighted_append.length !== 0){
+            var text_after_marker = $(document.createTextNode(unhighlighted_append));
+            text_after_marker.insertAfter(new_marker);
+        }
+    } else {
+        $(mode).wrap("<wtHighlight></wtHighlight>");
+    }
+}
