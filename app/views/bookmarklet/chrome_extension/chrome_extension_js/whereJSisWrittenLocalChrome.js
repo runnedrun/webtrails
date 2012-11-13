@@ -11,6 +11,7 @@ var trailDisplay,
     deleteNoteButton,
     previousNoteID,
     siteHTML = document.getElementsByTagName('html')[0].innerHTML;
+    noteCount = 0;
 
 
 String.prototype.splice = function( idx, rem, s ) {

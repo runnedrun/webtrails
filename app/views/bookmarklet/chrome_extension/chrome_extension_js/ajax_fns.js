@@ -57,9 +57,10 @@ function submitNoteAfterSave(e,site_data,content,comment,commentLocationX,commen
             "note[comment_location_y]": commentLocationY,
             "note[site_id]": currentSiteTrailID,
             "note[scroll_x]": window.scrollX,
-            "note[scroll_y]": window.scrollY
+            "note[scroll_y]": window.scrollY,
+            "note[client_side_id]": noteCount
         },
-        success: updateNoteDisplay
+        success: incrementNoteCountAfterSave
     })
 }
 
@@ -71,6 +72,16 @@ function deletePreviousNote(){
         data: {
             "id": previousNoteID
         },
-        success: updateNoteDisplay
+        success: decrementNoteCountAfterDelete()
     })
+}
+
+function incrementNoteCountAfterSave(data){
+    noteCount +=1;
+    updateNoteDisplay(data);
+}
+
+function decrementNoteCountAfterDelete(data){
+    noteCount -=1;
+    updateNoteDisplay(data);
 }
