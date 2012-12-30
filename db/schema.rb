@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120907025409) do
+ActiveRecord::Schema.define(:version => 20121230221344) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -39,16 +39,8 @@ ActiveRecord::Schema.define(:version => 20120907025409) do
     t.text     "comment"
     t.integer  "comment_location_x"
     t.integer  "comment_location_y"
+    t.string   "client_side_id"
   end
-
-  create_table "queue_classic_jobs", :force => true do |t|
-    t.string   "q_name"
-    t.string   "method"
-    t.text     "args"
-    t.datetime "locked_at"
-  end
-
-  add_index "queue_classic_jobs", ["q_name", "id"], :name => "idx_qc_on_name_only_unlocked"
 
   create_table "sites", :force => true do |t|
     t.string   "url"

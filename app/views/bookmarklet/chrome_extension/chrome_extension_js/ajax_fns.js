@@ -3,7 +3,6 @@ console.log("ajax_fns loaded");
 function saveSiteToTrail(successFunction){
     var currentSite = window.location.href;
     var currentHTML = getCurrentSiteHTML();
-    console.log(currentHTML);
     $.ajax({
         url: "http://localhost:3000/sites",
         type: "post",
@@ -20,7 +19,6 @@ function saveSiteToTrail(successFunction){
         },
         success: successFunction
     });
-    console.log(successFunction);
 //    document.onmousemove = mouseStopDetect();
     if (!currentSiteTrailID){
         saveSiteToTrailButton.attr("disabled","disabled");
@@ -44,8 +42,9 @@ function fetchFavicons(){
     })
 }
 
-function submitNoteAfterSave(e,site_data,content,comment,commentLocationX,commentLocationY){
+function submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY){
     currentSiteTrailID = site_data.site_id;
+    console.log(site_data.site_id);
     $.ajax({
         url: "http://localhost:3000/notes",
         type: "post",
@@ -58,7 +57,7 @@ function submitNoteAfterSave(e,site_data,content,comment,commentLocationX,commen
             "note[site_id]": currentSiteTrailID,
             "note[scroll_x]": window.scrollX,
             "note[scroll_y]": window.scrollY,
-            "note[client_side_id]": noteCount
+            "note[client_side_id]": "client_side_id_"+noteCount
         },
         success: incrementNoteCountAfterSave
     })

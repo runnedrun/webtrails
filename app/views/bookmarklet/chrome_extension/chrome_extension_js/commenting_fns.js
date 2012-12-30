@@ -63,14 +63,14 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
 //    doHighlight(document,"trailHighlight",parsedNoteContent);
     highlight_wtHighlights();
     $(".trailHighlight").css("background-color","yellow");
-    makePlaceholder(commentBox);
+//    makePlaceholder(commentBox);
     return commentBox;
 }
 
 function postNoteAndComment(e,content,commentOverlay,xPos,yPos){
     if (e.keyCode == 13){
-        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos);
         closeOverlay(commentOverlay);
+        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos);
     }
 }
 
@@ -90,8 +90,8 @@ function closeOverlay(overlay){
 function clickAway(e,content,commentOverlay,xPos,yPos){
     var clickedNode = $(e.target);
     if (clickedNode != commentOverlay && ($.inArray(e.target,commentOverlay.children())==-1)){
-        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos)
         closeOverlay(commentOverlay)
+        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos)
     }
 }
 
