@@ -99,6 +99,13 @@ function markNodeForHighlight(node,start_offset, end_offset){
     if (node.nodeType === 3){
         var contents = node.nodeValue;
         var highlighted_contents = contents.slice(start_offset,end_offset);
+        var whiteSpaceRegex = /^\s*$/;
+        console.log(highlighted_contents);
+        console.log(whiteSpaceRegex.test(highlighted_contents))
+        if(!highlighted_contents | whiteSpaceRegex.test(highlighted_contents)){
+            console.log("nothing inside this node, not replacing");
+            return
+        }
         var unhighlighted_prepend = contents.slice(0,start_offset);
         var unhighlighted_append = contents.slice(end_offset,contents.length);
         var new_marker = document.createElement("wtHighlight");

@@ -21,13 +21,15 @@ function addSaveButtonNextToNote(highlightedTextRange){
     var currentSelectionRange = getHighlightedTextRange();
     var newSelectionRange = rangy.createRange();
     newSelectionRange.selectNode(nodeToHighlight);
-    console.log(newSelectionRange);
-    console.log(currentSelectionRange);
-    console.log(currentSelectionRange.collapsed);
-    if (!(currentSelectionRange.collapsed)){
-        var combinedRange = currentSelectionRange.union(newSelectionRange);
-    }else{
-        var combinedRange = newSelectionRange;
+    try{
+        if (!(currentSelectionRange.collapsed)){
+            var combinedRange = currentSelectionRange.union(newSelectionRange);
+        }else{
+            var combinedRange = newSelectionRange;
+        }
+    }
+    catch(e){
+        combinedRange = currentSelectionRange;
     }
     currentSelection.addRange(combinedRange);
     var saveButtonPosition = saveButton.offset();
