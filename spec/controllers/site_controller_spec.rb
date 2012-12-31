@@ -165,9 +165,11 @@ describe SitesController do
       @scroll_y = 65
       @comment_location_y = 200
       @comment_location_x = 100
+      @client_side_id = "client_side_id_1"
       4.times do
         @notes.push(Note.create(:content => @content, :scroll_x => @scroll_x, :scroll_y => @scroll_y,
-                                :comment =>@comment, :comment_location_x => @comment_location_x, :comment_location_y => @comment_location_y))
+                                :comment =>@comment, :comment_location_x => @comment_location_x,
+                                :comment_location_y => @comment_location_y,:client_side_id => @client_side_id))
       end
       @site = Site.create(:url => "http://www.google.com", :title => "google, you know what it is", :notes => @notes,
                           :domain => "google.com", :archive_location => File.join(Rails.root, "spec/test_statics/test.html"))
@@ -193,6 +195,7 @@ describe SitesController do
       resp_hash["notes"]["2"]["scroll_y"].should == @scroll_y
       resp_hash["notes"]["2"]["comment_location_x"].should == @comment_location_x
       resp_hash["notes"]["2"]["comment_location_y"].should == @comment_location_y
+      resp_hash["notes"]["2"]["client_side_id"].should == @client_side_id
     end
 
   end

@@ -103,7 +103,7 @@ function markNodeForHighlight(node,start_offset, end_offset){
         var unhighlighted_append = contents.slice(end_offset,contents.length);
         var new_marker = document.createElement("wtHighlight");
         $(new_marker).addClass("highlightMe");
-        $(new_marker).attr('id', 'client_side_id_' + String(noteCount));
+        $(new_marker).addClass('client_side_id_' + String(noteCount));
 
         new_marker.innerHTML = highlighted_contents;
         var node_to_replace = node;

@@ -64,6 +64,7 @@ function readySite(data){
     siteHash[data.site_id]=siteAttributes;
     addMouseOverToFavicons();
 }
+
 function nextSite(){
     if (currentSiteIndex < siteIDs.length-1){
         closeNoteList();
@@ -126,8 +127,8 @@ function scrollToAndHighlightNote(noteID){
         $(contWindow).scrollTop(currentNote.scroll_y);
         console.log(currentNote.scroll_y);
         removeHighlight($(contWindow.document.body));
-        doHighlight(contWindow.document,"trailHighlight",currentNote.content);
-        var highlights = $(contWindow.document.body).find(".trailHighlight")
+        var highlights = $(contWindow.document.body).find("."+currentNote.client_side_id);
+        console.log(highlights);
         highlights.css("background-color","yellow");
 //        if (){
 //            highlights.css({"z-index": "99999", position:"relative", "font-size": "1.5em"});
@@ -152,7 +153,7 @@ function scrollToAndHighlightNote(noteID){
 }
 
 function removeHighlight(node){
-    node.find(".trailHighlight").css({"background-color":"transparent", "font-size": "1em","z-index":"0"}).removeClass("trailHighlight");
+    node.find("wthighlight").css({"background-color":"transparent", "font-size": "1em","z-index":"0"});
 }
 
 function iframeContentWindow(){
