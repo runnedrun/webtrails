@@ -33,7 +33,7 @@ function doHighlight(node,className,searchFor,which){
         while (iNode<nNodes){
             child=node.childNodes[iNode++];
             // text: collect and save index-node pair
-            if (child.nodeType === 3){
+            if (isTextNode(node)){
                 indices.push({i:textLength, n:child});
                 nodeText = child.nodeValue;
                 text.push(nodeText);

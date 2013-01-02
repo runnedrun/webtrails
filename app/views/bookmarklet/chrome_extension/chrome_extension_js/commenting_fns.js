@@ -97,8 +97,7 @@ function clickAway(e,content,commentOverlay,xPos,yPos){
 }
 
 function markNodeForHighlight(node,start_offset, end_offset){
-    //paul will make this a global
-    if (node.nodeType === 3){
+    if (isTextNode(node)){
         var contents = node.nodeValue;
         var highlighted_contents = contents.slice(start_offset,end_offset);
         var whiteSpaceRegex = /^\s*$/;

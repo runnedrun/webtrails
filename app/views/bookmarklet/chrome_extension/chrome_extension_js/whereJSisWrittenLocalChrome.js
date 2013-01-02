@@ -10,7 +10,7 @@ var trailDisplay,
     saveSiteToTrailButton,
     deleteNoteButton,
     previousNoteID,
-    siteHTML = document.getElementsByTagName('html')[0].innerHTML;
+    siteHTML = getCurrentSiteHTML();
     noteCount = 0;
 
 
@@ -40,3 +40,7 @@ function getComputedStyleOfElement(element,stylename){
     return document.defaultView.getComputedStyle(element,null)[stylename];
 }
 
+// returns true if the node is a text node, false if not
+function isTextNode(node) {
+    return node.nodeType == 3;
+}
