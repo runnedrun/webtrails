@@ -51,7 +51,7 @@ function getLastNode(node){
     var $node = $(node);
     var contents = $node.contents();
     if (contents.length===0){
-        if (node.nodeType === 3){
+        if (isTextNode(node)){
             return node
         } else {
             var newNode = document.createTextNode("");
