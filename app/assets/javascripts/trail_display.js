@@ -108,6 +108,8 @@ function nextNote(){
         var currentSiteID = getCurrentSiteID();
         var currentNoteID = siteHash[currentSiteID]["noteIDs"][currentNoteIndex];
         scrollToAndHighlightNote(currentNoteID);
+    } else {
+        nextSite();
     }
 }
 
@@ -117,6 +119,8 @@ function previousNote(){
         var currentSiteID = getCurrentSiteID();
         var currentNoteID = siteHash[currentSiteID]["noteIDs"][currentNoteIndex];
         scrollToAndHighlightNote(currentNoteID);
+    } else {
+        previousSite();
     }
 }
 
