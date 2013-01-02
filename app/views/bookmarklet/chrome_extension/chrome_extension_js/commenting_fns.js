@@ -2,9 +2,10 @@ console.log("commenting loaded");
 
 function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     var overlayHeight =spacing;
+    //make this dynamic so the size of the comment box changes based on page size
     var overlayWidth = 400;
 
-    var topPosition  =  yPos + spacing
+    var topPosition  =  yPos + spacing;
     var leftPosition = xPos > overlayWidth ? (xPos - overlayWidth) : xPos;
 
     var commentOverlay = $(document.createElement("div"));
@@ -41,8 +42,8 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     $(commentOverlay).append(commentDescription);
     $(commentOverlay).append(commentBox);
     var noteContent = String(highlightedRange);
-    commentBox.keydown((function(noteContent,commentOverlay,xPos){return (function (e){postNoteAndComment(e,noteContent,commentOverlay,xPos,yPos)})})(noteContent,commentOverlay,xPos));
-    $(document).mousedown((function(noteContent,commentOverlay,yPos){return (function (e){clickAway(e,noteContent,commentOverlay,xPos,yPos)})})(noteContent,commentOverlay,yPos));
+    commentBox.keydown((function(noteContent,commentOverlay,xPos,yPos){return (function (e){postNoteAndComment(e,noteContent,commentOverlay,xPos,yPos)})})(noteContent,commentOverlay,xPos,yPos));
+    $(document).mousedown((function(noteContent,commentOverlay,xPos,yPos){return (function (e){clickAway(e,noteContent,commentOverlay,xPos,yPos)})})(noteContent,commentOverlay,xPos,yPos));
     commentBox.autosize();
     commentBox.focus();
     var nodes = highlightedRange.getNodes();
@@ -96,13 +97,12 @@ function clickAway(e,content,commentOverlay,xPos,yPos){
 }
 
 function markNodeForHighlight(node,start_offset, end_offset){
+    //paul will make this a global
     if (node.nodeType === 3){
         var contents = node.nodeValue;
         var highlighted_contents = contents.slice(start_offset,end_offset);
         var whiteSpaceRegex = /^\s*$/;
-        console.log(highlighted_contents);
-        console.log(whiteSpaceRegex.test(highlighted_contents))
-        if(!highlighted_contents | whiteSpaceRegex.test(highlighted_contents)){
+        if(!highlighted_contents || whiteSpaceRegex.test(highlighted_contents)){
             console.log("nothing inside this node, not replacing");
             return
         }

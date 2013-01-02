@@ -8,14 +8,14 @@ function saveSiteToTrail(successFunction){
         type: "post",
         crossDomain: true,
         data: {
-            "site[id]":currentSiteTrailID,
+            "site[id]":currentSiteTrailID, //this is probably unnecesary
             "site[url]":currentSite,
             "site[trail_id]":trailID,
             "site[title]": document.title,
             "user": userID,
             "notes": "none",
             "html": currentHTML,
-            "shallow_save": currentSiteTrailID
+            "shallow_save": currentSiteTrailID  //this is empty string if it's the first time the site is saved.
         },
         success: successFunction
     });

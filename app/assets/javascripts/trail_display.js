@@ -125,16 +125,15 @@ function scrollToAndHighlightNote(noteID){
     var currentNote = Notes[noteID];
     if(currentNote){
         $(contWindow).scrollTop(currentNote.scroll_y);
-        console.log(currentNote.scroll_y);
         removeHighlight($(contWindow.document.body));
+        //gotta remove all the notes as well
         var highlights = $(contWindow.document.body).find("."+currentNote.client_side_id);
-        console.log(highlights);
         highlights.css("background-color","yellow");
 //        if (){
 //            highlights.css({"z-index": "99999", position:"relative", "font-size": "1.5em"});
 //            highlights.css("background-color","white");
 //        }
-        var offsets = highlights.offset();
+//        var offsets = highlights.offset();
         highlights.each(function(i,highlight){
             if ($(highlight).offset().top > currentNote.scroll_y){
                 offsets = $(highlight).offset();
@@ -257,6 +256,6 @@ function getCurrentSiteID(){
 
 function addMouseOverToFavicons(){
     $.each($(".siteFavicon"),function(i,favicon){
-
+              //add something here?
     })
 }

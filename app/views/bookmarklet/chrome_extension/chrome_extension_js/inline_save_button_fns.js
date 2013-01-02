@@ -6,6 +6,7 @@ function possibleHighlightStart(){
 }
 
 function highlightedTextDetect(startingHighlight){
+    //this probably breaks a lot of pages
     $(document).unbind("mouseup");
     if (!rangy.getSelection().isCollapsed){
         addSaveButtonNextToNote(rangy.getSelection().getRangeAt(0));
@@ -27,6 +28,7 @@ function addSaveButtonNextToNote(highlightedTextRange){
         }else{
             var combinedRange = newSelectionRange;
         }
+        //check if the new selection range is empty, then get rid of this jank try statement
     }
     catch(e){
         combinedRange = currentSelectionRange;
@@ -39,7 +41,9 @@ function addSaveButtonNextToNote(highlightedTextRange){
     var saveSpan = insertAbsolutelyPositionedSaveButton(saveButtonLeft, saveButtonTop);
     var nodeLineHeight = parseInt(getComputedStyleOfElement(currentSelection.getRangeAt(0).endContainer.parentNode, "lineHeight").replace("px",""));
 
-    saveSpan.click(function(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedRange){ return function(e){clickAndRemoveSaveButton(e,saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedRange)} }(saveButtonLeft,saveButtonTop,nodeLineHeight,rangy.getSelection().getRangeAt(0)));
+    //clean this up foo
+    saveSpan.click(function(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedRange){return function(e){clickAndRemoveSaveButton(e,saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedRange)} }(saveButtonLeft,saveButtonTop,nodeLineHeight,rangy.getSelection().getRangeAt(0)));
+    //make sure this gets handled, so no existing callback gets the event and captures it.
     $(document).mousedown(removeInlineSaveButton);
 }
 
@@ -92,6 +96,7 @@ function insertSaveButtonIntoNodeContent(highlightedTextRange){
     }
     saveSpan.insertAfter(nodeToHighlight);
     $(document.createTextNode(secondHalfOfNode)).insertAfter(saveSpan);
+    //make this do all the save button creation maybe?
     return [saveSpan,nodeToHighlight,insertionNode];
 }
 
@@ -122,8 +127,7 @@ function removeInlineSaveButton(e){
 }
 
 function clickAndRemoveSaveButton(e,overlayLeft,overlayTop,overLaySpacing,highlightedRange){
-    console.log(highlightedRange);
-    var commentBox = makeCommentOverlay(overlayLeft, overlayTop,overLaySpacing,highlightedRange);
+    makeCommentOverlay(overlayLeft, overlayTop,overLaySpacing,highlightedRange);
     $(".inlineSaveButton").remove();
 }
 
