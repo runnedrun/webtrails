@@ -37,7 +37,7 @@ function initMyBookmarklet() {
         "overflow": "hidden",
         "text-overflow": "ellipsis"
     });
-    previousNoteDisplay.html("Select text and hold down mouse to save notes.  Your last saved note will appear here");
+    previousNoteDisplay.html("Select text and press the save button to save notes.  Your last saved note will appear here");
 
 
     var linkToTrailWrapper = $(document.createElement("div"));
