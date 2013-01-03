@@ -197,8 +197,7 @@ class RemoteDocument
     if the_uri
       data = html_get_site the_uri
       if data
-        newFile = @bucket.objects[path]
-        newFile.write(data)
+        newFile = write_to_aws(data,path)
         return newFile
       end
     end
@@ -228,6 +227,19 @@ class RemoteDocument
     end
   end
 
+  def write_to_aws(data,path)
+    begin
+      $stderr.puts "getting here"
+      newFile = @bucket.objects[path]
+      newFile.write(data)
+      $stderr.puts "getting here, didn't fail"
+    rescue
+      newFile = false
+      $stderr.puts path.to_s+"had a problem saving"
+    end
+    return newFile
+  end
+
   def localize_css_recursively(tag, sym, dir)
     url = tag[sym]
     resource_url = url_for(url)
@@ -239,15 +251,8 @@ class RemoteDocument
         localized_css_string = save_css_urls_to_s3(css_string,dir,resource_url)
         newFile = false
         if localized_css_string
-          begin
-            newFile = @bucket.objects[dest]
-            newFile.write(localized_css_string)
-          rescue
-            newFile = false
-            $stderr.puts resource_url.to_s+"had a problem saving"
-          end
+          newFile = write_to_aws(localized_css_string,dest)
         end
-
         if newFile
           newFile.acl = :public_read
           tag[sym] = newFile.public_url().to_s
@@ -352,9 +357,7 @@ class RemoteDocument
     if !@is_iframe
       @save_path = File.join(dir, File.basename(uri.to_s))
       @save_path += '.html' if @save_path !~ /\.((html?)|(txt))$/
-
-      newFile = @bucket.objects[@save_path]
-      newFile.write(@contents.to_html.force_encoding(@encoding))
+      newFile = write_to_aws(@contents.to_html.force_encoding(@encoding),@save_path)
       newFile.acl = :public_read
       @asset_path = newFile.public_url().to_s
       return true
