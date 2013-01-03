@@ -14,12 +14,12 @@ describe SitesController do
   describe "the create method" do
     def make_deep_save_create_request
       post :create, :site => {:id => @site.id,  :trail_id => @trail.id, :url => @html_url, :title => "this is cool no?" },
-           :notes => "none", :user => @user.id, :html => @html, :shallow_save => false
+           :notes => "none", :user => @user.id, :html => @html, :shallow_save => ""
     end
 
     def make_shallow_save_create_request
       post :create, :site => {:id => @site.id,  :trail_id => @trail.id, :url => @html_url, :title => "this is cool no?" },
-           :notes => "none", :user => @user.id, :html => @html, :shallow_save => true
+           :notes => "none", :user => @user.id, :html => @html, :shallow_save => "save_me_shallow"
     end
 
     def setup_aws_mocks_deep_save
@@ -122,6 +122,10 @@ describe SitesController do
             args.scan(/this should get cut out.  fo sho/).length.should == 0
           end
           make_deep_save_create_request
+        end
+
+        it "should clip aws keys, and thus public urls, to 100 characters" do
+          #todo, find a good way too test this.  The html is already set up, but the mocking is not
         end
 
         it "should properly save iframes recursively" do

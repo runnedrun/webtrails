@@ -229,10 +229,15 @@ class RemoteDocument
 
   def write_to_aws(data,path)
     begin
-      $stderr.puts "getting here"
-      newFile = @bucket.objects[path]
+      extension = File.extname(path)
+      if !extension.empty?
+        path_wo_extension = path[0..-(extension.length)]
+      else
+        path_wo_extension = path
+      end
+      path_wo_extension.gsub(/\/+$/,"")
+      newFile = @bucket.objects[path_wo_extension[0..100]+extension]
       newFile.write(data)
-      $stderr.puts "getting here, didn't fail"
     rescue
       newFile = false
       $stderr.puts path.to_s+"had a problem saving"
