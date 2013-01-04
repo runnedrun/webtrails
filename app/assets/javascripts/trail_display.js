@@ -5,6 +5,7 @@ var currentNoteIndex=-1;
 var presentationMode = false;
 var noteIDs=[];
 var siteHash = {};
+var currentCommentBox;
 $(function(){
     var currentSiteID = String(siteIDs[currentSiteIndex]);
     currentSite = $("#"+currentSiteID);
@@ -85,12 +86,20 @@ function previousSite(){
     }
 }
 
+function scroll_favicon_carousel(){
+    console.log("Scrolling");
+    //todo add actual scroll behavior here
+}
+
 function clickJumpToSite(e){
     closeNoteList();
     var switchingToSiteWithExtraName = $(e.currentTarget).attr("id");
     var switchingToSiteID = switchingToSiteWithExtraName.replace(/\D+/,"");
     switchToSite(switchingToSiteID);
     currentSiteIndex = siteIDs.indexOf(switchingToSiteID);
+    if (currentSiteIndex > 5){
+        scroll_favicon_carousel();
+    }
     currentNoteIndex = -1;
 }
 
@@ -127,9 +136,11 @@ function previousNote(){
 function scrollToAndHighlightNote(noteID){
     var contWindow = iframeContentWindow();
     var currentNote = Notes[noteID];
+    removeHighlight($(contWindow.document.body));
+    removeCurrentComment();
     if(currentNote){
         $(contWindow).scrollTop(currentNote.scroll_y);
-        removeHighlight($(contWindow.document.body));
+
         //gotta remove all the notes as well
         var highlights = $(contWindow.document.body).find("."+currentNote.client_side_id);
         highlights.css("background-color","yellow");
@@ -148,10 +159,8 @@ function scrollToAndHighlightNote(noteID){
         if ($("#turnOffCommentsCheckbox").is(":checked")){
             commentDisplay.hide();
         }
+        currentCommentBox = commentDisplay;
         currentNoteIndex = siteHash[getCurrentSiteID()]["noteIDs"].indexOf(String(noteID));
-    }else{
-        removeComments();
-        removeHighlight($(contWindow.document.body));
     }
 }
 
@@ -197,7 +206,6 @@ function clickJumpToNote(e){
 }
 
 function showComment(note,xPos,yPos){
-    removeComments();
     if (note && (typeof note) == "string" && note != ""){
         return createCommentOverlay(note,xPos,yPos);
     }
@@ -232,8 +240,10 @@ function createCommentOverlay(commentText,xPos,yPos){
     return commentOverlay;
 }
 
-function removeComments(){
-    $(currentSite[0].contentWindow.document).find(".commentOverlay").remove();
+function removeCurrentComment(){
+    if (currentCommentBox){
+        currentCommentBox.remove();
+    }
 }
 
 function showOrHideCurrentComment(){

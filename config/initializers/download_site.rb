@@ -231,12 +231,13 @@ class RemoteDocument
     begin
       extension = File.extname(path)
       if !extension.empty?
-        path_wo_extension = path[0..-(extension.length)]
+        path_wo_extension = path[0..-(extension.length+1)]
       else
         path_wo_extension = path
       end
-      path_wo_extension.gsub(/\/+$/,"")
-      newFile = @bucket.objects[path_wo_extension[0..100]+extension]
+      short_path_wo_extension = path_wo_extension[0..100]
+      short_path_wo_extension.gsub(/\/+$/,"")
+      newFile = @bucket.objects[short_path_wo_extension+extension]
       newFile.write(data)
     rescue
       newFile = false
