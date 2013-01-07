@@ -68,46 +68,46 @@ function readySite(data){
 
 function nextSite(){
     if (currentSiteIndex < siteIDs.length-1){
-        closeNoteList();
         var switchingToSiteID = siteIDs[currentSiteIndex+1];
         switchToSite(switchingToSiteID);
-        currentSiteIndex+=1;
         currentNoteIndex = -1;
     }
 }
 
 function previousSite(){
     if (currentSiteIndex > 0){
-        closeNoteList();
         var switchingToSiteID = siteIDs[currentSiteIndex-1];
         switchToSite(switchingToSiteID);
-        currentSiteIndex-=1;
         currentNoteIndex = -1;
     }
 }
 
-function scroll_favicon_carousel(){
+function scroll_favicon_carousel(first_favicon_displayed){
     console.log("Scrolling");
+    $(".siteFavicon").animate({"left":first_favicon_displayed*(-20)});
     //todo add actual scroll behavior here
 }
 
 function clickJumpToSite(e){
-    closeNoteList();
     var switchingToSiteWithExtraName = $(e.currentTarget).attr("id");
     var switchingToSiteID = switchingToSiteWithExtraName.replace(/\D+/,"");
     switchToSite(switchingToSiteID);
-    currentSiteIndex = siteIDs.indexOf(switchingToSiteID);
-    if (currentSiteIndex > 5){
-        scroll_favicon_carousel();
-    }
-    currentNoteIndex = -1;
 }
 
 function switchToSite(siteID){
+    closeNoteList();
     currentSite.addClass("notCurrent").removeClass("currentSite");
     currentSite = $("#"+String(siteID));
     currentSite.removeClass("notCurrent").addClass("currentSite");
     higlightCurrentSiteFavicon(siteID);
+    currentSiteIndex = siteIDs.indexOf(siteID);
+    currentNoteIndex = -1;
+    if (currentSiteIndex>13){
+        scroll_favicon_carousel(currentSiteIndex-13);
+    } else {
+        scroll_favicon_carousel(0)
+    }
+
 }
 
 function nextNote(){

@@ -25,7 +25,7 @@
 <button class="leftNavigateButton navigateButton" id="previousSite">Previous Site</button>
 <button class="leftNavigateButton navigateButton" id="nextSite">Next site</button>
 <div class="siteFavicons">
-    <%- @favicon_urls_with_ids_and_titles.each do |favicon_id_and_title| %>
+    <%- @favicon_urls_with_ids_and_titles.each_with_index do |favicon_id_and_title,i| %>
       <div class="siteFavicon tooltip" id="favicon<%= favicon_id_and_title[1] %>">
         <img class="faviconImage" src="<%= favicon_id_and_title[0] %>"/>
         <span class="siteTitleDisplay"><%= favicon_id_and_title[2] %></span>

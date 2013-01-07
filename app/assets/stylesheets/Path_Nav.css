@@ -66,24 +66,28 @@
 }
 
 #trailName, .siteFavicon {
-    margin-right: 2px;
-    float: left;
+    margin-right: 1px;
+    position: relative;
+    display:inline-block;
 }
 
 .faviconImage {
-    height: 15px;
+    /*height: 15px;*/
+    width:15px;
     margin-top: 5px;
 }
 .activeFavicon{
     margin-top: 2.5px;
-    height:20px;
+    width:20px;
 }
 
 .siteFavicons{
     display:inline-block;
     position: relative;
     /*padding-left: 100px;*/
-    width: 10%;
+    width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 
