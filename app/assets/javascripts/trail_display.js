@@ -82,9 +82,13 @@ function previousSite(){
     }
 }
 
+function showAllSites(){
+    $(".siteFavicon").css("whitespace","");
+}
+
 function scroll_favicon_carousel(first_favicon_displayed){
     console.log("Scrolling");
-    $(".siteFavicon").animate({"left":first_favicon_displayed*(-20)});
+    $(".siteFavicon").animate({"left":first_favicon_displayed*(-20)},100);
     //todo add actual scroll behavior here
 }
 
@@ -119,6 +123,7 @@ function nextNote(){
         scrollToAndHighlightNote(currentNoteID);
     } else {
         nextSite();
+        nextNote();
     }
 }
 
@@ -130,7 +135,15 @@ function previousNote(){
         scrollToAndHighlightNote(currentNoteID);
     } else {
         previousSite();
+        gotoLastNoteforCurrentSite();
     }
+}
+
+function gotoLastNoteforCurrentSite(){
+    var currentSiteID = getCurrentSiteID();
+    var final_note_index = Object.keys(siteHash[currentSiteID]["noteIDs"]).length-1
+    scrollToAndHighlightNote(siteHash[currentSiteID]["noteIDs"][final_note_index]);
+    currentNoteIndex = final_note_index;
 }
 
 function scrollToAndHighlightNote(noteID){
