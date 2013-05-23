@@ -1,8 +1,10 @@
 console.log("inline save loaded");
 
 function possibleHighlightStart(){
-    var startingSelectionCopy = rangy.getSelection().toString().slice(0);
-    wt_$(document).mouseup(function(){highlightedTextDetect(startingSelectionCopy)});
+    if(!trailDisplay.is(":hidden")){
+        var startingSelectionCopy = rangy.getSelection().toString().slice(0);
+        wt_$(document).mouseup(function(){highlightedTextDetect(startingSelectionCopy)});
+    }
 }
 
 function highlightedTextDetect(startingHighlight){
