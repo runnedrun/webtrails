@@ -15,14 +15,14 @@ function addSiteFaviconToDisplay(domain,url) {
 }
 
 function addFaviconsToDisplay(data){
-    $.each(data.favicons_and_urls, function(i,favicon_and_url){
+    wt_$.each(data.favicons_and_urls, function(i,favicon_and_url){
             addSiteFaviconToDisplay(favicon_and_url[0],favicon_and_url[1]);
         }
     )
 }
 
 function revealTrailURL(e){
-    var urlDisplay = $(document.createElement("span"));
+    var urlDisplay = wt_$(document.createElement("span"));
     urlDisplay.css({
         "font-size": "12px",
         "color": "white",

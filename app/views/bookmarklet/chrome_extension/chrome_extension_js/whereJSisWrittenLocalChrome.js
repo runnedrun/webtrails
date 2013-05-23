@@ -19,7 +19,7 @@ String.prototype.splice = function( idx, rem, s ) {
 };
 
 
-$(initMyBookmarklet);
+wt_$(initMyBookmarklet);
 
 function getCurrentSiteHTML(){
     return document.getElementsByTagName('html')[0].innerHTML;

@@ -21,17 +21,17 @@ console.log("elipsis loaded");
  */
 
 function initializeJqueryEllipsis(){
-    (function($) {
-        $.fn.ellipsis = function(enableUpdating){
+    (function(wt_wt_$) {
+        wt_wt_$.fn.ellipsis = function(enableUpdating){
             var s = document.documentElement.style;
             if (!('textOverflow' in s || 'OTextOverflow' in s)) {
                 return this.each(function(){
-                    var el = $(this);
+                    var el = wt_wt_$(this);
                     if(el.css("overflow") == "hidden"){
                         var originalText = el.html();
                         var w = el.width();
 
-                        var t = $(this.cloneNode(true)).hide().css({
+                        var t = wt_wt_$(this.cloneNode(true)).hide().css({
                             'position': 'absolute',
                             'width': 'auto',
                             'overflow': 'visible',

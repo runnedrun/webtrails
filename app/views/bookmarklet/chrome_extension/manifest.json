@@ -7,7 +7,7 @@
         "default_icon": "icon.png"
     },
     "content_scripts":[{
-        "js": ["chrome_extension_js/init_chrome_toolbar.js","chrome_extension_js/jquery141.js"],
+        "js": ["chrome_extension_js/init_chrome_toolbar.js","chrome_extension_js/jquery191.js"],
         "css": ["chrome_extension_css/trail_tool_bar.css"],
         "matches": ["*://*/*"]
     }],
@@ -15,6 +15,6 @@
         ,"chrome_extension_js/ajax_fns.js","chrome_extension_js/smart_grab.js","chrome_extension_js/jquery_elipsis.js",
         "chrome_extension_js/search_and_highlight.js","chrome_extension_js/autoresize.js", "chrome_extension_js/ui_fns.js",
         "chrome_extension_js/commenting_fns.js", "chrome_extension_js/inline_save_button_fns.js","chrome_extension_js/rangy-core.js",
-        "chrome_extension_js/jquery141.js"]
+        "chrome_extension_js/jquery191.js"]
 
 }

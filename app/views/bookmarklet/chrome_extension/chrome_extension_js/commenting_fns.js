@@ -8,7 +8,7 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     var topPosition  =  yPos + spacing;
     var leftPosition = xPos > overlayWidth ? (xPos - overlayWidth) : xPos;
 
-    var commentOverlay = $(document.createElement("div"));
+    var commentOverlay = wt_$(document.createElement("div"));
     commentOverlay.css({
         "background": "#2E2E1F",
         "opacity": .9,
@@ -19,13 +19,13 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     commentOverlay.css("left", leftPosition+"px");
     commentOverlay.addClass("commentOverlay");
 
-    var commentDescription = $(document.createElement("div"))
+    var commentDescription = wt_$(document.createElement("div"))
     commentDescription.html("Hit enter, click away or type a comment here")
     commentDescription.css({
         "border": "2px solid black"
     });
 
-    var commentBox = $(document.createElement("textarea"));
+    var commentBox = wt_$(document.createElement("textarea"));
     commentBox.css({
         "font-size":"12px",
         "overflow": "hidden",
@@ -38,17 +38,17 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
         "z-index": "9999"
     });
 
-    $(document.body).append(commentOverlay);
-    $(commentOverlay).append(commentDescription);
-    $(commentOverlay).append(commentBox);
+    wt_$(document.body).append(commentOverlay);
+    wt_$(commentOverlay).append(commentDescription);
+    wt_$(commentOverlay).append(commentBox);
     var noteContent = String(highlightedRange);
     commentBox.keydown((function(noteContent,commentOverlay,xPos,yPos){return (function (e){postNoteAndComment(e,noteContent,commentOverlay,xPos,yPos)})})(noteContent,commentOverlay,xPos,yPos));
-    $(document).mousedown((function(noteContent,commentOverlay,xPos,yPos){return (function (e){clickAway(e,noteContent,commentOverlay,xPos,yPos)})})(noteContent,commentOverlay,xPos,yPos));
+    wt_$(document).mousedown((function(noteContent,commentOverlay,xPos,yPos){return (function (e){clickAway(e,noteContent,commentOverlay,xPos,yPos)})})(noteContent,commentOverlay,xPos,yPos));
     console.log(commentBox);
     commentBox.autosize();
     commentBox.focus();
     var nodes = highlightedRange.getNodes();
-    $.each(nodes,function(i,node){
+    wt_$.each(nodes,function(i,node){
         if (i == 0){
             markNodeForHighlight(node,highlightedRange.startOffset,node.length);
         }
@@ -64,7 +64,7 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
 
 //    doHighlight(document,"trailHighlight",parsedNoteContent);
     highlight_wtHighlights();
-    $(".trailHighlight").css("background-color","yellow");
+    wt_$(".trailHighlight").css("background-color","yellow");
 //    makePlaceholder(commentBox);
     return commentBox;
 }
@@ -81,17 +81,17 @@ function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY
 }
 
 function closeOverlay(overlay){
-    $(document).unbind("mousedown");
-    $(document).mousedown(function(){mouseDown=1});
-    $(document).mousedown(possibleHighlightStart);
+    wt_$(document).unbind("mousedown");
+    wt_$(document).mousedown(function(){mouseDown=1});
+    wt_$(document).mousedown(possibleHighlightStart);
     overlay.remove();
     unhighlight_wtHighlights();
 
 }
 
 function clickAway(e,content,commentOverlay,xPos,yPos){
-    var clickedNode = $(e.target);
-    if (clickedNode != commentOverlay && ($.inArray(e.target,commentOverlay.children())==-1)){
+    var clickedNode = wt_$(e.target);
+    if (clickedNode != commentOverlay && (wt_$.inArray(e.target,commentOverlay.children())==-1)){
         closeOverlay(commentOverlay)
         saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos)
     }
@@ -101,7 +101,7 @@ function markNodeForHighlight(node,start_offset, end_offset){
     if (isTextNode(node)){
         var contents = node.nodeValue;
         var highlighted_contents = contents.slice(start_offset,end_offset);
-        var whiteSpaceRegex = /^\s*$/;
+        var whiteSpaceRegex = /^\s*wt_$/;
         if(!highlighted_contents || whiteSpaceRegex.test(highlighted_contents)){
             console.log("nothing inside this node, not replacing");
             return
@@ -109,30 +109,30 @@ function markNodeForHighlight(node,start_offset, end_offset){
         var unhighlighted_prepend = contents.slice(0,start_offset);
         var unhighlighted_append = contents.slice(end_offset,contents.length);
         var new_marker = document.createElement("wtHighlight");
-        $(new_marker).addClass("highlightMe");
-        $(new_marker).addClass('client_side_id_' + String(noteCount));
+        wt_$(new_marker).addClass("highlightMe");
+        wt_$(new_marker).addClass('client_side_id_' + String(noteCount));
 
         new_marker.innerHTML = highlighted_contents;
         var node_to_replace = node;
         node_to_replace.parentNode.replaceChild(new_marker,node_to_replace);
 
         if (unhighlighted_prepend.length !== 0 ){
-            var text_before_marker = $(document.createTextNode(unhighlighted_prepend));
+            var text_before_marker = wt_$(document.createTextNode(unhighlighted_prepend));
             text_before_marker.insertBefore(new_marker);
         }
         if (unhighlighted_append.length !== 0){
-            var text_after_marker = $(document.createTextNode(unhighlighted_append));
+            var text_after_marker = wt_$(document.createTextNode(unhighlighted_append));
             text_after_marker.insertAfter(new_marker);
         }
     } else {
-//        $(node).wrap("wtHighlight");
+//        wt_$(node).wrap("wtHighlight");
     }
 }
 
 function highlight_wtHighlights(){
-    $("wtHighlight.highlightMe").css("background","yellow");
+    wt_$("wtHighlight.highlightMe").css("background","yellow");
 }
 
 function unhighlight_wtHighlights(){
-    $("wtHighlight.highlightMe").removeClass("highlightMe").css("background","");
+    wt_$("wtHighlight.highlightMe").removeClass("highlightMe").css("background","");
 }

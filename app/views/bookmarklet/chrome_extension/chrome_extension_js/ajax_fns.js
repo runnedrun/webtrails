@@ -30,7 +30,7 @@ function saveSiteToTrail(successFunction){
 
 function fetchFavicons(){
     var currentSite = window.location.href;
-    $.ajax({
+    wt_$.ajax({
         url: "http://localhost:3000/trail/site_list",
         type: "get",
         crossDomain: true,
@@ -45,7 +45,7 @@ function fetchFavicons(){
 function submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY){
     currentSiteTrailID = site_data.site_id;
     console.log(site_data.site_id);
-    $.ajax({
+    wt_$.ajax({
         url: "http://localhost:3000/notes",
         type: "post",
         crossDomain: true,
@@ -64,7 +64,7 @@ function submitNoteAfterSave(site_data,content,comment,commentLocationX,commentL
 }
 
 function deletePreviousNote(){
-    $.ajax({
+    wt_$.ajax({
         url: "http://localhost:3000/notes/delete",
         type: "post",
         crossDomain: true,
