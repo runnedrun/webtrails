@@ -4,4 +4,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-Proto1::Application.load_tasks
+Webtrails::Application.load_tasks
