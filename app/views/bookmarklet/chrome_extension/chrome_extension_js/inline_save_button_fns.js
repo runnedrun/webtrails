@@ -2,16 +2,20 @@ console.log("inline save loaded");
 
 function possibleHighlightStart(){
     if(!trailDisplay.is(":hidden")){
-        var startingSelectionCopy = rangy.getSelection().toString().slice(0);
-        wt_$(document).mouseup(function(){highlightedTextDetect(startingSelectionCopy)});
+        // this seems unused
+        // var startingSelectionCopy = rangy.getSelection().toString().slice(0);
+        mouseDown = 1;
+        wt_$(document).mouseup(function(){mouseDown = 0; highlightedTextDetect()});
     }
 }
 
-function highlightedTextDetect(startingHighlight){
-    //this probably breaks a lot of pages
-    wt_$(document).unbind("mouseup");
-    if (!rangy.getSelection().isCollapsed){
-        addSaveButtonNextToNote(rangy.getSelection().getRangeAt(0));
+function highlightedTextDetect(){
+    if(!trailDisplay.is(":hidden")){
+        //this probably breaks a lot of pages
+        wt_$(document).unbind("mouseup");
+        if (!rangy.getSelection().isCollapsed){
+            addSaveButtonNextToNote(rangy.getSelection().getRangeAt(0));
+        }
     }
 }
 
