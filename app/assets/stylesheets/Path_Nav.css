@@ -12,7 +12,7 @@
     float: left;
 }
 
-.trailDisplay .navigateButton{
+.viewTrailToolbar .navigateButton{
     cursor: pointer;
     color: inherit;
     background: inherit;
@@ -29,7 +29,7 @@
     float: left;
 }
 
-.trailDisplay {
+.viewTrailToolbar {
     opacity: .9;
     background: #2E2E1F;
     border: none;

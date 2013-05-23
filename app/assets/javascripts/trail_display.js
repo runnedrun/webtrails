@@ -114,13 +114,22 @@ function switchToSite(siteID){
 
 }
 
+function getNoteIDsForCurrentSite(){
+    return siteHash[getCurrentSiteID()]["noteIDs"]
+}
+
+function getCurrentNoteID(){
+    return getNoteIDsForCurrentSite()[currentNoteIndex]
+}
+
+function getNumberOfNotesForCurrentSite(){
+    return getNoteIDsForCurrentSite().length
+}
+
 function nextNote(){
-    var currentSiteID = getCurrentSiteID();
-    if (currentNoteIndex < (Object.keys(siteHash[currentSiteID]["noteIDs"]).length-1)){
+    if (currentNoteIndex < (getNumberOfNotesForCurrentSite()-1)){
         currentNoteIndex+=1;
-        var currentSiteID = getCurrentSiteID();
-        var currentNoteID = siteHash[currentSiteID]["noteIDs"][currentNoteIndex];
-        scrollToAndHighlightNote(currentNoteID);
+        scrollToAndHighlightNote(getCurrentNoteID());
     } else {
         nextSite();
         nextNote();
@@ -130,9 +139,7 @@ function nextNote(){
 function previousNote(){
     if (currentNoteIndex > -1){
         currentNoteIndex-=1;
-        var currentSiteID = getCurrentSiteID();
-        var currentNoteID = siteHash[currentSiteID]["noteIDs"][currentNoteIndex];
-        scrollToAndHighlightNote(currentNoteID);
+        scrollToAndHighlightNote(getCurrentNoteID());
     } else {
         previousSite();
         gotoLastNoteforCurrentSite();
@@ -140,9 +147,8 @@ function previousNote(){
 }
 
 function gotoLastNoteforCurrentSite(){
-    var currentSiteID = getCurrentSiteID();
-    var final_note_index = Object.keys(siteHash[currentSiteID]["noteIDs"]).length-1
-    scrollToAndHighlightNote(siteHash[currentSiteID]["noteIDs"][final_note_index]);
+    var final_note_index = getNumberOfNotesForCurrentSite()-1;
+    scrollToAndHighlightNote(getNoteIDsForCurrentSite()[final_note_index]);
     currentNoteIndex = final_note_index;
 }
 
@@ -152,7 +158,7 @@ function scrollToAndHighlightNote(noteID){
     removeHighlight($(contWindow.document.body));
     removeCurrentComment();
     if(currentNote){
-        $(contWindow).scrollTop(currentNote.scroll_y);
+        $(contWindow).scrollTop(currentNote.pos_y);
 
         //gotta remove all the notes as well
         var highlights = $(contWindow.document.body).find("."+currentNote.client_side_id);
