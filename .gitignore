@@ -6,3 +6,4 @@ tmp/
 config/initializers/aws.rb
 .env
 .idea
+vendor/*
