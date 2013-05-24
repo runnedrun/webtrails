@@ -44,4 +44,3 @@ function getComputedStyleOfElement(element,stylename){
 function isTextNode(node) {
     return node.nodeType == 3;
 }
-`
