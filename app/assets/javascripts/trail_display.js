@@ -59,7 +59,6 @@ function readySite(data){
     })
     var siteAttributes = {"noteIDs": noteIDs, "title" : data.title, "url" : data.url};
     siteHash[data.site_id]=siteAttributes;
-    addMouseOverToFavicons();
 }
 
 function nextSite(){
@@ -280,10 +279,4 @@ function switchToPresentationMode(){
 
 function getCurrentSiteID(){
     return siteIDs[currentSiteIndex];
-}
-
-function addMouseOverToFavicons(){
-    $.each($(".siteFavicon"),function(i,favicon){
-        // I think this should be deleted
-    });
 }
