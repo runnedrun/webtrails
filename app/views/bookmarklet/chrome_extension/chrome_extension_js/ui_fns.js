@@ -1,7 +1,7 @@
 console.log("ui_fns loaded");
 
 function showOrHidePathDisplay(){
-    if (trailDisplay.is(":hidden")){
+    if (trailDisplay.is(":hidden") && (window.location.host != 'localhost:3000') && (window.location.host.indexOf('webtrails.co') == -1) ){
         trailDisplay.show();
         if (mouseDown == 0) { // if the mouse is not pressed (not highlighting)
             highlightedTextDetect(); // check to see if they highlighted anything for the addnote button
