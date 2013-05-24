@@ -119,7 +119,7 @@ function insertAbsolutelyPositionedSaveButton(left,top){
         "left" : left +5,
         "border-radius": "4px",
         "cursor": "pointer",
-        "z-index": "9999"
+        "z-index": "2147483647"
 
     });
     wt_$(document.body).append(saveSpan)
