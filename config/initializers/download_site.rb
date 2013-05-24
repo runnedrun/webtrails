@@ -13,7 +13,13 @@ class RemoteDocument
 
 
   def initialize(uri,html, iframe=false)
-    @uri = URI(uri)
+    $stderr.puts(uri)
+    begin
+      @uri = URI(uri)
+    rescue
+      $stderr.puts('Page contains a bad URI:', uri, 'moving on.')
+      @uri = 'javascript:void(false)'; # set this to this temp URL to not get handled
+    end
     @is_iframe= iframe
     s3 = AWS::S3.new
     @bucket = s3.buckets["TrailsSitesProto"]
