@@ -151,5 +151,5 @@ function initializeAutoResize(){
                 color:"white";   };
         }
 
-    }(jQuery));
+    }(wt_$));
 }
