@@ -144,15 +144,14 @@ function initMyBookmarklet() {
 
     //document bindings
 
-    document.onkeydown = verifyKeyPress;
-    document.body.onkeydown = verifyKeyPress;
+    wt_$(document.body).keydown(verifyKeyPress);
 
-    document.body.onmousedown = function() {
+    wt_$(document.body).mousedown(function() {
         mouseDown=1;
-    };
-    document.body.onmouseup = function() {
+    });
+    wt_$(document.body).mouseup(function(){
         mouseDown=0;
-    };
+    });
 
     fetchFavicons();
     wt_$(document).mousedown(possibleHighlightStart);
