@@ -66,7 +66,9 @@ function nextSite(){
         var switchingToSiteID = siteIDs[currentSiteIndex+1];
         switchToSite(switchingToSiteID);
         currentNoteIndex = -1;
+        return true
     }
+    return false
 }
 
 function previousSite(){
@@ -121,12 +123,14 @@ function getNumberOfNotesForCurrentSite(){
 }
 
 function nextNote(){
+    console.log(getNumberOfNotesForCurrentSite());
     if (currentNoteIndex < (getNumberOfNotesForCurrentSite()-1)){
         currentNoteIndex+=1;
         scrollToAndHighlightNote(getCurrentNoteID());
     } else {
-        nextSite();
-        nextNote();
+        if(nextSite()){
+           nextNote();
+        }
     }
 }
 
