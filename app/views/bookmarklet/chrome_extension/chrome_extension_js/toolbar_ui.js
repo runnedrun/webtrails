@@ -145,6 +145,7 @@ function initMyBookmarklet() {
     //document bindings
 
     document.onkeydown = verifyKeyPress;
+    document.body.onkeydown = verifyKeyPress;
 
     document.body.onmousedown = function() {
         mouseDown=1;
