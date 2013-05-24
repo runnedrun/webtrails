@@ -26,12 +26,11 @@ function getCurrentSiteHTML(){
 }
 
 function verifyKeyPress(e){
-var code = (e.keyCode ? e.keyCode : e.which);
-    console.log("saw key");
-if (code == 27){
-    console.log("saw esc");
-    showOrHidePathDisplay();
-}
+    var code = (e.keyCode ? e.keyCode : e.which);
+    console.log(code);
+    if (code == 27){
+        showOrHidePathDisplay();
+    }
 }
 
 function setSiteID(response){
