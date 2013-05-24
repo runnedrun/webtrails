@@ -105,18 +105,18 @@ function initMyBookmarklet() {
     var cssStyle = wt_$(document.createElement("style"));
     wt_$(document.getElementsByTagName("head")[0]).append(cssStyle);
     cssStyle.html(".siteFavicon {" +
-        "vertical-align:top" +
-        "padding: 0px" +
+        "vertical-align:top;" +
+        "padding: 0px;" +
         "padding-right: 2.5px;" +
         "float: left;" +
         "overflow: hidden;" +
         "display: block;" +
-        "height: 20px;" +
         "border: none;" +
         "}" +
         ".siteFavicon img { " +
-        "height: 20px;" +
-        "margin: 0" +
+        "height: 16px;" +
+        "margin: 0;" +
+        "margin-bottom: 2px;" +
         "}"
     );
 

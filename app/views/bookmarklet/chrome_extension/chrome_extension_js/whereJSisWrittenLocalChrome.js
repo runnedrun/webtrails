@@ -27,7 +27,7 @@ function getCurrentSiteHTML(){
 
 function verifyKeyPress(e){
     var code = (e.keyCode ? e.keyCode : e.which);
-    if (code == 27 || code == 192){ //esc or tilda
+    if (code == 192){ //just tilda right now, esc is code == 27 |
         showOrHidePathDisplay();
     }
 }
