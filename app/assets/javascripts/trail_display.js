@@ -53,8 +53,6 @@ function insertHTMLInIframe(html,iframe){
     siteBody.append(html);
 }
 
-
-
 function readySite(data){
     var noteIDs=[];
     $.each(data.notes, function(i,note){
@@ -111,7 +109,6 @@ function switchToSite(siteID){
     } else {
         scroll_favicon_carousel(0)
     }
-
 }
 
 function getNoteIDsForCurrentSite(){
