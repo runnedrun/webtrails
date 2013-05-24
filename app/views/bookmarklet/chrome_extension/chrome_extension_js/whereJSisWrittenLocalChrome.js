@@ -27,7 +27,9 @@ function getCurrentSiteHTML(){
 
 function verifyKeyPress(e){
 var code = (e.keyCode ? e.keyCode : e.which);
+    console.log("saw key");
 if (code == 27){
+    console.log("saw esc");
     showOrHidePathDisplay();
 }
 }

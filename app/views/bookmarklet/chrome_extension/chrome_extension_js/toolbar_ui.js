@@ -9,7 +9,7 @@ function initMyBookmarklet() {
         position:"fixed",
         top:"0px",
         "text-align":"left",
-        "z-index": "1000",
+        "z-index": "2147483647",
         "padding-left":"10px",
         opacity: ".8",
         background: "#2E2E1F",
