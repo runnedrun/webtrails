@@ -63,10 +63,10 @@ class RemoteDocument
     @noscript_tags.each { |tag| tag.remove }
     @js_tags.each { |tag| tag.remove }
 
-    css_parsed_src  = save_css_urls_to_s3(@contents.to_html,File.join(@dir,"images"),@uri)
+    css_parsed_src  = @contents.to_html #save_css_urls_to_s3(@contents.to_html,File.join(@dir,"images"),@uri)
     @contents = Nokogiri::HTML(css_parsed_src,nil,@encoding)
 
-    @css_tags = @contents.xpath( '//link[@rel="stylesheet"]' )
+    @css_tags = []#@contents.xpath( '//link[@rel="stylesheet"]' )
     @img_tags = @contents.xpath( '//img[@src]' )
 
 

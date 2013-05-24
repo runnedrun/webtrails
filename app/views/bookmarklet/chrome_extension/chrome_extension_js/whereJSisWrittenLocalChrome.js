@@ -22,7 +22,9 @@ String.prototype.splice = function( idx, rem, s ) {
 wt_$(initMyBookmarklet);
 
 function getCurrentSiteHTML(){
-    return document.getElementsByTagName('html')[0].innerHTML;
+    var htmlClone = wt_$(document.getElementsByTagName('html')[0]).clone();
+    var processedHtml = createMasterStyleSheet(htmlClone[0]);
+    return processedHtml.innerHTML;
 }
 
 function verifyKeyPress(e){
