@@ -35,7 +35,7 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
         "color": "black",
         "height": String(overlayHeight)+"px",
         "width": String(overlayWidth)+"px",
-        "z-index": "9999"
+        "z-index": "2147483647"
     });
 
     wt_$(document.body).append(commentOverlay);
