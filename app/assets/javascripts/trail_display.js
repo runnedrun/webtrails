@@ -19,8 +19,7 @@ $(function(){
     $("#showNoteList").click(expandOrCloseNoteList);
     $(".noteWrapper").click(clickJumpToNote);
     $(".siteFavicon").click(clickJumpToSite);
-
-})
+});
 
 function loadIframes(siteID){
     $.ajax({
@@ -30,15 +29,14 @@ function loadIframes(siteID){
             "site_id" : siteID
         },
         success: readySite
-    })
+    });
 }
 
 function makeIframes(){
     //site IDS defined in the html
     $.each(siteIDs,function (i,siteID){
       loadIframes(siteID)
-    })
-
+    });
 }
 
 function wrapHTMLInIframe(html,iframe){
@@ -107,20 +105,20 @@ function switchToSite(siteID){
     if (currentSiteIndex>13){
         scroll_favicon_carousel(currentSiteIndex-13);
     } else {
-        scroll_favicon_carousel(0)
+        scroll_favicon_carousel(0);
     }
 }
 
 function getNoteIDsForCurrentSite(){
-    return siteHash[getCurrentSiteID()]["noteIDs"]
+    return siteHash[getCurrentSiteID()]["noteIDs"];
 }
 
 function getCurrentNoteID(){
-    return getNoteIDsForCurrentSite()[currentNoteIndex]
+    return getNoteIDsForCurrentSite()[currentNoteIndex];
 }
 
 function getNumberOfNotesForCurrentSite(){
-    return getNoteIDsForCurrentSite().length
+    return getNoteIDsForCurrentSite().length;
 }
 
 function nextNote(){
@@ -168,7 +166,7 @@ function scrollToAndHighlightNote(noteID){
         highlights.each(function(i,highlight){
             if ($(highlight).offset().top > currentNote.scroll_y){
                 offsets = $(highlight).offset();
-                return false
+                return false;
             }
         });
         var commentDisplay = showComment(currentNote.comment,offsets.left,offsets.top);
@@ -185,7 +183,7 @@ function removeHighlight(node){
 }
 
 function iframeContentWindow(){
-    return $(".currentSite")[0].contentWindow
+    return $(".currentSite")[0].contentWindow;
 }
 
 function higlightCurrentSiteFavicon(currentSiteID){
@@ -277,7 +275,7 @@ function getComputedStyleOfElementInIframe(element,stylename){
 function switchToPresentationMode(){
 //    $(currentSite[0].contentWindow.documenon-wrapping div full screennt.body).css({"height": "100%","width": "100%","z-index":"0"});
     insertHTMLInIframe("<div class=overlay style='background-color: #666666;z-index:99998; height: 100%; width: 100%;position: fixed; top:0; right: 0; opacity: .6;'>", currentSite);
-    presentationMode = true
+    presentationMode = true;
 }
 
 function getCurrentSiteID(){
@@ -286,6 +284,6 @@ function getCurrentSiteID(){
 
 function addMouseOverToFavicons(){
     $.each($(".siteFavicon"),function(i,favicon){
-              //add something here?
-    })
+        // I think this should be deleted
+    });
 }
