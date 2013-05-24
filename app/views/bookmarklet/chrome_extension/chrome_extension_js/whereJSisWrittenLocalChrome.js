@@ -27,7 +27,6 @@ function getCurrentSiteHTML(){
 
 function verifyKeyPress(e){
     var code = (e.keyCode ? e.keyCode : e.which);
-    console.log(code);
     if (code == 27 || code == 192){ //esc or tilda
         showOrHidePathDisplay();
     }
@@ -45,3 +44,4 @@ function getComputedStyleOfElement(element,stylename){
 function isTextNode(node) {
     return node.nodeType == 3;
 }
+`
