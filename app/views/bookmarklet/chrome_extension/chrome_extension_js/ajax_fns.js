@@ -3,7 +3,7 @@ console.log("ajax_fns loaded");
 function saveSiteToTrail(successFunction){
     var currentSite = window.location.href;
     var currentHTML = getCurrentSiteHTML();
-    $.ajax({
+    wt_$.ajax({
         url: "http://localhost:3000/sites",
         type: "post",
         crossDomain: true,
