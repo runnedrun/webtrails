@@ -18,7 +18,7 @@ class RemoteDocument
       @uri = URI(uri)
     rescue
       $stderr.puts('Page contains a bad URI:', uri, 'moving on.')
-      @uri = 'javascript:void(false)';
+      @uri = 'javascript:void(false)'; # set this to this temp URL to not get handled
     end
     @is_iframe= iframe
     s3 = AWS::S3.new
