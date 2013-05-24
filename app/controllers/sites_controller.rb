@@ -57,12 +57,16 @@ class SitesController < ApplicationController
   def show
     site = Site.find(params[:id])
     if site.archive_location.nil?
-      render :layout => false, :text => "<h1>Check back later! Still saving...</h1>"
+      render :template => 'trails/loading'
     else
       @html = open(site.archive_location).read.force_encoding(site.html_encoding).html_safe
       render :layout => false, :text => @html
     end
+  end
 
+  def exists
+    site = Site.find(params[:id])
+    render :json => {:exists => !site.archive_location.nil?}, :status => 200
   end
 
 end
