@@ -12,7 +12,6 @@
     setInterval(function() {
       console.log('checking...', id);
       $.get('/site/exists?id=' + id, function(data) {
-        console.log('response', data.exists, typeof data.exists);
         if (data.exists) {
           // Our page exists, and we should refresh to get the new hotness.
           document.location.reload(true);

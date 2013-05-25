@@ -54,7 +54,7 @@ class TrailsController < ApplicationController
 
   def site_list
     trail = Trail.find(params[:trail_id])
-    favicons_and_urls = trail.sites.inject([]) do |fav_list, site|
+    favicons_and_urls = trail.sites.sort_by(&:created_at).inject([]) do |fav_list, site|
       fav_list.push(["http://www.google.com/s2/favicons?domain=" + URI(site.url).host.to_s,site.url])
     end
     favicons_and_urls.push(["http://www.google.com/s2/favicons?domain=" + URI(params[:current_url]).host.split(".")[-2..-1].to_s,"#"])

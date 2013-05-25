@@ -23,6 +23,7 @@ function initMyBookmarklet() {
       }).mouseout(function(){
         trailDisplay.css("opacity", "0.8");
       });
+    trailDisplay.disableSelection();
 
     noteDisplayWrapper = wt_$(document.createElement("div"));
     noteDisplayWrapper.css({
@@ -96,19 +97,25 @@ function initMyBookmarklet() {
     saveSiteToTrailButton.addClass("webtrails");
     saveSiteToTrailButton.html("Save site");
 
-    var shareTrailButton = wt_$(document.createElement("button"));
-    shareTrailButton.css({
+    var shareTrailField = wt_$(document.createElement("input"));
+    shareTrailField.css({
         "font-size": "12px",
         "color": "white",
         "background-color": "transparent",
         "font-weight": "bold",
-        height:"100%",
-        width: "10%",
+        "height":"100%",
         "float": "right",
-        "margin-left": "2%"
+        "margin-left": "2%",
+        "line-height": "25px",
+        "text-align": "center",
+        "padding": "0",
+        "margin-top": "0",
+        "outline": "none"
     });
-    shareTrailButton.addClass("webtrails");
-    shareTrailButton.html("Share Trail");
+    shareTrailField.addClass("webtrails");
+    shareTrailField.attr("type", "text")
+    shareTrailField.attr("id", "shareTrail");
+    shareTrailField.attr("value", "Share Trail");
 
     //inserting global stylings
     var cssStyle = wt_$(document.createElement("style"));
@@ -141,8 +148,12 @@ function initMyBookmarklet() {
 
     wt_$(noteDisplayWrapper).append(previousNoteDisplay);
 
-    wt_$(trailDisplay).append(shareTrailButton);
-    shareTrailButton.click(revealTrailURL);
+    wt_$(trailDisplay).append(shareTrailField);
+    shareTrailField.click(function() {
+        shareTrailField.attr("value", webTrailsUrl + '/trails/'+trailID);
+        shareTrailField.focus();
+        shareTrailField.select();
+    });
 
     wt_$(trailDisplay).append(saveSiteToTrailButton);
     saveSiteToTrailButton.click(function(){saveSiteToTrail(setSiteID)});

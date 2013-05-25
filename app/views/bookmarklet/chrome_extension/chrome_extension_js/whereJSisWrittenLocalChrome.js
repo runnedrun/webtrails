@@ -11,13 +11,14 @@ var trailDisplay,
     deleteNoteButton,
     previousNoteID,
     siteHTML = getCurrentSiteHTML();
-    noteCount = 0;
+    noteCount = 0,
+    webTrailsUrl = "http://localhost:3000";
+    // webTrailsUrl = "http://webtrails.co";
 
 
 String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
 };
-
 
 wt_$(initMyBookmarklet);
 

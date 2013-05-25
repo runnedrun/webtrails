@@ -7,3 +7,4 @@ config/initializers/aws.rb
 .env
 .idea
 vendor/*
+*.DS_Store
