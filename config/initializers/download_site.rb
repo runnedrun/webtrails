@@ -189,19 +189,22 @@ class RemoteDocument
   end
 
 
+  def parse_URI_or_return_false(url)
+    uri = false
+    begin
+      uri = URI.parse(url)
+    rescue
+      $stderr.puts("something went very wrong, this url was probably completely invalid",url)
+    end
+    return uri
+  end
 
 
   #=begin rdoc
   #Download a remote file and save it to the specified path
   #=end
   def download_resource(url, path)
-    newFile = false
-    begin
-      the_uri = URI.parse(url)
-    rescue
-      $stderr.puts("something went very wrong, this url was probably completely invalid",url)
-      return newFile
-    end
+    the_uri = parse_URI_or_return_false(url)
     if the_uri
       data = html_get_site the_uri
       if data
@@ -301,8 +304,14 @@ class RemoteDocument
       dest = localize_url(absolute_url,dir)
       new_url = url
       if !@shallow_save
-        s3File = download_resource(absolute_url,dest)
-        s3File = save_css_urls_to_s3(s3File,dir,source)
+        #s3File = download_resource(absolute_url,dest)
+        s3File = false
+        css_string = html_get_site(absolute_url)
+        if css_string
+          css_string = save_css_urls_to_s3(css_string,dir,clean_uri)
+          dest = localize_url(absolute_url,dir)
+          s3File = write_to_aws(css_string,dest)
+        end
         if s3File
           s3File.acl = :public_read
           new_url = s3File.public_url().to_s
@@ -331,12 +340,17 @@ class RemoteDocument
           if !@shallow_save
             source = relative_url_for(url,css_file_url)
             dest = localize_url(source,dir)
-            s3File = download_resource(source,dest)
-            if s3File
+            #s3File = download_resource(source,dest)
+            s3File = false
+            data = html_get_site(source)
+            if data
               if File.extname(source) == ".css"
                 $stderr.puts("getting recurse css from "+source)
-                s3File = save_css_urls_to_s3(s3File,dir,source)
+                data = save_css_urls_to_s3(data,dir,source)
               end
+              s3File = write_to_aws(data,dest)
+            end
+            if s3File
               s3File.acl = :public_read
               new_url = s3File.public_url().to_s
             end
