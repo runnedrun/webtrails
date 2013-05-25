@@ -13,7 +13,6 @@ class RemoteDocument
 
 
   def initialize(uri,html, iframe=false)
-    $stderr.puts(uri)
     begin
       @uri = URI(uri)
     rescue
@@ -69,10 +68,10 @@ class RemoteDocument
     @noscript_tags.each { |tag| tag.remove }
     @js_tags.each { |tag| tag.remove }
 
-    css_parsed_src  = @contents.to_html #save_css_urls_to_s3(@contents.to_html,File.join(@dir,"images"),@uri)
+    css_parsed_src  = save_css_urls_to_s3(@contents.to_html,File.join(@dir,"images"),@uri)
     @contents = Nokogiri::HTML(css_parsed_src,nil,@encoding)
 
-    @css_tags = []#@contents.xpath( '//link[@rel="stylesheet"]' )
+    @css_tags = @contents.xpath( '//link[@rel="stylesheet"]' )
     @img_tags = @contents.xpath( '//img[@src]' )
 
 
@@ -178,6 +177,7 @@ class RemoteDocument
   #Send GET to url, following redirects if required.
   #=end
   def html_get_site(url)
+    delay
     user_agent = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:13.0) Gecko/20100101 Firefox/13.0"
     begin
       resp = open(url.to_s, "User-Agent" => user_agent)
@@ -189,6 +189,8 @@ class RemoteDocument
   end
 
 
+
+
   #=begin rdoc
   #Download a remote file and save it to the specified path
   #=end
@@ -197,7 +199,7 @@ class RemoteDocument
     begin
       the_uri = URI.parse(url)
     rescue
-      $stderr.puts("something went very wrong, a url was probably completely invalid")
+      $stderr.puts("something went very wrong, this url was probably completely invalid",url)
       return newFile
     end
     if the_uri
@@ -242,13 +244,17 @@ class RemoteDocument
         path_wo_extension = path
       end
       short_path_wo_extension = path_wo_extension[0..100]
-      short_path_wo_extension.gsub(/\/+$/,"")
+      short_path_wo_extension = short_path_wo_extension.gsub(/\/+$/,"")
+      short_path_wo_extension = short_path_wo_extension.gsub(/\.\./,"")
+      short_path_wo_extension = short_path_wo_extension.gsub(/\/\//,"/")
+      $stderr.puts("saving to path "+ short_path_wo_extension+extension)
       newFile = @bucket.objects[short_path_wo_extension+extension]
       newFile.write(data)
     rescue
       newFile = false
       $stderr.puts path.to_s+"had a problem saving"
     end
+    $stderr.puts("returning new file")
     return newFile
   end
 
@@ -290,11 +296,13 @@ class RemoteDocument
       everything_after_url = everything_after_url_start[url_end..-1]
       everything_before_url = everything_before_import_tag + everything_after_import_tag[0..url_start]
       url = everything_after_url_start[0...url_end]
-      localized_url = url_for(url)
-      dest = localize_url(url,dir)
+
+      absolute_url = relative_url_for(url,dir)
+      dest = localize_url(absolute_url,dir)
       new_url = url
       if !@shallow_save
-        s3File = download_resource(localized_url,dest)
+        s3File = download_resource(absolute_url,dest)
+        s3File = save_css_urls_to_s3(s3File,dir,source)
         if s3File
           s3File.acl = :public_read
           new_url = s3File.public_url().to_s
@@ -320,12 +328,15 @@ class RemoteDocument
         url = url[1..-2] if ((url[0] == "'") or (url[0] == '"'))
         new_url = url
         if !url.index("data:")
-          dest = localize_url(url,dir)
           if !@shallow_save
             source = relative_url_for(url,css_file_url)
+            dest = localize_url(source,dir)
             s3File = download_resource(source,dest)
-
             if s3File
+              if File.extname(source) == ".css"
+                $stderr.puts("getting recurse css from "+source)
+                s3File = save_css_urls_to_s3(s3File,dir,source)
+              end
               s3File.acl = :public_read
               new_url = s3File.public_url().to_s
             end
