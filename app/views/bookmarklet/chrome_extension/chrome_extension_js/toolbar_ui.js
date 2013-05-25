@@ -3,6 +3,7 @@ console.log('toolbar ui loaded');
 function initMyBookmarklet() {
     var displayHeight = "25px";
     trailDisplay = wt_$(document.createElement("div"));
+    trailDisplay.addClass("webtrails");
     trailDisplay.css({
         height:displayHeight,
         width: "100%",
@@ -33,7 +34,7 @@ function initMyBookmarklet() {
         "opacity": "1",
         overflow: "hidden"
     });
-    noteDisplayWrapper.addClass("noteDisplayWrapper");
+    noteDisplayWrapper.addClass("noteDisplayWrapper").addClass("webtrails");;
 
     previousNoteDisplay = wt_$(document.createElement("div"));
     previousNoteDisplay.css({
@@ -42,6 +43,7 @@ function initMyBookmarklet() {
         "overflow": "hidden",
         "text-overflow": "ellipsis"
     });
+    previousNoteDisplay.addClass("webtrails");
     previousNoteDisplay.html("Select text and press the save button to save notes.  Your last saved note will appear here");
 
 
@@ -51,6 +53,7 @@ function initMyBookmarklet() {
         width: "10%",
         "float": "right"
     });
+    linkToTrailWrapper.addClass("webtrails");
 
     var linkToTrail = wt_$(document.createElement("a"));
     linkToTrail.css({
@@ -60,6 +63,7 @@ function initMyBookmarklet() {
         "color": "white",
         "font-weight": "bold"
     });
+    linkToTrail.addClass("webtrails");
 
     wt_$(linkToTrail).html("View Trail");
     wt_$(linkToTrail).attr('href',"http://localhost:3000/trails/"+trailID);
@@ -77,7 +81,7 @@ function initMyBookmarklet() {
     });
 
     deleteNoteButton.html("Delete Note");
-    deleteNoteButton.addClass("deleteNote");
+    deleteNoteButton.addClass("deleteNote").addClass("webtrails");
 
     saveSiteToTrailButton = wt_$(document.createElement("button"));
     saveSiteToTrailButton.css({
@@ -89,7 +93,7 @@ function initMyBookmarklet() {
         width: "10%",
         "float": "right"
     });
-
+    saveSiteToTrailButton.addClass("webtrails");
     saveSiteToTrailButton.html("Save site");
 
     var shareTrailButton = wt_$(document.createElement("button"));
@@ -102,8 +106,8 @@ function initMyBookmarklet() {
         width: "10%",
         "float": "right",
         "margin-left": "2%"
-    })
-
+    });
+    shareTrailButton.addClass("webtrails");
     shareTrailButton.html("Share Trail");
 
     //inserting global stylings
@@ -124,13 +128,14 @@ function initMyBookmarklet() {
         "margin-bottom: 2px;" +
         "}"
     );
+    cssStyle.addClass("webtrails");
 
     //adding all the toolbar elements to the DOM.
     wt_$(document.body).prepend(trailDisplay);
 
     wt_$(trailDisplay).append(deleteNoteButton);
     deleteNoteButton.click(deletePreviousNote);
-    deleteNoteButton.attr("disabled","disabled");
+    deleteNoteButton.attr("enabled","disabled");
 
     wt_$(trailDisplay).append(noteDisplayWrapper);
 
