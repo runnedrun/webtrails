@@ -44,7 +44,6 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     var noteContent = String(highlightedRange);
     commentBox.keydown((function(noteContent,commentOverlay,xPos,yPos){return (function (e){postNoteAndComment(e,noteContent,commentOverlay,xPos,yPos)})})(noteContent,commentOverlay,xPos,yPos));
     wt_$(document).mousedown((function(noteContent,commentOverlay,xPos,yPos){return (function (e){clickAway(e,noteContent,commentOverlay,xPos,yPos)})})(noteContent,commentOverlay,xPos,yPos));
-    console.log(commentBox);
     commentBox.autosize();
     commentBox.focus();
     var nodes = highlightedRange.getNodes();
