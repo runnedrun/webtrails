@@ -17,6 +17,11 @@ function initMyBookmarklet() {
         "line-height": "25px",
         "display":"none"
     });
+    trailDisplay.mouseover(function() {
+        trailDisplay.css("opacity", "1");
+      }).mouseout(function(){
+        trailDisplay.css("opacity", "0.8");
+      });
 
     noteDisplayWrapper = wt_$(document.createElement("div"));
     noteDisplayWrapper.css({
