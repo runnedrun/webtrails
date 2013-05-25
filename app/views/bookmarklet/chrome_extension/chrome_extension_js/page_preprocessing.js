@@ -1,4 +1,4 @@
-console.log("loaded pro-processing");
+console.log("loaded pre-processing");
 
 function createMasterStyleSheet(html){
     var newStyleSheetString = "";
