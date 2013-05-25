@@ -4,6 +4,8 @@
   <%- end %>
   ];
 </script>
+<link href="/stylesheets/bootstrap.min.css" rel="stylesheet" media="screen">
+
 <div class=siteDisplayDiv>
   <%- @sites.each_with_index do |site,i| %>
     <iframe src=<%= Webtrails::Application::AJAX_REQUEST_URL %>/sites/<%= site.id %> id=<%= site.id %> class="siteDisplay <%= i==0 ? "currentSite":"notCurrent"  %>"></iframe>
@@ -22,22 +24,19 @@
   <%- end %>
 </div>
 <div class="viewTrailToolbar">
-<button class="leftNavigateButton navigateButton" id="previousSite">Previous Site</button>
-<button class="leftNavigateButton navigateButton" id="nextSite">Next site</button>
+<button class="btn btn-primary navigateButton" id="previousNote">Previous Note</button>
+<button class="btn btn-primary btn-small navigateButton" id="previousSite">Previous Site</button>
+
+
 <div class="siteFavicons">
     <%- @favicon_urls_with_ids_and_titles.each_with_index do |favicon_id_and_title,i| %>
-      <div class="siteFavicon tooltip" id="favicon<%= favicon_id_and_title[1] %>" data-ot="<%= @sites[i].title%>" data-ot-delay="0" data-ot-tip-joint="bottom" data-ot-style="dark">
-        <img class="faviconImage" src="<%= favicon_id_and_title[0] %>"/>
-        <span class="siteTitleDisplay"><%= favicon_id_and_title[2] %></span>
-      </div>
+        <img class="faviconImage" src="<%= favicon_id_and_title[0] %>" id="favicon<%= favicon_id_and_title[1] %>" data-ot="<%= @sites[i].title%>" data-ot-delay="0" data-ot-tip-joint="bottom" data-ot-style="dark"/>
     <%- end %>
 </div>
-<span id="showAllSitesButton">Show all Sites</span>
-<span id="urlText"></span>
-<button class="rightNavigateButton navigateButton" id="showNoteList" href="#">Show note list</button>
-<button class="rightNavigateButton navigateButton" id="nextNote">Next note</button>
-<button class="rightNavigateButton navigateButton" id="previousNote">Previous Note</button>
-<input type="checkbox" class="turnOffComments" id="turnOffCommentsCheckbox">
 
-<div class=checkBoxLabel>Turn off comments</div>
+<button id="showAllSitesButton" class="btn btn-warning navigateButton showList">Show all Sites</button>
+<button class="btn btn-warning navigateButton showList" id="showNoteList" href="#">Show note list</button>
+
+<button class="btn btn-primary btn-small navigateButton" id="nextSite">Next site</button>
+<button class="btn btn-primary navigateButton" id="nextNote"><b>Next note</b></button>
 </div>
