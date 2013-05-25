@@ -15,7 +15,6 @@ $(function(){
     $("#previousSite").click(previousSite);
     $("#nextNote").click(nextNote);
     $("#previousNote").click(previousNote);
-    $("#turnOffCommentsCheckbox").click(showOrHideCurrentComment);
     $("#showNoteList").click(expandOrCloseNoteList);
     $(".noteWrapper").click(clickJumpToNote);
     $(".faviconImage").click(clickJumpToSite);
@@ -108,6 +107,7 @@ function switchToSite(siteID){
     } else {
         scroll_favicon_carousel(0);
     }
+    $('#goToSite').attr("href", $('.activeFavicon').attr("data-site-url"));
 }
 
 function getNoteIDsForCurrentSite(){
@@ -263,6 +263,7 @@ function removeCurrentComment(){
     }
 }
 
+// Not used, removed from the UI on the view toolbar
 function showOrHideCurrentComment(){
     if($("#turnOffCommentsCheckbox").is(":checked")){
         $(iframeContentWindow().document).find(".commentOverlay").hide();

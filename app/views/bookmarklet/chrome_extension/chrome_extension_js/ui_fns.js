@@ -17,7 +17,7 @@ function showOrHidePathDisplay(){
 }
 
 function addSiteFaviconToDisplay(domain,url) {
-    trailDisplay.append("<a href=\""+ url+ "\" class=\"siteFavicon\"><img src='"+ domain + "'></a>")
+    trailDisplay.append("<a href=\""+ url+ "\" class=\"siteFavicon webtrails\"><img src='"+ domain + "' class=\"webtrails\"></a>")
 }
 
 function addFaviconsToDisplay(data){
@@ -41,6 +41,7 @@ function revealTrailURL(e){
         border: "solid white 2px"
     })
     urlDisplay.html("http://localhost:3000/trails/"+trailID);
+    urlDisplay.addClass("webtrails");
     e.target.parentNode.replaceChild(urlDisplay[0],e.target)
 }
 
