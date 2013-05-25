@@ -319,7 +319,7 @@ class RemoteDocument
       else
         new_url= generate_AWS_URL(dest)
       end
-      new_string = everything_before_url + new_url + everything_after_url
+      new_string = everything_before_url + new_url + save_import(everything_after_url)
       return new_string
     else
       return string
