@@ -24,7 +24,8 @@ wt_$(initMyBookmarklet);
 
 function getCurrentSiteHTML(){
     var htmlClone = wt_$(document.getElementsByTagName('html')[0]).clone();
-    var processedHtml = createMasterStyleSheet(htmlClone[0]);
+    removeToolbarFromPage(htmlClone); // edits in-place
+    var processedHtml = createMasterStyleSheet(htmlClone[0]); //gets the element, not the jquery object
     return processedHtml.innerHTML;
 }
 
