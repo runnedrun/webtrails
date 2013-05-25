@@ -18,7 +18,7 @@ $(function(){
     $("#turnOffCommentsCheckbox").click(showOrHideCurrentComment);
     $("#showNoteList").click(expandOrCloseNoteList);
     $(".noteWrapper").click(clickJumpToNote);
-    $(".siteFavicon").click(clickJumpToSite);
+    $(".faviconImage").click(clickJumpToSite);
 });
 
 function loadIframes(siteID){
@@ -191,7 +191,7 @@ function iframeContentWindow(){
 
 function higlightCurrentSiteFavicon(currentSiteID){
     $(".activeFavicon").removeClass("activeFavicon");
-    var currentSiteFavicon = $("#favicon"+String(currentSiteID)).find("img");
+    var currentSiteFavicon = $("#favicon"+String(currentSiteID));
     currentSiteFavicon.addClass("activeFavicon");
 }
 
