@@ -45,8 +45,8 @@ function addSaveButtonNextToNote(highlightedTextRange){
     var saveButtonLeft = saveButtonPosition.left;
     saveButton.remove();
     var saveSpan = insertAbsolutelyPositionedSaveButton(saveButtonLeft, saveButtonTop);
-    var nodeLineHeight = parseInt(getComputedStyleOfElement(currentSelection.getRangeAt(0).endContainer.parentNode, "lineHeight").replace("px",""));
-
+    window.parent = wt_$(currentSelection.getRangeAt(0).endContainer.parentNode).clone();
+    var nodeLineHeight = parseInt(getComputedStyleOfElement(currentSelection.getRangeAt(0).endContainer.parentNode, "font-size").replace("px",""))*1.5;
     //clean this up foo
     saveSpan.click(function(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedRange){return function(e){clickAndRemoveSaveButton(e,saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedRange)} }(saveButtonLeft,saveButtonTop,nodeLineHeight,rangy.getSelection().getRangeAt(0)));
     //make sure this gets handled, so no existing callback gets the event and captures it.
