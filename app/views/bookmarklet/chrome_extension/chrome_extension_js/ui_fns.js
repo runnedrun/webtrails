@@ -27,24 +27,6 @@ function addFaviconsToDisplay(data){
     )
 }
 
-function revealTrailURL(e){
-    var urlDisplay = wt_$(document.createElement("span"));
-    urlDisplay.css({
-        "font-size": "12px",
-        "color": "white",
-        "background-color": "transparent",
-        "font-weight": "bold",
-        height:"100%",
-        "max-width": "15%",
-        "float": "right",
-        "margin-left": "2%",
-        border: "solid white 2px"
-    })
-    urlDisplay.html("http://localhost:3000/trails/"+trailID);
-    urlDisplay.addClass("webtrails");
-    e.target.parentNode.replaceChild(urlDisplay[0],e.target)
-}
-
 function moveNoteToPrevious(noteContent){
     previousNoteDisplay.fadeOut(100);
     previousNoteDisplay.html(noteContent);
