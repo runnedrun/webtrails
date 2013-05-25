@@ -83,7 +83,6 @@ function showAllSites(){
 }
 
 function scroll_favicon_carousel(first_favicon_displayed){
-    console.log("Scrolling");
     $(".siteFavicon").animate({"left":first_favicon_displayed*(-20)},100);
     //todo add actual scroll behavior here
 }
@@ -123,7 +122,6 @@ function getNumberOfNotesForCurrentSite(){
 }
 
 function nextNote(){
-    console.log(getNumberOfNotesForCurrentSite());
     if (currentNoteIndex < (getNumberOfNotesForCurrentSite()-1)){
         currentNoteIndex+=1;
         scrollToAndHighlightNote(getCurrentNoteID());
@@ -156,22 +154,23 @@ function scrollToAndHighlightNote(noteID){
     removeHighlight($(contWindow.document.body));
     removeCurrentComment();
     if(currentNote){
-        $(contWindow).scrollTop(currentNote.pos_y);
-
-        //gotta remove all the notes as well
         var highlights = $(contWindow.document.body).find("."+currentNote.client_side_id);
         highlights.css("background-color","yellow");
-//        if (){
-//            highlights.css({"z-index": "99999", position:"relative", "font-size": "1.5em"});
-//            highlights.css("background-color","white");
-//        }
-//        var offsets = highlights.offset();
+
+        //go through all the highlighted elements and find the first one above the scroll position, then put the comment box there.
+        offsets = $(highlights[0]).offset();
         highlights.each(function(i,highlight){
-            if ($(highlight).offset().top > currentNote.scroll_y){
+            if ($(highlight).offset().top > currentNote.comment_location_y){
                 offsets = $(highlight).offset();
                 return false;
             }
         });
+
+        var windowHeight = $(window).height();
+        var scrollPosition = offsets.top - windowHeight/2;
+        console.log(scrollPosition);
+        $(contWindow).scrollTop(scrollPosition);
+
         var commentDisplay = showComment(currentNote.comment,offsets.left,offsets.top);
         if ($("#turnOffCommentsCheckbox").is(":checked")){
             commentDisplay.hide();
@@ -242,7 +241,7 @@ function createCommentOverlay(commentText,xPos,yPos){
         "border": "2px solid black"
     });
     commentOverlay.html(commentText);
-    console.log(commentText);
+
     commentOverlay.addClass("commentOverlay");
     insertHTMLInIframe(commentOverlay,currentSite);
 
