@@ -4,7 +4,7 @@ function saveSiteToTrail(successFunction){
     var currentSite = window.location.href;
     var currentHTML = getCurrentSiteHTML();
     wt_$.ajax({
-        url: "http://localhost:3000/sites",
+        url: webTrailsUrl + "/sites",
         type: "post",
         crossDomain: true,
         data: {
@@ -22,7 +22,22 @@ function saveSiteToTrail(successFunction){
 //    document.onmousemove = mouseStopDetect();
     if (!currentSiteTrailID){
         saveSiteToTrailButton.attr("disabled","disabled");
-        saveSiteToTrailButton.html("Site saved");
+        saveSiteToTrailButton.text("Site saving");
+        console.log("saving site:", currentSiteTrailID);
+
+        // now check to see if site is actually saved, and update the UI accordingly
+        var updateSiteSavedButton = function() {
+            $.get(webTrailsUrl + '/site/exists?id=' + currentSiteTrailID, function(data) {
+                if (data.exists) {
+                  // Our page exists, and we should correct the save site button
+                  saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
+                } else {
+                    setTimeout(updateSiteSavedButton, 5000); // check again
+                }
+            });
+        }
+        setTimeout(updateSiteSavedButton, 5000);
+
 //        noteDisplayWrapper.fadeTo(200,1);
         deleteNoteButton.fadeTo(200,1);
     }
