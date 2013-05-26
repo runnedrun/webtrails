@@ -177,7 +177,6 @@ class RemoteDocument
   #Send GET to url, following redirects if required.
   #=end
   def html_get_site(url)
-    delay
     user_agent = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:13.0) Gecko/20100101 Firefox/13.0"
     begin
       resp = open(url.to_s, "User-Agent" => user_agent)
@@ -227,7 +226,6 @@ class RemoteDocument
     resource_url = url_for(url)
     dest = localize_url(url, dir)
     if !@shallow_save
-      delay
       s3File = download_resource(resource_url, dest)
       if s3File
         s3File.acl = :public_read
@@ -264,7 +262,6 @@ class RemoteDocument
     resource_url = url_for(url)
     dest = localize_url(url, dir)
     if !@shallow_save
-      delay
       css_string = html_get_site resource_url
       if css_string
         localized_css_string = save_css_urls_to_s3(css_string,dir,resource_url)
