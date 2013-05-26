@@ -73,13 +73,13 @@ class RemoteDocument
 
     @css_tags = @contents.xpath( '//link[@rel="stylesheet"]' )
     @img_tags = @contents.xpath( '//img[@src]' )
+    @links = @contents.xpath( '//a[@href]' )
+    convert_links_to_open_in_a_new_tab
 
 
 
-    # Note: meta tags and links are unused in this example
-    #
     #find_meta_tags
-    #find_links
+
   end
 
 
@@ -108,12 +108,13 @@ class RemoteDocument
   #=begin rdoc
   #Generate a Hash URL -> Title of all (unique) links in document.
   #=end
-  def find_links
+  def convert_links_to_open_in_a_new_tab
     @contents.xpath('//a[@href]').each do |tag|
       begin
-        tag[:href] = @uri.scheme.to_s + "://" + @uri.host.to_s + tag[:href].to_s if !(URI(tag[:href]).scheme)
+        tag[:target] = "_blank"
+        #tag[:href] = @uri.scheme.to_s + "://" + @uri.host.to_s + tag[:href].to_s if !(URI(tag[:href]).scheme)
       rescue
-        Rails.logger.error("#{tag[:href]} is probably invalid")
+        $stderr.puts("something broke while trying to make links open in a new tab")
       end
     end
   end
@@ -365,7 +366,6 @@ class RemoteDocument
       return css_string
     end
   end
-
 
   #=begin rdoc
   #Attempt to "play nice" with web servers by sleeping for a few ms.
