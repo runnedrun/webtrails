@@ -17,7 +17,27 @@ function showOrHidePathDisplay(){
 }
 
 function addSiteFaviconToDisplay(domain,url) {
-    trailDisplay.append("<a href=\""+ url+ "\" class=\"siteFavicon webtrails\"><img src='"+ domain + "' class=\"webtrails\"></a>")
+    var faviconLink = wt_$("<a href=\""+ url+ "\" class=\"siteFavicon webtrails\"></a>");
+    var faviconImg  = wt_$("<img src='"+ domain + "' class=\"webtrails\">");
+    faviconLink.css({
+        "vertical-align":"top",
+            padding: "0px",
+            "padding-right": "3px",
+            float: "left",
+            overflow: "hidden",
+            display: "block",
+            border: "none"
+            });
+    faviconImg.css({
+       height:"16px",
+       margin: 0,
+       "margin-top":"4px",
+       "vertical-align":"top",
+        padding: "0px"
+    })
+
+    faviconLink.append(faviconImg);
+    trailDisplay.append(faviconLink);
 }
 
 function addFaviconsToDisplay(data){

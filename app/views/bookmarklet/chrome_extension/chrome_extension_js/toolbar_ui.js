@@ -117,26 +117,6 @@ function initMyBookmarklet() {
     shareTrailField.attr("id", "shareTrail");
     shareTrailField.attr("value", "Share Trail");
 
-    //inserting global stylings
-    var cssStyle = wt_$(document.createElement("style"));
-    wt_$(document.getElementsByTagName("head")[0]).append(cssStyle);
-    cssStyle.html(".siteFavicon {" +
-        "vertical-align:top;" +
-        "padding: 0px;" +
-        "padding-right: 2.5px;" +
-        "float: left;" +
-        "overflow: hidden;" +
-        "display: block;" +
-        "border: none;" +
-        "}" +
-        ".siteFavicon img { " +
-        "height: 16px;" +
-        "margin: 0;" +
-        "margin-bottom: 2px;" +
-        "}"
-    );
-    cssStyle.addClass("webtrails");
-
     //adding all the toolbar elements to the DOM.
     wt_$(document.body).prepend(trailDisplay);
 
