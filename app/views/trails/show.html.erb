@@ -8,7 +8,7 @@
 
 <div class=siteDisplayDiv>
   <%- @sites.each_with_index do |site,i| %>
-    <iframe src=<%= Webtrails::Application::AJAX_REQUEST_URL %>/sites/<%= site.id %> id=<%= site.id %> class="siteDisplay <%= i==0 ? "currentSite":"notCurrent"  %>"></iframe>
+    <iframe src=<%= Webtrails::Application::AJAX_REQUEST_URL %>/sites/<%= site.id %> id=<%= site.id %> class="siteDisplay notCurrent"></iframe>
   <%- end %>
 </div>
 

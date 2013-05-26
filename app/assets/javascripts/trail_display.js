@@ -7,9 +7,18 @@ var noteIDs=[];
 var siteHash = {};
 var currentCommentBox;
 $(function(){
+    if (window.location.hash) {
+        var hash = window.location.hash.substring(1);
+        console.log(hash, hash == "end")
+        currentSiteIndex = parseInt(hash) || 0;
+        if (currentSiteIndex >= siteIDs.length || hash == "end") {
+            currentSiteIndex = siteIDs.length - 1;
+        } else if (currentSiteIndex < 0) {
+            currentSiteIndex = 0;
+        }
+    }
     var currentSiteID = String(siteIDs[currentSiteIndex]);
     currentSite = $("#"+currentSiteID);
-    switchToSite(currentSiteID);
     makeIframes();
     $("#nextSite").click(nextSite);
     $("#previousSite").click(previousSite);
@@ -18,6 +27,7 @@ $(function(){
     $("#showNoteList").click(expandOrCloseNoteList);
     $(".noteWrapper").click(clickJumpToNote);
     $(".faviconImage").click(clickJumpToSite);
+    switchToSite(currentSiteID);
 });
 
 function loadIframes(siteID){
@@ -98,6 +108,7 @@ function clickJumpToSite(e){
 }
 
 function switchToSite(siteID){
+    console.log('switching to site', siteID);
     closeNoteList();
     currentSite.addClass("notCurrent").removeClass("currentSite");
     currentSite = $("#"+String(siteID));
