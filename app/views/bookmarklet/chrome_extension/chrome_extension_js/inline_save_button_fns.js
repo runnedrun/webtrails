@@ -21,6 +21,7 @@ function highlightedTextDetect(){
 
 function addSaveButtonNextToNote(highlightedTextRange){
     var currentSelection = rangy.getSelection();
+    var nodeLineHeight = getNodeLineHeight(currentSelection.getRangeAt(0).endContainer.parentNode);
     var highlightedContent = smartGrabHighlightedText();
     var newNodeReadyForInsertandSaveButton = insertSaveButtonIntoNodeContent(highlightedTextRange);
     var saveButton = newNodeReadyForInsertandSaveButton[0];
@@ -45,8 +46,6 @@ function addSaveButtonNextToNote(highlightedTextRange){
     var saveButtonLeft = saveButtonPosition.left;
     saveButton.remove();
     var saveSpan = insertAbsolutelyPositionedSaveButton(saveButtonLeft, saveButtonTop);
-    window.parent = wt_$(currentSelection.getRangeAt(0).endContainer.parentNode).clone();
-    var nodeLineHeight = getNodeLineHeight(currentSelection.getRangeAt(0).endContainer.parentNode);
     //clean this up foo
     saveSpan.click(function(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedRange){return function(e){clickAndRemoveSaveButton(e,saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedRange)} }(saveButtonLeft,saveButtonTop,nodeLineHeight,rangy.getSelection().getRangeAt(0)));
     //make sure this gets handled, so no existing callback gets the event and captures it.
