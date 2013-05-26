@@ -9,7 +9,7 @@ var currentCommentBox;
 $(function(){
     var currentSiteID = String(siteIDs[currentSiteIndex]);
     currentSite = $("#"+currentSiteID);
-    higlightCurrentSiteFavicon(currentSiteID);
+    switchToSite(currentSiteID);
     makeIframes();
     $("#nextSite").click(nextSite);
     $("#previousSite").click(previousSite);
@@ -82,9 +82,12 @@ function showAllSites(){
     $(".siteFavicon").css("whitespace","");
 }
 
-function scroll_favicon_carousel(first_favicon_displayed){
-    console.log("Scrolling");
-    $(".siteFavicon").animate({"left":first_favicon_displayed*(-20)},100);
+// scrolls the favicon carousel to the appropriate place for the active favicon
+function scroll_favicon_carousel(activeFaviconIndex){
+    console.log("scrolling")
+    var scrollLeft = 150 - 14 + activeFaviconIndex*(-19);
+    console.log(activeFaviconIndex, scrollLeft);
+    $(".siteFavicons").animate({"left": scrollLeft},100);
     //todo add actual scroll behavior here
 }
 
@@ -100,13 +103,10 @@ function switchToSite(siteID){
     currentSite = $("#"+String(siteID));
     currentSite.removeClass("notCurrent").addClass("currentSite");
     higlightCurrentSiteFavicon(siteID);
+
     currentSiteIndex = siteIDs.indexOf(siteID);
     currentNoteIndex = -1;
-    if (currentSiteIndex>13){
-        scroll_favicon_carousel(currentSiteIndex-13);
-    } else {
-        scroll_favicon_carousel(0);
-    }
+    scroll_favicon_carousel(currentSiteIndex);
     $('#goToSite').attr("href", $('.activeFavicon').attr("data-site-url"));
 }
 

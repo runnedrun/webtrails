@@ -27,10 +27,12 @@
 <button class="btn btn-primary btn-mini navigateButton" id="previousSite">Previous Site</button>
 <button class="btn btn-primary navigateButton" id="previousNote">Previous Note</button>
 
-<div class="siteFavicons">
-    <%- @favicon_urls_with_ids_and_titles.each_with_index do |favicon_id_and_title,i| %>
-        <img class="faviconImage" src="<%= favicon_id_and_title[0] %>" id="favicon<%= favicon_id_and_title[1] %>" data-ot="<%= @sites[i].title%>" data-ot-delay="0" data-ot-tip-joint="bottom" data-ot-style="dark" data-site-url="<%= @sites[i].url%>"/>
-    <%- end %>
+<div class="siteFaviconsHolder">
+  <div class="siteFavicons">
+      <%- @favicon_urls_with_ids_and_titles.each_with_index do |favicon_id_and_title,i| %>
+          <img class="faviconImage" src="<%= favicon_id_and_title[0] %>" id="favicon<%= favicon_id_and_title[1] %>" data-ot="<%= @sites[i].title%>" data-ot-delay="0" data-ot-tip-joint="bottom" data-ot-style="dark" data-site-url="<%= @sites[i].url%>" data-site-index="<%= i %>"/>
+      <%- end %>
+  </div>
 </div>
 
 <a class="btn btn-alert btn-mini navigateButton" id="goToSite" href="<%= @sites[0].url unless @sites.empty?%>" target="_blank">Visit Site</a>

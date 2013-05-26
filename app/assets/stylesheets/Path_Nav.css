@@ -68,11 +68,18 @@
     height:20px;
 }
 
-.siteFavicons{
+.siteFaviconsHolder{
     display:inline-block;
     width: 300px;
     white-space: nowrap;
     overflow: hidden;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.siteFavicons{
+    display:inline-block;
+    position:relative;
 }
 
 .checkBoxLabel{
