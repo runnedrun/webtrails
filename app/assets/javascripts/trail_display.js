@@ -284,8 +284,14 @@ function showOrHideCurrentComment(){
     }
 }
 
+// will return null if error
 function getComputedStyleOfElementInIframe(element,stylename){
-    return $(".currentSite")[0].contentWindow.document.defaultView.getComputedStyle(element,null)[stylename];
+    var style = $(".currentSite")[0].contentWindow.document.defaultView.getComputedStyle(element,null);
+    if (style) {
+        return style[stylename];
+    } else {
+        return null;
+    }
 }
 
 function switchToPresentationMode(){

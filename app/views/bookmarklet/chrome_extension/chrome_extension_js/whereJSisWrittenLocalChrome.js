@@ -40,10 +40,25 @@ function setSiteID(response){
     currentSiteTrailID = response.site_id
 }
 
+// if error returns null
 function getComputedStyleOfElement(element,stylename){
-    return document.defaultView.getComputedStyle(element,null)[stylename];
+    var style = document.defaultView.getComputedStyle(element,null);
+    if (style) {
+        return style[stylename];
+    } else {
+        return null;
+    }
 }
 
+function getNodeLineHeight(element) {
+    var fontsize = getComputedStyleOfElement(element, "font-size");
+    if (fontsize) {
+        return parseInt(fontsize.replace("px",""))*1.5 || 20; //default to 20
+    } else {
+        return 20;
+    }
+    
+}
 // returns true if the node is a text node, false if not
 function isTextNode(node) {
     return node.nodeType == 3;
