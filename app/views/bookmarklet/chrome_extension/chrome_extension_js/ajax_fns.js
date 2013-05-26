@@ -21,7 +21,6 @@ function saveSiteToTrail(successFunction){
     });
 //    document.onmousemove = mouseStopDetect();
     if (!currentSiteTrailID){
-        saveSiteToTrailButton.attr("disabled","disabled");
         saveSiteToTrailButton.text("Site saving");
         console.log("saving site:", currentSiteTrailID);
 
