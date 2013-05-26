@@ -251,7 +251,8 @@ function createCommentOverlay(commentText,xPos,yPos){
         "color":"black",
         "position":"absolute",
         "max-width": overlayMaxWidth,
-        "border": "2px solid black"
+        "border": "2px solid black",
+        "z-index": "2147483647"
     });
     commentOverlay.html(commentText);
 
