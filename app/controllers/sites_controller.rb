@@ -25,6 +25,7 @@ class SitesController < ApplicationController
     url = params[:site][:url]
     trail_id = params[:site][:trail_id]
     shallow_save = params[:shallow_save]
+
     if shallow_save != ""
       site_id = params[:site][:id]
       shallow_save=true
@@ -65,6 +66,7 @@ class SitesController < ApplicationController
   end
 
   def exists
+    puts "getting exists request"
     site = Site.find(params[:id])
     render :json => {:exists => !site.archive_location.nil?}, :status => 200
   end
