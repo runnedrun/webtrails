@@ -65,6 +65,7 @@ class SitesController < ApplicationController
   end
 
   def exists
+    puts "getting exists request"
     site = Site.find(params[:id])
     render :json => {:exists => !site.archive_location.nil?}, :status => 200
   end
