@@ -17,6 +17,5 @@ function createMasterStyleSheet(html){
     wt_$(html.getElementsByTagName("head")[0]).prepend(masterStyleSheet);
     masterStyleSheet.html(newStyleSheetString);
     window.master = masterStyleSheet;
-    console.log(html);
     return html;
 }

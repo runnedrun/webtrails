@@ -22,18 +22,31 @@ function saveSiteToTrail(successFunction){
 //    document.onmousemove = mouseStopDetect();
     if (!currentSiteTrailID){
         saveSiteToTrailButton.text("Site saving");
-        console.log("saving site:", currentSiteTrailID);
+        saveSiteToTrailButton.unbind();
 
         // now check to see if site is actually saved, and update the UI accordingly
         var updateSiteSavedButton = function() {
-            wt_$.get(webTrailsUrl + '/site/exists?id=' + currentSiteTrailID,{crossDomain: true}, function(data) {
-                if (data.exists) {
-                  // Our page exists, and we should correct the save site button
-                  saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
-                } else {
-                    setTimeout(updateSiteSavedButton, 5000); // check again
-                }
-            });
+            if (currentSiteTrailID) {
+                wt_$.ajax({
+                    url: webTrailsUrl + '/site/exists',
+                    type: "get",
+                    crossDomain: true,
+                    data: {
+                        "id": currentSiteTrailID
+                    },
+                    success: function(data) {
+                            if (data.exists) {
+                              // Our page exists, and we should correct the save site button
+                              saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
+                              saveSiteToTrailButton.unbind().click(function(){window.location = webTrailsUrl + '/trails/' + trailID + "#end"})
+                            } else {
+                                setTimeout(updateSiteSavedButton, 5000); // check again
+                            }
+                        }
+                });
+            } else {
+                setTimeout(updateSiteSavedButton, 5000); // check again
+            }
         }
         setTimeout(updateSiteSavedButton, 5000);
 
@@ -45,7 +58,7 @@ function saveSiteToTrail(successFunction){
 function fetchFavicons(){
     var currentSite = window.location.href;
     wt_$.ajax({
-        url: "http://localhost:3000/trail/site_list",
+        url: webTrailsUrl + "/trail/site_list",
         type: "get",
         crossDomain: true,
         data: {
@@ -53,12 +66,11 @@ function fetchFavicons(){
             "current_url": currentSite
         },
         success: addFaviconsToDisplay
-    })
+    });
 }
 
 function submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY){
     currentSiteTrailID = site_data.site_id;
-    console.log(site_data.site_id);
     wt_$.ajax({
         url: "http://localhost:3000/notes",
         type: "post",
