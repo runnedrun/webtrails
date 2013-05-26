@@ -27,7 +27,7 @@ function saveSiteToTrail(successFunction){
 
         // now check to see if site is actually saved, and update the UI accordingly
         var updateSiteSavedButton = function() {
-            $.get(webTrailsUrl + '/site/exists?id=' + currentSiteTrailID, function(data) {
+            wt_$.get(webTrailsUrl + '/site/exists?id=' + currentSiteTrailID, function(data) {
                 if (data.exists) {
                   // Our page exists, and we should correct the save site button
                   saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
