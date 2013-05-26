@@ -119,6 +119,7 @@ function switchToSite(siteID){
     currentNoteIndex = -1;
     scroll_favicon_carousel(currentSiteIndex);
     $('#goToSite').attr("href", $('.activeFavicon').attr("data-site-url"));
+    window.location.hash = "#" + currentSiteIndex;
 }
 
 function getNoteIDsForCurrentSite(){
