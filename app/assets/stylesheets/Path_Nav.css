@@ -80,6 +80,8 @@
 .siteFavicons{
     display:inline-block;
     position:relative;
+    min-width:300px;
+    text-align:left;
 }
 
 .checkBoxLabel{
