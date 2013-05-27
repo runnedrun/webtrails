@@ -423,7 +423,12 @@ function deleteSiteLocally(siteIndex) {
     var siteID = siteIDs[siteIndex];
     var iframe = $('#' + siteID);
     if (iframe.hasClass("currentSite")) {
-        nextSite();
+        if (siteIndex < siteIDs.length - 1) {
+            nextSite();
+            currentSite -= 1;
+        } else {
+            previousSite();
+        }
     }
     siteIDs.splice(siteIndex,1);
     iframe.remove();
