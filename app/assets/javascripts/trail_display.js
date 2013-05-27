@@ -41,12 +41,14 @@ function loadIframes(siteID){
 
 function makeIframes(){
     var currentSiteID = siteIDs[currentSiteIndex];
+    $('#' + currentSiteID).attr("src", requestUrl + "/sites/" + currentSiteID)
     loadIframes(currentSiteID);
     //site IDS defined in the html
     $.each(siteIDs,function (i,siteID){
         if (siteID != currentSiteID) {
-            console.log(siteID, currentSiteID, siteID == currentSiteID);
+            $('#' + siteID).attr("src", requestUrl + "/sites/" + siteID)
             loadIframes(siteID);
+
         }
     });
 }
@@ -181,7 +183,6 @@ function scrollToAndHighlightNote(noteID){
 
         var windowHeight = $(window).height();
         var scrollPosition = offsets.top - windowHeight/2;
-        console.log(scrollPosition);
         $(contWindow).scrollTop(scrollPosition);
 
         var commentDisplay = showComment(currentNote.comment,offsets.left,offsets.top);
