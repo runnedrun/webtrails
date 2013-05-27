@@ -23,7 +23,6 @@ function addSiteFaviconToDisplay(domain,url) {
         "vertical-align":"top",
             padding: "0px",
             "margin": "0 3px",
-            float: "left",
             overflow: "hidden",
             display: "block",
             border: "none"
@@ -31,13 +30,13 @@ function addSiteFaviconToDisplay(domain,url) {
     faviconImg.css({
        height:"16px",
        margin: 0,
-       "margin-top":"4px",
+       "margin-top":"2px",
        "vertical-align":"top",
         padding: "0px"
     })
 
     faviconLink.append(faviconImg);
-    trailDisplay.append(faviconLink);
+    faviconHolder.append(faviconLink);
 }
 
 function addFaviconsToDisplay(data){
@@ -62,4 +61,12 @@ function updateNoteDisplay(data){
         moveNoteToPrevious(data.content);
         deleteNoteButton.attr("disabled","");
     }
+}
+
+function growFaviconHolder() {
+    faviconHolder.stop().animate({"height": "200px"});
+}
+
+function shrinkFaviconHolder() {
+    faviconHolder.stop().animate({"height": "20px"});
 }

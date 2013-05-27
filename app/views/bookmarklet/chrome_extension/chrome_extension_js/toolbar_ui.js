@@ -12,8 +12,8 @@ function initMyBookmarklet() {
         "text-align":"left",
         "z-index": "2147483647",
         opacity: ".8",
-        background: "#2E2E1F",
-        color: "white",
+        background: "#F0F0F0",
+        color: "#333",
         "line-height": "25px",
         "display":"none",
         "border-bottom-right-radius": "7px",
@@ -28,19 +28,21 @@ function initMyBookmarklet() {
 
     noteDisplayWrapper = wt_$(document.createElement("div"));
     noteDisplayWrapper.css({
-        height:"100%",
-        width: "40%",
+        "height":"20px",
+        "width": "40%",
         "float":"right",
         "margin-left": "3%",
-        "border-left": "solid",
         "opacity": "1",
-        overflow: "hidden"
+        "overflow": "hidden",
+        "margin-top": "2px",
+        "border-radius": "5px",
+        "background-color": "#d1d1d1"
     });
     noteDisplayWrapper.addClass("noteDisplayWrapper").addClass("webtrails");;
 
     previousNoteDisplay = wt_$(document.createElement("div"));
     previousNoteDisplay.css({
-        "margin": "0 0 0 5px",
+        "margin-left": "5px",
         "font-size": "12px",
         "overflow": "hidden",
         "text-overflow": "ellipsis"
@@ -51,20 +53,21 @@ function initMyBookmarklet() {
 
     var linkToTrailWrapper = wt_$(document.createElement("div"));
     linkToTrailWrapper.css({
-        height:"100%",
-        width: "10%",
-        "float": "right"
+        "height":"100%",
+        "display": "inline-block",
+        "float": "left"
     });
     linkToTrailWrapper.addClass("webtrails");
 
     var linkToTrail = wt_$(document.createElement("a"));
     linkToTrail.css({
-        "margin": "0 0 0 5px",
+        "margin-left": "5px",
+        "margin-right": "5px",
         "font-size": "12px",
-        "display": "block",
-        "color": "white",
+        "color": "#333",
         "font-weight": "bold",
-        "border-radius": "5px"
+        "text-shadow": "1px 1px #F0f0f0",
+        "text-decoration": "underline"
     });
     linkToTrail.addClass("webtrails");
 
@@ -74,13 +77,15 @@ function initMyBookmarklet() {
     deleteNoteButton = wt_$(document.createElement("button"));
     deleteNoteButton.css({
         "font-size": "12px",
-        "color": "white",
+        "color": "#333",
         "background-color": "transparent",
         "font-weight": "bold",
-        height:"100%",
-        width: "10%",
+        "height":"100%",
+        "width": "7%",
         "float": "right",
-        "opacity": "0"
+        "opacity": "0",
+        "border": "1px solid #333",
+        "text-shadow": "1px 1px #F0f0f0"
     });
 
     deleteNoteButton.html("Delete Note");
@@ -89,13 +94,17 @@ function initMyBookmarklet() {
     saveSiteToTrailButton = wt_$(document.createElement("button"));
     saveSiteToTrailButton.css({
         "font-size": "12px",
-        "color": "white",
+        "color": "#333",
         "background-color": "transparent",
         "font-weight": "bold",
-        height:"100%",
-        width: "10%",
+        "height":"20px",
+        "width": "7%",
         "float": "right",
-        "border-radius": "5px"
+        "border-radius": "5px",
+        "border": "1px solid #333",
+        "text-shadow": "1px 1px #F0f0f0",
+        "margin-top": "2px",
+        "line-height": "normal"
     });
     saveSiteToTrailButton.addClass("webtrails");
     saveSiteToTrailButton.html("Save site");
@@ -103,23 +112,45 @@ function initMyBookmarklet() {
     var shareTrailField = wt_$(document.createElement("input"));
     shareTrailField.css({
         "font-size": "12px",
-        "color": "white",
+        "color": "#333",
         "background-color": "transparent",
         "font-weight": "bold",
-        "height":"90%",
+        "height":"20px",
+        "width":"7%",
         "float": "right",
         "margin-left": "2%",
+        "line-height": "normal",
+        "text-align": "center",
+        "padding": "0",
+        "margin-top": "2px",
+        "outline": "none",
+        "border-radius": "5px",
+        "border": "1px solid #333",
+        "text-shadow": "1px 1px #f0f0f0"
+    });
+    shareTrailField.addClass("webtrails");
+    shareTrailField.attr("type", "text");
+    shareTrailField.attr("id", "shareTrail");
+    shareTrailField.attr("value", "Share Trail");
+
+    faviconHolder = wt_$(document.createElement("div"));
+    faviconHolder.css({
+        "font-size": "12px",
+        "color": "#333",
+        "background-color": "#f0f0f0",
+        "height":"19px",
         "line-height": "25px",
         "text-align": "center",
         "padding": "0",
-        "margin-top": "0",
-        "outline": "none",
-        "border-radius": "5px"
+        "margin-top": "2px",
+        "border-radius": "7px",
+        "border": "1px solid #ccc",
+        "width": "14%",
+        "display": "inline-block",
+        "overflow":"auto"
     });
-    shareTrailField.addClass("webtrails");
-    shareTrailField.attr("type", "text")
-    shareTrailField.attr("id", "shareTrail");
-    shareTrailField.attr("value", "Share Trail");
+    faviconHolder.addClass("webtrails");
+    faviconHolder.attr("id", "faviconHolder");
 
     //adding all the toolbar elements to the DOM.
     wt_$(document.body).prepend(trailDisplay);
@@ -144,6 +175,9 @@ function initMyBookmarklet() {
 
     wt_$(trailDisplay).append(linkToTrailWrapper);
     wt_$(linkToTrailWrapper).append(linkToTrail);
+
+    wt_$(trailDisplay).append(faviconHolder);
+    faviconHolder.mouseenter(growFaviconHolder).mouseleave(shrinkFaviconHolder)
 
     initializeAutoResize();
     initializeJqueryEllipsis();
