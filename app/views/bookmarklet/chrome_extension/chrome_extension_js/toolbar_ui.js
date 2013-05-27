@@ -5,19 +5,21 @@ function initMyBookmarklet() {
     trailDisplay = wt_$(document.createElement("div"));
     trailDisplay.addClass("webtrails");
     trailDisplay.css({
-        height:displayHeight,
-        width: "100%",
-        position:"fixed",
-        top:"0px",
+        "height":displayHeight,
+        "width": "100%",
+        "position":"fixed",
+        "top":"0px",
         "text-align":"left",
         "z-index": "2147483647",
-        opacity: ".8",
-        background: "#F0F0F0",
-        color: "#333",
+        "opacity": ".8",
+        "background": "#F0F0F0",
+        "color": "#333",
         "line-height": "25px",
         "display":"none",
         "border-bottom-right-radius": "7px",
-        "border-bottom-left-radius": "7px"
+        "border-bottom-left-radius": "7px",
+        "border-bottom" : "1px solid #aaa",
+        "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif'
     });
     trailDisplay.mouseover(function() {
         trailDisplay.css("opacity", "1");
@@ -196,4 +198,11 @@ function initMyBookmarklet() {
 
     fetchFavicons();
     wt_$(document).mousedown(possibleHighlightStart);
+
+    try {
+        var bodymargin = wt_$('body').css('margin-left')
+        if (bodymargin) {
+            trailDisplay.css("margin-left", "-" + bodymargin);
+        }
+    }catch (e) {}
 }
