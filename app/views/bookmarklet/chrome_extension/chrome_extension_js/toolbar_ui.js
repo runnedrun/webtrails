@@ -11,7 +11,7 @@ function initMyBookmarklet() {
         "top":"0px",
         "text-align":"left",
         "z-index": "2147483647",
-        "opacity": ".8",
+        "opacity": "1",
         "background": "#F0F0F0",
         "color": "#333",
         "line-height": "25px",
@@ -21,11 +21,6 @@ function initMyBookmarklet() {
         "border-bottom" : "1px solid #aaa",
         "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif'
     });
-    trailDisplay.mouseover(function() {
-        trailDisplay.css("opacity", "1");
-      }).mouseout(function(){
-        trailDisplay.css("opacity", "0.8");
-      });
     trailDisplay.disableSelection();
 
     noteDisplayWrapper = wt_$(document.createElement("div"));
