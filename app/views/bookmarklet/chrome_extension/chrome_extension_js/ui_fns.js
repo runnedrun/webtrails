@@ -22,7 +22,7 @@ function addSiteFaviconToDisplay(domain,url) {
     faviconLink.css({
         "vertical-align":"top",
             padding: "0px",
-            "padding-right": "3px",
+            "margin": "0 3px",
             float: "left",
             overflow: "hidden",
             display: "block",

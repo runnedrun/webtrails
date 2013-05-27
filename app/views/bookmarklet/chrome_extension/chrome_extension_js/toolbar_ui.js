@@ -11,12 +11,13 @@ function initMyBookmarklet() {
         top:"0px",
         "text-align":"left",
         "z-index": "2147483647",
-        "padding-left":"10px",
         opacity: ".8",
         background: "#2E2E1F",
         color: "white",
         "line-height": "25px",
-        "display":"none"
+        "display":"none",
+        "border-bottom-right-radius": "7px",
+        "border-bottom-left-radius": "7px"
     });
     trailDisplay.mouseover(function() {
         trailDisplay.css("opacity", "1");
@@ -62,7 +63,8 @@ function initMyBookmarklet() {
         "font-size": "12px",
         "display": "block",
         "color": "white",
-        "font-weight": "bold"
+        "font-weight": "bold",
+        "border-radius": "5px"
     });
     linkToTrail.addClass("webtrails");
 
@@ -92,7 +94,8 @@ function initMyBookmarklet() {
         "font-weight": "bold",
         height:"100%",
         width: "10%",
-        "float": "right"
+        "float": "right",
+        "border-radius": "5px"
     });
     saveSiteToTrailButton.addClass("webtrails");
     saveSiteToTrailButton.html("Save site");
@@ -103,14 +106,15 @@ function initMyBookmarklet() {
         "color": "white",
         "background-color": "transparent",
         "font-weight": "bold",
-        "height":"100%",
+        "height":"90%",
         "float": "right",
         "margin-left": "2%",
         "line-height": "25px",
         "text-align": "center",
         "padding": "0",
         "margin-top": "0",
-        "outline": "none"
+        "outline": "none",
+        "border-radius": "5px"
     });
     shareTrailField.addClass("webtrails");
     shareTrailField.attr("type", "text")
