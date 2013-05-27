@@ -142,13 +142,15 @@ function nextNote(){
         scrollToAndHighlightNote(getCurrentNoteID());
     } else {
         if(nextSite()){
-           nextNote();
+            if (getNumberOfNotesForCurrentSite() > 0) {
+                nextNote();
+            }
         }
     }
 }
 
 function previousNote(){
-    if (currentNoteIndex > -1){
+    if (currentNoteIndex > 0){
         currentNoteIndex-=1;
         scrollToAndHighlightNote(getCurrentNoteID());
     } else {
