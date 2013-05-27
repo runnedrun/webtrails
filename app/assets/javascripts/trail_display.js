@@ -8,7 +8,6 @@ var currentCommentBox;
 $(function(){
     if (window.location.hash) {
         var hash = window.location.hash.substring(1);
-        console.log(hash, hash == "end")
         currentSiteIndex = parseInt(hash) || 0;
         if (currentSiteIndex >= siteIDs.length || hash == "end") {
             currentSiteIndex = siteIDs.length - 1;
@@ -18,7 +17,7 @@ $(function(){
     }
     var currentSiteID = String(siteIDs[currentSiteIndex]);
     currentSite = $("#"+currentSiteID);
-    makeIframes();
+    setTimeout(makeIframes, 1);
     $("#nextSite").click(nextSite);
     $("#previousSite").click(previousSite);
     $("#nextNote").click(nextNote);
@@ -41,9 +40,14 @@ function loadIframes(siteID){
 }
 
 function makeIframes(){
+    var currentSiteID = siteIDs[currentSiteIndex];
+    loadIframes(currentSiteID);
     //site IDS defined in the html
     $.each(siteIDs,function (i,siteID){
-      loadIframes(siteID)
+        if (siteID != currentSiteID) {
+            console.log(siteID, currentSiteID, siteID == currentSiteID);
+            loadIframes(siteID);
+        }
     });
 }
 
@@ -74,9 +78,9 @@ function nextSite(){
         var switchingToSiteID = siteIDs[currentSiteIndex+1];
         switchToSite(switchingToSiteID);
         currentNoteIndex = -1;
-        return true
+        return true;
     }
-    return false
+    return false;
 }
 
 function previousSite(){
@@ -93,9 +97,7 @@ function showAllSites(){
 
 // scrolls the favicon carousel to the appropriate place for the active favicon
 function scroll_favicon_carousel(activeFaviconIndex){
-    console.log("scrolling")
     var scrollLeft = 150 - 14 + activeFaviconIndex*(-19);
-    console.log(activeFaviconIndex, scrollLeft);
     $(".siteFavicons").animate({"left": scrollLeft},100);
     //todo add actual scroll behavior here
 }
@@ -107,7 +109,6 @@ function clickJumpToSite(e){
 }
 
 function switchToSite(siteID){
-    console.log('switching to site', siteID);
     closeNoteList();
     currentSite.addClass("notCurrent").removeClass("currentSite");
     currentSite = $("#"+String(siteID));
