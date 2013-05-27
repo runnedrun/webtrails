@@ -1,4 +1,5 @@
 <script type="text/javascript">
+  var requestUrl = "<%= Webtrails::Application::AJAX_REQUEST_URL %>";
   var siteIDs = [ <%- @favicon_urls_with_ids_and_titles.each do |favicon_url_and_id|%>
     "<%= favicon_url_and_id[1] %>",
   <%- end %>
@@ -9,7 +10,7 @@
 
 <div class="siteDisplayDiv">
   <%- @sites.each_with_index do |site,i| %>
-    <iframe src=<%= Webtrails::Application::AJAX_REQUEST_URL %>/sites/<%= site.id %> id=<%= site.id %> class="siteDisplay notCurrent"></iframe>
+    <iframe id=<%= site.id %> class="siteDisplay notCurrent"></iframe>
   <%- end %>
 </div>
 
