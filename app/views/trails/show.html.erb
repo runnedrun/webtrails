@@ -28,7 +28,7 @@
 <div class="viewTrailToolbar">
 
 
-<button class="btn btn-primary btn-mini navigateButton" id="previousSite"> <i class="icon-chevron-left"> </i> </button>
+<button class="btn btn-mini chevronButton" id="previousSite"> <i class="icon-chevron-left"> </i> </button>
 <div class="siteFaviconsHolder">
   <div class="siteFavicons">
       <%- @favicon_urls_with_ids_and_titles.each_with_index do |favicon_id_and_title,i| %>
@@ -36,7 +36,7 @@
       <%- end %>
   </div>
 </div>
-<button class="btn btn-primary btn-mini navigateButton" id="nextSite"> <i class="icon-chevron-right"> </i> </button>
+<button class="btn btn-mini chevronButton" id="nextSite"> <i class="icon-chevron-right"> </i> </button>
 
 <a class="btn btn-alert btn-mini navigateButton" id="goToSite" href="<%= @sites[0].url unless @sites.empty?%>" target="_blank">Visit Site</a>
 

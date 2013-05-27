@@ -57,6 +57,10 @@
     border-color: #333;
 }
 
+.viewTrailToolbar .chevronButton {
+    padding:0;
+}
+
 
 .faviconImage {
     height: 15px;
