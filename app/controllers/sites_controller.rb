@@ -37,6 +37,12 @@ class SitesController < ApplicationController
     render :json => {:site_id => site_id}, :status => 200
   end
 
+  def delete
+    site = Site.find(params[:id])
+    site.delete
+    render :json => {"error" => nil}, :status => 200
+  end
+
   def async_site_load
     site = Site.find(params[:site_id])
 

@@ -70,6 +70,7 @@ Webtrails::Application.routes.draw do
   match '/async_site_load', :controller => 'sites', :action => 'async_site_load'
   match '/site/exists', :controller => 'sites', :action => 'options', :constraints => {:method => 'OPTIONS'}
   match '/site/exists', :controller => 'sites', :action => 'exists'
+  match '/sites/delete', :controller => "sites", :action => 'delete', :constraints => {:method => 'POST'}
 
   resources :notes, :only=>[:create]
   match '/notes', :controller => 'notes', :action => 'options', :constraints => {:method => 'OPTIONS'}

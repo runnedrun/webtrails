@@ -22,6 +22,7 @@ $(function(){
     $("#previousSite").click(previousSite);
     $("#nextNote").click(nextNote);
     $("#previousNote").click(previousNote);
+    $("#removeSite").click(removeSite);
     $("#showNoteList").click(expandOrCloseNoteList);
     $(".noteWrapper").click(clickJumpToNote);
     $(".faviconImage").click(clickJumpToSite);
@@ -392,7 +393,6 @@ function deleteCurrentNoteFromTrail(){
 }
 
 function deleteNoteFromTrail(noteID){
-    console.log(noteID);
     $.ajax({
         url: "/notes/delete",
         type: "post",
@@ -401,6 +401,33 @@ function deleteNoteFromTrail(noteID){
         },
         success: function(){deleteCurrentNoteLocally(); closeCurrentNoteAndRemoveHighlight()}
     })
+}
+
+function deleteSiteFromTrail(siteIndex){
+    $.ajax({
+        url: "/sites/delete",
+        type: "post",
+        data: {
+            "id" : siteIDs[siteIndex]
+        },
+        success: function() {deleteSiteLocally(siteIndex);}
+    });
+}
+
+function removeSite() {
+    console.log("remove site pressed");
+    deleteSiteFromTrail(currentSiteIndex);
+}
+
+function deleteSiteLocally(siteIndex) {
+    var siteID = siteIDs[siteIndex];
+    var iframe = $('#' + siteID);
+    if (iframe.hasClass("currentSite")) {
+        nextSite();
+    }
+    siteIDs.splice(siteIndex,1);
+    iframe.remove();
+    $('#favicon' + siteID).remove();
 }
 
 function closeCurrentNoteAndRemoveHighlight(){
