@@ -3,7 +3,6 @@ var currentSite;
 var Notes = {};
 var currentNoteIndex=-1;
 var presentationMode = false;
-var noteIDs=[];
 var siteHash = {};
 var currentCommentBox;
 $(function(){
@@ -244,30 +243,107 @@ function createCommentOverlay(commentText,xPos,yPos){
     var spacing = 25;
     var overlayMaxWidth = 400;
 
-    var commentOverlay = $(document.createElement("div"));
-    commentOverlay.css({
+    var commentContainer = $("<div>")
+    commentContainer.css({
         "background": "white",
-        "opacity": .9,
         "color":"black",
         "position":"absolute",
-        "max-width": overlayMaxWidth,
-        "border": "2px solid black",
-        "z-index": "2147483647"
+        "z-index": "2147483647",
     });
-    commentOverlay.html(commentText);
+    commentContainer.addClass("commentOverlay");
 
-    commentOverlay.addClass("commentOverlay");
-    insertHTMLInIframe(commentOverlay,currentSite);
+
+    var commentOverlay = $("<div>");
+    commentOverlay.html(commentText);
+    commentOverlay.css({
+        "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
+        "border": "2px solid black",
+        "background": "white",
+        "max-width": overlayMaxWidth,
+        display:"inline",
+        padding:"3px 3px 3px 3px",
+        "font-size":"13px",
+        "-webkit-border-top-left-radius": "5px",
+        "-webkit-border-bottom-left-radius": "5px",
+        "-moz-border-radius-topleft": "5px",
+        "-moz-border-radius-bottomleft": "5px",
+        "border-top-left-radius": "5px",
+        "border-bottom-left-radius": "5px",
+        "line-height": "normal"
+    })
+
+
+    console.log(commentOverlay);
+
+    var closeCommentX = $("<div>");
+    closeCommentX.css({
+        "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
+        display:"inline",
+        border: "2px solid black",
+        "border-left": "none",
+        "border-right": "none",
+        padding: "0 2px 3px 2px",
+        "background-color": "#f0f0f0",
+        "font-size": "16px",
+        "margin": "0",
+        "vertical-align":"baseline",
+        "line-height": "normal",
+        "cursor": "pointer"
+    })
+    closeCommentX.html("&times;");
+    closeCommentX.click(closeCurrentNoteAndRemoveHighlight);
+
+    var deleteCommentContainer = $("<div>");
+    deleteCommentContainer.css({
+        "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
+        display:"inline",
+        border: "2px solid black",
+        "border-left": "1px solid black",
+        padding: "0px 2px 3px 2px",
+        "background-color": "#f0f0f0",
+        "-webkit-border-top-right-radius": "5px",
+        "-webkit-border-bottom-right-radius": "5px",
+        "-moz-border-radius-topright": "5px",
+        "-moz-border-radius-bottomright": "5px",
+        "border-top-right-radius": "5px",
+        "border-bottom-right-radius": "5px",
+        "margin": "0",
+        "vertical-align":"baseline",
+        "line-height": "normal",
+        "font-size": "16px",
+        "cursor": "pointer"
+    })
+
+    var deleteComment = $("<img>");
+    deleteComment.css({
+        height: "16px",
+        "line-height": "normal",
+        border: "0",
+        margin: "0",
+        padding: "0",
+        "vertical-align": "bottom",
+        "font-size": "16px",
+    })
+    deleteComment.attr("src","/images/trashcan.png");
+    deleteCommentContainer.append(deleteComment);
+    deleteCommentContainer.click(deleteCurrentNoteFromTrail);
+
+    commentContainer.append(commentOverlay);
+    commentContainer.append(closeCommentX);
+    commentContainer.append(deleteCommentContainer);
+
+
+    insertHTMLInIframe(commentContainer,currentSite);
 
 //    var overlayWidth = getComputedStyleOfElementInIframe(commentOverlay,"width");
-    var overlayHeightString = getComputedStyleOfElementInIframe(commentOverlay[0],"height");
+    var overlayHeightString = getComputedStyleOfElementInIframe(commentContainer[0],"height");
     var overlayHeightFloat = parseFloat(overlayHeightString.slice(0,overlayHeightString.length -2));
     var topPosition  =  yPos - spacing - overlayHeightFloat;
     var leftPosition = xPos;
 
-    commentOverlay.css("top", topPosition+"px");
-    commentOverlay.css("left", leftPosition+"px");
-    return commentOverlay;
+    commentContainer.css("top", topPosition+"px");
+    commentContainer.css("left", leftPosition+"px");
+    return commentContainer;
 }
 
 function removeCurrentComment(){
@@ -303,4 +379,31 @@ function switchToPresentationMode(){
 
 function getCurrentSiteID(){
     return siteIDs[currentSiteIndex];
+}
+
+function deleteCurrentNoteFromTrail(){
+    var currentNoteID = getCurrentNoteID();
+//    console.log(currentNote);
+    deleteNoteFromTrail(currentNoteID);
+}
+
+function deleteNoteFromTrail(noteID){
+    console.log(noteID);
+    $.ajax({
+        url: "/notes/delete",
+        type: "post",
+        data: {
+            "id" : noteID
+        },
+        success: function(){deleteCurrentNoteLocally(); closeCurrentNoteAndRemoveHighlight()}
+    })
+}
+
+function closeCurrentNoteAndRemoveHighlight(){
+    removeCurrentComment();
+    removeHighlight($(iframeContentWindow().document.body));
+}
+
+function deleteCurrentNoteLocally(){
+    getNoteIDsForCurrentSite().splice(currentNoteIndex,1);
 }

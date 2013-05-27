@@ -47,11 +47,6 @@ class SitesController < ApplicationController
                   "comment_location_y" => note.comment_location_y, "client_side_id" => note.client_side_id}
     end
 
-    $stderr.puts site.archive_location
-
-    #src = open(site.archive_location).read.force_encoding('utf-8')
-
-
     render :json => {"notes" => notes, "site_id" => site.id, "domain" => site.domain, "url" => site.url, "title" => site.title}, :status => 200
   end
 
