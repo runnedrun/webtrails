@@ -4,9 +4,10 @@
   <%- end %>
   ];
 </script>
-<link href="/stylesheets/bootstrap.min.css" rel="stylesheet" media="screen">
+<script src="/bootstrap/js/bootstrap.min.js"> </script>
+<link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 
-<div class=siteDisplayDiv>
+<div class="siteDisplayDiv">
   <%- @sites.each_with_index do |site,i| %>
     <iframe src=<%= Webtrails::Application::AJAX_REQUEST_URL %>/sites/<%= site.id %> id=<%= site.id %> class="siteDisplay notCurrent"></iframe>
   <%- end %>
@@ -24,9 +25,9 @@
   <%- end %>
 </div>
 <div class="viewTrailToolbar">
-<button class="btn btn-primary btn-mini navigateButton" id="previousSite">Previous Site</button>
-<button class="btn btn-primary navigateButton" id="previousNote">Previous Note</button>
 
+
+<button class="btn btn-primary btn-mini navigateButton" id="previousSite"> <i class="icon-chevron-left"> </i> </button>
 <div class="siteFaviconsHolder">
   <div class="siteFavicons">
       <%- @favicon_urls_with_ids_and_titles.each_with_index do |favicon_id_and_title,i| %>
@@ -34,11 +35,14 @@
       <%- end %>
   </div>
 </div>
+<button class="btn btn-primary btn-mini navigateButton" id="nextSite"> <i class="icon-chevron-right"> </i> </button>
 
 <a class="btn btn-alert btn-mini navigateButton" id="goToSite" href="<%= @sites[0].url unless @sites.empty?%>" target="_blank">Visit Site</a>
+
+<button class="btn btn-primary navigateButton" id="previousNote">Previous Note</button>
+<button class="btn btn-primary navigateButton" id="nextNote"><b>Next note</b></button>
+
 <button id="showAllSitesButton" class="btn btn-warning navigateButton showList">Show all Sites</button>
 <button class="btn btn-warning navigateButton showList" id="showNoteList" href="#">Show note list</button>
 
-<button class="btn btn-primary navigateButton" id="nextNote"><b>Next note</b></button>
-<button class="btn btn-primary btn-mini navigateButton" id="nextSite">Next site</button>
 </div>
