@@ -38,7 +38,8 @@
 </div>
 <button class="btn btn-mini chevronButton" id="nextSite"> <i class="icon-chevron-right"> </i> </button>
 
-<a class="btn btn-alert btn-mini navigateButton" id="goToSite" href="<%= @sites[0].url unless @sites.empty?%>" target="_blank">Visit Site</a>
+<a class="btn btn-mini navigateButton" id="goToSite" href="<%= @sites[0].url unless @sites.empty?%>" target="_blank">Visit Site</a>
+<button class="btn btn-danger btn-mini navigateButton" id="removeSite"><i class="icon-trash"> </i> Remove</button>
 
 <button class="btn btn-info navigateButton" id="previousNote">Previous</button>
 <button class="btn btn-success navigateButton" id="nextNote"><b>Next</b></button>
