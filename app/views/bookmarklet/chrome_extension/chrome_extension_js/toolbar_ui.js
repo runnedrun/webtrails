@@ -123,7 +123,8 @@ function initMyBookmarklet() {
         "outline": "none",
         "border-radius": "5px",
         "border": "1px solid #333",
-        "text-shadow": "1px 1px #f0f0f0"
+        "text-shadow": "1px 1px #f0f0f0",
+        "cursor": "pointer"
     });
     shareTrailField.addClass("webtrails");
     shareTrailField.attr("type", "text");
@@ -165,6 +166,7 @@ function initMyBookmarklet() {
         shareTrailField.attr("value", webTrailsUrl + '/trails/'+trailID);
         shareTrailField.focus();
         shareTrailField.select();
+        shareTrailField.css({"cursor": "text"});
     });
 
     wt_$(trailDisplay).append(saveSiteToTrailButton);
