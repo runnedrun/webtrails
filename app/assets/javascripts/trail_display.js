@@ -280,7 +280,7 @@ function createCommentOverlay(commentText,xPos,yPos){
         "background": "white",
         "max-width": overlayMaxWidth,
         display:"inline",
-        padding:"0px 2px 0px 0px",
+        padding:"0px 2px 0px 2px",
         "font-size":"13px",
     })
 
@@ -294,7 +294,7 @@ function createCommentOverlay(commentText,xPos,yPos){
 //        border: "2px solid black",
         "border-left": "1px solid black",
         "border-right": "none",
-        padding: "0 2px 0px 2px",
+        padding:"3px 2px 3px 2px",
         "background-color": "#f0f0f0",
         "font-size": "16px",
         "margin": "0",
@@ -311,7 +311,7 @@ function createCommentOverlay(commentText,xPos,yPos){
         display:"inline",
 //        border: "2px solid black",
         "border-left": "1px solid black",
-        padding: "0px 2px 0px 2px",
+        padding:"3px 2px 3px 2px",
         "background-color": "#f0f0f0",
         "margin": "0",
         "vertical-align":"baseline",
