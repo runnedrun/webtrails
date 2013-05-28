@@ -7,13 +7,8 @@
         "default_icon": "icon.png"
     },
     "background": {
-        "scripts": ["chrome_extension_js/extension_background.js"]
+        "scripts": ["chrome_extension_js/extension_background.js", "chrome_extension_js/jquery191.js"]
     },
-    "content_scripts":[{
-        "js": ["chrome_extension_js/init_chrome_toolbar.js","chrome_extension_js/jquery191.js"],
-        "css": ["chrome_extension_css/trail_tool_bar.css"],
-        "matches": ["*://*/*"]
-    }],
     "permissions": [
         "tabs", "*://*/*"
     ],
