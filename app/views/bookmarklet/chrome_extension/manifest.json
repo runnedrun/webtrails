@@ -7,14 +7,18 @@
         "default_icon": "icon.png"
     },
     "background": {
-        "scripts": ["chrome_extension_js/extension_background.js", "chrome_extension_js/jquery191.js"]
+        "scripts": ["chrome_extension_js/extension_background.js", "chrome_extension_js/jquery191.js", "chrome_extension_js/chrome_ex_oauthsimple.js", "chrome_extension_js/chrome_ex_oauth.js"]
     },
     "permissions": [
-        "tabs", "*://*/*"
+        "tabs", "*://*/*","https://docs.google.com/feeds/*",
+        "https://www.google.com/accounts/OAuthGetRequestToken",
+        "https://www.google.com/accounts/OAuthAuthorizeToken",
+        "https://www.google.com/accounts/OAuthGetAccessToken"
     ],
     "web_accessible_resources" : ["chrome_extension_js/whereJSisWrittenLocalChrome.js","chrome_extension_js/toolbar_ui.js"
         ,"chrome_extension_js/ajax_fns.js","chrome_extension_js/smart_grab.js","chrome_extension_js/jquery_elipsis.js",
         "chrome_extension_js/search_and_highlight.js","chrome_extension_js/autoresize.js", "chrome_extension_js/ui_fns.js",
         "chrome_extension_js/commenting_fns.js", "chrome_extension_js/inline_save_button_fns.js","chrome_extension_js/rangy-core.js",
-        "chrome_extension_js/jquery191.js","chrome_extension_js/page_preprocessing.js"]
+        "chrome_extension_js/jquery191.js","chrome_extension_js/page_preprocessing.js","chrome_extension_js/chrome_ex_oauth.js",
+        "chrome_extension_js/chrome_ex_oauthsimple.js"]
 }

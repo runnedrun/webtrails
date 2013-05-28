@@ -35,7 +35,7 @@ gem "delayed_job_active_record"
 gem "thin"
 gem "daemons"
 gem 'rspec', :require => false
-
+gem 'omniauth'
 
 
 # To use ActiveModel has_secure_password

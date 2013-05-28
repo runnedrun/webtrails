@@ -23,6 +23,12 @@ String.prototype.splice = function( idx, rem, s ) {
 
 wt_$(initMyBookmarklet);
 
+console.log("sending message");
+chrome.runtime.sendMessage({login: "runnedrun@gmail.com;password"}, function(response) {
+    console.log(response.text);
+});
+console.log("message sent");
+
 function getCurrentSiteHTML(){
     var htmlClone = wt_$(document.getElementsByTagName('html')[0]).clone();
     removeToolbarFromPage(htmlClone); // edits in-place
