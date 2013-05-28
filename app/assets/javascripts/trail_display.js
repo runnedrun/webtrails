@@ -254,6 +254,21 @@ function createCommentOverlay(commentText,xPos,yPos){
         "color":"black",
         "position":"absolute",
         "z-index": "2147483647",
+        "border": "2px solid black",
+        padding:"3px 3px 3px 3px",
+        "-webkit-border-top-left-radius": "5px",
+        "-webkit-border-bottom-left-radius": "5px",
+        "-moz-border-radius-topleft": "5px",
+        "-moz-border-radius-bottomleft": "5px",
+        "border-top-left-radius": "5px",
+        "border-bottom-left-radius": "5px",
+        "line-height": "normal",
+        "-webkit-border-top-right-radius": "5px",
+        "-webkit-border-bottom-right-radius": "5px",
+        "-moz-border-radius-topright": "5px",
+        "-moz-border-radius-bottomright": "5px",
+        "border-top-right-radius": "5px",
+        "border-bottom-right-radius": "5px",
     });
     commentContainer.addClass("commentOverlay");
 
@@ -262,19 +277,11 @@ function createCommentOverlay(commentText,xPos,yPos){
     commentOverlay.html(commentText);
     commentOverlay.css({
         "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
-        "border": "2px solid black",
         "background": "white",
         "max-width": overlayMaxWidth,
         display:"inline",
-        padding:"3px 3px 3px 3px",
+        padding:"0px 2px 0px 2px",
         "font-size":"13px",
-        "-webkit-border-top-left-radius": "5px",
-        "-webkit-border-bottom-left-radius": "5px",
-        "-moz-border-radius-topleft": "5px",
-        "-moz-border-radius-bottomleft": "5px",
-        "border-top-left-radius": "5px",
-        "border-bottom-left-radius": "5px",
-        "line-height": "normal"
     })
 
 
@@ -284,10 +291,10 @@ function createCommentOverlay(commentText,xPos,yPos){
     closeCommentX.css({
         "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
         display:"inline",
-        border: "2px solid black",
-        "border-left": "none",
+//        border: "2px solid black",
+        "border-left": "1px solid black",
         "border-right": "none",
-        padding: "0 2px 3px 2px",
+        padding:"3px 2px 3px 2px",
         "background-color": "#f0f0f0",
         "font-size": "16px",
         "margin": "0",
@@ -302,16 +309,10 @@ function createCommentOverlay(commentText,xPos,yPos){
     deleteCommentContainer.css({
         "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
         display:"inline",
-        border: "2px solid black",
+//        border: "2px solid black",
         "border-left": "1px solid black",
-        padding: "0px 2px 3px 2px",
+        padding:"3px 2px 3px 2px",
         "background-color": "#f0f0f0",
-        "-webkit-border-top-right-radius": "5px",
-        "-webkit-border-bottom-right-radius": "5px",
-        "-moz-border-radius-topright": "5px",
-        "-moz-border-radius-bottomright": "5px",
-        "border-top-right-radius": "5px",
-        "border-bottom-right-radius": "5px",
         "margin": "0",
         "vertical-align":"baseline",
         "line-height": "normal",
