@@ -23,6 +23,7 @@ function saveSiteToTrail(successFunction){
     if (!currentSiteTrailID){
         saveSiteToTrailButton.text("Site saving");
         saveSiteToTrailButton.unbind();
+        saveSiteToTrailButton.css({"cursor": "default"});
 
         // now check to see if site is actually saved, and update the UI accordingly
         var updateSiteSavedButton = function() {
@@ -39,6 +40,7 @@ function saveSiteToTrail(successFunction){
                               // Our page exists, and we should correct the save site button
                               saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
                               saveSiteToTrailButton.unbind().click(function(){window.location = webTrailsUrl + '/trails/' + trailID + "#end"})
+                              saveSiteToTrailButton.css({"cursor": "pointer"});
                             } else {
                                 setTimeout(updateSiteSavedButton, 5000); // check again
                             }
@@ -49,9 +51,6 @@ function saveSiteToTrail(successFunction){
             }
         }
         setTimeout(updateSiteSavedButton, 5000);
-
-//        noteDisplayWrapper.fadeTo(200,1);
-        deleteNoteButton.fadeTo(200,1);
     }
 }
 
@@ -97,7 +96,7 @@ function deletePreviousNote(){
         data: {
             "id": previousNoteID
         },
-        success: decrementNoteCountAfterDelete()
+        success: decrementNoteCountAfterDelete
     })
 }
 

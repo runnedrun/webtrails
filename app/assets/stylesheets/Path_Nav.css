@@ -30,7 +30,7 @@
     color: #333;
     width: 100%;
     line-height: 25px;
-    height: 35px;
+    height: 41px;
     text-align: center;
     position: fixed;
     bottom: 0;
@@ -51,10 +51,12 @@
 
 .navigateButton#nextNote{
     border-color: #333;
+    margin-top: 2px;
 }
 
 .navigateButton#previousNote{
     border-color: #333;
+    margin-top: 2px;
 }
 
 .viewTrailToolbar .chevronButton {
@@ -62,7 +64,7 @@
 }
 
 .navigateButton#removeSite {
-    
+
 }
 
 .faviconImage {
