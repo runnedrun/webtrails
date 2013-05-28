@@ -94,7 +94,7 @@ function deletePreviousNote(){
         data: {
             "id": previousNoteID
         },
-        success: decrementNoteCountAfterDelete()
+        success: decrementNoteCountAfterDelete
     })
 }
 
