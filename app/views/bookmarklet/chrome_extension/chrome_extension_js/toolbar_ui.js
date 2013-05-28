@@ -73,7 +73,7 @@ function initMyBookmarklet() {
     linkToTrail.addClass("webtrails");
 
     wt_$(linkToTrail).html("View Trail");
-    wt_$(linkToTrail).attr('href',"http://localhost:3000/trails/"+trailID);
+    wt_$(linkToTrail).attr('href', webTrailsUrl + "/trails/"+trailID);
 
     deleteNoteButton = wt_$(document.createElement("button"));
     deleteNoteButton.css({
@@ -94,6 +94,14 @@ function initMyBookmarklet() {
 
     deleteNoteButton.html("Delete Note");
     deleteNoteButton.addClass("deleteNote").addClass("webtrails");
+
+    settingsButton = wt_$(document.createElement("img"));
+    settingsButton.attr('src', webTrailsUrl + "/images/cog.png");
+    settingsButton.addClass("webtrails");
+    settingsButton.css({
+        "float": "right",
+        "margin-right": "5px"
+    });
 
     saveSiteToTrailButton = wt_$(document.createElement("button"));
     saveSiteToTrailButton.css({
@@ -158,6 +166,8 @@ function initMyBookmarklet() {
 
     //adding all the toolbar elements to the DOM.
     wt_$(document.body).prepend(trailDisplay);
+
+    wt_$(trailDisplay).append(settingsButton);
 
     wt_$(trailDisplay).append(deleteNoteButton);
     deleteNoteButton.click(deletePreviousNote);
