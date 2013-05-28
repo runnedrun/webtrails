@@ -49,9 +49,6 @@ function saveSiteToTrail(successFunction){
             }
         }
         setTimeout(updateSiteSavedButton, 5000);
-
-//        noteDisplayWrapper.fadeTo(200,1);
-        deleteNoteButton.fadeTo(200,1);
     }
 }
 

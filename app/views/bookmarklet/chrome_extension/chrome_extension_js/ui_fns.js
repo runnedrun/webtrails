@@ -21,19 +21,20 @@ function addSiteFaviconToDisplay(domain,url) {
     var faviconImg  = wt_$("<img src='"+ domain + "' class=\"webtrails\">");
     faviconLink.css({
         "vertical-align":"top",
-            padding: "0px",
-            "margin": "0 3px",
-            overflow: "hidden",
-            display: "block",
-            border: "none"
-            });
+        "padding": "0px",
+        "margin": "0 3px",
+        "overflow": "hidden",
+        "display": "block",
+        "border": "none",
+        "float": "left"
+    });
     faviconImg.css({
-       height:"16px",
-       margin: 0,
-       "margin-top":"2px",
-       "vertical-align":"top",
-        padding: "0px"
-    })
+        "height":"16px",
+        "margin": "0",
+        "margin-top":"2px",
+        "vertical-align":"top",
+        "padding": "0px"
+    });
 
     faviconLink.append(faviconImg);
     faviconHolder.append(faviconLink);
@@ -55,11 +56,11 @@ function moveNoteToPrevious(noteContent){
 function updateNoteDisplay(data){
     if (data.id == "none") {
         moveNoteToPrevious("No more notes on this page.  Go ahead and take a few.");
-        deleteNoteButton.attr("disabled","disabled");
+        deleteNoteButton.attr("enabled","disabled");
     }else{
         previousNoteID = data.id;
         moveNoteToPrevious(data.content);
-        deleteNoteButton.attr("disabled","");
+        deleteNoteButton.attr("enabled","enabled");
     }
 }
 

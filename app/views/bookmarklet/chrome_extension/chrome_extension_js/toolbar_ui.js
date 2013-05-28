@@ -80,7 +80,6 @@ function initMyBookmarklet() {
         "height":"100%",
         "width": "7%",
         "float": "right",
-        "opacity": "0",
         "border": "1px solid #333",
         "text-shadow": "1px 1px #F0f0f0"
     });
