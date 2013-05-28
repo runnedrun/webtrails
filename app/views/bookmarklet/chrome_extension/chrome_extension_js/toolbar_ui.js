@@ -97,12 +97,12 @@ function initMyBookmarklet() {
     deleteNoteButton.addClass("deleteNote").addClass("webtrails");
 
     settingsButton = wt_$(document.createElement("img"));
-    settingsButton.attr('src', webTrailsUrl + "/images/cog.png");
+    settingsButton.attr('src', webTrailsUrl + "/images/power.png");
     settingsButton.addClass("webtrails");
     settingsButton.css({
         "float": "right",
         "margin-right": "5px",
-        "margin-top": "5px"
+        "margin-top": "6px"
     });
 
     saveSiteToTrailButton = wt_$(document.createElement("button"));
