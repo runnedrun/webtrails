@@ -56,7 +56,8 @@ function initMyBookmarklet() {
     linkToTrailWrapper.css({
         "height":"100%",
         "display": "inline-block",
-        "float": "left"
+        "float": "left",
+        "margin-top": "3px"
     });
     linkToTrailWrapper.addClass("webtrails");
 
@@ -100,7 +101,8 @@ function initMyBookmarklet() {
     settingsButton.addClass("webtrails");
     settingsButton.css({
         "float": "right",
-        "margin-right": "5px"
+        "margin-right": "5px",
+        "margin-top": "5px"
     });
 
     saveSiteToTrailButton = wt_$(document.createElement("button"));
