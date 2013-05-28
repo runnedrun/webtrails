@@ -107,7 +107,8 @@ function initMyBookmarklet() {
         "border-radius": "5px",
         "border": "1px solid #333",
         "margin-top": "2px",
-        "line-height": "normal"
+        "line-height": "normal",
+        "cursor": "pointer"
     });
     saveSiteToTrailButton.addClass("webtrails");
     saveSiteToTrailButton.html("Save site");
