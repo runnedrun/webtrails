@@ -14,7 +14,7 @@ function initMyBookmarklet() {
         "opacity": "1",
         "background": "#F0F0F0",
         "color": "#333",
-        "line-height": "25px",
+        "line-height": "18px",
         "display":"none",
         "border-bottom-right-radius": "7px",
         "border-bottom-left-radius": "7px",
@@ -25,15 +25,19 @@ function initMyBookmarklet() {
 
     noteDisplayWrapper = wt_$(document.createElement("div"));
     noteDisplayWrapper.css({
-        "height":"20px",
+        "height":"18px",
         "width": "40%",
         "float":"right",
         "margin-left": "3%",
         "opacity": "1",
         "overflow": "hidden",
         "margin-top": "2px",
-        "border-radius": "5px",
-        "background-color": "#d1d1d1"
+        "border-top-left-radius": "5px",
+        "border-bottom-left-radius": "5px",
+        "background-color": "#d1d1d1",
+        "border": "1px solid #aaa",
+        "border-right-width": "0px",
+        "cursor": "default"
     });
     noteDisplayWrapper.addClass("noteDisplayWrapper").addClass("webtrails");;
 
@@ -74,14 +78,18 @@ function initMyBookmarklet() {
     deleteNoteButton = wt_$(document.createElement("button"));
     deleteNoteButton.css({
         "font-size": "12px",
-        "color": "#333",
-        "background-color": "transparent",
+        "color": "#aaa",
+        "background-color": "#f0f0f0",
         "font-weight": "bold",
-        "height":"100%",
+        "height":"20px",
+        "margin-top" : "2px",
+        "margin-right": "5px",
         "width": "7%",
         "float": "right",
-        "border": "1px solid #333",
-        "text-shadow": "1px 1px #F0f0f0"
+        "border": "1px solid #aaa",
+        "border-top-right-radius": "5px",
+        "border-bottom-right-radius": "5px",
+        "cursor": "default"
     });
 
     deleteNoteButton.html("Delete Note");
@@ -98,7 +106,6 @@ function initMyBookmarklet() {
         "float": "right",
         "border-radius": "5px",
         "border": "1px solid #333",
-        "text-shadow": "1px 1px #F0f0f0",
         "margin-top": "2px",
         "line-height": "normal"
     });
@@ -122,7 +129,6 @@ function initMyBookmarklet() {
         "outline": "none",
         "border-radius": "5px",
         "border": "1px solid #333",
-        "text-shadow": "1px 1px #f0f0f0",
         "cursor": "pointer"
     });
     shareTrailField.addClass("webtrails");
