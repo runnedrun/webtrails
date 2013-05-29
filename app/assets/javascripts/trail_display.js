@@ -155,8 +155,12 @@ function previousNote(){
         currentNoteIndex-=1;
         scrollToAndHighlightNote(getCurrentNoteID());
     } else {
-        previousSite();
-        gotoLastNoteforCurrentSite();
+        if (currentSiteIndex > 0) {
+            previousSite();
+            gotoLastNoteforCurrentSite();
+        } else {
+            switchToSite(siteIDs[0]);
+        }
     }
 }
 

@@ -76,7 +76,7 @@ function postNoteAndComment(e,content,commentOverlay,xPos,yPos){
 }
 
 function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY){
-    saveSiteToTrail(function(site_data){submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY)})
+    saveSiteToTrail(function(site_data){console.log("done saving"); submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY)})
 }
 
 function closeOverlay(overlay){

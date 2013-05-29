@@ -72,6 +72,7 @@ function initMyBookmarklet() {
         "text-decoration": "underline"
     });
     linkToTrail.addClass("webtrails");
+    linkToTrail.attr("target", "_blank");
 
     wt_$(linkToTrail).html("View Trail");
     wt_$(linkToTrail).attr('href', webTrailsUrl + "/trails/"+trailID);
