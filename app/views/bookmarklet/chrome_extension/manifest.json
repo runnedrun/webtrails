@@ -7,8 +7,15 @@
         "default_icon": "icon.png"
     },
     "background": {
-        "scripts": ["chrome_extension_js/extension_background.js", "chrome_extension_js/jquery191.js"]
+        "scripts": ["chrome_extension_js/jquery191.js","lib/oauth2.js","chrome_extension_js/extension_background.js"]
     },
+    "content_scripts": [
+        {
+            "matches": ["http://www.google.com/robots.txt*"],
+            "js": ["lib/oauth2_inject.js"],
+            "run_at": "document_start"
+        }
+    ],
     "permissions": [
         "tabs", "*://*/*"
     ],
