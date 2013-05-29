@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130528205003) do
+ActiveRecord::Schema.define(:version => 20121230221344) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -76,9 +76,6 @@ ActiveRecord::Schema.define(:version => 20130528205003) do
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
-    t.string   "provider"
-    t.integer  "uid"
-    t.string   "name"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
