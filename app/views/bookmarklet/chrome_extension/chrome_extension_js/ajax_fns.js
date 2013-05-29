@@ -40,7 +40,7 @@ function saveSiteToTrail(successFunction){
                             if (data.exists) {
                               // Our page exists, and we should correct the save site button
                               saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
-                              saveSiteToTrailButton.unbind().click(function(){window.location = webTrailsUrl + '/trails/' + trailID + "#end"})
+                              saveSiteToTrailButton.unbind().click(function(){window.open(webTrailsUrl + '/trails/' + trailID + "#end", '_blank');});
                               saveSiteToTrailButton.css({"cursor": "pointer"});
                             } else {
                                 setTimeout(updateSiteSavedButton, 5000); // check again
@@ -72,7 +72,6 @@ function fetchFavicons(){
 function submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY){
     console.log("SETTING THE CURRENT TRAIL ID:", site_data.site_id);
     currentSiteTrailID = site_data.site_id;
-    noteCount +=1;
     wt_$.ajax({
         url: "http://localhost:3000/notes",
         type: "post",
@@ -92,7 +91,7 @@ function submitNoteAfterSave(site_data,content,comment,commentLocationX,commentL
 }
 
 function deletePreviousNote(){
-    noteCount -=1;
+    noteCount--;
     wt_$.ajax({
         url: "http://localhost:3000/notes/delete",
         type: "post",

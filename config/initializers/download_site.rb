@@ -134,7 +134,17 @@ class RemoteDocument
     path = url.gsub(/^[|[:alpha]]+:\/\//, '')
     path.gsub!(/^[.\/]+/, '')
     path.gsub!(/[^-_.\/[:alnum:]]/, '_')
-    File.join(dir, path)
+    extension = File.extname(path)
+    if !extension.empty?
+      path_wo_extension = path[0..-(extension.length+1)]
+    else
+      path_wo_extension = path
+    end
+    short_path_wo_extension = path_wo_extension[0..100]
+    short_path_wo_extension = short_path_wo_extension.gsub(/\/+$/,"")
+    short_path_wo_extension = short_path_wo_extension.gsub(/\.\./,"")
+    short_path_wo_extension = short_path_wo_extension.gsub(/\/\//,"/")
+    File.join(dir, short_path_wo_extension + extension)
   end
 
 
@@ -210,7 +220,7 @@ class RemoteDocument
 
 
   #=begin rdoc
-  #Download a remote file and save it to the specified path
+  #Download a remote file and save it to the specified localized url path
   #=end
   def download_resource(url, path)
     the_uri = parse_URI_or_return_false(url)
@@ -223,6 +233,7 @@ class RemoteDocument
     end
   end
 
+# Make sure dir is localized_url'd
   def generate_AWS_URL(dir)
     "https://s3.amazonaws.com/TrailsSitesProto/"+dir
   end
@@ -248,23 +259,13 @@ class RemoteDocument
     end
   end
 
-  def write_to_aws(data,path)
+  def write_to_aws(data,localized_url)
     begin
-      extension = File.extname(path)
-      if !extension.empty?
-        path_wo_extension = path[0..-(extension.length+1)]
-      else
-        path_wo_extension = path
-      end
-      short_path_wo_extension = path_wo_extension[0..100]
-      short_path_wo_extension = short_path_wo_extension.gsub(/\/+$/,"")
-      short_path_wo_extension = short_path_wo_extension.gsub(/\.\./,"")
-      short_path_wo_extension = short_path_wo_extension.gsub(/\/\//,"/")
-      newFile = @bucket.objects[short_path_wo_extension+extension]
+      newFile = @bucket.objects[localized_url]
       newFile.write(data)
     rescue
       newFile = false
-      $stderr.puts path.to_s+"had a problem saving"
+      $stderr.puts localized_url.to_s+"had a problem saving"
     end
     return newFile
   end
@@ -322,8 +323,7 @@ class RemoteDocument
           css_string = html_get_site(absolute_url)
           if css_string
             css_string = save_css_urls_to_s3(css_string,dir,clean_uri)
-            dest = localize_url(absolute_url,dir)
-            s3File = write_to_aws(css_string,dest)
+            s3File = write_to_aws(css_string, dest)
           end
           if s3File
             s3File.acl = :public_read
@@ -334,14 +334,10 @@ class RemoteDocument
           $stderr.puts "dest:", dest
           new_url= generate_AWS_URL(dest)
         end
-        $stderr.puts "new url:", new_url, "everything_before_url", everything_before_url
         new_string = everything_before_url + new_url + save_import_tags(everything_after_url,dir)
       end
-      $stderr.puts "returning", new_string
       return new_string
-
     else
-      $stderr.puts "just returning", string
       return string
     end
   end
@@ -351,7 +347,6 @@ class RemoteDocument
     css_string = save_import_tags(css_string,dir)
     $stderr.puts "Done with import tags and back to save css"
     beginning_of_url = css_string.index("url(")
-    $stderr.puts "begging of url", beginning_of_url
     if beginning_of_url
       url_onward = css_string[beginning_of_url+4..-1]
       end_of_url = url_onward.index(")")
@@ -386,14 +381,10 @@ class RemoteDocument
         $stderr.puts "setting new url to empty"
         new_url = ""
       end
-      $stderr.puts "making halves"
       first_half = css_string[0..beginning_of_url+3]
       second_half = save_css_urls_to_s3(url_onward[end_of_url..-1],dir,css_file_url)
-      $stderr.puts "save css returns with:"
-      $stderr.puts (first_half + new_url + second_half)
       return (first_half + new_url + second_half)
     else
-      $stderr.puts "save css returns with just:", css_string
       return css_string
     end
   end
@@ -423,7 +414,7 @@ class RemoteDocument
     if !@is_iframe
       @save_path = File.join(dir, File.basename(@uri.to_s))
       @save_path += '.html' if @save_path !~ /\.((html?)|(txt))$/
-      newFile = write_to_aws(@contents.to_html.force_encoding(@encoding),@save_path)
+      newFile = write_to_aws(@contents.to_html.force_encoding(@encoding), localize_url(@save_path, dir))
       newFile.acl = :public_read
       @asset_path = newFile.public_url().to_s
       return true
