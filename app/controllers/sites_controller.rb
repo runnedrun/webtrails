@@ -25,7 +25,7 @@ class SitesController < ApplicationController
     url = params[:site][:url]
     trail_id = params[:site][:trail_id]
     shallow_save = params[:shallow_save]
-
+    $stderr.puts "shallow_save at create", shallow_save, params[:site][:id]
     if shallow_save != ""
       site_id = params[:site][:id]
       shallow_save=true

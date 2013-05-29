@@ -76,7 +76,9 @@ function postNoteAndComment(e,content,commentOverlay,xPos,yPos){
 }
 
 function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY){
-    saveSiteToTrail(function(site_data){submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY)})
+    noteCount++;
+    console.log("note count incremented", noteCount);
+    saveSiteToTrail(function(site_data){console.log("done saving"); submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY)})
 }
 
 function closeOverlay(overlay){
@@ -91,8 +93,8 @@ function closeOverlay(overlay){
 function clickAway(e,content,commentOverlay,xPos,yPos){
     var clickedNode = wt_$(e.target);
     if (clickedNode != commentOverlay && (wt_$.inArray(e.target,commentOverlay.children())==-1)){
-        closeOverlay(commentOverlay)
-        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos)
+        closeOverlay(commentOverlay);
+        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos);
     }
 }
 

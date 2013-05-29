@@ -1,6 +1,7 @@
 console.log("ajax_fns loaded");
 
 function saveSiteToTrail(successFunction){
+    console.log("saving site to trail:", currentSiteTrailID);
     var currentSite = window.location.href;
     var currentHTML = getCurrentSiteHTML();
     wt_$.ajax({
@@ -39,7 +40,7 @@ function saveSiteToTrail(successFunction){
                             if (data.exists) {
                               // Our page exists, and we should correct the save site button
                               saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
-                              saveSiteToTrailButton.unbind().click(function(){window.location = webTrailsUrl + '/trails/' + trailID + "#end"})
+                              saveSiteToTrailButton.unbind().click(function(){window.open(webTrailsUrl + '/trails/' + trailID + "#end", '_blank');});
                               saveSiteToTrailButton.css({"cursor": "pointer"});
                             } else {
                                 setTimeout(updateSiteSavedButton, 5000); // check again
@@ -69,6 +70,7 @@ function fetchFavicons(){
 }
 
 function submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY){
+    console.log("SETTING THE CURRENT TRAIL ID:", site_data.site_id);
     currentSiteTrailID = site_data.site_id;
     wt_$.ajax({
         url: "http://localhost:3000/notes",
@@ -82,13 +84,14 @@ function submitNoteAfterSave(site_data,content,comment,commentLocationX,commentL
             "note[site_id]": currentSiteTrailID,
             "note[scroll_x]": window.scrollX,
             "note[scroll_y]": window.scrollY,
-            "note[client_side_id]": "client_side_id_"+noteCount
+            "note[client_side_id]": "client_side_id_"+ (noteCount - 1)
         },
-        success: incrementNoteCountAfterSave
+        success: updateNoteDisplay
     })
 }
 
 function deletePreviousNote(){
+    noteCount--;
     wt_$.ajax({
         url: "http://localhost:3000/notes/delete",
         type: "post",
@@ -96,16 +99,6 @@ function deletePreviousNote(){
         data: {
             "id": previousNoteID
         },
-        success: decrementNoteCountAfterDelete
+        success: updateNoteDisplay
     })
-}
-
-function incrementNoteCountAfterSave(data){
-    noteCount +=1;
-    updateNoteDisplay(data);
-}
-
-function decrementNoteCountAfterDelete(data){
-    noteCount -=1;
-    updateNoteDisplay(data);
 }

@@ -43,6 +43,7 @@ class TrailsController < ApplicationController
 
 
   def index
+    @user = current_user
     @trails = current_user.trails
     @favicon_urls = @trails.map do |trail|
       trail.sites.map do |site|

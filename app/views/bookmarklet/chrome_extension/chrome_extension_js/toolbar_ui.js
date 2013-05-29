@@ -56,7 +56,8 @@ function initMyBookmarklet() {
     linkToTrailWrapper.css({
         "height":"100%",
         "display": "inline-block",
-        "float": "left"
+        "float": "left",
+        "margin-top": "3px"
     });
     linkToTrailWrapper.addClass("webtrails");
 
@@ -71,6 +72,7 @@ function initMyBookmarklet() {
         "text-decoration": "underline"
     });
     linkToTrail.addClass("webtrails");
+    linkToTrail.attr("target", "_blank");
 
     wt_$(linkToTrail).html("View Trail");
     wt_$(linkToTrail).attr('href', webTrailsUrl + "/trails/"+trailID);
@@ -96,11 +98,12 @@ function initMyBookmarklet() {
     deleteNoteButton.addClass("deleteNote").addClass("webtrails");
 
     settingsButton = wt_$(document.createElement("img"));
-    settingsButton.attr('src', webTrailsUrl + "/images/cog.png");
+    settingsButton.attr('src', webTrailsUrl + "/images/power.png");
     settingsButton.addClass("webtrails");
     settingsButton.css({
         "float": "right",
-        "margin-right": "5px"
+        "margin-right": "5px",
+        "margin-top": "6px"
     });
 
     settingsButton.click(function(){

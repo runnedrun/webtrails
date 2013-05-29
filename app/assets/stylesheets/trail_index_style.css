@@ -1,40 +1,38 @@
-.title-bar{
-    height: 60px;
-    text-align: center;
-    font-size: 45px;
+#create-trail-container {
+    margin-top:25px;
 }
 
-.trailContainer {
-    margin-bottom: 20px;
-}
-
-.trailLinkDiv .trailLink {
-    cursor: pointer;
-    color: #000000;
-}
-
-.trailDisplayDiv {
-    border: 2px solid black;
-    padding: 10px;
-}
-
-.newTrailDiv {
-    height: 200px;
-}
-
-.newTrailButtons {
-     margin-top: 50px;
+.centered {
     text-align: center;
 }
 
-.newTrailLabel {
-    margin-bottom: 20px;
+#trails-display {
+    margin-top: 25px;
 }
 
-.createTrailButton {
-    margin-top: 15px;
+.trail-container {
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    margin-top:15px;
+    background-color: #f0f0f0;
 }
 
+.trail-container:hover {
+    background-color:yellow;
+}
 
+.last-trail-container{
+    margin-bottom:15px;
+}
 
+.trail-name {
+}
 
+.site-display {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    min-height: 30px;
+    width: 200px;
+    display: inline-block;
+    margin: 10px 5px;
+}
