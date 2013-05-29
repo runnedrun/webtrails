@@ -8,7 +8,10 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
     if (changeInfo.status == 'complete') {
-        injectScripts(tabId);
+        var callbackURL = chrome.extension.getURL('http://www.google.com/robots.txt');
+        if (tab.url != callbackURL){
+            injectScripts(tabId);
+        }
     }
 })
 
@@ -31,3 +34,24 @@ function createContentScript(index_of_script, contentScriptString,tabId){
         }
     })
 }
+
+client_secret = "t2iqu6oxQbkXf7wdSXhtXXm0";
+googleAuth = new OAuth2('google', {
+    client_id: '910353473891.apps.googleusercontent.com',
+    client_secret: client_secret,
+    api_scope: 'https://www.googleapis.com/auth/tasks'
+});
+console.log(client_secret,"client secret");
+
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        if (request.login){
+            console.log("authorizing");
+            googleAuth.authorize(function() {
+                console.log("authorized");
+                console.log(googleAuth.getAccessToken());
+                sendResponse({text: "success!"});
+            })
+           return true
+        };
+    })
