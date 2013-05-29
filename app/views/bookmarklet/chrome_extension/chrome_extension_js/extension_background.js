@@ -1,3 +1,5 @@
+domain = "http://localhost:3000"
+
 var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","toolbar_ui.js","ajax_fns.js","smart_grab.js","autoresize.js",
     "jquery_elipsis.js","search_and_highlight.js","inline_save_button_fns.js","ui_fns.js","commenting_fns.js",
     "whereJSisWrittenLocalChrome.js"];
@@ -39,8 +41,9 @@ client_secret = "t2iqu6oxQbkXf7wdSXhtXXm0";
 googleAuth = new OAuth2('google', {
     client_id: '910353473891.apps.googleusercontent.com',
     client_secret: client_secret,
-    api_scope: 'https://www.googleapis.com/auth/tasks'
+    api_scope:'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email'
 });
+console.log(OAuth2())
 console.log(client_secret,"client secret");
 
 chrome.runtime.onMessage.addListener(
@@ -49,9 +52,27 @@ chrome.runtime.onMessage.addListener(
             console.log("authorizing");
             googleAuth.authorize(function() {
                 console.log("authorized");
-                console.log(googleAuth.getAccessToken());
-                sendResponse({text: "success!"});
+                console.log("now getting user information from server");
+                logInOrCreateUser(function(){sendResponse({text: "success!"})});
             })
            return true
         };
     })
+
+function logInOrCreateUser(callback){
+    console.log(googleAuth.getAccessToken());
+    var authToken =  googleAuth.getAccessToken();
+    console.log(domain+"/users/login_or_create_gmail_user")
+    wt_$.ajax({
+        url: domain+"/users/login_or_create_gmail_user",
+        type: "post",
+        data: {
+            "access_token":authToken,
+            "expires_on": googleAuth.get("expiresIn") + googleAuth.get("accessTokenDate")
+        },
+        success: callback,
+        error: function(error){
+          console.log("error!",error);
+        }
+    })
+}

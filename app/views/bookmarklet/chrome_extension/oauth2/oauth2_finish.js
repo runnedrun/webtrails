@@ -17,7 +17,6 @@
 // This script serves as an intermediary between oauth2.html and oauth2.js.
 
 // Get all query string parameters from the original URL.
-console.log("whwwwaaat?")
 var url = decodeURIComponent(window.location.href.match(/&from=([^&]+)/)[1]);
 console.log(url);
 var index = url.indexOf('?');
