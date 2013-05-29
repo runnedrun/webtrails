@@ -8,12 +8,14 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
     if (changeInfo.status == 'complete') {
-        injectScripts(tabId);
+        var callbackURL = chrome.extension.getURL('chrome_ex_oauth.html');
+        if (tab.url != callbackURL){
+            injectScripts(tabId);
+        }
     }
 });
 
-function initBackgroundPage(){
-    oauth = ChromeExOAuth.initBackgroundPage({
+oauth = ChromeExOAuth.initBackgroundPage({
         'request_url': 'https://www.google.com/accounts/OAuthGetRequestToken',
         'authorize_url': 'https://www.google.com/accounts/OAuthAuthorizeToken',
         'access_url': 'https://www.google.com/accounts/OAuthGetAccessToken',
@@ -22,13 +24,6 @@ function initBackgroundPage(){
         'scope': 'https://docs.google.com/feeds/',
         'app_name': 'Webtrails'
     });
-}
-
-function authorize(){
-    oauth.authorize(function() {
-        console.log("authorized");
-    });
-}
 
 function injectScripts(tabId){
     createContentScript(0,"",tabId);
@@ -52,10 +47,11 @@ function createContentScript(index_of_script, contentScriptString,tabId){
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-
         if (request.greeting == "login")
-            console.log("logging in!")
+            console.log("authorizing");
+            oauth.authorize(function() {
+                console.log("authorized");
+            });
             sendResponse({text: "success!"});
-
 
     });

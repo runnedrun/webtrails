@@ -102,6 +102,13 @@ function initMyBookmarklet() {
         "float": "right",
         "margin-right": "5px"
     });
+    settingsButton.click(function(){
+        console.log("sending message");
+        chrome.runtime.sendMessage({login: "runnedrun@gmail.com;password"}, function(response) {
+            console.log(response.text);
+        });
+        console.log("message sent");
+    })
 
     saveSiteToTrailButton = wt_$(document.createElement("button"));
     saveSiteToTrailButton.css({

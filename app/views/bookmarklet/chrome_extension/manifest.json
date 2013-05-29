@@ -7,7 +7,7 @@
         "default_icon": "icon.png"
     },
     "background": {
-        "scripts": ["chrome_extension_js/extension_background.js", "chrome_extension_js/jquery191.js", "chrome_extension_js/chrome_ex_oauthsimple.js", "chrome_extension_js/chrome_ex_oauth.js"]
+        "scripts": ["chrome_extension_js/chrome_ex_oauthsimple.js", "chrome_extension_js/chrome_ex_oauth.js", "chrome_extension_js/jquery191.js","chrome_extension_js/extension_background.js"]
     },
     "permissions": [
         "tabs", "*://*/*","https://docs.google.com/feeds/*",
