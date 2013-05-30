@@ -15,10 +15,7 @@
     border-radius: 5px;
     margin-top:15px;
     background-color: #f0f0f0;
-}
-
-.site-display:hover {
-    background-color:#ddd;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .last-trail-container{
@@ -28,14 +25,33 @@
 .trail-name {
 }
 
+.sites-display-container {
+    white-space: nowrap;
+    overflow-y: hidden;
+    overflow-x: scroll;
+}
+
+.sites-display {
+    max-height: 500px;
+    position: relative;
+    left: 0px;
+}
+
 .site-display {
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     border-radius: 5px;
     min-height: 30px;
     width: 200px;
     display: inline-block;
     margin: 10px 5px;
     vertical-align: top;
+    padding: 5px;
+    background-color: #e1e1e1;
+    white-space: normal;
+}
+
+.site-display:hover {
+    background-color:#ddd;
 }
 
 .note-container {
@@ -52,11 +68,11 @@
 }
 
 .note-comment {
-    background-color: #fff;
-    color: #333;
+    background-color: white;
+    color: black;
     margin-bottom: 10px;
     max-height: 45px;
     overflow:hidden;
-    border: 1px solid #aaa;
+    border: 2px solid black;
     border-radius: 5px;
 }

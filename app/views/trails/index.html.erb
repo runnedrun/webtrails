@@ -1,5 +1,6 @@
 <script src="/bootstrap/js/bootstrap.min.js"> </script>
 <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<script src="/javascripts/index.js"> </script>
 
 <div class="row-fluid">
   <div class="span4 offset4 centered" id="webtrails-title">
@@ -19,32 +20,34 @@
 <div class="row-fluid">
   <div class="span10 offset1 centered" id="trails-display">
     <%- @trails.each_with_index do |trail,i|%>
-        <a class="" href="<%= request.protocol + (request.port.blank? ? request.host : request.host_with_port) %>/trails/<%= trail.id%>">
-          <div class= "row-fluid">
-            <div class="span1"></div>
-            <div class="trail-container span10 <%= "last-trail-container" if i == @trails.length - 1%>">
-              <div class="trail-name centered">
-                <h3><%= trail.name %></h3>
-              </div>
-              <div class="sites-display">
-                  <%- @favicon_urls[i].each_with_index do |favicon_url, i| %>
-                    <a class="" href="<%= request.protocol + (request.port.blank? ? request.host : request.host_with_port) %>/trails/<%= trail.id%>#<%= i%>">
-                      <div class="site-display">
-                        <img src="<%= favicon_url %>" class="siteFavicon"/>
-                        <span><%= trail.sites[i].title%></span>
-                        <%- trail.sites[i].notes.each_with_index do |note, i| %>
-                          <div class="note-container">
-                            <div class="note-content"><%= note.content%></div>
-                            <div class="note-comment"><%= note.comment%></div>
-                          </div>
-                        <%- end %>
-                      </div>
-                    </a>
-                  <%- end %>
+      <div class= "row-fluid">
+        <a class="link-to-trail" href="<%= request.protocol + (request.port.blank? ? request.host : request.host_with_port) %>/trails/<%= trail.id%>">
+          <div class="span1"></div>
+          <div class="trail-container span10 <%= "last-trail-container" if i == @trails.length - 1%>">
+            <div class="trail-name centered">
+              <h3><%= trail.name %></h3>
+            </div>
+            <div class="sites-display-container" id="sites-display-container-<%= i %>" data-index="<%= i %>">
+              <div class="sites-display" id="sites-display-<%= i %>">
+                <%- @favicon_urls[i].each_with_index do |favicon_url, i| %>
+                  <a class="link-to-site" href="<%= request.protocol + (request.port.blank? ? request.host : request.host_with_port) %>/trails/<%= trail.id%>#<%= i%>">
+                    <div class="site-display">
+                      <img src="<%= favicon_url %>" class="siteFavicon"/>
+                      <span><%= trail.sites[i].title%></span>
+                      <%- trail.sites[i].notes.each_with_index do |note, i| %>
+                        <div class="note-container">
+                          <div class="note-content"><%= note.content%></div>
+                          <div class="note-comment"><%= note.comment%></div>
+                        </div>
+                      <%- end %>
+                    </div>
+                  </a>
+                <%- end %>
               </div>
             </div>
           </div>
         </a>
-      <%- end %>
+      </div>
+    <%- end %>
   </div>
 </div>

@@ -52,6 +52,8 @@ class TrailsController < ApplicationController
         "http://www.google.com/s2/favicons?domain=" + search_name
       end
     end
+
+    @trails.each {|trail| trail.sites.sort_by!(&:created_at)}
   end
 
   def site_list

@@ -6,6 +6,12 @@ var presentationMode = false;
 var siteHash = {};
 var currentCommentBox;
 $(function(){
+    // We should have the siteIDs set from the server page.
+    // If we don't we probably shouldn't run this code on that page.
+    if (typeof siteIDs == "undefined") {
+        console.log("No SiteIDs, returning");
+        return;
+    }
     if (window.location.hash) {
         var hash = window.location.hash.substring(1);
         currentSiteIndex = parseInt(hash) || 0;
@@ -263,7 +269,7 @@ function createCommentOverlay(commentText,xPos,yPos){
         "position":"absolute",
         "z-index": "2147483647",
         "border": "2px solid black",
-        padding:"3px 3px 3px 3px",
+        "padding":"3px 3px 3px 3px",
         "-webkit-border-top-left-radius": "5px",
         "-webkit-border-bottom-left-radius": "5px",
         "-moz-border-radius-topleft": "5px",
