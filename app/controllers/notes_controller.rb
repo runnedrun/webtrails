@@ -1,5 +1,6 @@
 class NotesController < ApplicationController
   skip_before_filter :verify_authenticity_token, :only => [:create,:options]
+  before_filter :get_user_from_wt_auth_header
   after_filter :cors_set_access_control_headers
 
   def cors_set_access_control_headers

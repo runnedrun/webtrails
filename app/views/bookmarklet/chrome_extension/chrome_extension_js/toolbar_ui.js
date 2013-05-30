@@ -75,7 +75,7 @@ function initMyBookmarklet() {
     linkToTrail.attr("target", "_blank");
 
     wt_$(linkToTrail).html("View Trail");
-    wt_$(linkToTrail).attr('href', webTrailsUrl + "/trails/"+trailID);
+    wt_$(linkToTrail).attr('href', webTrailsUrl + "/trails/"+currentTrailID);
 
     deleteNoteButton = wt_$(document.createElement("button"));
     deleteNoteButton.css({
@@ -107,11 +107,11 @@ function initMyBookmarklet() {
     });
 
     settingsButton.click(function(){
-        console.log("sending message");
-        chrome.runtime.sendMessage({login: "runnedrun@gmail.com;password"}, function(response) {
-            console.log(response.text);
+        chrome.runtime.sendMessage({login:"login"}, function(response) {
+            console.log(response.wt_auth_token);
+            wt_auth_token = response.wt_auth_token;
+            initSignedInExperience();
         });
-        console.log("message sent");
     })
 
     saveSiteToTrailButton = wt_$(document.createElement("button"));
@@ -190,7 +190,7 @@ function initMyBookmarklet() {
 
     wt_$(trailDisplay).append(shareTrailField);
     shareTrailField.click(function() {
-        shareTrailField.attr("value", webTrailsUrl + '/trails/'+trailID);
+        shareTrailField.attr("value", webTrailsUrl + '/trails/'+currentTrailID);
         shareTrailField.focus();
         shareTrailField.select();
         shareTrailField.css({"cursor": "text"});
@@ -220,8 +220,16 @@ function initMyBookmarklet() {
         mouseDown=0;
     });
 
-    fetchFavicons();
-    wt_$(document).mousedown(possibleHighlightStart);
+    if (wt_auth_token){
+        //logged in
+
+        initSignedInExperience();
+    }else{
+        //not logged in
+        faviconHolder.html("Hit the gear icon to sign in!");
+    }
+
+
 
     try {
         var bodymargin = wt_$('body').css('margin-left')
@@ -230,3 +238,17 @@ function initMyBookmarklet() {
         }
     }catch (e) {}
 }
+
+function initSignedInExperience(){
+    console.log("intitilizing signedin in experience")
+    faviconHolder.html("");
+    fetchFavicons();
+    wt_$(document).mousedown(possibleHighlightStart);
+}
+
+//function checkIfSignedIn(){
+//    chrome.runtime.sendMessage({isUserSignedIn:"check"}, function(response) {
+//        console.log(response.wt_auth_token);
+//        wt_auth_token = response.wt_auth_token;
+//    });
+//}

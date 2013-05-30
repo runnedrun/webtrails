@@ -6,12 +6,11 @@ var trailDisplay,
     previousNoteDisplay,
     noteDisplayWrapper,
     currentSiteTrailID="",
-    trailID = 5,
-    userID = 1,
+//    trailID = "",
     saveSiteToTrailButton,
     deleteNoteButton,
     previousNoteID,
-    siteHTML = getCurrentSiteHTML();
+    siteHTML = getCurrentSiteHTML(),
     noteCount = 0,
     webTrailsUrl = "http://localhost:3000";
     // webTrailsUrl = "http://webtrails.co";

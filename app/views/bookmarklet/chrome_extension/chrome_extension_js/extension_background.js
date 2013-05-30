@@ -1,4 +1,4 @@
-domain = "http://localhost:3000"
+domain = "http://localhost:3000";
 
 var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","toolbar_ui.js","ajax_fns.js","smart_grab.js","autoresize.js",
     "jquery_elipsis.js","search_and_highlight.js","inline_save_button_fns.js","ui_fns.js","commenting_fns.js",
@@ -18,11 +18,26 @@ chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
 })
 
 function injectScripts(tabId){
-    createContentScript(0,"",tabId);
+    var wt_auth_token = getWtAuthToken();
+    var current_trail_id = getCurrentTrailID();
+    console.log("auth token",wt_auth_token);
+    console.log("current trail id",current_trail_id);
+    var auth_injection_string = "wt_auth_token=undefined;\n";
+    var trail_id_injection_string = "currentTrailID='';\n";
+    if(wt_auth_token){
+        console.log("injecting with token");
+        auth_injection_string = "wt_auth_token='"+wt_auth_token + "';\n";
+        if (current_trail_id){
+            console.log("injecting with currentTrailID");
+            trail_id_injection_string = "currentTrailID='"+current_trail_id + "';\n";
+        }
+    }
+    createContentScript(0,auth_injection_string+trail_id_injection_string,tabId);
 }
 
 function createContentScript(index_of_script, contentScriptString,tabId){
     if (index_of_script >= scriptsToBeInjected.length){
+//        console.log(contentScriptString);
         chrome.tabs.executeScript(tabId,{code:contentScriptString});
         return false;
     }
@@ -31,7 +46,7 @@ function createContentScript(index_of_script, contentScriptString,tabId){
         url: scriptURL,
         type: "get",
         success: function(data) {
-           contentScriptString += "\n;"+  data;
+           contentScriptString += ";\n"+  data;
            createContentScript(index_of_script+1, contentScriptString,tabId);
         }
     })
@@ -53,7 +68,11 @@ chrome.runtime.onMessage.addListener(
             googleAuth.authorize(function() {
                 console.log("authorized");
                 console.log("now getting user information from server");
-                logInOrCreateUser(function(){sendResponse({text: "success!"})});
+                logInOrCreateUser(function(resp){
+                    var wt_auth_token = resp.wt_authentication_token;
+                    localStorage["wt_auth_token"] = wt_auth_token;
+                    sendResponse({"wt_auth_token": wt_auth_token});
+                });
             })
            return true
         };
@@ -75,4 +94,14 @@ function logInOrCreateUser(callback){
           console.log("error!",error);
         }
     })
+}
+
+function signOut(){
+    localStorage.removeItem("wt_auth_token");
+}
+function getWtAuthToken(){
+    return localStorage["wt_auth_token"];
+}
+function getCurrentTrailID(){
+    return localStorage["current_trail_ID"];
 }

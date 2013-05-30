@@ -1,6 +1,7 @@
 class TrailsController < ApplicationController
 
-  before_filter :authenticated_or_redirect, :only => [:index]
+  #before_filter :authenticated_or_redirect, :only => [:index]
+  before_filter :get_user_from_wt_auth_header
   skip_before_filter :verify_authenticity_token, :only => [:create,:options]
   after_filter :cors_set_access_control_headers
 
@@ -54,12 +55,27 @@ class TrailsController < ApplicationController
   end
 
   def site_list
-    trail = Trail.find(params[:trail_id])
-    favicons_and_urls = trail.sites.sort_by(&:created_at).inject([]) do |fav_list, site|
-      fav_list.push(["http://www.google.com/s2/favicons?domain=" + URI(site.url).host.to_s,site.url])
+    puts @user
+    #trail = Trail.find(params[:trail_id])
+    current_trail_id = params[:trail_id]
+    trail = nil
+
+    trail = @user.trails.where(:id => params[:trail_id]).first if current_trail_id
+
+    if trail == nil
+      trail = @user.trails.sort_by(&:created_at).last
     end
-    favicons_and_urls.push(["http://www.google.com/s2/favicons?domain=" + URI(params[:current_url]).host.split(".")[-2..-1].to_s,"#"])
-    render :json => {"favicons_and_urls" => favicons_and_urls}
+
+    if trail
+      favicons_and_urls = trail.sites.sort_by(&:created_at).inject([]) do |fav_list, site|
+        fav_list.push(["http://www.google.com/s2/favicons?domain=" + URI(site.url).host.to_s,site.url])
+      end
+      favicons_and_urls.push(["http://www.google.com/s2/favicons?domain=" + URI(params[:current_url]).host.split(".")[-2..-1].to_s,"#"])
+      render :json => {"favicons_and_urls" => favicons_and_urls, "trail_id" => trail.id}
+    else
+      render :json => {"favicons_and_urls" => [], "trail_id" => ""}
+    end
+
   end
 
   private
