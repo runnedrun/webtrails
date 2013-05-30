@@ -4,6 +4,11 @@ function saveSiteToTrail(successFunction){
     console.log("saving site to trail:", currentSiteTrailID);
     var currentSite = window.location.href;
     var currentHTML = getCurrentSiteHTML();
+    if (siteSavedDeeply && !currentSiteTrailID) {
+        console.log("saved already, but not returned yet");
+        setTimeout(function(){saveSiteToTrail(successFunction)}, 100);
+        return;
+    }
     wt_$.ajax({
         url: webTrailsUrl + "/sites",
         type: "post",
@@ -21,7 +26,9 @@ function saveSiteToTrail(successFunction){
         success: successFunction
     });
 //    document.onmousemove = mouseStopDetect();
-    if (!currentSiteTrailID){
+
+    if (!siteSavedDeeply){
+        siteSavedDeeply = true;
         saveSiteToTrailButton.text("Site saving");
         saveSiteToTrailButton.unbind();
         saveSiteToTrailButton.css({"cursor": "default"});

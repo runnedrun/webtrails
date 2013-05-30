@@ -13,6 +13,7 @@ var trailDisplay,
     previousNoteID,
     siteHTML = getCurrentSiteHTML();
     noteCount = 0,
+    siteSavedDeeply = false,
     webTrailsUrl = "http://localhost:3000";
     // webTrailsUrl = "http://webtrails.co";
 

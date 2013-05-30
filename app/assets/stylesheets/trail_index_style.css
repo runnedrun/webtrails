@@ -17,8 +17,8 @@
     background-color: #f0f0f0;
 }
 
-.trail-container:hover {
-    background-color:yellow;
+.site-display:hover {
+    background-color:#ddd;
 }
 
 .last-trail-container{
@@ -35,4 +35,28 @@
     width: 200px;
     display: inline-block;
     margin: 10px 5px;
+    vertical-align: top;
+}
+
+.note-container {
+    color: #333;
+    max-height: 360px;
+}
+
+.note-content {
+    margin-top:5px;
+    overflow:hidden;
+    max-height: 45px;
+    background-color: #FFFF7E;
+    color: #666;
+}
+
+.note-comment {
+    background-color: #fff;
+    color: #333;
+    margin-bottom: 10px;
+    max-height: 45px;
+    overflow:hidden;
+    border: 1px solid #aaa;
+    border-radius: 5px;
 }

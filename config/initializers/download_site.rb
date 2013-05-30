@@ -34,11 +34,11 @@ class RemoteDocument
     @shallow_save = shallow_save
     @dir = dir
     source = @src
-    $stderr.puts "mirror", @shallow_save, @dir
+    # $stderr.puts "mirror", @shallow_save, @dir
     @encoding = source.encoding.to_s
     @contents = Nokogiri::HTML( source, nil ,@encoding )
     process_contents
-    $stderr.puts "done processing contents"
+    # $stderr.puts "done processing contents"
     save_locally(dir)
   end
 
@@ -47,7 +47,7 @@ class RemoteDocument
   #Extract resources (CSS, JS, Image files) from the parsed html document.
   #=end
   def process_contents
-    $stderr.puts "processing contents"
+    # $stderr.puts "processing contents"
     @contents.xpath('//base').each do |base|
       if base.parent.node_name == "head"
         @uri = URI(base.attribute("href"))
@@ -90,7 +90,7 @@ class RemoteDocument
   #Extract contents of META tags to @meta Hash.
   #=end
   def find_meta_tags
-    $stderr.puts "finding meta tags"
+    # $stderr.puts "finding meta tags"
     @meta = {}
     @contents.xpath('//meta').each do |tag|
       last_name = name = value = nil
@@ -113,7 +113,7 @@ class RemoteDocument
   #Generate a Hash URL -> Title of all (unique) links in document.
   #=end
   def convert_links_to_open_in_a_new_tab
-    $stderr.puts "converting links to open in a new tab"
+    # $stderr.puts "converting links to open in a new tab"
     @contents.xpath('//a[@href]').each do |tag|
       begin
         tag[:target] = "_blank"
@@ -122,7 +122,7 @@ class RemoteDocument
         $stderr.puts("something broke while trying to make links open in a new tab")
       end
     end
-    $stderr.puts "converting links to open in a new tab End"
+    # $stderr.puts "converting links to open in a new tab End"
   end
 
 
@@ -130,7 +130,7 @@ class RemoteDocument
   #Generate a local, legal filename for url in dir.
   #=end
   def localize_url(url, dir)
-    $stderr.puts "localizing url"
+    # $stderr.puts "localizing url"
     path = url.gsub(/^[|[:alpha]]+:\/\//, '')
     path.gsub!(/^[.\/]+/, '')
     path.gsub!(/[^-_.\/[:alnum:]]/, '_')
@@ -153,7 +153,7 @@ class RemoteDocument
   #to convert a relative URL ('/doc') to an absolute one ('http://foo.com/doc').
   #=end
   def url_for(str)
-    $stderr.puts "url for a href"
+    # $stderr.puts "url for a href"
     if @uri.scheme
       url_base = @uri.scheme + "://" +  @uri.host
     elsif @uri.host
@@ -172,7 +172,7 @@ class RemoteDocument
   end
 
   def relative_url_for(str,relative_dir)
-    $stderr.puts "relative url"
+    # $stderr.puts "relative url"
     relative_dir = relative_dir.to_s
     relative_uri = URI(relative_dir)
     if @uri.scheme
@@ -243,7 +243,7 @@ class RemoteDocument
   #'dir' and modifying the tag attribute to reflect the new, local location.
   #=end                                                                                                                        b
   def localize(tag, sym, dir)
-    $stderr.puts "localizing"
+    # $stderr.puts "localizing"
 
     url = tag[sym]
     resource_url = url_for(url)
@@ -271,7 +271,7 @@ class RemoteDocument
   end
 
   def localize_css_recursively(tag, sym, dir)
-    $stderr.puts "localizing css recursively"
+    # $stderr.puts "localizing css recursively"
     url = tag[sym]
     resource_url = url_for(url)
     dest = localize_url(url, dir)
@@ -294,7 +294,7 @@ class RemoteDocument
   end
 
   def save_import_tags(string,dir)
-    $stderr.puts "saving import tags"
+    # $stderr.puts "saving import tags"
     import_tag_start = string.index("@import")
     if import_tag_start
       everything_before_import_tag = string[0...import_tag_start+7]
@@ -343,9 +343,9 @@ class RemoteDocument
   end
 
   def save_css_urls_to_s3(css_string,dir,css_file_url)
-    $stderr.puts "saving css urls to s3"
+    # $stderr.puts "saving css urls to s3"
     css_string = save_import_tags(css_string,dir)
-    $stderr.puts "Done with import tags and back to save css"
+    # $stderr.puts "Done with import tags and back to save css"
     beginning_of_url = css_string.index("url(")
     if beginning_of_url
       url_onward = css_string[beginning_of_url+4..-1]
@@ -369,16 +369,16 @@ class RemoteDocument
             end
             if s3File
               s3File.acl = :public_read
-              $stderr.puts "public url save css", s3File.public_url()
+              # $stderr.puts "public url save css", s3File.public_url()
               new_url = s3File.public_url().to_s
             end
           else
-            $stderr.puts "save css generate url for", dest
+            # $stderr.puts "save css generate url for", dest
             new_url = generate_AWS_URL(dest)
           end
         end
       else
-        $stderr.puts "setting new url to empty"
+        # $stderr.puts "setting new url to empty"
         new_url = ""
       end
       first_half = css_string[0..beginning_of_url+3]
@@ -403,7 +403,7 @@ class RemoteDocument
   #Creates destination directory if it does not exist.
   #=end
   def save_locally(dir)
-    $stderr.puts "saving locally"
+    # $stderr.puts "saving locally"
     # remove HTML BASE tag if it exists
     @contents.xpath('//base').each { |t| t.remove }
     # save resources
