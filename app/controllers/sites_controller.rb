@@ -46,13 +46,14 @@ class SitesController < ApplicationController
   def async_site_load
     site = Site.find(params[:site_id])
 
-    notes = {}
+    notes = []
     site.notes.each_with_index do |note, i|
       notes[i] = {"content" => note.content, "scroll_x" => note.scroll_x, "scroll_y" => note.scroll_y, "note_id" => note.id,
                   "comment" => note.comment, "comment_location_x" => note.comment_location_x,
                   "comment_location_y" => note.comment_location_y, "client_side_id" => note.client_side_id}
     end
 
+    notes.sort_by! {|note| Integer(note["client_side_id"].sub("client_side_id_",""))}
     render :json => {"notes" => notes, "site_id" => site.id, "domain" => site.domain, "url" => site.url, "title" => site.title}, :status => 200
   end
 

@@ -171,8 +171,10 @@ function gotoLastNoteforCurrentSite(){
 }
 
 function scrollToAndHighlightNote(noteID){
+    console.log('scrolling to note', noteID);
     var contWindow = iframeContentWindow();
-    var currentNote = Notes[noteID];
+    currentNote = Notes[noteID];
+    console.log(currentNote);
     removeHighlight($(contWindow.document.body));
     removeCurrentComment();
     if(currentNote){

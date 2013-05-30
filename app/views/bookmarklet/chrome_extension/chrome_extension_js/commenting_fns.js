@@ -85,7 +85,8 @@ function postNoteAndComment(e,content,commentOverlay,xPos,yPos){
 function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY){
     noteCount++;
     console.log("note count incremented", noteCount);
-    saveSiteToTrail(function(site_data){console.log("done saving"); submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY)})
+    var noteCountAtSave = noteCount;
+    saveSiteToTrail(function(site_data){console.log("done saving"); submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY, noteCountAtSave)})
 }
 
 function closeOverlay(overlay){
