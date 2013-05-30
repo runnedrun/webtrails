@@ -36,6 +36,7 @@ gem "thin"
 gem "daemons"
 gem 'rspec', :require => false
 gem 'omniauth-google-oauth2'
+gem 'rake'
 
 
 

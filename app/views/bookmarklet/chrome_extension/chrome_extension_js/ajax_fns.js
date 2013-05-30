@@ -8,6 +8,11 @@ function saveSiteToTrail(successFunction){
     console.log("saving site to trail:", currentSiteTrailID);
     var currentSite = window.location.href;
     var currentHTML = getCurrentSiteHTML();
+    if (siteSavedDeeply && !currentSiteTrailID) {
+        console.log("saved already, but not returned yet");
+        setTimeout(function(){saveSiteToTrail(successFunction)}, 100);
+        return;
+    }
     wt_$.ajax({
         url: webTrailsUrl + "/sites",
         type: "post",
@@ -25,7 +30,9 @@ function saveSiteToTrail(successFunction){
         success: successFunction
     });
 //    document.onmousemove = mouseStopDetect();
-    if (!currentSiteTrailID){
+
+    if (!siteSavedDeeply){
+        siteSavedDeeply = true;
         saveSiteToTrailButton.text("Site saving");
         saveSiteToTrailButton.unbind();
         saveSiteToTrailButton.css({"cursor": "default"});
@@ -75,11 +82,12 @@ function fetchFavicons(){
     });
 }
 
-function submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY){
+function submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY, noteCountAtSave){
     console.log("SETTING THE CURRENT TRAIL ID:", site_data.site_id);
+    console.log("note count:", noteCount, "note count at save:", noteCountAtSave);
     currentSiteTrailID = site_data.site_id;
     wt_$.ajax({
-        url: "http://localhost:3000/notes",
+        url: webTrailsUrl + "/notes",
         type: "post",
         crossDomain: true,
         beforeSend: signRequestWithWtAuthToken,
@@ -91,7 +99,7 @@ function submitNoteAfterSave(site_data,content,comment,commentLocationX,commentL
             "note[site_id]": currentSiteTrailID,
             "note[scroll_x]": window.scrollX,
             "note[scroll_y]": window.scrollY,
-            "note[client_side_id]": "client_side_id_"+ (noteCount - 1)
+            "note[client_side_id]": "client_side_id_"+ (noteCountAtSave - 1)
         },
         success: updateNoteDisplay
     })

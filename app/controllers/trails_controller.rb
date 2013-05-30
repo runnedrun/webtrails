@@ -45,8 +45,9 @@ class TrailsController < ApplicationController
 
   def index
     @user = current_user
-    @trails = current_user.trails
+    @trails = current_user.trails.sort_by(&:created_at)
     @favicon_urls = @trails.map do |trail|
+      trail.sites = trail.sites.sort_by(&:created_at)
       trail.sites.map do |site|
         search_name = URI(site.url).host
         "http://www.google.com/s2/favicons?domain=" + search_name
