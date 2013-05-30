@@ -114,7 +114,9 @@ function clickJumpToSite(e){
 function switchToSite(siteID){
     closeNoteList();
     currentSite.addClass("notCurrent").removeClass("currentSite");
+    console.log("switching to siteID", siteID);
     currentSite = $("#"+String(siteID));
+    console.log(currentSite);
     currentSite.removeClass("notCurrent").addClass("currentSite");
     higlightCurrentSiteFavicon(siteID);
 
@@ -432,7 +434,7 @@ function deleteSiteLocally(siteIndex) {
     if (iframe.hasClass("currentSite")) {
         if (siteIndex < siteIDs.length - 1) {
             nextSite();
-            currentSite -= 1;
+            currentSiteIndex--;
         } else {
             previousSite();
         }
