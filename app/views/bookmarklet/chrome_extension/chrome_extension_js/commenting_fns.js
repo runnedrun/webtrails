@@ -10,19 +10,23 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
 
     var commentOverlay = wt_$(document.createElement("div"));
     commentOverlay.css({
-        "background": "#2E2E1F",
-        "opacity": .9,
-        "color":"white",
-        "position":"absolute"
+        "background": "#f0f0f0",
+        "color":"#333",
+        "position":"absolute",
+        "border": "1px solid #ccc",
+        "border-radius": "5px",
+        "font-family": "'Helvetica Neue', Helvetica, Arial, sans-serif"
     });
     commentOverlay.css("top", topPosition+"px");
     commentOverlay.css("left", leftPosition+"px");
-    commentOverlay.addClass("commentOverlay");
+    commentOverlay.addClass("commentOverlay").addClass("webtrails");
 
     var commentDescription = wt_$(document.createElement("div"))
     commentDescription.html("Hit enter, click away or type a comment here")
     commentDescription.css({
-        "border": "2px solid black"
+        "padding": "2px",
+        "text-align": "center",
+        "margin-top": "3px"
     });
 
     var commentBox = wt_$(document.createElement("textarea"));
@@ -30,12 +34,15 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
         "font-size":"12px",
         "overflow": "hidden",
         "resize": "none",
-        "border": "4px solid black",
         "border-radius": "4px",
-        "color": "black",
+        "color": "#333",
         "height": String(overlayHeight)+"px",
         "width": String(overlayWidth)+"px",
-        "z-index": "2147483647"
+        "z-index": "2147483647",
+        "margin": "5px",
+        "outline": "none",
+        "padding": "5px",
+        "border": "1px solid #666"
     });
 
     wt_$(document.body).append(commentOverlay);

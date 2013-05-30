@@ -85,7 +85,7 @@ function insertSaveButtonIntoNodeContent(highlightedTextRange){
     var textNodeContent = insertionNode.textContent;
     var firstHalfOfNode =  textNodeContent.slice(0,endOffset);
     var secondHalfOfNode =  textNodeContent.slice(endOffset);
-    var saveSpan = wt_$("<span class='inlineSaveButton'></span>");
+    var saveSpan = wt_$("<span class='inlineSaveButton webtrails'></span>");
     saveSpan.html("Save note");
     saveSpan.css("width", "0");
 
@@ -106,20 +106,21 @@ function insertSaveButtonIntoNodeContent(highlightedTextRange){
 }
 
 function insertAbsolutelyPositionedSaveButton(left,top){
-    var saveSpan = wt_$("<span class='inlineSaveButton'></span>");
+    var saveSpan = wt_$("<span class='inlineSaveButton webtrails'></span>");
     saveSpan.html("+Save note");
     saveSpan.addClass("inlineSaveButton");
     saveSpan.css({
-        "background" : "black",
+        "background" : "#f0f0f0",
         "font-size" : "12px",
-        "color" : "white",
+        "color" : "#333",
         "position" : "absolute",
-        "top" : top,
+        "top" : top - 2,
         "left" : left +5,
         "border-radius": "4px",
         "cursor": "pointer",
-        "z-index": "2147483647"
-
+        "z-index": "2147483647",
+        "border": "1px solid #ccc",
+        "padding": "2px"
     });
     wt_$(document.body).append(saveSpan)
     return saveSpan
