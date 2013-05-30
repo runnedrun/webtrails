@@ -35,6 +35,7 @@ gem "delayed_job_active_record"
 gem "thin"
 gem "daemons"
 gem 'rspec', :require => false
+gem 'rake'
 
 
 
