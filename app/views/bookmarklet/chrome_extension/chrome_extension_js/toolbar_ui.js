@@ -23,6 +23,26 @@ function initMyBookmarklet() {
     });
     trailDisplay.disableSelection();
 
+    settingsButton = wt_$(document.createElement("img"));
+    settingsButton.attr('src', webTrailsUrl + "/images/power.png");
+    settingsButton.addClass("webtrails");
+    settingsButton.css({
+        "margin-top": "6px"
+    });
+
+    settingsButtonWrapper = wt_$("<div>")
+    settingsButtonWrapper.append(settingsButton)
+    settingsButtonWrapper.css({
+        height: "100%",
+        "float": "right",
+        "padding-right": "5px",
+        "padding-left": "5px",
+        "border-bottom-right-radius": "7px",
+        "cursor": "pointer"
+    })
+    settingsButtonWrapper.addClass("webtrails");
+    settingsButtonWrapper.addClass("wt_settingsButton");
+
     noteDisplayWrapper = wt_$(document.createElement("div"));
     noteDisplayWrapper.css({
         "height":"18px",
@@ -101,23 +121,6 @@ function initMyBookmarklet() {
     deleteNoteButton.html("Delete Note");
     deleteNoteButton.addClass("deleteNote").addClass("webtrails");
 
-    settingsButton = wt_$(document.createElement("img"));
-    settingsButton.attr('src', webTrailsUrl + "/images/power.png");
-    settingsButton.addClass("webtrails");
-    settingsButton.css({
-        "float": "right",
-        "margin-right": "5px",
-        "margin-top": "6px"
-    });
-
-    settingsButton.click(function(){
-        chrome.runtime.sendMessage({login:"login"}, function(response) {
-            console.log(response.wt_auth_token);
-            wt_auth_token = response.wt_auth_token;
-            initSignedInExperience();
-        });
-    })
-
     saveSiteToTrailButton = wt_$(document.createElement("button"));
     saveSiteToTrailButton.css({
         "font-size": "12px",
@@ -179,20 +182,32 @@ function initMyBookmarklet() {
     faviconHolder.addClass("webtrails");
     faviconHolder.attr("id", "faviconHolder");
 
+    loggedOutMessage = wt_$("<div>");
+    loggedOutMessage.html("Hit the power button on the right to sign in using Google -------->")
+    loggedOutMessage.css({
+        "margin-right": "auto",
+        "margin-left": "auto",
+        "height": "100%",
+        "width": "40%",
+        "padding-top": "5px",
+        "font-size": "16px"
+    });
+    loggedOutMessage.addClass("loggedOutMessage");
+
     //adding all the toolbar elements to the DOM.
     wt_$(document.body).prepend(trailDisplay);
 
-    wt_$(trailDisplay).append(settingsButton);
+    trailDisplay.append(settingsButtonWrapper);
 
-    wt_$(trailDisplay).append(deleteNoteButton);
+    trailDisplay.append(deleteNoteButton);
     deleteNoteButton.click(deletePreviousNote);
     deleteNoteButton.attr("enabled","disabled");
 
-    wt_$(trailDisplay).append(noteDisplayWrapper);
+    trailDisplay.append(noteDisplayWrapper);
 
-    wt_$(noteDisplayWrapper).append(previousNoteDisplay);
+    noteDisplayWrapper.append(previousNoteDisplay);
 
-    wt_$(trailDisplay).append(shareTrailField);
+    trailDisplay.append(shareTrailField);
     shareTrailField.click(function() {
         shareTrailField.attr("value", webTrailsUrl + '/trails/'+currentTrailID);
         shareTrailField.focus();
@@ -200,19 +215,28 @@ function initMyBookmarklet() {
         shareTrailField.css({"cursor": "text"});
     });
 
-    wt_$(trailDisplay).append(saveSiteToTrailButton);
+    trailDisplay.append(saveSiteToTrailButton);
     saveSiteToTrailButton.click(function(){saveSiteToTrail(setSiteID)});
 
-    wt_$(trailDisplay).append(linkToTrailWrapper);
-    wt_$(linkToTrailWrapper).append(linkToTrail);
+    trailDisplay.append(linkToTrailWrapper);
+    linkToTrailWrapper.append(linkToTrail);
 
-    wt_$(trailDisplay).append(faviconHolder);
+    trailDisplay.append(faviconHolder);
+    trailDisplay.append(loggedOutMessage);
     faviconHolder.mouseenter(growFaviconHolder).mouseleave(shrinkFaviconHolder)
+
+
 
     initializeAutoResize();
     initializeJqueryEllipsis();
-    previousNoteDisplay.ellipsis();
+    previousNoteDisplay.ellipsis()
+    fetchFavicons();
 
+    if (wt_auth_token){
+        initSignedInExperience()
+    }else{
+        initSignedOutExperience()
+    }
     //document bindings
 
     wt_$(document.body).keydown(verifyKeyPress);
@@ -224,16 +248,6 @@ function initMyBookmarklet() {
         mouseDown=0;
     });
 
-    if (wt_auth_token){
-        //logged in
-        initSignedInExperience();
-    }else{
-        //not logged in
-        faviconHolder.html("Hit the gear icon to sign in!");
-    }
-
-
-
     try {
         var bodymargin = wt_$('body').css('margin-left')
         if (bodymargin) {
@@ -243,10 +257,45 @@ function initMyBookmarklet() {
 }
 
 function initSignedInExperience(){
+    loggedIn = true;
     console.log("intitilizing signedin in experience")
-    faviconHolder.html("");
-    fetchFavicons();
+    trailDisplay.children().show();
+    loggedOutMessage.hide();
+    settingsButtonWrapper.css("background-color","#94FF70")
+    settingsButtonWrapper.unbind("click");
+    settingsButtonWrapper.click(function(){
+        signOut();
+        return false
+    })
     wt_$(document).mousedown(possibleHighlightStart);
+}
+
+function initSignedOutExperience(){
+    loggedIn = false;
+    trailDisplay.children().not(".wt_settingsButton").hide();
+    settingsButtonWrapper.css("background-color","#FF8080")
+    loggedOutMessage.show();
+    wt_$(document).unbind("mousedown");
+    settingsButtonWrapper.unbind("click");
+    settingsButtonWrapper.click(function(){
+        signIn()
+        return false
+    })
+}
+
+function signOut(){
+    chrome.runtime.sendMessage({logout:"now!"}, function(response) {
+        console.log(response.response);
+        initSignedOutExperience();
+    });
+}
+
+function signIn(){
+    chrome.runtime.sendMessage({login:"login"}, function(response) {
+        console.log(response.wt_auth_token);
+        wt_auth_token = response.wt_auth_token;
+        initSignedInExperience();
+    });
 }
 
 //function checkIfSignedIn(){

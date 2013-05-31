@@ -77,10 +77,14 @@ chrome.runtime.onMessage.addListener(
             })
            return true
         };
-       if (request.setCurrentTrailID){
-           addTrailIdToLocalStorage(request.setCurrentTrailID);
-           sendResponse("set in local storage");
-       }
+        if (request.setCurrentTrailID){
+            addTrailIdToLocalStorage(request.setCurrentTrailID);
+            sendResponse("set in local storage");
+        }
+        if (request.logout){
+            signOut()
+            sendResponse({response:"signed out"});
+        }
     })
 
 function logInOrCreateUser(callback){

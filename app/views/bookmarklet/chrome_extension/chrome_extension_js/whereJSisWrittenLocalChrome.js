@@ -6,15 +6,16 @@ var trailDisplay,
     previousNoteDisplay,
     noteDisplayWrapper,
     currentSiteTrailID="",
-//    trailID = "",
     saveSiteToTrailButton,
     deleteNoteButton,
     previousNoteID,
     siteHTML = getCurrentSiteHTML(),
     noteCount = 0,
     siteSavedDeeply = false,
+    loggedIn = false;
     webTrailsUrl = "http://localhost:3000";
     // webTrailsUrl = "http://webtrails.co";
+
 
 
 String.prototype.splice = function( idx, rem, s ) {
