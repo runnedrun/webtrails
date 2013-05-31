@@ -1,6 +1,6 @@
 console.log("ajax_fns loaded");
 
-function saveSiteToTrail(successFunction){
+function saveSiteToTrail(successFunction, note){
     console.log("saving site to trail:", currentSiteTrailID);
     var currentSite = window.location.href;
     var currentHTML = getCurrentSiteHTML();
@@ -19,7 +19,7 @@ function saveSiteToTrail(successFunction){
             "site[trail_id]":trailID,
             "site[title]": document.title,
             "user": userID,
-            "notes": "none",
+            "note": note || "none",
             "html": currentHTML,
             "shallow_save": currentSiteTrailID  //this is empty string if it's the first time the site is saved.
         },

@@ -21,6 +21,7 @@ class SitesController < ApplicationController
   end
 
   def create
+    $stderr.puts "Site create"
     html = params[:html]
     url = params[:site][:url]
     trail_id = params[:site][:trail_id]
@@ -34,7 +35,15 @@ class SitesController < ApplicationController
       shallow_save=false
     end
     Site.delay.save_site_to_aws(html,url,trail_id,shallow_save,site_id)
-    render :json => {:site_id => site_id}, :status => 200
+    $stderr.puts params[:note], params[:note] != "none"
+    if (params[:note] and params[:note] != "none")
+      # We should save the note, too.
+      params[:note][:site_id] = site_id
+      @note = Note.create!(params[:note])
+      render :json => {:site_id => site_id, :note_content => @note.content, :note_id => @note.id}, :status => 200
+    else
+      render :json => {:site_id => site_id}, :status => 200
+    end
   end
 
   def delete

@@ -23,7 +23,7 @@ class NotesController < ApplicationController
   def create
     $stderr.puts "note create:", params[:note]
     @note = Note.create!(params[:note])
-    render :json => {"content" => @note.content, "id" => @note.id}, :status => 200
+    render :json => {"note_content" => @note.content, "note_id" => @note.id}, :status => 200
   end
 
   def delete
