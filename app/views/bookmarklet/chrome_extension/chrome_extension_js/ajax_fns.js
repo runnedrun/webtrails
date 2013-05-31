@@ -27,7 +27,10 @@ function saveSiteToTrail(successFunction){
             "html": currentHTML,
             "shallow_save": currentSiteTrailID  //this is empty string if it's the first time the site is saved.
         },
-        success: successFunction
+        success: function(resp){
+            setCurrentTrailID(resp.trail_id);
+            successFunction(resp);
+        }
     });
 //    document.onmousemove = mouseStopDetect();
 
@@ -68,6 +71,7 @@ function saveSiteToTrail(successFunction){
 }
 
 function fetchFavicons(){
+    //also gets the users latest trail id, if none is saved in localstorage
     var currentSite = window.location.href;
     wt_$.ajax({
         url: webTrailsUrl + "/trail/site_list",
@@ -78,7 +82,10 @@ function fetchFavicons(){
             "current_url": currentSite
         },
         beforeSend: signRequestWithWtAuthToken,
-        success: addFaviconsToDisplay
+        success: function(resp){
+            setCurrentTrailID(resp.trail_id)
+            addFaviconsToDisplay(resp)
+        }
     });
 }
 
@@ -118,3 +125,4 @@ function deletePreviousNote(){
         success: updateNoteDisplay
     })
 }
+

@@ -72,10 +72,14 @@ function initMyBookmarklet() {
         "text-decoration": "underline"
     });
     linkToTrail.addClass("webtrails");
-    linkToTrail.attr("target", "_blank");
+//    linkToTrail.attr("target", "_blank");
 
+    console.log(currentTrailID);
     wt_$(linkToTrail).html("View Trail");
-    wt_$(linkToTrail).attr('href', webTrailsUrl + "/trails/"+currentTrailID);
+    wt_$(linkToTrail).click(function(event){
+        window.open(webTrailsUrl + "/trails/"+currentTrailID+"?auth_token="+wt_auth_token, "_blank")
+    })
+    wt_$(linkToTrail).attr('href', "#");
 
     deleteNoteButton = wt_$(document.createElement("button"));
     deleteNoteButton.css({
@@ -222,7 +226,6 @@ function initMyBookmarklet() {
 
     if (wt_auth_token){
         //logged in
-
         initSignedInExperience();
     }else{
         //not logged in

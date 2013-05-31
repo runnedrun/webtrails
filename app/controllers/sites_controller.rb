@@ -1,6 +1,7 @@
 class SitesController < ApplicationController
-  skip_before_filter :verify_authenticity_token, :only => [:create,:options]
-  before_filter :get_user_from_wt_auth_header
+  #skip_before_filter :verify_authenticity_token, :only => [:create,:options]
+  before_filter :get_user_from_wt_auth_header, :only => [:create, :exists]
+  before_filter :get_user_from_wt_auth_cookie, :except => [:create]
   after_filter :cors_set_access_control_headers
 
   def cors_set_access_control_headers
@@ -22,7 +23,7 @@ class SitesController < ApplicationController
   end
 
   def create
-    #begin
+    begin
       html = params[:html]
       url = params[:site][:url]
       trail_id = params[:site][:trail_id]
@@ -31,8 +32,7 @@ class SitesController < ApplicationController
 
       if trail_id.empty?
         new_trail = Trail.create!(:name => "New Trail!")
-        @user.trails.push(new_trail)
-        @user.save!
+        new_trail.owner = @user
         trail_id = new_trail.id
         params[:site][:trail_id] = trail_id
       else
@@ -51,10 +51,10 @@ class SitesController < ApplicationController
         shallow_save=false
       end
       Site.delay.save_site_to_aws(html,url,trail_id,shallow_save,site_id)
-      render :json => {:site_id => site_id}, :status => 200
-    #rescue
-    #  render :status => 500, :json => "we're experiencing some difficulty, please trail again later"
-    #end
+      render :json => {:site_id => site_id, :trail_id => trail_id}, :status => 200
+    rescue
+      render :status => 500, :json => "we're experiencing some difficulty, please trail again later"
+    end
   end
 
   def delete
@@ -65,7 +65,6 @@ class SitesController < ApplicationController
 
   def async_site_load
     site = Site.find(params[:site_id])
-
     notes = []
     site.notes.each_with_index do |note, i|
       notes[i] = {"content" => note.content, "scroll_x" => note.scroll_x, "scroll_y" => note.scroll_y, "note_id" => note.id,
@@ -78,6 +77,7 @@ class SitesController < ApplicationController
   end
 
   def show
+    puts "got to site show"
     site = Site.find(params[:id])
     if site.archive_location.nil?
       render :template => 'trails/loading'

@@ -64,3 +64,10 @@ function getNodeLineHeight(element) {
 function isTextNode(node) {
     return node.nodeType == 3;
 }
+
+function setCurrentTrailID(ID){
+    currentTrailID = ID;
+    chrome.runtime.sendMessage({setCurrentTrailID:ID}, function(response) {
+        console.log(response)
+    });
+}

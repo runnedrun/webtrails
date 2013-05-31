@@ -1,4 +1,6 @@
 domain = "http://localhost:3000";
+domain_name = "localhost";
+//domain_name = "webtrails.co";
 
 var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","toolbar_ui.js","ajax_fns.js","smart_grab.js","autoresize.js",
     "jquery_elipsis.js","search_and_highlight.js","inline_save_button_fns.js","ui_fns.js","commenting_fns.js",
@@ -11,7 +13,8 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
     if (changeInfo.status == 'complete') {
         var callbackURL = chrome.extension.getURL('http://www.google.com/robots.txt');
-        if (tab.url != callbackURL){
+        var domain_re = RegExp("(.|^)"+domain_name+"$")
+        if ((tab.url != callbackURL) && !domain_re.exec(wt_$.url(tab.url).attr("host"))){
             injectScripts(tabId);
         }
     }
@@ -69,13 +72,15 @@ chrome.runtime.onMessage.addListener(
                 console.log("authorized");
                 console.log("now getting user information from server");
                 logInOrCreateUser(function(resp){
-                    var wt_auth_token = resp.wt_authentication_token;
-                    localStorage["wt_auth_token"] = wt_auth_token;
-                    sendResponse({"wt_auth_token": wt_auth_token});
+                    sendResponse({"wt_auth_token": resp.wt_authentication_token});
                 });
             })
            return true
         };
+       if (request.setCurrentTrailID){
+           addTrailIdToLocalStorage(request.setCurrentTrailID);
+           sendResponse("set in local storage");
+       }
     })
 
 function logInOrCreateUser(callback){
@@ -89,7 +94,17 @@ function logInOrCreateUser(callback){
             "access_token":authToken,
             "expires_on": googleAuth.get("expiresIn") + googleAuth.get("accessTokenDate")
         },
-        success: callback,
+        success: function(resp){
+            var wt_auth_token = resp.wt_authentication_token;
+            localStorage["wt_auth_token"] = wt_auth_token;
+            chrome.cookies.set({
+                url:"www.webtrails.co",
+                name: "wt_auth_token",
+                expirationDate: 315360000,
+                value: wt_auth_token
+            })
+            callback(resp)
+        },
         error: function(error){
           console.log("error!",error);
         }
@@ -104,4 +119,8 @@ function getWtAuthToken(){
 }
 function getCurrentTrailID(){
     return localStorage["current_trail_ID"];
+}
+
+function addTrailIdToLocalStorage(ID){
+    localStorage["current_trail_ID"] = ID;
 }
