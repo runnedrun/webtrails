@@ -17,12 +17,12 @@ function showOrHidePathDisplay(){
 }
 
 function addSiteFaviconToDisplay(domain,url) {
-    var faviconLink = wt_$("<a href=\""+ url+ "\" class=\"siteFavicon webtrails\"></a>");
+    var faviconLink = wt_$("<a href=\""+ url+ "\" class=\"webtrails\"></a>");
     var faviconImg  = wt_$("<img src='"+ domain + "' class=\"webtrails\">");
     faviconLink.css({
         "vertical-align":"top",
         "padding": "0px",
-        "margin": "0 0px",
+        "margin": "0 3px",
         "overflow": "hidden",
         "display": "block",
         "border": "none",

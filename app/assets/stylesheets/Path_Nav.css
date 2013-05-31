@@ -133,6 +133,10 @@
 .noteWrapper {
     border-bottom: 2px solid #c2c2c2;
 }
+
+iframe {
+    border: 0px;
+}
 /*iframe {
     -moz-transform: scale(0.25, 0.25); 
     -webkit-transform: scale(0.25, 0.25); 

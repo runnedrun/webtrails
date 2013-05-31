@@ -1,4 +1,4 @@
-domain = "http://localhost:3000/";
+domain = "http://localhost:3000";
 domain_name = "localhost";
 //domain_name = "webtrails.co";
 
@@ -72,10 +72,11 @@ chrome.runtime.onMessage.addListener(
                 console.log("authorized");
                 console.log("now getting user information from server");
                 logInOrCreateUser(function(resp){
+                  console.log('loginorcreateusercallback', resp);
                     sendResponse({"wt_auth_token": resp.wt_authentication_token});
                 });
-            })
-           return true
+            });
+           return true;
         };
         if (request.setCurrentTrailID){
             addTrailIdToLocalStorage(request.setCurrentTrailID);
@@ -88,18 +89,20 @@ chrome.runtime.onMessage.addListener(
     })
 
 function logInOrCreateUser(callback){
+    console.log("loginorcreatuser called")
     console.log(googleAuth.getAccessToken());
     var authToken =  googleAuth.getAccessToken();
-    console.log(domain+"/users/login_or_create_gmail_user")
+    console.log(domain + "/users/login_or_create_gmail_user")
     wt_$.ajax({
-        url: domain+"/users/login_or_create_gmail_user",
+        url: domain + "/users/login_or_create_gmail_user",
         type: "post",
         data: {
             "access_token":authToken,
             "expires_on": googleAuth.get("expiresIn") + googleAuth.get("accessTokenDate")
         },
         success: function(resp){
-            var wt_auth_token = resp.wt_authentication_token;
+            wt_auth_token = resp.wt_authentication_token;
+            console.log(resp.wt_authentication_token)
             localStorage["wt_auth_token"] = wt_auth_token;
             var date = new Date();
             var secondsSinceEpoch = date.getTime()/1000;
