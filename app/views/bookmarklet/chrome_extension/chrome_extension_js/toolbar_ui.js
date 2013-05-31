@@ -72,10 +72,14 @@ function initMyBookmarklet() {
         "text-decoration": "underline"
     });
     linkToTrail.addClass("webtrails");
-    linkToTrail.attr("target", "_blank");
+//    linkToTrail.attr("target", "_blank");
 
+    console.log(currentTrailID);
     wt_$(linkToTrail).html("View Trail");
-    wt_$(linkToTrail).attr('href', webTrailsUrl + "/trails/"+trailID);
+    wt_$(linkToTrail).click(function(event){
+        window.open(webTrailsUrl + "/trails/"+currentTrailID+"?auth_token="+wt_auth_token, "_blank")
+    })
+    wt_$(linkToTrail).attr('href', "#");
 
     deleteNoteButton = wt_$(document.createElement("button"));
     deleteNoteButton.css({
@@ -105,6 +109,14 @@ function initMyBookmarklet() {
         "margin-right": "5px",
         "margin-top": "6px"
     });
+
+    settingsButton.click(function(){
+        chrome.runtime.sendMessage({login:"login"}, function(response) {
+            console.log(response.wt_auth_token);
+            wt_auth_token = response.wt_auth_token;
+            initSignedInExperience();
+        });
+    })
 
     saveSiteToTrailButton = wt_$(document.createElement("button"));
     saveSiteToTrailButton.css({
@@ -182,7 +194,7 @@ function initMyBookmarklet() {
 
     wt_$(trailDisplay).append(shareTrailField);
     shareTrailField.click(function() {
-        shareTrailField.attr("value", webTrailsUrl + '/trails/'+trailID);
+        shareTrailField.attr("value", webTrailsUrl + '/trails/'+currentTrailID);
         shareTrailField.focus();
         shareTrailField.select();
         shareTrailField.css({"cursor": "text"});
@@ -212,8 +224,15 @@ function initMyBookmarklet() {
         mouseDown=0;
     });
 
-    fetchFavicons();
-    wt_$(document).mousedown(possibleHighlightStart);
+    if (wt_auth_token){
+        //logged in
+        initSignedInExperience();
+    }else{
+        //not logged in
+        faviconHolder.html("Hit the gear icon to sign in!");
+    }
+
+
 
     try {
         var bodymargin = wt_$('body').css('margin-left')
@@ -222,3 +241,17 @@ function initMyBookmarklet() {
         }
     }catch (e) {}
 }
+
+function initSignedInExperience(){
+    console.log("intitilizing signedin in experience")
+    faviconHolder.html("");
+    fetchFavicons();
+    wt_$(document).mousedown(possibleHighlightStart);
+}
+
+//function checkIfSignedIn(){
+//    chrome.runtime.sendMessage({isUserSignedIn:"check"}, function(response) {
+//        console.log(response.wt_auth_token);
+//        wt_auth_token = response.wt_auth_token;
+//    });
+//}

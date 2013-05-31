@@ -1,5 +1,7 @@
 class SitesController < ApplicationController
-  skip_before_filter :verify_authenticity_token, :only => [:create,:options]
+  #skip_before_filter :verify_authenticity_token, :only => [:create,:options]
+  before_filter :get_user_from_wt_auth_header, :only => [:create, :exists]
+  before_filter :get_user_from_wt_auth_cookie, :except => [:create]
   after_filter :cors_set_access_control_headers
 
   def cors_set_access_control_headers
@@ -21,20 +23,38 @@ class SitesController < ApplicationController
   end
 
   def create
-    html = params[:html]
-    url = params[:site][:url]
-    trail_id = params[:site][:trail_id]
-    shallow_save = params[:shallow_save]
-    $stderr.puts "shallow_save at create", shallow_save, params[:site][:id]
-    if shallow_save != ""
-      site_id = params[:site][:id]
-      shallow_save=true
-    else
-      site_id = Site.create!(params[:site]).id
-      shallow_save=false
+    begin
+      html = params[:html]
+      url = params[:site][:url]
+      trail_id = params[:site][:trail_id]
+      shallow_save = params[:shallow_save]
+
+
+      if trail_id.empty?
+        new_trail = Trail.create!(:name => "New Trail!")
+        new_trail.owner = @user
+        trail_id = new_trail.id
+        params[:site][:trail_id] = trail_id
+      else
+        trail = @user.trails.where(:id => trail_id).first
+        if !trail
+          render :status => 401, :json => "you do not own this trail, try a different one"
+        end
+      end
+
+      $stderr.puts "shallow_save at create", shallow_save, params[:site][:id]
+      if shallow_save != ""
+        site_id = params[:site][:id]
+        shallow_save=true
+      else
+        site_id = Site.create!(params[:site]).id
+        shallow_save=false
+      end
+      Site.delay.save_site_to_aws(html,url,trail_id,shallow_save,site_id)
+      render :json => {:site_id => site_id, :trail_id => trail_id}, :status => 200
+    rescue
+      render :status => 500, :json => "we're experiencing some difficulty, please trail again later"
     end
-    Site.delay.save_site_to_aws(html,url,trail_id,shallow_save,site_id)
-    render :json => {:site_id => site_id}, :status => 200
   end
 
   def delete
@@ -45,7 +65,6 @@ class SitesController < ApplicationController
 
   def async_site_load
     site = Site.find(params[:site_id])
-
     notes = []
     site.notes.each_with_index do |note, i|
       notes[i] = {"content" => note.content, "scroll_x" => note.scroll_x, "scroll_y" => note.scroll_y, "note_id" => note.id,
@@ -58,6 +77,7 @@ class SitesController < ApplicationController
   end
 
   def show
+    puts "got to site show"
     site = Site.find(params[:id])
     if site.archive_location.nil?
       render :template => 'trails/loading'

@@ -33,5 +33,6 @@ Webtrails::Application.configure do
   config.assets.debug = true
 
   ENV["AJAX_BASE"] = "http://localhost:3000"
+  ENV["SAME_DOMAIN"] = 'localhost'
 
 end

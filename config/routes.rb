@@ -1,5 +1,6 @@
 Webtrails::Application.routes.draw do
-  devise_for :users
+  devise_for :users, :controllers => { :omniauth_callbacks => "omniauth_callbacks" }
+
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -64,6 +65,7 @@ Webtrails::Application.routes.draw do
   match 'trail/site_list', :controller => 'trails', :action => 'options', :constraints => {:method => 'OPTIONS'}
 
   match 'users/new', :controller => 'users', :action => "new"
+  match 'users/login_or_create_gmail_user', :controller => 'users', :action => 'login_or_create_gmail_user', :constraints => {:method => 'POST'}
 
   resources :sites, :only=>[:create,:show]
   match '/sites', :controller => 'sites', :action => 'options', :constraints => {:method => 'OPTIONS'}
@@ -78,6 +80,7 @@ Webtrails::Application.routes.draw do
 
   match "/bookmarklet_js", :controller => 'bookmarklets', :action => "get_js"
   match '/bookmarklet_js', :controller => 'bookmarklets', :action => 'options', :constraints => {:method => 'OPTIONS'}
+
 
 
 end

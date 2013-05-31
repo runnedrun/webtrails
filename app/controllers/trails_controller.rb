@@ -1,6 +1,9 @@
 class TrailsController < ApplicationController
 
-  before_filter :authenticated_or_redirect, :only => [:index]
+  #before_filter :authenticated_or_redirect, :only => [:index]
+  before_filter :get_user_from_wt_auth_header, :except => [:show,:index]
+  before_filter :get_user_from_wt_auth_cookie, :only => [:index]
+  #skip_before_filter :get_user_from_wt_auth_header, :only => :show
   skip_before_filter :verify_authenticity_token, :only => [:create,:options]
   after_filter :cors_set_access_control_headers
 
@@ -18,6 +21,7 @@ class TrailsController < ApplicationController
   end
 
   def options
+    puts "getting options request"
     cors_preflight_check
     render :text => '', :content_type => 'text/plain'
   end
@@ -29,7 +33,16 @@ class TrailsController < ApplicationController
   end
 
   def show
-    @trail = Trail.find(params[:id])
+    $stderr.puts("getting to the trail show")
+
+    get_user_from_auth_token_in_params_and_set_cookie()
+
+    @trail = @user.trails.where(:id => params[:id]).first
+
+    if !@trail
+      render status => 401, :html => "you do not have access to this trail"
+    end
+
     @sites = @trail.sites.sort_by(&:created_at)
     @favicon_urls_with_ids_and_titles = @sites.inject([]) do |urls, site|
       search_name = URI(site.url).host
@@ -57,12 +70,25 @@ class TrailsController < ApplicationController
   end
 
   def site_list
-    trail = Trail.find(params[:trail_id])
-    favicons_and_urls = trail.sites.sort_by(&:created_at).inject([]) do |fav_list, site|
-      fav_list.push(["http://www.google.com/s2/favicons?domain=" + URI(site.url).host.to_s,site.url])
+    current_trail_id = params[:trail_id]
+    trail = nil
+
+    trail = @user.trails.where(:id => params[:trail_id]).first if current_trail_id
+
+    if trail == nil
+      trail = @user.trails.sort_by(&:created_at).last
     end
-    favicons_and_urls.push(["http://www.google.com/s2/favicons?domain=" + URI(params[:current_url]).host.split(".")[-2..-1].to_s,"#"])
-    render :json => {"favicons_and_urls" => favicons_and_urls}
+
+    if trail
+      favicons_and_urls = trail.sites.sort_by(&:created_at).inject([]) do |fav_list, site|
+        fav_list.push(["http://www.google.com/s2/favicons?domain=" + URI(site.url).host.to_s,site.url])
+      end
+      favicons_and_urls.push(["http://www.google.com/s2/favicons?domain=" + URI(params[:current_url]).host.split(".")[-2..-1].to_s,"#"])
+      render :json => {"favicons_and_urls" => favicons_and_urls, "trail_id" => trail.id}
+    else
+      render :json => {"favicons_and_urls" => [], "trail_id" => ""}
+    end
+
   end
 
   private
@@ -85,6 +111,27 @@ class TrailsController < ApplicationController
       document.getElementsByTagName('head')[0].appendChild(myScript);
 
       })();">#{trail_name}</a>}
+  end
+
+  def get_user_from_auth_token_in_params_and_set_cookie
+    $stderr.puts("looking in params for auth token")
+    if request.cookies["wt_auth_token"]
+      wt_auth_token = request.cookies["wt_auth_token"]
+      @user = User.find_by_wt_auth_token(wt_auth_token)
+    end
+    if !@user
+      wt_auth_token = params[:auth_token]
+      if wt_auth_token
+        @user = User.find_by_wt_auth_token(wt_auth_token)
+        unless @user
+          render :status => 401, :html => "token invalid, please trail again"
+        end
+      else
+        $stderr.puts("token not found")
+        render :status => 401, :html => ["please authenticate your request with a valid token"]
+      end
+    end
+    cookies.permanent[:wt_auth_token] = wt_auth_token
   end
 
 end
