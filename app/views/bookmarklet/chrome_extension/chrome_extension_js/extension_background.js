@@ -13,7 +13,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
     console.log(changeInfo);
     if (changeInfo.status == 'complete') {
-        var callbackURL = chrome.extension.getURL('http://www.google.com/robots.txt');
+        var callbackURL = 'http://www.google.com/robots.txt';
         var domain_re = RegExp("(.|^)"+domain_name+"$")
         if ((tab.url != callbackURL) && !domain_re.exec(wt_$.url(tab.url).attr("host"))){
             injectScripts(tabId);
@@ -24,19 +24,21 @@ chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
 function injectScripts(tabId){
     var wt_auth_token = getWtAuthToken();
     var current_trail_id = getCurrentTrailID();
-    console.log("auth token",wt_auth_token);
-    console.log("current trail id",current_trail_id);
+    var toolbar_display_state = getToolBarDisplayState();
     var auth_injection_string = "wt_auth_token=undefined;\n";
     var trail_id_injection_string = "currentTrailID='';\n";
+    var tool_bar_state_injection_string = "toolbarShown=false;\n"
     if(wt_auth_token){
-        console.log("injecting with token");
         auth_injection_string = "wt_auth_token='"+wt_auth_token + "';\n";
         if (current_trail_id){
-            console.log("injecting with currentTrailID");
             trail_id_injection_string = "currentTrailID='"+current_trail_id + "';\n";
         }
     }
-    createContentScript(0,auth_injection_string+trail_id_injection_string,tabId);
+    if (toolbar_display_state == "shown"){
+        tool_bar_state_injection_string = "toolbarShown=true;\n"
+    }
+    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string
+    createContentScript(0,starting_injection_string,tabId);
 }
 
 function createContentScript(index_of_script, contentScriptString,tabId){
@@ -68,12 +70,10 @@ console.log(client_secret,"client secret");
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.login){
-            console.log("authorizing");
             googleAuth.authorize(function() {
                 console.log("authorized");
                 console.log("now getting user information from server");
                 logInOrCreateUser(function(resp){
-                  console.log('loginorcreateusercallback', resp);
                     sendResponse({"wt_auth_token": resp.wt_authentication_token});
                 });
             });
@@ -87,13 +87,18 @@ chrome.runtime.onMessage.addListener(
             signOut()
             sendResponse({response:"signed out"});
         }
+        if (request.showToolBarOnAllTabs){
+            addToolbarDisplayStateToLocalStorage("shown")
+            showToolbarOnAllTabs();
+        }
+        if (request.hideToolBarOnAllTabs){
+            addToolbarDisplayStateToLocalStorage("hidden")
+            hideToolbarOnAllTabs();
+        }
     })
 
 function logInOrCreateUser(callback){
-    console.log("loginorcreatuser called")
-    console.log(googleAuth.getAccessToken());
     var authToken =  googleAuth.getAccessToken();
-    console.log(domain + "/users/login_or_create_gmail_user")
     wt_$.ajax({
         url: domain + "/users/login_or_create_gmail_user",
         type: "post",
@@ -103,7 +108,6 @@ function logInOrCreateUser(callback){
         },
         success: function(resp){
             wt_auth_token = resp.wt_authentication_token;
-            console.log(resp.wt_authentication_token)
             localStorage["wt_auth_token"] = wt_auth_token;
             var date = new Date();
             var secondsSinceEpoch = date.getTime()/1000;
@@ -139,9 +143,18 @@ function getCurrentTrailID(){
     return localStorage["current_trail_ID"];
 }
 
+function getToolBarDisplayState(){
+    return localStorage["wt_toolbar_display_state"]
+}
+
 function addTrailIdToLocalStorage(ID){
     localStorage["current_trail_ID"] = ID;
 }
+
+function addToolbarDisplayStateToLocalStorage(state){
+    localStorage["wt_toolbar_display_state"] = String(state);
+}
+
 function sendSignOutMessageToAllTabs(){
     console.log("sending sign out message to all toolbars!")
     chrome.tabs.getAllInWindow(null, function(tabs) {
@@ -159,3 +172,20 @@ function sendSignInMessageToAllTabs(){
         });
     });
 }
+
+function showToolbarOnAllTabs(){
+    chrome.tabs.getAllInWindow(null, function(tabs) {
+        wt_$.each(tabs, function() {
+            chrome.tabs.sendRequest(this.id, {"showToolBarOnAllTabs":"do it!"});
+        });
+    });
+}
+
+function hideToolbarOnAllTabs(){
+    chrome.tabs.getAllInWindow(null, function(tabs) {
+        wt_$.each(tabs, function() {
+            chrome.tabs.sendRequest(this.id, {"hideToolBarOnAllTabs":"do it!"});
+        });
+    });
+}
+

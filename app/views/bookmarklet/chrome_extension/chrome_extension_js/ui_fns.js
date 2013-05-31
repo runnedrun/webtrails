@@ -2,18 +2,29 @@ console.log("ui_fns loaded");
 
 function showOrHidePathDisplay(){
     if (trailDisplay.is(":hidden") && (window.location.host != 'localhost:3000') && (window.location.host.indexOf('webtrails.co') == -1) ){
-        trailDisplay.show();
-        if (mouseDown == 0) { // if the mouse is not pressed (not highlighting)
-            highlightedTextDetect(); // check to see if they highlighted anything for the addnote button
-        } else { // mouse is down, must be highlighting
-            possibleHighlightStart(); // get that highlight start event so when done highlighting, addnote appears
-        }
+        showToolbar();
+        showToolbarOnAllTabs();
     }
     else {
-        trailDisplay.hide();
-        wt_$(".inlineSaveButton").remove();
+        hideToolbar();
+        hideToolbarOnAllTabs();
     }
+}
 
+function showToolbar(){
+    trailDisplay.show();
+    toolbarShown = true
+    if (mouseDown == 0) { // if the mouse is not pressed (not highlighting)
+        highlightedTextDetect(); // check to see if they highlighted anything for the addnote button
+    } else { // mouse is down, must be highlighting
+        possibleHighlightStart(); // get that highlight start event so when done highlighting, addnote appears
+    }
+}
+
+function hideToolbar(){
+    trailDisplay.hide();
+    toolbarShown = false
+    wt_$(".inlineSaveButton").remove();
 }
 
 function addSiteFaviconToDisplay(domain,url) {
@@ -84,3 +95,36 @@ function shrinkFaviconHolder() {
 function clearFaviconHolder() {
     faviconHolder.html("");
 }
+
+function showToolbarOnAllTabs(){
+    chrome.runtime.sendMessage({showToolBarOnAllTabs:"now!"}, function(response) {
+        console.log("toolbar showed on all tabs")
+    });
+}
+
+function hideToolbarOnAllTabs(){
+    chrome.runtime.sendMessage({hideToolBarOnAllTabs:"now!"}, function(response) {
+        console.log("toolbar hidden on all tabs")
+    });
+}
+
+chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+    if (request.logOutAllTabs){
+        initSignedOutExperience();
+    }
+    if (request.logInAllTabs){
+        wt_auth_token = request.logInAllTabs[0]
+        var newTrailID = request.logInAllTabs[1]
+        if (currentTrailID != newTrailID){
+            faviconsFetched = false;
+            currentTrailID = newTrailID;
+        }
+        initSignedInExperience();
+    }
+    if (request.showToolBarOnAllTabs){
+        showToolbar();
+    }
+    if (request.hideToolBarOnAllTabs){
+        hideToolbar();
+    }
+})
