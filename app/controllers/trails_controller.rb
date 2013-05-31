@@ -1,7 +1,5 @@
 class TrailsController < ApplicationController
-
-  before_filter :authenticated_or_redirect, :only => [:index]
-  skip_before_filter :verify_authenticity_token, :only => [:create,:options]
+  before_filter :get_user_from_wt_auth_header_or_cookie
   after_filter :cors_set_access_control_headers
 
   def cors_set_access_control_headers
@@ -18,6 +16,7 @@ class TrailsController < ApplicationController
   end
 
   def options
+    puts "getting options request"
     cors_preflight_check
     render :text => '', :content_type => 'text/plain'
   end
@@ -29,7 +28,12 @@ class TrailsController < ApplicationController
   end
 
   def show
-    @trail = Trail.find(params[:id])
+    @trail = @user.trails.where(:id => params[:id]).first
+
+    if !@trail
+      render status => 401, :html => "you do not have access to this trail"
+    end
+
     @sites = @trail.sites.sort_by(&:created_at)
     @favicon_urls_with_ids_and_titles = @sites.inject([]) do |urls, site|
       search_name = URI(site.url).host
@@ -57,34 +61,29 @@ class TrailsController < ApplicationController
   end
 
   def site_list
-    trail = Trail.find(params[:trail_id])
-    favicons_and_urls = trail.sites.sort_by(&:created_at).inject([]) do |fav_list, site|
-      fav_list.push(["http://www.google.com/s2/favicons?domain=" + URI(site.url).host.to_s,site.url])
+
+    current_trail_id = params[:trail_id]
+    trail = nil
+
+    trail = @user.trails.where(:id => params[:trail_id]).first if current_trail_id
+
+
+    # if the trail_id was empty, or not owned by the user, send by the users latest trail
+    # this is so our favicon list doesn't break if something goes wrong with the extension.
+    if trail == nil
+      trail = @user.trails.sort_by(&:created_at).last
     end
-    favicons_and_urls.push(["http://www.google.com/s2/favicons?domain=" + URI(params[:current_url]).host.split(".")[-2..-1].to_s,"#"])
-    render :json => {"favicons_and_urls" => favicons_and_urls}
-  end
 
-  private
+    if trail
+      favicons_and_urls = trail.sites.sort_by(&:created_at).inject([]) do |fav_list, site|
+        fav_list.push(["http://www.google.com/s2/favicons?domain=" + URI(site.url).host.to_s,site.url])
+      end
+      favicons_and_urls.push(["http://www.google.com/s2/favicons?domain=" + URI(params[:current_url]).host.split(".")[-2..-1].to_s,"#"])
+      render :json => {"favicons_and_urls" => favicons_and_urls, "trail_id" => trail.id}
+    else
+      render :json => {"favicons_and_urls" => [], "trail_id" => ""}
+    end
 
-  def bookmarklet_string(trail_id,user_id,trail_name)
-    %{<a href="Javascript:(function(){
-      window.siteHTML = document.getElementsByTagName('html')[0].innerHTML;
-      var v = '1.4.1';
-      var script = document.createElement('script');
-      var myScript = document.createElement('script');
-      window.userID = #{user_id};
-      window.trailID = #{trail_id};
-
-      myScript.src = '#{Webtrails::Application::AJAX_REQUEST_URL}/bookmarklet_js';
-      myScript.onload = function (){
-      script.src = 'http://ajax.googleapis.com/ajax/libs/jquery/' + v + '/jquery.min.js';
-      script.onload = script.onreadystatechange = initMyBookmarklet;
-      document.getElementsByTagName('head')[0].appendChild(script);
-      };
-      document.getElementsByTagName('head')[0].appendChild(myScript);
-
-      })();">#{trail_name}</a>}
   end
 
 end

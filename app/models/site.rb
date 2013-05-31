@@ -5,7 +5,7 @@ class Site < ActiveRecord::Base
   def self.save_site_to_aws(html,url, trail_id, shallow_save,site_id)
     $stderr.puts "save_site_to_aws", url, trail_id, shallow_save, site_id
     remote = RemoteDocument.new(url,html)
-    path = "/" + trail_id + "/" + site_id.to_s
+    path = "/" + trail_id.to_s + "/" + site_id.to_s
     $stderr.puts "site_id that we are saving:" + site_id.to_s + " url:" + url.to_s
     $stderr.puts "shallow save? " + shallow_save.to_s
     remote.mirror(path,shallow_save)

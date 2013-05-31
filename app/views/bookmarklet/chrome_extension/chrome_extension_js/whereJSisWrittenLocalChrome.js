@@ -6,16 +6,16 @@ var trailDisplay,
     previousNoteDisplay,
     noteDisplayWrapper,
     currentSiteTrailID="",
-    trailID = 4,
-    userID = 1,
     saveSiteToTrailButton,
     deleteNoteButton,
     previousNoteID,
-    siteHTML = getCurrentSiteHTML();
+    siteHTML = getCurrentSiteHTML(),
     noteCount = 0,
     siteSavedDeeply = false,
+    loggedIn = false;
     webTrailsUrl = "http://localhost:3000";
     // webTrailsUrl = "http://webtrails.co";
+
 
 
 String.prototype.splice = function( idx, rem, s ) {
@@ -64,4 +64,11 @@ function getNodeLineHeight(element) {
 // returns true if the node is a text node, false if not
 function isTextNode(node) {
     return node.nodeType == 3;
+}
+
+function setCurrentTrailID(ID){
+    currentTrailID = ID;
+    chrome.runtime.sendMessage({setCurrentTrailID:ID}, function(response) {
+        console.log(response)
+    });
 }

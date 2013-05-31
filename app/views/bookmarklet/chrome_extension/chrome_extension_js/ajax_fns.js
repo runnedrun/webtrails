@@ -1,5 +1,10 @@
 console.log("ajax_fns loaded");
 
+
+function signRequestWithWtAuthToken(xhr,ajaxRequest){
+    xhr.setRequestHeader("WT_AUTH_TOKEN",wt_auth_token);
+}
+
 function saveSiteToTrail(successFunction, note){
     console.log("saving site to trail:", currentSiteTrailID);
     var currentSite = window.location.href;
@@ -13,17 +18,20 @@ function saveSiteToTrail(successFunction, note){
         url: webTrailsUrl + "/sites",
         type: "post",
         crossDomain: true,
+        beforeSend: signRequestWithWtAuthToken,
         data: {
             "site[id]":currentSiteTrailID, //this is probably unnecesary
             "site[url]":currentSite,
-            "site[trail_id]":trailID,
+            "site[trail_id]":currentTrailID,
             "site[title]": document.title,
-            "user": userID,
             "note": note || "none",
             "html": currentHTML,
             "shallow_save": currentSiteTrailID  //this is empty string if it's the first time the site is saved.
         },
-        success: successFunction
+        success: function(resp){
+            setCurrentTrailID(resp.trail_id);
+            successFunction(resp);
+        }
     });
 //    document.onmousemove = mouseStopDetect();
 
@@ -40,6 +48,7 @@ function saveSiteToTrail(successFunction, note){
                     url: webTrailsUrl + '/site/exists',
                     type: "get",
                     crossDomain: true,
+                    beforeSend: signRequestWithWtAuthToken,
                     data: {
                         "id": currentSiteTrailID
                     },
@@ -63,16 +72,21 @@ function saveSiteToTrail(successFunction, note){
 }
 
 function fetchFavicons(){
+    //also gets the users latest trail id, if none is saved in localstorage
     var currentSite = window.location.href;
     wt_$.ajax({
         url: webTrailsUrl + "/trail/site_list",
         type: "get",
         crossDomain: true,
         data: {
-            "trail_id": trailID,
+            "trail_id": currentTrailID,
             "current_url": currentSite
         },
-        success: addFaviconsToDisplay
+        beforeSend: signRequestWithWtAuthToken,
+        success: function(resp){
+            setCurrentTrailID(resp.trail_id)
+            addFaviconsToDisplay(resp)
+        }
     });
 }
 
@@ -84,6 +98,7 @@ function submitNoteAfterSave(site_data,content,comment,commentLocationX,commentL
         url: webTrailsUrl + "/notes",
         type: "post",
         crossDomain: true,
+        beforeSend: signRequestWithWtAuthToken,
         data: {
             "note[content]": content,
             "note[comment]": comment,
@@ -104,9 +119,11 @@ function deletePreviousNote(){
         url: "http://localhost:3000/notes/delete",
         type: "post",
         crossDomain: true,
+        beforeSend: signRequestWithWtAuthToken,
         data: {
             "id": previousNoteID
         },
         success: updateNoteDisplay
     })
 }
+
