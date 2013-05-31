@@ -2,9 +2,9 @@ class TrailsController < ApplicationController
 
   #before_filter :authenticated_or_redirect, :only => [:index]
   before_filter :get_user_from_wt_auth_header, :except => [:show,:index]
-  before_filter :get_user_from_wt_auth_cookie, :only => [:index]
-  #skip_before_filter :get_user_from_wt_auth_header, :only => :show
-  skip_before_filter :verify_authenticity_token, :only => [:create,:options]
+  before_filter :get_user_from_wt_auth_cookie, :only => [:index,:show]
+  #before_filter :get_user_from_auth_token_in_params_and_set_cookie, :only => [:show]
+  #skip_before_filter :verify_authenticity_token, :only => [:create,:options]
   after_filter :cors_set_access_control_headers
 
   def cors_set_access_control_headers
@@ -33,10 +33,6 @@ class TrailsController < ApplicationController
   end
 
   def show
-    $stderr.puts("getting to the trail show")
-
-    get_user_from_auth_token_in_params_and_set_cookie()
-
     @trail = @user.trails.where(:id => params[:id]).first
 
     if !@trail
@@ -119,18 +115,24 @@ class TrailsController < ApplicationController
       wt_auth_token = request.cookies["wt_auth_token"]
       @user = User.find_by_wt_auth_token(wt_auth_token)
     end
+    puts @user
     if !@user
       wt_auth_token = params[:auth_token]
       if wt_auth_token
         @user = User.find_by_wt_auth_token(wt_auth_token)
-        unless @user
-          render :status => 401, :html => "token invalid, please trail again"
+        puts @user
+        if !@user
+          puts "rendering 401"
+          render :status => 401, :text => "token invalid, please trail again"
+          return
         end
       else
         $stderr.puts("token not found")
-        render :status => 401, :html => ["please authenticate your request with a valid token"]
+        render :status => 401, :text => "please authenticate your request with a valid token"
+        return
       end
     end
+    puts "setting cookie"
     cookies.permanent[:wt_auth_token] = wt_auth_token
   end
 

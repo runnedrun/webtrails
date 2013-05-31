@@ -1,4 +1,4 @@
-domain = "http://localhost:3000";
+domain = "http://localhost:3000/";
 domain_name = "localhost";
 //domain_name = "webtrails.co";
 
@@ -97,11 +97,16 @@ function logInOrCreateUser(callback){
         success: function(resp){
             var wt_auth_token = resp.wt_authentication_token;
             localStorage["wt_auth_token"] = wt_auth_token;
+            var date = new Date();
+            var secondsSinceEpoch = date.getTime()/1000;
             chrome.cookies.set({
-                url:"www.webtrails.co",
+                url: domain,
                 name: "wt_auth_token",
-                expirationDate: 315360000,
+                expirationDate: secondsSinceEpoch + 315360000,
                 value: wt_auth_token
+            },function(resp){
+                console.log(resp);
+                console.log("cookie set!")
             })
             callback(resp)
         },
@@ -113,6 +118,12 @@ function logInOrCreateUser(callback){
 
 function signOut(){
     localStorage.removeItem("wt_auth_token");
+    chrome.cookies.remove({
+        url:domain,
+        name: "wt_auth_token"
+    },function(){
+        console.log("cookie removed!")
+    })
 }
 function getWtAuthToken(){
     return localStorage["wt_auth_token"];

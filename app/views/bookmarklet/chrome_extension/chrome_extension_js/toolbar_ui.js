@@ -77,7 +77,7 @@ function initMyBookmarklet() {
     console.log(currentTrailID);
     wt_$(linkToTrail).html("View Trail");
     wt_$(linkToTrail).click(function(event){
-        window.open(webTrailsUrl + "/trails/"+currentTrailID+"?auth_token="+wt_auth_token, "_blank")
+        window.open(webTrailsUrl + "/trails/"+currentTrailID, "_blank")
     })
     wt_$(linkToTrail).attr('href', "#");
 
