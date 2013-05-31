@@ -23,4 +23,8 @@ class UsersController < ApplicationController
     end
   end
 
+  def login_via_oauth2
+
+  end
+
 end

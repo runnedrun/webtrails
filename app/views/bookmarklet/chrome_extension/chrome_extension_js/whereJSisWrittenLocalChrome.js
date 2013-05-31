@@ -13,6 +13,7 @@ var trailDisplay,
     noteCount = 0,
     siteSavedDeeply = false,
     loggedIn = false;
+    faviconsFetched = false;
     webTrailsUrl = "http://localhost:3000";
     // webTrailsUrl = "http://webtrails.co";
 

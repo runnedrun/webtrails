@@ -230,7 +230,7 @@ function initMyBookmarklet() {
     initializeAutoResize();
     initializeJqueryEllipsis();
     previousNoteDisplay.ellipsis()
-    fetchFavicons();
+
 
     if (wt_auth_token){
         initSignedInExperience()
@@ -258,6 +258,10 @@ function initMyBookmarklet() {
 
 function initSignedInExperience(){
     loggedIn = true;
+    if (!faviconsFetched){
+        fetchFavicons();
+        faviconsFetched = true;
+    }
     console.log("intitilizing signedin in experience")
     trailDisplay.children().show();
     loggedOutMessage.hide();
@@ -271,6 +275,7 @@ function initSignedInExperience(){
 }
 
 function initSignedOutExperience(){
+    console.log("signing out");
     loggedIn = false;
     trailDisplay.children().not(".wt_settingsButton").hide();
     settingsButtonWrapper.css("background-color","#FF8080")
