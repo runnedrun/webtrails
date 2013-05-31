@@ -37,7 +37,7 @@ class User < ActiveRecord::Base
                            password: Devise.friendly_token[0,20]
         )
       end
-      if !user.auth_token
+      if !user.wt_authentication_token
         wt_auth_token = generate_wt_auth_token
         user.wt_authentication_token = wt_auth_token
       end

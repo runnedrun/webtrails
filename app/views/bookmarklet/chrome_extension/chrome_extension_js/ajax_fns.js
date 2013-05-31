@@ -1,10 +1,11 @@
 console.log("ajax_fns loaded");
 
+
 function signRequestWithWtAuthToken(xhr,ajaxRequest){
     xhr.setRequestHeader("WT_AUTH_TOKEN",wt_auth_token);
 }
 
-function saveSiteToTrail(successFunction){
+function saveSiteToTrail(successFunction, note){
     console.log("saving site to trail:", currentSiteTrailID);
     var currentSite = window.location.href;
     var currentHTML = getCurrentSiteHTML();
@@ -23,7 +24,7 @@ function saveSiteToTrail(successFunction){
             "site[url]":currentSite,
             "site[trail_id]":currentTrailID,
             "site[title]": document.title,
-            "notes": "none",
+            "note": note || "none",
             "html": currentHTML,
             "shallow_save": currentSiteTrailID  //this is empty string if it's the first time the site is saved.
         },
@@ -55,7 +56,7 @@ function saveSiteToTrail(successFunction){
                             if (data.exists) {
                               // Our page exists, and we should correct the save site button
                               saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
-                              saveSiteToTrailButton.unbind().click(function(){window.open(webTrailsUrl + '/trails/' + trailID + "#end", '_blank');});
+                              saveSiteToTrailButton.unbind().click(function(){window.open(webTrailsUrl + '/trails/' + currentTrailID + "#end", '_blank');});
                               saveSiteToTrailButton.css({"cursor": "pointer"});
                             } else {
                                 setTimeout(updateSiteSavedButton, 5000); // check again

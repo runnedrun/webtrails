@@ -17,12 +17,12 @@ function showOrHidePathDisplay(){
 }
 
 function addSiteFaviconToDisplay(domain,url) {
-    var faviconLink = wt_$("<a href=\""+ url+ "\" class=\"siteFavicon webtrails\"></a>");
+    var faviconLink = wt_$("<a href=\""+ url+ "\" class=\"webtrails\"></a>");
     var faviconImg  = wt_$("<img src='"+ domain + "' class=\"webtrails\">");
     faviconLink.css({
         "vertical-align":"top",
         "padding": "0px",
-        "margin": "0 0px",
+        "margin": "0 3px",
         "overflow": "hidden",
         "display": "block",
         "border": "none",
@@ -54,7 +54,8 @@ function moveNoteToPrevious(noteContent){
 }
 
 function updateNoteDisplay(data){
-    if (data.id == "none") {
+    console.log("update note display", data)
+    if (data.note_id == "none") {
         moveNoteToPrevious("No more notes on this page.  Go ahead and take a few.");
         deleteNoteButton.css({
             "color": "#aaa",
@@ -62,8 +63,8 @@ function updateNoteDisplay(data){
         });
         deleteNoteButton.attr("disabled","disabled");
     }else{
-        previousNoteID = data.id;
-        moveNoteToPrevious(data.content);
+        previousNoteID = data.note_id;
+        moveNoteToPrevious(data.note_content);
         deleteNoteButton.removeAttr("disabled");
         deleteNoteButton.css({
             "color": "#333",

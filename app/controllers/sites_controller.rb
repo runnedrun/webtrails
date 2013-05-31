@@ -49,7 +49,15 @@ class SitesController < ApplicationController
         shallow_save=false
       end
       Site.delay.save_site_to_aws(html,url,trail_id,shallow_save,site_id)
-      render :json => {:site_id => site_id, :trail_id => trail_id}, :status => 200
+
+      if (params[:note] and params[:note] != "none")
+        # We should save the note, too.
+        params[:note][:site_id] = site_id
+        @note = Note.create!(params[:note])
+        render :json => {:trail_id => trail_id, :site_id => site_id, :note_content => @note.content, :note_id => @note.id}, :status => 200
+      else
+        render :json => {:trail_id => trail_id, :site_id => site_id}, :status => 200
+      end
     rescue
       render_server_error_ajax
     end
