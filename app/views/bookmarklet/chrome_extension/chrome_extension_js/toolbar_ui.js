@@ -89,7 +89,8 @@ function initMyBookmarklet() {
         "color": "#333",
         "font-weight": "bold",
         "text-shadow": "1px 1px #F0f0f0",
-        "text-decoration": "underline"
+        "text-decoration": "underline",
+        "cursor":"pointer"
     });
     linkToTrail.addClass("webtrails");
 //    linkToTrail.attr("target", "_blank");
@@ -99,7 +100,8 @@ function initMyBookmarklet() {
     wt_$(linkToTrail).click(function(event){
         window.open(webTrailsUrl + "/trails/"+currentTrailID, "_blank")
     })
-    wt_$(linkToTrail).attr('href', "#");
+
+//    wt_$(linkToTrail).attr('href', "#");
 
     deleteNoteButton = wt_$(document.createElement("button"));
     deleteNoteButton.css({
@@ -277,6 +279,8 @@ function initSignedInExperience(){
 function initSignedOutExperience(){
     console.log("signing out");
     loggedIn = false;
+    console.log("bouta hide");
+    console.log(trailDisplay.children().not(".wt_settingsButton"))
     trailDisplay.children().not(".wt_settingsButton").hide();
     settingsButtonWrapper.css("background-color","#FF8080")
     loggedOutMessage.show();
