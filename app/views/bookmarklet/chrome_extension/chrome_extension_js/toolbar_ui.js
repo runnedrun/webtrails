@@ -261,10 +261,10 @@ function initMyBookmarklet() {
 function initSignedInExperience(){
     loggedIn = true;
     if (!faviconsFetched){
+        clearFaviconHolder();
         fetchFavicons();
         faviconsFetched = true;
     }
-    console.log("intitilizing signedin in experience")
     trailDisplay.children().show();
     loggedOutMessage.hide();
     settingsButtonWrapper.css("background-color","#94FF70")
@@ -279,8 +279,6 @@ function initSignedInExperience(){
 function initSignedOutExperience(){
     console.log("signing out");
     loggedIn = false;
-    console.log("bouta hide");
-    console.log(trailDisplay.children().not(".wt_settingsButton"))
     trailDisplay.children().not(".wt_settingsButton").hide();
     settingsButtonWrapper.css("background-color","#FF8080")
     loggedOutMessage.show();
@@ -294,18 +292,31 @@ function initSignedOutExperience(){
 
 function signOut(){
     chrome.runtime.sendMessage({logout:"now!"}, function(response) {
-        console.log(response.response);
         initSignedOutExperience();
     });
 }
 
 function signIn(){
     chrome.runtime.sendMessage({login:"login"}, function(response) {
-        console.log(response.wt_auth_token);
         wt_auth_token = response.wt_auth_token;
         initSignedInExperience();
     });
 }
+
+chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+    if (request.logOutAllTabs){
+        initSignedOutExperience();
+    }
+    if (request.logInAllTabs){
+        wt_auth_token = request.logInAllTabs[0]
+        var newTrailID = request.logInAllTabs[1]
+        if (currentTrailID != newTrailID){
+            faviconsFetched = false;
+            currentTrailID = newTrailID;
+        }
+        initSignedInExperience();
+    }
+})
 
 //function checkIfSignedIn(){
 //    chrome.runtime.sendMessage({isUserSignedIn:"check"}, function(response) {

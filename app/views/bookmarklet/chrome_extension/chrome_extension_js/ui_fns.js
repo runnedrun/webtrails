@@ -80,3 +80,7 @@ function growFaviconHolder() {
 function shrinkFaviconHolder() {
     faviconHolder.stop().animate({"height": "20px"});
 }
+
+function clearFaviconHolder() {
+    faviconHolder.html("");
+}

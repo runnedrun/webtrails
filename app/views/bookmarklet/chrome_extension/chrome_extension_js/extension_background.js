@@ -11,6 +11,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 });
 
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
+    console.log(changeInfo);
     if (changeInfo.status == 'complete') {
         var callbackURL = chrome.extension.getURL('http://www.google.com/robots.txt');
         var domain_re = RegExp("(.|^)"+domain_name+"$")
@@ -111,10 +112,8 @@ function logInOrCreateUser(callback){
                 name: "wt_auth_token",
                 expirationDate: secondsSinceEpoch + 315360000,
                 value: wt_auth_token
-            },function(resp){
-                console.log(resp);
-                console.log("cookie set!")
             })
+            sendSignInMessageToAllTabs();
             callback(resp)
         },
         error: function(error){
@@ -131,6 +130,7 @@ function signOut(){
     },function(){
         console.log("cookie removed!")
     })
+    sendSignOutMessageToAllTabs();
 }
 function getWtAuthToken(){
     return localStorage["wt_auth_token"];
@@ -141,4 +141,21 @@ function getCurrentTrailID(){
 
 function addTrailIdToLocalStorage(ID){
     localStorage["current_trail_ID"] = ID;
+}
+function sendSignOutMessageToAllTabs(){
+    console.log("sending sign out message to all toolbars!")
+    chrome.tabs.getAllInWindow(null, function(tabs) {
+        wt_$.each(tabs, function() {
+            chrome.tabs.sendRequest(this.id, {"logOutAllTabs":"logitout!"});
+        });
+    });
+}
+
+function sendSignInMessageToAllTabs(){
+    console.log("sending sign in message to all toolbars!")
+    chrome.tabs.getAllInWindow(null, function(tabs) {
+        wt_$.each(tabs, function() {
+            chrome.tabs.sendRequest(this.id, {"logInAllTabs":[getWtAuthToken(),getCurrentTrailID()]});
+        });
+    });
 }
