@@ -285,6 +285,7 @@ function initSignedOutExperience(){
     settingsButtonWrapper.css("background-color","#FF8080")
     loggedOutMessage.show();
     wt_$(document).unbind("mousedown");
+    wt_$(".inlineSaveButton").remove();
     settingsButtonWrapper.unbind("click");
     settingsButtonWrapper.click(function(){
         signIn()

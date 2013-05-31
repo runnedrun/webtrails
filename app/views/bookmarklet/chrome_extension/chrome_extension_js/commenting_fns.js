@@ -49,8 +49,8 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     wt_$(commentOverlay).append(commentDescription);
     wt_$(commentOverlay).append(commentBox);
     var noteContent = String(highlightedRange);
-    commentBox.keydown((function(noteContent,commentOverlay,xPos,yPos){return (function (e){postNoteAndComment(e,noteContent,commentOverlay,xPos,yPos)})})(noteContent,commentOverlay,xPos,yPos));
-    wt_$(document).mousedown((function(noteContent,commentOverlay,xPos,yPos){return (function (e){clickAway(e,noteContent,commentOverlay,xPos,yPos)})})(noteContent,commentOverlay,xPos,yPos));
+    commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,xPos,yPos));
+    wt_$(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,xPos,yPos));
     commentBox.autosize();
     commentBox.focus();
     var nodes = highlightedRange.getNodes();
@@ -77,9 +77,17 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
 
 function postNoteAndComment(e,content,commentOverlay,xPos,yPos){
     if (e.keyCode == 13){
-        closeOverlay(commentOverlay);
+        closeOverlay();
         saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos);
     }
+}
+
+function postNoteAndCommentWithClosure(noteContent,commentOverlay,xPos,yPos){
+    return function (e){postNoteAndComment(e,noteContent,commentOverlay,xPos,yPos)}
+}
+
+function clickAwayWithClosure(noteContent,commentOverlay,xPos,yPos){
+    return function (e){clickAway(e,noteContent,commentOverlay,xPos,yPos)}
 }
 
 function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY){
@@ -98,13 +106,13 @@ function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY
     );
 }
 
-function closeOverlay(overlay){
+function closeOverlay(){
+    var overlay = wt_$(".commentOverlay")
     wt_$(document).unbind("mousedown");
     wt_$(document).mousedown(function(){mouseDown=1});
     wt_$(document).mousedown(possibleHighlightStart);
     overlay.remove();
     unhighlight_wtHighlights();
-
 }
 
 function clickAway(e,content,commentOverlay,xPos,yPos){

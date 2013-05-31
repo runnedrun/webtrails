@@ -23,8 +23,9 @@ function showToolbar(){
 
 function hideToolbar(){
     trailDisplay.hide();
-    toolbarShown = false
+    toolbarShown = false;
     wt_$(".inlineSaveButton").remove();
+    closeOverlay();
 }
 
 function addSiteFaviconToDisplay(domain,url) {
@@ -108,6 +109,7 @@ function hideToolbarOnAllTabs(){
     });
 }
 
+
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
     if (request.logOutAllTabs){
         initSignedOutExperience();
@@ -128,3 +130,4 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         hideToolbar();
     }
 })
+
