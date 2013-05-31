@@ -22,9 +22,8 @@ class TrailsController < ApplicationController
   end
 
   def create
-    trail = Trail.create(:owner => current_user, :name => params[:name])
-    bookmarklet = bookmarklet_string(trail.id, current_user.id, params[:name])
-    render :json => {:bookmarklet => bookmarklet}
+    trail = Trail.create(:owner => @user, :name => params[:name])
+    render :json => {:message => "trail created"}, :status => 200
   end
 
   def show
@@ -47,8 +46,7 @@ class TrailsController < ApplicationController
 
 
   def index
-    @user = current_user
-    @trails = current_user.trails.sort_by(&:created_at)
+    @trails = @user.trails.sort_by(&:created_at)
     @favicon_urls = @trails.map do |trail|
       trail.sites = trail.sites.sort_by(&:created_at)
       trail.sites.map do |site|
