@@ -1,7 +1,4 @@
 class SitesController < ApplicationController
-  #skip_before_filter :verify_authenticity_token, :only => [:create,:options]
-  #before_filter :get_user_from_wt_auth_header, :only => [:create, :exists]
-  #before_filter :get_user_from_wt_auth_cookie, :except => [:create]
   before_filter :get_user_from_wt_auth_header_or_cookie
   after_filter :cors_set_access_control_headers
 
@@ -39,7 +36,7 @@ class SitesController < ApplicationController
       else
         trail = @user.trails.where(:id => trail_id).first
         if !trail
-          render :status => 401, :json => "you do not own this trail, try a different one"
+          render_not_authorized
         end
       end
 
@@ -54,7 +51,7 @@ class SitesController < ApplicationController
       Site.delay.save_site_to_aws(html,url,trail_id,shallow_save,site_id)
       render :json => {:site_id => site_id, :trail_id => trail_id}, :status => 200
     rescue
-      render :status => 500, :json => "we're experiencing some difficulty, please trail again later"
+      render_server_error_ajax
     end
   end
 
@@ -63,8 +60,7 @@ class SitesController < ApplicationController
     if site
       site_owner = site.trail.owner
       if site_owner != @user
-        render :json => {"error" => "you are not authorized to delete this site"}, :status => 401
-        return
+        render_not_authorized
       end
       site.delete
     end
@@ -72,7 +68,8 @@ class SitesController < ApplicationController
   end
 
   def async_site_load
-    site = Site.find(params[:site_id])
+    site = get_site_if_owned_by_user(params[:site_id])
+
     notes = []
     site.notes.each_with_index do |note, i|
       notes[i] = {"content" => note.content, "scroll_x" => note.scroll_x, "scroll_y" => note.scroll_y, "note_id" => note.id,
@@ -85,8 +82,8 @@ class SitesController < ApplicationController
   end
 
   def show
-    puts "got to site show"
-    site = Site.find(params[:id])
+    site = get_site_if_owned_by_user(params[:id])
+
     if site.archive_location.nil?
       render :template => 'trails/loading'
     else
@@ -96,9 +93,20 @@ class SitesController < ApplicationController
   end
 
   def exists
-    puts "getting exists request"
-    site = Site.find(params[:id])
+    site = get_site_if_owned_by_user(params[:id])
     render :json => {:exists => !site.archive_location.nil?}, :status => 200
+  end
+
+  def get_site_if_owned_by_user(id)
+    site = Site.find(id)
+    if site
+      site_owner = site.trail.owner
+      if site_owner != @user
+        render_not_authorized
+        return false
+      end
+    end
+    return site
   end
 
 end

@@ -1,11 +1,5 @@
 class TrailsController < ApplicationController
-
-  #before_filter :authenticated_or_redirect, :only => [:index]
-  #before_filter :get_user_from_wt_auth_header, :except => [:show,:index]
-  #before_filter :get_user_from_wt_auth_cookie, :only => [:index,:show]
   before_filter :get_user_from_wt_auth_header_or_cookie
-  #before_filter :get_user_from_auth_token_in_params_and_set_cookie, :only => [:show]
-  #skip_before_filter :verify_authenticity_token, :only => [:create,:options]
   after_filter :cors_set_access_control_headers
 
   def cors_set_access_control_headers
@@ -90,55 +84,6 @@ class TrailsController < ApplicationController
       render :json => {"favicons_and_urls" => [], "trail_id" => ""}
     end
 
-  end
-
-  private
-
-  def bookmarklet_string(trail_id,user_id,trail_name)
-    %{<a href="Javascript:(function(){
-      window.siteHTML = document.getElementsByTagName('html')[0].innerHTML;
-      var v = '1.4.1';
-      var script = document.createElement('script');
-      var myScript = document.createElement('script');
-      window.userID = #{user_id};
-      window.trailID = #{trail_id};
-
-      myScript.src = '#{Webtrails::Application::AJAX_REQUEST_URL}/bookmarklet_js';
-      myScript.onload = function (){
-      script.src = 'http://ajax.googleapis.com/ajax/libs/jquery/' + v + '/jquery.min.js';
-      script.onload = script.onreadystatechange = initMyBookmarklet;
-      document.getElementsByTagName('head')[0].appendChild(script);
-      };
-      document.getElementsByTagName('head')[0].appendChild(myScript);
-
-      })();">#{trail_name}</a>}
-  end
-
-  def get_user_from_auth_token_in_params_and_set_cookie
-    $stderr.puts("looking in params for auth token")
-    if request.cookies["wt_auth_token"]
-      wt_auth_token = request.cookies["wt_auth_token"]
-      @user = User.find_by_wt_auth_token(wt_auth_token)
-    end
-    puts @user
-    if !@user
-      wt_auth_token = params[:auth_token]
-      if wt_auth_token
-        @user = User.find_by_wt_auth_token(wt_auth_token)
-        puts @user
-        if !@user
-          puts "rendering 401"
-          render :status => 401, :text => "token invalid, please trail again"
-          return
-        end
-      else
-        $stderr.puts("token not found")
-        render :status => 401, :text => "please authenticate your request with a valid token"
-        return
-      end
-    end
-    puts "setting cookie"
-    cookies.permanent[:wt_auth_token] = wt_auth_token
   end
 
 end
