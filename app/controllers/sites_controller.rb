@@ -1,7 +1,8 @@
 class SitesController < ApplicationController
   #skip_before_filter :verify_authenticity_token, :only => [:create,:options]
-  before_filter :get_user_from_wt_auth_header, :only => [:create, :exists]
-  before_filter :get_user_from_wt_auth_cookie, :except => [:create]
+  #before_filter :get_user_from_wt_auth_header, :only => [:create, :exists]
+  #before_filter :get_user_from_wt_auth_cookie, :except => [:create]
+  before_filter :get_user_from_wt_auth_header_or_cookie
   after_filter :cors_set_access_control_headers
 
   def cors_set_access_control_headers
@@ -59,7 +60,14 @@ class SitesController < ApplicationController
 
   def delete
     site = Site.find(params[:id])
-    site.delete
+    if site
+      site_owner = site.trail.owner
+      if site_owner != @user
+        render :json => {"error" => "you are not authorized to delete this site"}, :status => 401
+        return
+      end
+      site.delete
+    end
     render :json => {"error" => nil}, :status => 200
   end
 

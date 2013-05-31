@@ -1,8 +1,9 @@
 class TrailsController < ApplicationController
 
   #before_filter :authenticated_or_redirect, :only => [:index]
-  before_filter :get_user_from_wt_auth_header, :except => [:show,:index]
-  before_filter :get_user_from_wt_auth_cookie, :only => [:index,:show]
+  #before_filter :get_user_from_wt_auth_header, :except => [:show,:index]
+  #before_filter :get_user_from_wt_auth_cookie, :only => [:index,:show]
+  before_filter :get_user_from_wt_auth_header_or_cookie
   #before_filter :get_user_from_auth_token_in_params_and_set_cookie, :only => [:show]
   #skip_before_filter :verify_authenticity_token, :only => [:create,:options]
   after_filter :cors_set_access_control_headers
@@ -66,11 +67,15 @@ class TrailsController < ApplicationController
   end
 
   def site_list
+
     current_trail_id = params[:trail_id]
     trail = nil
 
     trail = @user.trails.where(:id => params[:trail_id]).first if current_trail_id
 
+
+    # if the trail_id was empty, or not owned by the user, send by the users latest trail
+    # this is so our favicon list doesn't break if something goes wrong with the extension.
     if trail == nil
       trail = @user.trails.sort_by(&:created_at).last
     end
