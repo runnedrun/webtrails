@@ -1,4 +1,33 @@
 $(function() {
+  $("#trail-create-button").click(makeTrail);
+  setupTrailScrolling();
+});
+
+function makeTrail(){
+    var trailName = $("#trail-name").val();
+    if (trailName == "") {
+      $("#trail-create-control-group").addClass("error");
+        // if type in trail-name, then no error
+        $('#trail-name').keypress(function(){
+          $("#trail-create-control-group").removeClass("error");
+          $('#trail-name').unbind();
+        });
+      return;
+    }
+    $.ajax({
+        url: "/trails",
+        type: "post",
+        data: {
+            "name" : trailName
+        },
+        success: function(data) {
+          // TODO: popup display of trail created or something
+          location.reload(true);
+        }
+    });
+}
+
+function setupTrailScrolling() {
   var portion = .5; // where mouse is horizontally on div
   var currentScrollInterval = null;
 
@@ -34,4 +63,4 @@ $(function() {
       }
     }, 100);
   }); 
-});
+}
