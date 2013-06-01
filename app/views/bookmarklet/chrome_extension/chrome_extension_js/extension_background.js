@@ -2,6 +2,7 @@ domain = "http://localhost:3000";
 domain_name = "localhost";
 //domain_name = "webtrails.co";
 
+
 var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","toolbar_ui.js","ajax_fns.js","smart_grab.js","autoresize.js",
     "jquery_elipsis.js","search_and_highlight.js","inline_save_button_fns.js","ui_fns.js","commenting_fns.js",
     "whereJSisWrittenLocalChrome.js"];
@@ -11,15 +12,12 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 });
 
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
-    console.log(changeInfo);
     if (changeInfo.status == 'complete') {
-        var callbackURL = 'http://www.google.com/robots.txt';
-        var domain_re = RegExp("(.|^)"+domain_name+"$")
-        if ((tab.url != callbackURL) && !domain_re.exec(wt_$.url(tab.url).attr("host"))){
-            injectScripts(tabId);
-        }
+        console.log("checking for page loaded");
+        chrome.tabs.executeScript(tabId, {"code":"chrome.runtime.sendMessage({ loaded: [typeof(contentScriptLoaded), "+tabId+",'"+tab.url+"']});"})
     }
 })
+
 
 function injectScripts(tabId){
     var wt_auth_token = getWtAuthToken();
@@ -94,6 +92,17 @@ chrome.runtime.onMessage.addListener(
         if (request.hideToolBarOnAllTabs){
             addToolbarDisplayStateToLocalStorage("hidden")
             hideToolbarOnAllTabs();
+        }
+        console.log(request);
+        if (request.loaded && (request.loaded[0] !== "string")){
+            console.log("injecting script");
+            var tabId = request.loaded[1];
+            var tabUrl = request.loaded[2];
+            var callbackURL = 'http://www.google.com/robots.txt';
+            var domain_re = RegExp("(.|^)"+domain_name+"$")
+            if ((tabUrl != callbackURL) && !domain_re.exec(wt_$.url(tabUrl).attr("host"))){
+                injectScripts(tabId);
+            }
         }
     })
 
