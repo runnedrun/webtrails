@@ -28,7 +28,11 @@ $(function(){
     $("#previousSite").click(previousSite);
     $("#nextNote").click(nextNote);
     $("#previousNote").click(previousNote);
-    $("#removeSite").click(removeSite);
+    if (editAccess) {
+        $("#removeSite").click(removeSite);
+    } else {
+        $("#removeSite").remove();
+    }
     $("#showNoteList").click(expandOrCloseNoteList);
     $(".noteWrapper").click(clickJumpToNote);
     $(".faviconImage").click(clickJumpToSite);
@@ -262,7 +266,7 @@ function createCommentOverlay(commentText,xPos,yPos){
     var spacing = 25;
     var overlayMaxWidth = 400;
 
-    var commentContainer = $("<div>")
+    var commentContainer = $("<div>");
     commentContainer.css({
         "background": "white",
         "color":"black",
@@ -296,11 +300,10 @@ function createCommentOverlay(commentText,xPos,yPos){
         display:"inline",
         padding:"0px 2px 0px 2px",
         "font-size":"13px",
-    })
+    });
+    commentContainer.append(commentOverlay);
 
-
-    console.log(commentOverlay);
-
+    
     var closeCommentX = $("<div>");
     closeCommentX.css({
         "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
@@ -315,43 +318,43 @@ function createCommentOverlay(commentText,xPos,yPos){
         "vertical-align":"baseline",
         "line-height": "normal",
         "cursor": "pointer"
-    })
+    });
     closeCommentX.html("&times;");
     closeCommentX.click(closeCurrentNoteAndRemoveHighlight);
-
-    var deleteCommentContainer = $("<div>");
-    deleteCommentContainer.css({
-        "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
-        display:"inline",
-//        border: "2px solid black",
-        "border-left": "1px solid black",
-        padding:"3px 2px 3px 2px",
-        "background-color": "#f0f0f0",
-        "margin": "0",
-        "vertical-align":"baseline",
-        "line-height": "normal",
-        "font-size": "16px",
-        "cursor": "pointer"
-    })
-
-    var deleteComment = $("<img>");
-    deleteComment.css({
-        height: "16px",
-        "line-height": "normal",
-        border: "0",
-        margin: "0",
-        padding: "0",
-        "vertical-align": "bottom",
-        "font-size": "16px",
-    })
-    deleteComment.attr("src","data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAQCAQAAABnqj2yAAAACXBIWXMAAAsTAAALEwEAmpwYAAADGGlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjaY2BgnuDo4uTKJMDAUFBUUuQe5BgZERmlwH6egY2BmYGBgYGBITG5uMAxIMCHgYGBIS8/L5UBFTAyMHy7xsDIwMDAcFnX0cXJlYE0wJpcUFTCwMBwgIGBwSgltTiZgYHhCwMDQ3p5SUEJAwNjDAMDg0hSdkEJAwNjAQMDg0h2SJAzAwNjCwMDE09JakUJAwMDg3N+QWVRZnpGiYKhpaWlgmNKflKqQnBlcUlqbrGCZ15yflFBflFiSWoKAwMD1A4GBgYGXpf8EgX3xMw8BSMDVQYqg4jIKAUICxE+CDEESC4tKoMHJQODAIMCgwGDA0MAQyJDPcMChqMMbxjFGV0YSxlXMN5jEmMKYprAdIFZmDmSeSHzGxZLlg6WW6x6rK2s99gs2aaxfWMPZ9/NocTRxfGFM5HzApcj1xZuTe4FPFI8U3mFeCfxCfNN45fhXyygI7BD0FXwilCq0A/hXhEVkb2i4aJfxCaJG4lfkaiQlJM8JpUvLS19QqZMVl32llyfvIv8H4WtioVKekpvldeqFKiaqP5UO6jepRGqqaT5QeuA9iSdVF0rPUG9V/pHDBYY1hrFGNuayJsym740u2C+02KJ5QSrOutcmzjbQDtXe2sHY0cdJzVnJRcFV3k3BXdlD3VPXS8Tbxsfd99gvwT//ID6wIlBS4N3hVwMfRnOFCEXaRUVEV0RMzN2T9yDBLZE3aSw5IaUNak30zkyLDIzs+ZmX8xlz7PPryjYVPiuWLskq3RV2ZsK/cqSql01jLVedVPrHzbqNdU0n22VaytsP9op3VXUfbpXta+x/+5Em0mzJ/+dGj/t8AyNmf2zvs9JmHt6vvmCpYtEFrcu+bYsc/m9lSGrTq9xWbtvveWGbZtMNm/ZarJt+w6rnft3u+45uy9s/4ODOYd+Hmk/Jn58xUnrU+fOJJ/9dX7SRe1LR68kXv13fc5Nm1t379TfU75/4mHeY7En+59lvhB5efB1/lv5dxc+NH0y/fzq64Lv4T8Ffp360/rP8f9/AA0ADzT6lvFdAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAACDSURBVHjavI4xCsJQEETfBltlO8Nv9AqpPICl5/CwniJo8dFCCNo7Fn8DxnxbB4aBfczumvilRYlk9GwAOOdtMCHEwTrJ5fJOipmJJGhoyaUfmc0EXj01mIA0+yUbNGXJ/jg1BILLfeoPVNM/kQnYXYf1kiej/XZqA7H6ar94jKiq9wBVaTFDLLMAdgAAAABJRU5ErkJggg==");
-    deleteCommentContainer.append(deleteComment);
-    deleteCommentContainer.click(deleteCurrentNoteFromTrail);
-
-    commentContainer.append(commentOverlay);
     commentContainer.append(closeCommentX);
-    commentContainer.append(deleteCommentContainer);
 
+    if (editAccess) {
+        var deleteCommentContainer = $("<div>");
+        deleteCommentContainer.css({
+            "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
+            display:"inline",
+    //        border: "2px solid black",
+            "border-left": "1px solid black",
+            padding:"3px 2px 3px 2px",
+            "background-color": "#f0f0f0",
+            "margin": "0",
+            "vertical-align":"baseline",
+            "line-height": "normal",
+            "font-size": "16px",
+            "cursor": "pointer"
+        });
+
+        var deleteComment = $("<img>");
+        deleteComment.css({
+            height: "16px",
+            "line-height": "normal",
+            border: "0",
+            margin: "0",
+            padding: "0",
+            "vertical-align": "bottom",
+            "font-size": "16px",
+        })
+        deleteComment.attr("src","data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAQCAQAAABnqj2yAAAACXBIWXMAAAsTAAALEwEAmpwYAAADGGlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjaY2BgnuDo4uTKJMDAUFBUUuQe5BgZERmlwH6egY2BmYGBgYGBITG5uMAxIMCHgYGBIS8/L5UBFTAyMHy7xsDIwMDAcFnX0cXJlYE0wJpcUFTCwMBwgIGBwSgltTiZgYHhCwMDQ3p5SUEJAwNjDAMDg0hSdkEJAwNjAQMDg0h2SJAzAwNjCwMDE09JakUJAwMDg3N+QWVRZnpGiYKhpaWlgmNKflKqQnBlcUlqbrGCZ15yflFBflFiSWoKAwMD1A4GBgYGXpf8EgX3xMw8BSMDVQYqg4jIKAUICxE+CDEESC4tKoMHJQODAIMCgwGDA0MAQyJDPcMChqMMbxjFGV0YSxlXMN5jEmMKYprAdIFZmDmSeSHzGxZLlg6WW6x6rK2s99gs2aaxfWMPZ9/NocTRxfGFM5HzApcj1xZuTe4FPFI8U3mFeCfxCfNN45fhXyygI7BD0FXwilCq0A/hXhEVkb2i4aJfxCaJG4lfkaiQlJM8JpUvLS19QqZMVl32llyfvIv8H4WtioVKekpvldeqFKiaqP5UO6jepRGqqaT5QeuA9iSdVF0rPUG9V/pHDBYY1hrFGNuayJsym740u2C+02KJ5QSrOutcmzjbQDtXe2sHY0cdJzVnJRcFV3k3BXdlD3VPXS8Tbxsfd99gvwT//ID6wIlBS4N3hVwMfRnOFCEXaRUVEV0RMzN2T9yDBLZE3aSw5IaUNak30zkyLDIzs+ZmX8xlz7PPryjYVPiuWLskq3RV2ZsK/cqSql01jLVedVPrHzbqNdU0n22VaytsP9op3VXUfbpXta+x/+5Em0mzJ/+dGj/t8AyNmf2zvs9JmHt6vvmCpYtEFrcu+bYsc/m9lSGrTq9xWbtvveWGbZtMNm/ZarJt+w6rnft3u+45uy9s/4ODOYd+Hmk/Jn58xUnrU+fOJJ/9dX7SRe1LR68kXv13fc5Nm1t379TfU75/4mHeY7En+59lvhB5efB1/lv5dxc+NH0y/fzq64Lv4T8Ffp360/rP8f9/AA0ADzT6lvFdAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAACDSURBVHjavI4xCsJQEETfBltlO8Nv9AqpPICl5/CwniJo8dFCCNo7Fn8DxnxbB4aBfczumvilRYlk9GwAOOdtMCHEwTrJ5fJOipmJJGhoyaUfmc0EXj01mIA0+yUbNGXJ/jg1BILLfeoPVNM/kQnYXYf1kiej/XZqA7H6ar94jKiq9wBVaTFDLLMAdgAAAABJRU5ErkJggg==");
+        deleteCommentContainer.append(deleteComment);
+        deleteCommentContainer.click(deleteCurrentNoteFromTrail);
+
+        commentContainer.append(deleteCommentContainer);
+    }
 
     insertHTMLInIframe(commentContainer,currentSite);
 
@@ -408,6 +411,10 @@ function deleteCurrentNoteFromTrail(){
 }
 
 function deleteNoteFromTrail(noteID){
+    if (!editAccess) { // in case called from console or something
+        console.log("No access to editing this trail! No deleting notes!");
+        return;
+    }
     $.ajax({
         url: "/notes/delete",
         type: "post",
@@ -419,6 +426,10 @@ function deleteNoteFromTrail(noteID){
 }
 
 function deleteSiteFromTrail(siteIndex){
+    if (!editAccess) { // in case called from console or something
+        console.log("No access to editing this trail! No deleting sites!");
+        return;
+    }
     $.ajax({
         url: "/sites/delete",
         type: "post",

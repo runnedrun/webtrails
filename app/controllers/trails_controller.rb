@@ -1,5 +1,6 @@
 class TrailsController < ApplicationController
-  before_filter :get_user_from_wt_auth_header_or_cookie
+  before_filter :get_user_from_wt_auth_header_or_cookie, :except => :show
+  before_filter :get_user_or_set_nil, :only => :show
   after_filter :cors_set_access_control_headers
 
   def cors_set_access_control_headers
@@ -27,7 +28,8 @@ class TrailsController < ApplicationController
   end
 
   def show
-    @trail = @user.trails.where(:id => params[:id]).first
+    @editAccess = !(!@user || !@user.trails.where(:id => params[:id]).first)
+    @trail = Trail.where(:id => params[:id]).first
 
     if !@trail
       render status => 401, :html => "you do not have access to this trail"

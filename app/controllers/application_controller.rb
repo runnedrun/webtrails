@@ -23,8 +23,14 @@ class ApplicationController < ActionController::Base
 
 
   def get_user_from_wt_auth_header_or_cookie
-    @user = nil
+    get_user_or_set_nil
+    if !@user
+      render_incorrect_token
+    end
+  end
 
+  def get_user_or_set_nil
+    @user = nil
     puts "looking in header for token"
     wt_auth_token = request.headers["WT_AUTH_TOKEN"]
     if wt_auth_token
@@ -44,10 +50,7 @@ class ApplicationController < ActionController::Base
         puts("token not found")
       end
     end
-
-    if !@user
-      render_incorrect_token
-    end
   end
+
 
 end

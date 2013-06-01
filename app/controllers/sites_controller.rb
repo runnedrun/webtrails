@@ -76,7 +76,7 @@ class SitesController < ApplicationController
   end
 
   def async_site_load
-    site = get_site_if_owned_by_user(params[:site_id])
+    site = Site.find(params[:site_id])
 
     notes = []
     site.notes.each_with_index do |note, i|
@@ -90,7 +90,7 @@ class SitesController < ApplicationController
   end
 
   def show
-    site = get_site_if_owned_by_user(params[:id])
+    site = Site.find(params[:id])
 
     if site.archive_location.nil?
       render :template => 'trails/loading'
