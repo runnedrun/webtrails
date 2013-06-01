@@ -206,7 +206,7 @@ function scrollToAndHighlightNote(noteID){
         var scrollPosition = offsets.top - windowHeight/2;
         $(contWindow).scrollTop(scrollPosition);
 
-        var commentDisplay = showComment(currentNote.comment,offsets.left,offsets.top);
+        var commentDisplay = createCommentOverlay(currentNote.comment,offsets.left,offsets.top);
         currentCommentBox = commentDisplay;
         currentNoteIndex = siteHash[getCurrentSiteID()]["noteIDs"].indexOf(String(noteID));
     }
@@ -253,12 +253,6 @@ function clickJumpToNote(e){
     scrollToAndHighlightNote(noteID);
 }
 
-function showComment(note,xPos,yPos){
-    if (note && (typeof note) == "string" && note != ""){
-        return createCommentOverlay(note,xPos,yPos);
-    }
-}
-
 function createCommentOverlay(commentText,xPos,yPos){
     var spacing = 25;
     var overlayMaxWidth = 400;
@@ -287,28 +281,23 @@ function createCommentOverlay(commentText,xPos,yPos){
     });
     commentContainer.addClass("commentOverlay");
 
-
     var commentOverlay = $("<div>");
     commentOverlay.html(commentText);
     commentOverlay.css({
         "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
         "background": "white",
         "max-width": overlayMaxWidth,
-        display:"inline",
-        padding:"0px 2px 0px 2px",
+        "display":"inline",
+        "padding":"0px 2px 0px 2px",
         "font-size":"13px",
     });
-    commentContainer.append(commentOverlay);
-
     
     var closeCommentX = $("<div>");
     closeCommentX.css({
         "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
-        display:"inline",
-//        border: "2px solid black",
-        "border-left": "1px solid black",
+        "display":"inline",
         "border-right": "none",
-        padding:"3px 2px 3px 2px",
+        "padding":"3px 2px 3px 2px",
         "background-color": "#f0f0f0",
         "font-size": "16px",
         "margin": "0",
@@ -318,6 +307,11 @@ function createCommentOverlay(commentText,xPos,yPos){
     });
     closeCommentX.html("&times;");
     closeCommentX.click(closeCurrentNoteAndRemoveHighlight);
+
+    if (commentText && (typeof commentText == "string") && commentText != "") {
+        commentContainer.append(commentOverlay);
+        closeCommentX.css({"border-left": "1px solid black"});
+    }
     commentContainer.append(closeCommentX);
 
     if (editAccess) {
