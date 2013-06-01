@@ -4,7 +4,7 @@ domain_name = "localhost";
 
 
 var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","toolbar_ui.js","ajax_fns.js","smart_grab.js","autoresize.js",
-    "jquery_elipsis.js","search_and_highlight.js","inline_save_button_fns.js","ui_fns.js","commenting_fns.js",
+    "jquery_elipsis.js","search_and_highlight.js","css_property_defaults.js","inline_save_button_fns.js","ui_fns.js","commenting_fns.js",
     "whereJSisWrittenLocalChrome.js"];
 
 chrome.browserAction.onClicked.addListener(function(tab) {

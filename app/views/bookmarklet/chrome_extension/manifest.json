@@ -23,5 +23,6 @@
         ,"chrome_extension_js/ajax_fns.js","chrome_extension_js/smart_grab.js","chrome_extension_js/jquery_elipsis.js",
         "chrome_extension_js/search_and_highlight.js","chrome_extension_js/autoresize.js", "chrome_extension_js/ui_fns.js",
         "chrome_extension_js/commenting_fns.js", "chrome_extension_js/inline_save_button_fns.js","chrome_extension_js/rangy-core.js",
-        "chrome_extension_js/jquery191.js","chrome_extension_js/page_preprocessing.js","chrome_extension_js/jquery_url_parser.js"]
+        "chrome_extension_js/jquery191.js","chrome_extension_js/page_preprocessing.js","chrome_extension_js/jquery_url_parser.js",
+        "chrome_extension_js/css_property_defaults.js"]
 }

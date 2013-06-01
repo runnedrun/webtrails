@@ -3,6 +3,7 @@ console.log('toolbar ui loaded');
 function initMyBookmarklet() {
     var displayHeight = "25px";
     trailDisplay = wt_$(document.createElement("div"));
+    applyDefaultCSS(trailDisplay);
     trailDisplay.addClass("webtrails");
     trailDisplay.css({
         "height":displayHeight,
@@ -26,6 +27,7 @@ function initMyBookmarklet() {
     trailDisplay.disableSelection();
 
     settingsButton = wt_$(document.createElement("img"));
+    applyDefaultCSS(settingsButton);
     settingsButton.attr('src', webTrailsUrl + "/images/power.png");
     settingsButton.addClass("webtrails");
     settingsButton.css({
@@ -36,6 +38,7 @@ function initMyBookmarklet() {
     });
 
     settingsButtonWrapper = wt_$("<div>")
+    applyDefaultCSS(settingsButtonWrapper);
     settingsButtonWrapper.append(settingsButton)
     settingsButtonWrapper.css({
         margin: "0",
@@ -51,6 +54,7 @@ function initMyBookmarklet() {
     settingsButtonWrapper.addClass("wt_settingsButton");
 
     noteDisplayWrapper = wt_$(document.createElement("div"));
+    applyDefaultCSS(noteDisplayWrapper);
     noteDisplayWrapper.css({
         "height":"18px",
         "width": "40%",
@@ -69,6 +73,7 @@ function initMyBookmarklet() {
     noteDisplayWrapper.addClass("noteDisplayWrapper").addClass("webtrails");;
 
     previousNoteDisplay = wt_$(document.createElement("div"));
+    applyDefaultCSS(previousNoteDisplay);
     previousNoteDisplay.css({
         "margin-left": "5px",
         "font-size": "12px",
@@ -80,6 +85,7 @@ function initMyBookmarklet() {
 
 
     var linkToTrailWrapper = wt_$(document.createElement("div"));
+    applyDefaultCSS(linkToTrailWrapper);
     linkToTrailWrapper.css({
         "height":"100%",
         "display": "inline-block",
@@ -89,6 +95,7 @@ function initMyBookmarklet() {
     linkToTrailWrapper.addClass("webtrails");
 
     var linkToTrail = wt_$(document.createElement("a"));
+    applyDefaultCSS(linkToTrail);
     linkToTrail.css({
         "margin-left": "5px",
         "margin-right": "5px",
@@ -103,6 +110,7 @@ function initMyBookmarklet() {
 //    linkToTrail.attr("target", "_blank");
 
     trailSelect = wt_$(document.createElement("select"));
+    applyDefaultCSS(trailSelect);
     trailSelect.css({
         "float": "left",
         "margin-left": "5px",
@@ -123,6 +131,7 @@ function initMyBookmarklet() {
 //    wt_$(linkToTrail).attr('href', "#");
 
     deleteNoteButton = wt_$(document.createElement("button"));
+    applyDefaultCSS(deleteNoteButton);
     deleteNoteButton.css({
         "font-size": "12px",
         "color": "#aaa",
@@ -143,6 +152,7 @@ function initMyBookmarklet() {
     deleteNoteButton.addClass("deleteNote").addClass("webtrails");
 
     saveSiteToTrailButton = wt_$(document.createElement("button"));
+    applyDefaultCSS(saveSiteToTrailButton);
     saveSiteToTrailButton.css({
         "font-size": "12px",
         "color": "#333",
@@ -161,6 +171,7 @@ function initMyBookmarklet() {
     saveSiteToTrailButton.html("Save site");
 
     var shareTrailField = wt_$(document.createElement("input"));
+    applyDefaultCSS(shareTrailField);
     shareTrailField.css({
         "font-size": "12px",
         "color": "#333",
@@ -185,6 +196,7 @@ function initMyBookmarklet() {
     shareTrailField.attr("value", "Share Trail");
 
     faviconHolder = wt_$(document.createElement("div"));
+    applyDefaultCSS(faviconHolder);
     faviconHolder.css({
         "font-size": "12px",
         "color": "#333",
@@ -204,6 +216,7 @@ function initMyBookmarklet() {
     faviconHolder.attr("id", "faviconHolder");
 
     loggedOutMessage = wt_$("<div>");
+    applyDefaultCSS(loggedOutMessage);
     loggedOutMessage.html("Hit the power button on the right to sign in using Google -------->")
     loggedOutMessage.css({
         "margin-right": "auto",
@@ -237,6 +250,9 @@ function initMyBookmarklet() {
     });
 
     trailDisplay.append(saveSiteToTrailButton);
+    saveSiteToTrailButton.css({
+        "text-align":"center"
+    });
     saveSiteToTrailButton.click(function(){saveSiteToTrail(setSiteID)});
 
     trailDisplay.append(trailSelect);
