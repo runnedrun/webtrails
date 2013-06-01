@@ -65,6 +65,9 @@ class TrailsController < ApplicationController
 
     trail = @user.trails.where(:id => params[:trail_id]).first if current_trail_id
 
+    trails = {}
+    @user.trails.each { |trail| trails[trail.id] = trail.name }
+
 
     # if the trail_id was empty, or not owned by the user, send by the users latest trail
     # this is so our favicon list doesn't break if something goes wrong with the extension.
@@ -77,9 +80,9 @@ class TrailsController < ApplicationController
         fav_list.push(["http://www.google.com/s2/favicons?domain=" + URI(site.url).host.to_s,site.url])
       end
       favicons_and_urls.push(["http://www.google.com/s2/favicons?domain=" + URI(params[:current_url]).host.split(".")[-2..-1].to_s,"#"])
-      render :json => {"favicons_and_urls" => favicons_and_urls, "trail_id" => trail.id}
+      render :json => {"favicons_and_urls" => favicons_and_urls, "trail_id" => trail.id, "trails" => trails}
     else
-      render :json => {"favicons_and_urls" => [], "trail_id" => ""}
+      render :json => {"favicons_and_urls" => [], "trail_id" => "", "trails" => trails}
     end
 
   end

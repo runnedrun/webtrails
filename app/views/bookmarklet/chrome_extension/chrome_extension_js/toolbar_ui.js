@@ -97,7 +97,19 @@ function initMyBookmarklet() {
     linkToTrail.addClass("webtrails");
 //    linkToTrail.attr("target", "_blank");
 
-    console.log(currentTrailID);
+    trailSelect = wt_$(document.createElement("select"));
+    trailSelect.css({
+        "float": "left",
+        "margin-left": "5px",
+        "margin-right": "0px",
+        "margin-top": "3px",
+        "margin-bottom": "0",
+        "width": "10%",
+        "height": "18px"
+    });
+    trailSelect.addClass("webtrails");
+    trailSelect.change(trailSelectChanged);
+
     wt_$(linkToTrail).html("View Trail");
     wt_$(linkToTrail).click(function(event){
         window.open(webTrailsUrl + "/trails/"+currentTrailID, "_blank")
@@ -221,6 +233,8 @@ function initMyBookmarklet() {
 
     trailDisplay.append(saveSiteToTrailButton);
     saveSiteToTrailButton.click(function(){saveSiteToTrail(setSiteID)});
+
+    trailDisplay.append(trailSelect);
 
     trailDisplay.append(linkToTrailWrapper);
     linkToTrailWrapper.append(linkToTrail);

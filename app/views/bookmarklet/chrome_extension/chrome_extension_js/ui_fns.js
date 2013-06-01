@@ -97,6 +97,30 @@ function clearFaviconHolder() {
     faviconHolder.html("");
 }
 
+function trailSelectChanged() {
+    try {
+        // console.log(currentTrailID, typeof currentTrailID, wt_$(this).val());
+        setCurrentTrailID(parseInt(wt_$(this).val()));
+        clearFaviconHolder();
+        fetchFavicons();
+    } catch(e) {
+        console.log("Uh oh. Not a number or something", wt_$(this).val())
+    }
+}
+
+function setTrailSelect(trails) {
+    trailSelect.empty();
+    wt_$.each(trails, function(id, name) {
+        var option = wt_$(document.createElement('option'));
+        option.attr('value', id);
+        option.text(name);
+        if (String(id) == String(currentTrailID)) {
+            option.attr('selected', 'selected');
+        }
+        trailSelect.append(option);
+    });
+}
+
 function showToolbarOnAllTabs(){
     chrome.runtime.sendMessage({showToolBarOnAllTabs:"now!"}, function(response) {
         console.log("toolbar showed on all tabs")
@@ -129,5 +153,4 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
     if (request.hideToolBarOnAllTabs){
         hideToolbar();
     }
-})
-
+});

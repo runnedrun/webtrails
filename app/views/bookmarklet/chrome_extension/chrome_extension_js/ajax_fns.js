@@ -84,8 +84,9 @@ function fetchFavicons(){
         },
         beforeSend: signRequestWithWtAuthToken,
         success: function(resp){
-            setCurrentTrailID(resp.trail_id)
-            addFaviconsToDisplay(resp)
+            setCurrentTrailID(resp.trail_id);
+            addFaviconsToDisplay(resp);
+            setTrailSelect(resp.trails);
         }
     });
 }

@@ -6,6 +6,7 @@ var trailDisplay,
     previousNoteDisplay,
     noteDisplayWrapper,
     currentSiteTrailID="",
+    trailSelect,
     saveSiteToTrailButton,
     deleteNoteButton,
     previousNoteID,
@@ -71,6 +72,6 @@ function isTextNode(node) {
 function setCurrentTrailID(ID){
     currentTrailID = ID;
     chrome.runtime.sendMessage({setCurrentTrailID:ID}, function(response) {
-        console.log(response)
+        console.log(response);
     });
 }
