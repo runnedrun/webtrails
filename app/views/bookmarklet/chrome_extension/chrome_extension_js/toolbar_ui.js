@@ -15,12 +15,14 @@ function initMyBookmarklet() {
         "background": "#F0F0F0",
         "color": "#333",
         "line-height": "18px",
-        "display":"none",
         "border-bottom-right-radius": "7px",
         "border-bottom-left-radius": "7px",
         "border-bottom" : "1px solid #aaa",
         "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif'
     });
+    if(!toolbarShown){
+        trailDisplay.css("display","none");
+    }
     trailDisplay.disableSelection();
 
     settingsButton = wt_$(document.createElement("img"));
@@ -297,6 +299,7 @@ function initSignedOutExperience(){
     settingsButtonWrapper.css("background-color","#FF8080")
     loggedOutMessage.show();
     wt_$(document).unbind("mousedown");
+    wt_$(".inlineSaveButton").remove();
     settingsButtonWrapper.unbind("click");
     settingsButtonWrapper.click(function(){
         signIn()
@@ -317,20 +320,6 @@ function signIn(){
     });
 }
 
-chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-    if (request.logOutAllTabs){
-        initSignedOutExperience();
-    }
-    if (request.logInAllTabs){
-        wt_auth_token = request.logInAllTabs[0]
-        var newTrailID = request.logInAllTabs[1]
-        if (currentTrailID != newTrailID){
-            faviconsFetched = false;
-            currentTrailID = newTrailID;
-        }
-        initSignedInExperience();
-    }
-})
 
 //function checkIfSignedIn(){
 //    chrome.runtime.sendMessage({isUserSignedIn:"check"}, function(response) {
