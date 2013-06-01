@@ -29,12 +29,17 @@ function initMyBookmarklet() {
     settingsButton.attr('src', webTrailsUrl + "/images/power.png");
     settingsButton.addClass("webtrails");
     settingsButton.css({
+        margin: "0",
+        padding: "0",
         "margin-top": "6px"
+
     });
 
     settingsButtonWrapper = wt_$("<div>")
     settingsButtonWrapper.append(settingsButton)
     settingsButtonWrapper.css({
+        margin: "0",
+        padding: "0",
         height: "100%",
         "float": "right",
         "padding-right": "5px",
