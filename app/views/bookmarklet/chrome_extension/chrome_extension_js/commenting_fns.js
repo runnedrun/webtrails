@@ -9,6 +9,7 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     var leftPosition = xPos > overlayWidth ? (xPos - overlayWidth) : xPos;
 
     var commentOverlay = wt_$(document.createElement("div"));
+    applyDefaultCSS(commentOverlay);
     commentOverlay.css({
         "background": "#f0f0f0",
         "color":"#333",
@@ -22,14 +23,17 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     commentOverlay.addClass("commentOverlay").addClass("webtrails");
 
     var commentDescription = wt_$(document.createElement("div"))
+//    applyDefaultCSS(commentDescription);
     commentDescription.html("Hit enter, click away or type a comment here")
     commentDescription.css({
         "padding": "2px",
         "text-align": "center",
-        "margin-top": "3px"
+        "margin-top": "3px",
+        "display": "block"
     });
 
     var commentBox = wt_$(document.createElement("textarea"));
+    applyDefaultCSS(commentBox);
     commentBox.css({
         "font-size":"12px",
         "overflow": "hidden",

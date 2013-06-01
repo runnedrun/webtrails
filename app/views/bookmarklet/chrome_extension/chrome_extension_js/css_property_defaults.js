@@ -95,7 +95,7 @@ defaultCSS = {
 "float"				        :	"none",
 "float-offset"				:	"0 0",
 "font-feature-settings"		:			"normal",
-"font-family"				:	'"Helvetica Neue",, Helvetica, Arial, sans-serif',
+"font-family"				:	'"Helvetica Neue", Helvetica, Arial, sans-serif',
 "font-kerning"				:	"auto",
 "font-language-override"	:				"normal",
 "font-size"				    :	"medium",

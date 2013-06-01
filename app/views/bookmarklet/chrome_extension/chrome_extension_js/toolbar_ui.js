@@ -78,7 +78,8 @@ function initMyBookmarklet() {
         "margin-left": "5px",
         "font-size": "12px",
         "overflow": "hidden",
-        "text-overflow": "ellipsis"
+        "text-overflow": "ellipsis",
+        "text-align": "center"
     });
     previousNoteDisplay.addClass("webtrails");
     previousNoteDisplay.html("Select text and press the save button to save notes.  Your last saved note will appear here");
@@ -110,7 +111,7 @@ function initMyBookmarklet() {
 //    linkToTrail.attr("target", "_blank");
 
     trailSelect = wt_$(document.createElement("select"));
-    applyDefaultCSS(trailSelect);
+//    applyDefaultCSS(trailSelect);
     trailSelect.css({
         "float": "left",
         "margin-left": "5px",
@@ -118,7 +119,9 @@ function initMyBookmarklet() {
         "margin-top": "3px",
         "margin-bottom": "0",
         "width": "10%",
-        "height": "18px"
+        "height": "18px",
+        "font-size": "13px",
+        "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif'
     });
     trailSelect.addClass("webtrails");
     trailSelect.change(trailSelectChanged);
@@ -137,7 +140,7 @@ function initMyBookmarklet() {
         "color": "#aaa",
         "background-color": "#f0f0f0",
         "font-weight": "bold",
-        "height":"20px",
+        "height":"18px",
         "margin-top" : "2px",
         "margin-right": "5px",
         "width": "7%",
@@ -145,7 +148,8 @@ function initMyBookmarklet() {
         "border": "1px solid #aaa",
         "border-top-right-radius": "5px",
         "border-bottom-right-radius": "5px",
-        "cursor": "default"
+        "cursor": "default",
+        "text-align": "center"
     });
 
     deleteNoteButton.html("Delete Note");

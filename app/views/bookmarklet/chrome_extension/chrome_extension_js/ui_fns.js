@@ -30,7 +30,9 @@ function hideToolbar(){
 
 function addSiteFaviconToDisplay(domain,url) {
     var faviconLink = wt_$("<a href=\""+ url+ "\" class=\"webtrails\"></a>");
+    applyDefaultCSS(faviconLink);
     var faviconImg  = wt_$("<img src='"+ domain + "' class=\"webtrails\">");
+    applyDefaultCSS(faviconImg);
     faviconLink.css({
         "vertical-align":"top",
         "padding": "0px",
@@ -112,6 +114,7 @@ function setTrailSelect(trails) {
     trailSelect.empty();
     wt_$.each(trails, function(id, name) {
         var option = wt_$(document.createElement('option'));
+        applyDefaultCSS(option),
         option.attr('value', id);
         option.text(name);
         if (String(id) == String(currentTrailID)) {

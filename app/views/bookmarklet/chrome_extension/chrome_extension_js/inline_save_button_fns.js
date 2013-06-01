@@ -107,6 +107,7 @@ function insertSaveButtonIntoNodeContent(highlightedTextRange){
 
 function insertAbsolutelyPositionedSaveButton(left,top){
     var saveSpan = wt_$("<span class='inlineSaveButton webtrails'></span>");
+    applyDefaultCSS(saveSpan);
     saveSpan.html("+Save note");
     saveSpan.addClass("inlineSaveButton");
     saveSpan.css({
