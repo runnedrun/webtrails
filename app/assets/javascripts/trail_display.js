@@ -207,9 +207,6 @@ function scrollToAndHighlightNote(noteID){
         $(contWindow).scrollTop(scrollPosition);
 
         var commentDisplay = showComment(currentNote.comment,offsets.left,offsets.top);
-        if ($("#turnOffCommentsCheckbox").is(":checked")){
-            commentDisplay.hide();
-        }
         currentCommentBox = commentDisplay;
         currentNoteIndex = siteHash[getCurrentSiteID()]["noteIDs"].indexOf(String(noteID));
     }

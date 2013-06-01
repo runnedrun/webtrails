@@ -91,29 +91,6 @@ function fetchFavicons(){
     });
 }
 
-function submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY, noteCountAtSave){
-    console.log("SETTING THE CURRENT TRAIL ID:", site_data.site_id);
-    console.log("note count:", noteCount, "note count at save:", noteCountAtSave);
-    currentSiteTrailID = site_data.site_id;
-    wt_$.ajax({
-        url: webTrailsUrl + "/notes",
-        type: "post",
-        crossDomain: true,
-        beforeSend: signRequestWithWtAuthToken,
-        data: {
-            "note[content]": content,
-            "note[comment]": comment,
-            "note[comment_location_x]": commentLocationX,
-            "note[comment_location_y]": commentLocationY,
-            "note[site_id]": currentSiteTrailID,
-            "note[scroll_x]": window.scrollX,
-            "note[scroll_y]": window.scrollY,
-            "note[client_side_id]": "client_side_id_"+ (noteCountAtSave - 1)
-        },
-        success: updateNoteDisplay
-    })
-}
-
 function deletePreviousNote(){
     noteCount--;
     wt_$.ajax({
