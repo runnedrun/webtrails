@@ -46,7 +46,8 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
         "margin": "5px",
         "outline": "none",
         "padding": "5px",
-        "border": "1px solid #666"
+        "border": "1px solid #666",
+        "background-color": "white"
     });
 
     wt_$(document.body).append(commentOverlay);
