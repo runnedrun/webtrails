@@ -30,8 +30,8 @@
               <div class="sites-display-container" id="sites-display-container-<%= i %>" data-index="<%= i %>">
                 <div class="sites-display">
                     <%- @favicon_urls[i].each_with_index do |favicon_url, i| %>
-                      <a class="site-link" href="<%= request.protocol + (request.port.blank? ? request.host : request.host_with_port) %>/trails/<%= trail.id%>#<%= i%>">
-                        <div class="site-display">
+                      <div class="site-display">
+                        <a class="site-link" href="<%= request.protocol + (request.port.blank? ? request.host : request.host_with_port) %>/trails/<%= trail.id%>#<%= i%>">
                           <img src="<%= favicon_url %>" class="siteFavicon"/>
                           <span><%= trail.sites[i].title%></span>
                           <%- trail.sites[i].notes.each_with_index do |note, i| %>
@@ -42,8 +42,8 @@
                               <% end %>
                             </div>
                           <%- end %>
-                        </div>
-                      </a>
+                        </a>
+                      </div>
                     <%- end %>
                 </div>
               </div>
