@@ -46,7 +46,8 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
         "margin": "5px",
         "outline": "none",
         "padding": "5px",
-        "border": "1px solid #666"
+        "border": "1px solid #666",
+        "background-color": "white"
     });
 
     wt_$(document.body).append(commentOverlay);
@@ -103,7 +104,6 @@ function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY
             console.log("done saving"); 
             currentSiteTrailID = site_data.site_id;
             console.log(currentSiteTrailID);
-            // submitNoteAfterSave(site_data,content,comment,commentLocationX,commentLocationY, noteCountAtSave)
             updateNoteDisplay(site_data);
         },
         {content: content, comment: comment, comment_location_x: commentLocationX, comment_location_y: commentLocationY, client_side_id: "client_side_id_"+ (noteCount - 1), scroll_x: window.scrollX, scroll_y:window.scrollY}

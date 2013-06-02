@@ -37,7 +37,9 @@
                           <%- trail.sites[i].notes.each_with_index do |note, i| %>
                             <div class="note-container">
                               <div class="note-content"><%= note.content%></div>
-                              <div class="note-comment"><%= note.comment%></div>
+                              <% if note.comment != ""%>
+                                <div class="note-comment"><%= note.comment%></div>
+                              <% end %>
                             </div>
                           <%- end %>
                         </div>
