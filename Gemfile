@@ -37,7 +37,7 @@ gem "daemons"
 gem 'rspec', :require => false
 gem "omniauth"
 gem 'omniauth-google-oauth2'
-gem 'rake'
+gem 'rake', '10.0.3'
 
 
 
