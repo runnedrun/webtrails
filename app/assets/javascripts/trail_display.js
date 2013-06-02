@@ -43,6 +43,7 @@ function loadIframes(siteID){
     $('iframe#' + siteID).load(function() {
         console.log("removing loading from site:", siteID);
         $('#loading-' + siteID).remove();
+        $('iframe#' + siteID).css('background', '');
     });
     $('iframe#' + siteID).attr("src", requestUrl + "/sites/" + siteID);
     $.ajax({

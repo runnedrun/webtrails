@@ -11,7 +11,7 @@
 
 <div class="siteDisplayDiv">
   <%- @sites.each_with_index do |site,i| %>
-    <iframe id=<%= site.id %> class="siteDisplay notCurrent"></iframe>
+    <iframe id=<%= site.id %> class="siteDisplay notCurrent" style="background:url('/images/pacman.gif') no-repeat center;"></iframe>
   <%- end %>
 </div>
 
