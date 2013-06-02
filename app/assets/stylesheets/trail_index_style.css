@@ -80,7 +80,6 @@
 .note-comment {
     background-color: white;
     color: black;
-    margin-bottom: 5px;
     max-height: 45px;
     overflow:hidden;
     border: 2px solid black;
