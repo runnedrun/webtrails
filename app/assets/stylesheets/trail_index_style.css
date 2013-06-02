@@ -56,6 +56,14 @@
     background-color:#ddd;
 }
 
+.site-display:nth-child(2) {
+    margin-left:15px;
+}
+
+.site-display:last-child {
+    margin-right:15px;
+}
+
 .note-container {
     color: #333;
     max-height: 360px;
