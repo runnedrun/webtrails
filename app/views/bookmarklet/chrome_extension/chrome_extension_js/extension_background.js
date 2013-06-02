@@ -11,13 +11,32 @@ chrome.browserAction.onClicked.addListener(function(tab) {
   chrome.tabs.executeScript(tab.id, {code:"showOrHidePathDisplay()"});
 });
 
+chrome.tabs.onReplaced.addListener(function(addedTabId, removedTabId) {
+    chrome.tabs.get(addedTabId,function(tab){
+        injectToolbarAndCheckForSignInOrOutEvents(tab);
+    })
+});
+
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
     if (changeInfo.status == 'complete') {
-        console.log("checking for page loaded");
-        chrome.tabs.executeScript(tabId, {"code":"chrome.runtime.sendMessage({ loaded: [typeof(contentScriptLoaded), "+tabId+",'"+tab.url+"']});"})
+        injectToolbarAndCheckForSignInOrOutEvents(tab);
     }
 })
 
+function injectToolbarAndCheckForSignInOrOutEvents(tab){
+    setAuthTokenFromCookieIfNecessary();
+    console.log("tabid", tab.id);
+    var callbackURL = 'http://www.google.com/robots.txt';
+    var domain_re = RegExp("(.|^)"+domain_name+"$")
+    if (domain_re.exec(wt_$.url(tab.url).attr("host"))){
+        //stuff that only happens on our own domain goes here
+        if (getWtAuthToken()){
+            getWtAuthTokenCookie(signOutIfSignedOutOfWebpage);
+        }
+    }else if (tab.url != callbackURL){
+        chrome.tabs.executeScript(tab.id, {"code":"chrome.runtime.sendMessage({ loaded: [typeof(contentScriptLoaded), "+tab.id+",'"+tab.url+"']});"})
+    }
+}
 
 function injectScripts(tabId){
     var wt_auth_token = getWtAuthToken();
@@ -62,8 +81,6 @@ googleAuth = new OAuth2('google', {
     client_secret: client_secret,
     api_scope:'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email'
 });
-console.log(OAuth2())
-console.log(client_secret,"client secret");
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
@@ -95,14 +112,9 @@ chrome.runtime.onMessage.addListener(
         }
         console.log(request);
         if (request.loaded && (request.loaded[0] !== "string")){
-            console.log("injecting script");
             var tabId = request.loaded[1];
             var tabUrl = request.loaded[2];
-            var callbackURL = 'http://www.google.com/robots.txt';
-            var domain_re = RegExp("(.|^)"+domain_name+"$")
-            if ((tabUrl != callbackURL) && !domain_re.exec(wt_$.url(tabUrl).attr("host"))){
-                injectScripts(tabId);
-            }
+            injectScripts(tabId);
         }
     })
 
@@ -116,17 +128,8 @@ function logInOrCreateUser(callback){
             "expires_on": googleAuth.get("expiresIn") + googleAuth.get("accessTokenDate")
         },
         success: function(resp){
-            wt_auth_token = resp.wt_authentication_token;
-            localStorage["wt_auth_token"] = wt_auth_token;
-            var date = new Date();
-            var secondsSinceEpoch = date.getTime()/1000;
-            chrome.cookies.set({
-                url: domain,
-                name: "wt_auth_token",
-                expirationDate: secondsSinceEpoch + 315360000,
-                value: wt_auth_token
-            })
-            sendSignInMessageToAllTabs();
+            var wt_auth_token = resp.wt_authentication_token;
+            signIn(wt_auth_token)
             callback(resp)
         },
         error: function(error){
@@ -137,14 +140,90 @@ function logInOrCreateUser(callback){
 
 function signOut(){
     localStorage.removeItem("wt_auth_token");
+    removeWtAuthTokenCookie();
+    sendSignOutMessageToAllTabs();
+}
+
+function signIn(wt_auth_token){
+    localStorage["wt_auth_token"] = wt_auth_token;
+    setWtAuthTokenCookie(wt_auth_token);
+    sendSignInMessageToAllTabs();
+}
+
+function signOutIfSignedOutOfWebpage(cookie){
+    if (!cookie){
+        signOut();
+    }
+}
+
+function setAuthTokenFromCookieIfNecessary(){
+    if (!getWtAuthToken()){
+        getWtAuthTokenCookie(setAuthTokenFromCookie)
+    }
+}
+
+function setAuthTokenFromCookie(cookie){
+    if(cookie){
+        var auth_token = cookie.value;
+        if(auth_token){
+            signIn(auth_token);
+        }
+    }
+}
+
+function getWtAuthTokenCookie(callback){
+    return chrome.cookies.get({
+        url:domain,
+        name: "wt_auth_token"
+    },callback)
+}
+
+function getSignedOutCookie(callback){
+    return chrome.cookies.get({
+        url:domain,
+        name: "wt_signed_out"
+    },callback)
+}
+
+function setWtAuthTokenCookie(auth_token){
+    var date = new Date();
+    var secondsSinceEpoch = date.getTime()/1000;
+    chrome.cookies.set({
+        url: domain,
+        name: "wt_auth_token",
+        expirationDate: secondsSinceEpoch + 315360000,
+        value: auth_token
+    })
+}
+function setWtSignedOutCookie(auth_token){
+    var date = new Date();
+    var secondsSinceEpoch = date.getTime()/1000;
+    chrome.cookies.set({
+        url: domain,
+        name: "wt_signed_out",
+        expirationDate: secondsSinceEpoch + 315360000,
+        value: "signed_out"
+    })
+}
+
+function removeWtAuthTokenCookie(auth_token){
     chrome.cookies.remove({
         url:domain,
         name: "wt_auth_token"
     },function(){
         console.log("cookie removed!")
     })
-    sendSignOutMessageToAllTabs();
 }
+
+function removeSignedOutCookie(){
+    chrome.cookies.remove({
+        url:domain,
+        name: "wt_signed_out"
+    },function(){
+        console.log("cookie removed!")
+    })
+}
+
 function getWtAuthToken(){
     return localStorage["wt_auth_token"];
 }
@@ -165,7 +244,6 @@ function addToolbarDisplayStateToLocalStorage(state){
 }
 
 function sendSignOutMessageToAllTabs(){
-    console.log("sending sign out message to all toolbars!")
     chrome.tabs.getAllInWindow(null, function(tabs) {
         wt_$.each(tabs, function() {
             chrome.tabs.sendRequest(this.id, {"logOutAllTabs":"logitout!"});
@@ -174,7 +252,6 @@ function sendSignOutMessageToAllTabs(){
 }
 
 function sendSignInMessageToAllTabs(){
-    console.log("sending sign in message to all toolbars!")
     chrome.tabs.getAllInWindow(null, function(tabs) {
         wt_$.each(tabs, function() {
             chrome.tabs.sendRequest(this.id, {"logInAllTabs":[getWtAuthToken(),getCurrentTrailID()]});

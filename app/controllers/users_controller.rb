@@ -1,7 +1,17 @@
 class UsersController < ApplicationController
+  before_filter :get_user_from_wt_auth_header_or_cookie_or_return_401, :only => :sign_out
 
   def new
-    @user = User.new()
+  end
+
+  def sign_out
+    puts "signing out"
+    @user.sign_out
+    #cookies.permanent[:wt_signed_out] = "signed_out"
+    cookies.delete :wt_auth_token
+    puts request.format
+    redirect_to "/"
+    #render :text => "oeoeooeooe"
   end
 
   def login_or_create_gmail_user
@@ -23,8 +33,12 @@ class UsersController < ApplicationController
     end
   end
 
-  def login_via_oauth2
-
+  def oauth2_callback
+    puts "calling back now"
+    user = User.find_or_create_from_omniauth_hash(request.env["omniauth.auth"])
+    cookies.permanent[:wt_auth_token] = user.wt_authentication_token
+    #cookies.delete :wt_signed_out
+    redirect_to :controller => "trails", :action => "index"
   end
 
 end

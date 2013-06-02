@@ -1,5 +1,5 @@
 class TrailsController < ApplicationController
-  before_filter :get_user_from_wt_auth_header_or_cookie, :except => :show
+  before_filter :get_user_from_wt_auth_header_or_cookie_or_return_401, :except => [:show]
   before_filter :get_user_or_set_nil, :only => :show
   after_filter :cors_set_access_control_headers
 
@@ -49,6 +49,7 @@ class TrailsController < ApplicationController
 
   def index
     @trails = @user.trails.sort_by(&:created_at)
+    puts @user.email
     @favicon_urls = @trails.map do |trail|
       trail.sites = trail.sites.sort_by(&:created_at)
       trail.sites.map do |site|
@@ -61,7 +62,6 @@ class TrailsController < ApplicationController
   end
 
   def site_list
-
     current_trail_id = params[:trail_id]
     trail = nil
 

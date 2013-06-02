@@ -22,10 +22,14 @@ class ApplicationController < ActionController::Base
   end
 
 
-  def get_user_from_wt_auth_header_or_cookie
+  def get_user_from_wt_auth_header_or_cookie_or_return_401
     get_user_or_set_nil
     if !@user
-      render_incorrect_token
+      if request.format == "text/html"
+        redirect_to :controller => :users, :action => :new
+      else
+        render_incorrect_token
+      end
     end
   end
 
@@ -44,6 +48,7 @@ class ApplicationController < ActionController::Base
     if request.host == ENV["SAME_DOMAIN"] and !@user
       puts "looking in cookie for token"
       wt_auth_token = request.cookies["wt_auth_token"]
+      puts wt_auth_token
       if wt_auth_token
         @user = User.find_by_wt_auth_token(wt_auth_token)
       else

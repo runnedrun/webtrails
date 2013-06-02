@@ -28,13 +28,14 @@ gem "thin"
 gem 'jquery-rails'
 gem "rb-readline"
 gem 'faker'
-gem 'devise'
+#gem 'devise'
 gem 'hpricot'
 gem 'nokogiri'
 gem "delayed_job_active_record"
 gem "thin"
 gem "daemons"
 gem 'rspec', :require => false
+gem "omniauth"
 gem 'omniauth-google-oauth2'
 gem 'rake'
 

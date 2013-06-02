@@ -1,4 +1,5 @@
 Rails.application.config.middleware.use OmniAuth::Builder do
+  #http://www.google.com/robots.txt
   puts "starting up omniauth"
   puts ENV["GOOGLE_KEY"]
   puts ENV["GOOGLE_SECRET"]

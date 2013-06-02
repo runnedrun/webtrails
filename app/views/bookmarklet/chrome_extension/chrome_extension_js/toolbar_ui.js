@@ -19,7 +19,8 @@ function initMyBookmarklet() {
         "border-bottom-right-radius": "7px",
         "border-bottom-left-radius": "7px",
         "border-bottom" : "1px solid #aaa",
-        "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif'
+        "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
+        "left" : "0"
     });
     if(!toolbarShown){
         trailDisplay.css("display","none");

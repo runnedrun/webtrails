@@ -98,7 +98,6 @@ OAuth2.prototype.openAuthorizationCodePopup = function(callback) {
   window['oauth-callback'] = callback;
 
   // Create a new tab with the OAuth 2.0 prompt
-  console.log(this.adapter.authorizationCodeURL(this.getConfig()));
   chrome.tabs.create({url: this.adapter.authorizationCodeURL(this.getConfig())},
   function(tab) {
     // 1. user grants permission for the application to access the OAuth 2.0
@@ -135,7 +134,6 @@ OAuth2.prototype.getAccessAndRefreshTokens = function(authorizationCode, callbac
   });
 
   var method = that.adapter.accessTokenMethod();
-  console.log(that.getConfig());
   var items = that.adapter.accessTokenParams(authorizationCode, that.getConfig());
   var key = null;
   if (method == 'POST') {
@@ -172,7 +170,6 @@ OAuth2.prototype.refreshAccessToken = function(refreshToken, callback) {
   xhr.onreadystatechange = function(event) {
     if (xhr.readyState == 4) {
       if(xhr.status == 200) {
-        console.log(xhr.responseText);
         // Parse response with JSON
         var obj = JSON.parse(xhr.responseText);
         // Callback with the tokens
@@ -220,7 +217,6 @@ OAuth2.prototype.finishAuth = function() {
 
   try {
     authorizationCode = that.adapter.parseAuthorizationCode(window.location.href);
-    console.log(authorizationCode);
   } catch (e) {
     console.error(e);
     callback(e);
@@ -410,7 +406,6 @@ OAuth2.lookupAdapterName = function(url) {
  *                            Note: does not callback if grant popup required
  */
 
-console.log("making the prototype");
 
 OAuth2.prototype.authorize = function(callback) {
   console.log("authorizing");
