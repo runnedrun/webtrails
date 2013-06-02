@@ -13,6 +13,9 @@
   <%- @sites.each_with_index do |site,i| %>
     <iframe id=<%= site.id %> class="siteDisplay notCurrent" style="background:url('/images/pacman.gif') no-repeat center;"></iframe>
   <%- end %>
+  <% if @sites.empty?%>
+    <h2> No sites added to this trail. Get to trailing some websites with the Chrome Extension before you can come here to view them!</h2>
+   <% end %>
 </div>
 
 <div class="noteLists">
