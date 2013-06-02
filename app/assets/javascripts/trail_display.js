@@ -40,6 +40,11 @@ $(function(){
 });
 
 function loadIframes(siteID){
+    $('iframe#' + siteID).load(function() {
+        console.log("removing loading from site:", siteID);
+        $('#loading-' + siteID).remove();
+    });
+    $('iframe#' + siteID).attr("src", requestUrl + "/sites/" + siteID);
     $.ajax({
         url: "/async_site_load",
         type: "get",
@@ -52,14 +57,11 @@ function loadIframes(siteID){
 
 function makeIframes(){
     var currentSiteID = siteIDs[currentSiteIndex];
-    $('#' + currentSiteID).attr("src", requestUrl + "/sites/" + currentSiteID)
     loadIframes(currentSiteID);
     //site IDS defined in the html
     $.each(siteIDs,function (i,siteID){
         if (siteID != currentSiteID) {
-            $('#' + siteID).attr("src", requestUrl + "/sites/" + siteID)
             loadIframes(siteID);
-
         }
     });
 }
@@ -70,13 +72,14 @@ function wrapHTMLInIframe(html,iframe){
     siteBody.wrapInner(html);
 }
 
-function insertHTMLInIframe(html,iframe){
-    var siteDoc = iframe[0].contentWindow.document;
+function insertHTMLInIframe(html,$iframe){
+    var siteDoc = $iframe[0].contentWindow.document;
     var siteBody = $('body', siteDoc);
     siteBody.append(html);
 }
 
 function readySite(data){
+    console.log("readying site:", data.site_id);
     var noteIDs=[];
     $.each(data.notes, function(i,note){
         noteIDs.push(String(note.note_id));

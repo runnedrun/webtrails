@@ -67,14 +67,30 @@
 
 }
 
+.faviconContainer {
+    display: inline-block;
+    position:relative;
+    left:0;
+    top:0;
+}
+
 .faviconImage {
     height: 15px;
     width:15px;
+    position: relative;
+    left: 0;
+    right: 0;
 }
 
-.activeFavicon{
+.activeFavicon {
     width:20px;
     height:20px;
+}
+
+.faviconLoading {
+    position: absolute;
+    left: 0;
+    top: 6px;
 }
 
 .siteFaviconsHolder{
