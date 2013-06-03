@@ -5,9 +5,7 @@ var currentNoteIndex=-1;
 var presentationMode = false;
 var siteHash = {};
 var currentCommentBox;
-console.log("js loaded, more or less")
 $(function(){
-    console.log("page loaded running the javascript code")
     // We should have the siteIDs set from the server page.
     // If we don't we probably shouldn't run this code on that page.
     if (typeof siteIDs == "undefined") {
@@ -92,6 +90,9 @@ function readySite(data){
     })
     var siteAttributes = {"noteIDs": noteIDs, "title" : data.title, "url" : data.url};
     siteHash[data.site_id]=siteAttributes;
+    if (data.site_id == getCurrentSiteID()){
+        updateNoteCount();
+    }
 }
 
 function nextSite(){
@@ -204,6 +205,10 @@ function switchToSite(siteID){
     scroll_favicon_carousel(currentSiteIndex);
     $('#goToSite').attr("href", $('.activeFavicon').attr("data-site-url"));
     window.location.hash = "#" + currentSiteIndex;
+    if(siteHash[getCurrentSiteID()]){
+        //only run if sites notes have been loaded
+        updateNoteCount();
+    }
 }
 
 function getNoteIDsForCurrentSite(){
@@ -255,7 +260,6 @@ function scrollToAndHighlightNote(noteID){
     console.log('scrolling to note', noteID);
     var contWindow = iframeContentWindow();
     currentNote = Notes[noteID];
-    console.log(currentNote);
     removeHighlight($(contWindow.document.body));
     removeCurrentComment();
     if(currentNote){
@@ -278,6 +282,7 @@ function scrollToAndHighlightNote(noteID){
         var commentDisplay = createCommentOverlay(currentNote.comment,offsets.left,offsets.top);
         currentCommentBox = commentDisplay;
         currentNoteIndex = siteHash[getCurrentSiteID()]["noteIDs"].indexOf(String(noteID));
+        updateNoteCount();
     }
 }
 
@@ -300,8 +305,10 @@ function expandOrCloseNoteList(){
     var currentNoteList = $(".noteList#site"+currentSiteID);
     if (currentNoteList.hasClass("open")){
         closeNoteList();
+        $('#showNoteList').text("Show Note List");
     }else{
         openNoteList(currentNoteList);
+        $('#showNoteList').text("Hide Note List");
     }
 }
 
@@ -314,6 +321,18 @@ function closeNoteList(){
 function openNoteList(noteList){
     noteList.slideDown(200);
     noteList.addClass("open");
+}
+
+function updateNoteCount(){
+    var noteIds = getNoteIDsForCurrentSite();
+    var numberOfNotes = noteIds.length;
+    if (numberOfNotes > 0){
+        var currentNote = currentNoteIndex + 1;
+        $(".note-count").html(currentNote+"/"+numberOfNotes);
+    }else{
+        $(".note-count").html("no notes for this site");
+    }
+
 }
 
 function clickJumpToNote(e){

@@ -1,5 +1,10 @@
 $(function() {
   $("#trail-create-button").click(makeTrail);
+    $("#trail-name").keypress(function(e) {
+        if(e.which == 13) {
+            makeTrail()
+        }
+    })
   setupTrailScrolling();
 });
 

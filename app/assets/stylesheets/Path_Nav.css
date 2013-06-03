@@ -120,34 +120,41 @@
     margin: auto;
 }
 
+#showNoteList {
+    width: 20%;
+    /*position: fixed;
+    z-index: 100;
+    bottom:5px;
+    right:0px;*/
+    float: right;
+    margin-top:3px;
+}
 
 .noteLists {
     position: fixed;
     z-index: 100;
     right:0;
-    bottom:25px;
-    width: 250px;
-    background-color: #2E2E1F;
-    opacity: .9;
+    bottom:37px;
+    width: 20%;
+    background-color: #f0f0f0;
 }
 
 .noteList {
-    border: #c2c2c2 solid 2px;
+    border: #aaa solid 1px;
     display: none;
-    margin-bottom:10px;
 }
 
 .noteContent {
     max-height: 28px;
     line-height: 14px;
     font-size: 12px;
-    color: white;
+    color: #333;
     overflow: hidden;
     margin: 4px
 }
 
 .noteWrapper {
-    border-bottom: 2px solid #c2c2c2;
+    border-bottom: 1px solid #ccc;
 }
 
 iframe {
@@ -189,3 +196,8 @@ iframe.shrunk {
     top: 0px;
     left: 0px;
 }
+
+.note-count {
+    padding: 0px 10px 0px 10px
+}
+

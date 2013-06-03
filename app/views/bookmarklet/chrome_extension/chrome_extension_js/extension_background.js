@@ -33,6 +33,7 @@ function injectToolbarAndCheckForSignInOrOutEvents(tab){
         //stuff that only happens on our own domain goes here
         if (getWtAuthToken()){
             getWtAuthTokenCookie(signOutIfSignedOutOfWebpage);
+            checkForNewTrail();
         }
     }else if (tab.url != callbackURL){
         chrome.tabs.executeScript(tab.id, {"code":"chrome.runtime.sendMessage({ loaded: [typeof(contentScriptLoaded), "+tab.id+",'"+tab.url+"']});"})
@@ -62,7 +63,7 @@ function injectScripts(tabId){
 
 function createContentScript(index_of_script, contentScriptString,tabId){
     if (index_of_script >= scriptsToBeInjected.length){
-        console.log(contentScriptString);
+//        console.log(contentScriptString);
         chrome.tabs.executeScript(tabId,{code:contentScriptString});
         return false;
     }
@@ -218,6 +219,36 @@ function clearCurrentTrailID(){
     localStorage.removeItem("current_trail_ID");
 }
 
+function checkForNewTrail(){
+    chrome.cookies.get({
+        url:domain,
+        name: "wt_new_trail"
+    },getNewTrailFromCookie)
+}
+function removeNewTrailCookie(){
+    chrome.cookies.remove({
+        url:domain,
+        name: "wt_new_trail"
+    })
+}
+
+function getNewTrailFromCookie(cookie){
+    if (cookie){
+        console.log("got cookie");
+        var unencodedCookieString = decodeURIComponent(cookie.value);
+        var unencodedCookieArray =unencodedCookieString.split(",");
+        var trailId = unencodedCookieArray[0];
+        var trailName = unencodedCookieArray[1]
+        removeNewTrailCookie();
+        addNewTrailOnAllTabs(trailId,trailName);
+    }
+}
+function addNewTrailOnAllTabs(trailId,trailName){
+    var trail_obj = {};
+    trail_obj[trailId] = trailName;
+    console.log(trail_obj);
+    sendMessageToAllTabs({addNewTrail:trail_obj});
+}
 
 function getToolBarDisplayState(){
     return localStorage["wt_toolbar_display_state"]
@@ -232,34 +263,27 @@ function addToolbarDisplayStateToLocalStorage(state){
 }
 
 function sendSignOutMessageToAllTabs(){
-    chrome.tabs.getAllInWindow(null, function(tabs) {
-        wt_$.each(tabs, function() {
-            chrome.tabs.sendRequest(this.id, {"logOutAllTabs":"logitout!"});
-        });
-    });
+    sendMessageToAllTabs({"logOutAllTabs":"logitout!"});
 }
 
 function sendSignInMessageToAllTabs(){
-    chrome.tabs.getAllInWindow(null, function(tabs) {
-        wt_$.each(tabs, function() {
-            chrome.tabs.sendRequest(this.id, {"logInAllTabs":[getWtAuthToken(),getCurrentTrailID()]});
-        });
-    });
+    sendMessageToAllTabs({"logInAllTabs":[getWtAuthToken(),getCurrentTrailID()]})
 }
 
 function showToolbarOnAllTabs(){
-    chrome.tabs.getAllInWindow(null, function(tabs) {
-        wt_$.each(tabs, function() {
-            chrome.tabs.sendRequest(this.id, {"showToolBarOnAllTabs":"do it!"});
-        });
-    });
+    sendMessageToAllTabs({"showToolBarOnAllTabs":"do it!"})
 }
 
 function hideToolbarOnAllTabs(){
-    chrome.tabs.getAllInWindow(null, function(tabs) {
-        wt_$.each(tabs, function() {
-            chrome.tabs.sendRequest(this.id, {"hideToolBarOnAllTabs":"do it!"});
-        });
-    });
+    sendMessageToAllTabs({"hideToolBarOnAllTabs":"do it!"})
 }
 
+function sendMessageToAllTabs(message){
+    chrome.windows.getAll({populate:true}, function(windows){
+        wt_$.each(windows,function(index,window){
+            wt_$.each(window.tabs, function() {
+                chrome.tabs.sendRequest(this.id, message);
+            });
+        })
+    } )
+}
