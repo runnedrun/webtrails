@@ -5,7 +5,9 @@ var currentNoteIndex=-1;
 var presentationMode = false;
 var siteHash = {};
 var currentCommentBox;
+console.log("js loaded, more or less")
 $(function(){
+    console.log("page loaded running the javascript code")
     // We should have the siteIDs set from the server page.
     // If we don't we probably shouldn't run this code on that page.
     if (typeof siteIDs == "undefined") {
@@ -57,6 +59,7 @@ function loadIframes(siteID){
 }
 
 function makeIframes(){
+    console.log("making iframes")
     var currentSiteID = siteIDs[currentSiteIndex];
     loadIframes(currentSiteID);
     //site IDS defined in the html
