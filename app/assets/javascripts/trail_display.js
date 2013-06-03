@@ -35,6 +35,7 @@ $(function(){
     } else {
         $("#removeSite").remove();
     }
+    $('#showAllSitesButton').click(showAllSites);
     $("#showNoteList").click(expandOrCloseNoteList);
     $(".noteWrapper").click(clickJumpToNote);
     $(".faviconImage").click(clickJumpToSite);
@@ -112,7 +113,65 @@ function previousSite(){
 }
 
 function showAllSites(){
-    $(".siteFavicon").css("whitespace","");
+    console.log("currently showing all sites:", $('iframe').hasClass('shrunk'));
+    if ($('iframe').hasClass('shrunk')) {
+        removeShrinkFromIframes();
+        switchToSite(getCurrentSiteID());
+    } else {
+        shrinkIframes();
+    }
+}
+
+function removeShrinkFromIframes() {
+    console.log("unshrink");
+    $('iframe').removeClass('shrunk').css({
+        "left":"0px",
+        "top":"0px",
+        "-moz-transform": "scale(1, 1)",
+        "-webkit-transform": "scale(1, 1)",
+        "-o-transform": "scale(1, 1)",
+        "-ms-transform": "scale(1, 1)",
+        "transform": "scale(1, 1)"
+    });
+    $('.siteClickDiv').remove();
+}
+
+function shrinkIframes() {
+    console.log("shrink");
+    var percentPerIframe = .23;
+    $('iframe').css({
+        "-moz-transform": "scale(" + percentPerIframe + ", " + percentPerIframe + ")",
+        "-webkit-transform": "scale(" + percentPerIframe + ", " + percentPerIframe + ")",
+        "-o-transform": "scale(" + percentPerIframe + ", " + percentPerIframe + ")",
+        "-ms-transform": "scale(" + percentPerIframe + ", " + percentPerIframe + ")",
+        "transform": "scale(" + percentPerIframe + ", " + percentPerIframe + ")"
+    });
+    var iframesPerRow = 4;
+    var marginOffset = (1 - iframesPerRow * percentPerIframe)/(2 * iframesPerRow);
+    // console.log("offset:", marginOffset);
+    $('iframe').addClass('shrunk').each(function(index, iframe) {
+        var row = Math.floor(index/iframesPerRow);
+        var col = index - row * iframesPerRow;
+        var leftProp = (1 + 2 * col) * marginOffset + col * percentPerIframe;
+        var topProp = (1 + 2 * row) * marginOffset + row * percentPerIframe;
+        // console.log(index, "left:", (leftProp * 100) + "%", "top:", (topProp * 100) + "%")
+        $(iframe).css({left: (leftProp * 100) + "%" , top: (topProp * 100) + "%"});
+
+        var $clickdiv = $(document.createElement('div'));
+        $clickdiv.addClass('siteClickDiv');
+        $clickdiv.css({left: (leftProp * 100) + "%" , 
+            top: (topProp * 100) + "%", 
+            width: (percentPerIframe * 100) + "%",
+            height: (percentPerIframe * 100) + "%"});
+        $clickdiv.click(function(e){
+            e.preventDefault();
+            console.log("iframe click div clicked");
+            removeShrinkFromIframes();
+            switchToSite($(iframe).attr("data-site-id"));
+        })
+        $('#siteClickDivs').append($clickdiv);
+    });
+    $('iframe').removeClass('notCurrent');
 }
 
 // scrolls the favicon carousel to the appropriate place for the active favicon
@@ -130,10 +189,13 @@ function clickJumpToSite(e){
 
 function switchToSite(siteID){
     closeNoteList();
-    currentSite.addClass("notCurrent").removeClass("currentSite");
+    if ($('#' + siteID).hasClass('shrunk')) {
+        removeShrinkFromIframes();
+    }
+    $('iframe').addClass("notCurrent").removeClass("currentSite");
     console.log("switching to siteID", siteID);
     currentSite = $("#"+String(siteID));
-    console.log(currentSite);
+    // console.log(currentSite);
     currentSite.removeClass("notCurrent").addClass("currentSite");
     higlightCurrentSiteFavicon(siteID);
 

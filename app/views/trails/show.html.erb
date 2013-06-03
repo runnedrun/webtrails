@@ -11,12 +11,13 @@
 
 <div class="siteDisplayDiv">
   <%- @sites.each_with_index do |site,i| %>
-    <iframe id=<%= site.id %> class="siteDisplay notCurrent" style="background:url('/images/pacman.gif') no-repeat center;"></iframe>
+    <iframe id=<%= site.id %> data-site-id="<%= site.id %>" class="siteDisplay notCurrent"></iframe>
   <%- end %>
   <% if @sites.empty?%>
     <h2> No sites added to this trail. Get to trailing some websites with the Chrome Extension before you can come here to view them!</h2>
    <% end %>
 </div>
+<div id="siteClickDivs"></div>
 
 <div class="noteLists">
   <%- @site_note_hash.each do |site_id, note_contents_and_id| %>
