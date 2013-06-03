@@ -95,7 +95,7 @@ function fetchFavicons(){
 function deletePreviousNote(){
     noteCount--;
     wt_$.ajax({
-        url: "http://localhost:3000/notes/delete",
+        url: webTrailsUrl + "/notes/delete",
         type: "post",
         crossDomain: true,
         beforeSend: signRequestWithWtAuthToken,
