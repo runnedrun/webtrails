@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
                             uid: omniauth_hash["uid"],
                             provider: "google",
                             auth_token: omniauth_hash["credentials"]["token"],
-                            expires_on: omniauth_hash["credentials"]["expires_at"],
+                            expires_on: Time.at(omniauth_hash["credentials"]["expires_at"]),
         )
       end
       if !user.wt_authentication_token
