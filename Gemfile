@@ -6,12 +6,10 @@ gem 'rails', '3.1.1'
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
 group :production, :staging do
-  gem 'rb-readline', '~> 0.4.2'
 end
 
 
 group :development, :testing do
-  gem "rb-readline"
 end
 
 
@@ -24,6 +22,7 @@ group :assets do
 end
 
 gem "pg", "0.11.0"
+gem 'rb-readline', '~> 0.4.2'
 gem "thin"
 gem 'jquery-rails'
 gem 'faker'
