@@ -153,6 +153,10 @@
 iframe {
     border: 0px;
 }
+
+.note-count {
+    padding: 0px 10px 0px 10px
+}
 /*iframe {
     -moz-transform: scale(0.25, 0.25); 
     -webkit-transform: scale(0.25, 0.25); 
