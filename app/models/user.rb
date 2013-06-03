@@ -31,16 +31,12 @@ class User < ActiveRecord::Base
       user = User.where(:uid => omniauth_hash["uid"]).first
       unless user
         puts "creating new user"
-        puts omniauth_hash
-        puts omniauth_hash["email"]
-        puts "indifferent access?"
-        puts omniauth_hash[:email]
-        user = User.create!(name: omniauth_hash["given_name"],
-                            email: omniauth_hash["email"],
+        user = User.create!(name: omniauth_hash["info"]["first_name"],
+                            email: omniauth_hash["info"]["email"],
                             uid: omniauth_hash["uid"],
                             provider: "google",
-                            auth_token: omniauth_hash["token"],
-                            expires_on: omniauth_hash["expires_at"],
+                            auth_token: omniauth_hash["credentials"]["token"],
+                            expires_on: omniauth_hash["credentials"]["expires_at"],
         )
       end
       if !user.wt_authentication_token
