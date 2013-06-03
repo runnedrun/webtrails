@@ -34,5 +34,6 @@ Webtrails::Application.configure do
 
   ENV["AJAX_BASE"] = "http://localhost:3000"
   ENV["SAME_DOMAIN"] = 'localhost'
+  ENV["DATABASE_URL"] = "postgres://proto1:throwaway@localhost/proto1_development"
 
 end
