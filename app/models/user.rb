@@ -32,6 +32,9 @@ class User < ActiveRecord::Base
       unless user
         puts "creating new user"
         puts omniauth_hash
+        puts omniauth_hash["email"]
+        puts "indifferent access?"
+        puts omniauth_hash[:email]
         user = User.create!(name: omniauth_hash["given_name"],
                             email: omniauth_hash["email"],
                             uid: omniauth_hash["uid"],
