@@ -5,7 +5,7 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   puts ENV["GOOGLE_SECRET"]
   provider :google_oauth2, ENV["GOOGLE_KEY"], ENV["GOOGLE_SECRET"],
            {
-               :scope => "userinfo.email,userinfo.profile,plus.me",
+               :scope => "userinfo.email,userinfo.profile",
                :approval_prompt => "auto"
            }
 end
