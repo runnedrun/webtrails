@@ -117,7 +117,7 @@ class RemoteDocument
     @contents.xpath('//a[@href]').each do |tag|
       begin
         tag[:target] = "_blank"
-        tag[:href] = @uri.scheme.to_s + "://" + @uri.host.to_s + tag[:href].to_s if !(URI(tag[:href]).scheme)
+        tag[:href] = url_for(tag[:href])
       rescue
         $stderr.puts("something broke while trying to make links open in a new tab")
       end
