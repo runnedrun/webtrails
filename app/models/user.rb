@@ -31,7 +31,7 @@ class User < ActiveRecord::Base
       user = User.where(:uid => omniauth_hash["uid"]).first
       unless user
         puts "creating new user"
-        $stderr.puts omniauth_hash["email"]
+        puts omniauth_hash
         user = User.create!(name: omniauth_hash["given_name"],
                             email: omniauth_hash["email"],
                             uid: omniauth_hash["uid"],
