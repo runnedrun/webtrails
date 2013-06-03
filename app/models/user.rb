@@ -62,7 +62,6 @@ class User < ActiveRecord::Base
                            provider: "google",
                            auth_token: access_token,
                            expires_on: expires_on,
-                           password: Devise.friendly_token[0,20]
         )
       end
       if !user.wt_authentication_token

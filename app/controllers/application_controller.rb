@@ -44,7 +44,7 @@ class ApplicationController < ActionController::Base
       puts "token not found in header"
       #render :status => 401, :json => ["please authenticate your request with a valid token"]
     end
-
+    puts request.host
     if request.host == ENV["SAME_DOMAIN"] and !@user
       puts "looking in cookie for token"
       wt_auth_token = request.cookies["wt_auth_token"]

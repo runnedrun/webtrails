@@ -1,6 +1,7 @@
-domain = "http://localhost:3000";
-domain_name = "localhost";
-//domain_name = "webtrails.co";
+//domain = "http://localhost:3000";
+domain = "http://www.webtrails.co";
+//domain_name = "localhost";
+domain_name = "webtrails.co";
 
 
 var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","toolbar_ui.js","ajax_fns.js","smart_grab.js","autoresize.js",
