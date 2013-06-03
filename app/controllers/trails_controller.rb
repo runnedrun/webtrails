@@ -23,8 +23,21 @@ class TrailsController < ApplicationController
   end
 
   def create
-    trail = Trail.create(:owner => @user, :name => params[:name])
-    render :json => {:message => "trail created"}, :status => 200
+    begin
+      puts "creating trail"
+      trail = Trail.create(:owner => @user, :name => params[:name])
+      puts "setting cookie"
+      current_trails_cookie = @user.trails.inject("") do |string,trail|
+        trail.name + "," + trail.id + ";"
+      end
+      puts "cookie = " + current_trails_cookie
+      cookies.permanent[:wt_current_trails] = current_trails_cookie
+      puts "cookie set"
+      render :json => {:message => "trail created"}, :status => 200
+    rescue
+      puts $!.message
+      render_server_error_ajax
+    end
   end
 
   def show
