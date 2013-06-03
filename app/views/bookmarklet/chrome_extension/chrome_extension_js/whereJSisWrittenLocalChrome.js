@@ -16,12 +16,8 @@ var trailDisplay,
     loggedIn = false;
     faviconsFetched = false;
     contentScriptLoaded = "loaded";
-<<<<<<< HEAD
 //    webTrailsUrl = "http://localhost:3000";
-=======
-    // webTrailsUrl = "http://localhost:3000";
->>>>>>> 0962b052537a4e89267079ed77866ff5302ac288
-    webTrailsUrl = "http://webtrails.co";
+    webTrailsUrl = "http://www.webtrails.co";
 
 
 

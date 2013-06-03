@@ -46,6 +46,7 @@ function injectScripts(tabId){
     var auth_injection_string = "wt_auth_token=undefined;\n";
     var trail_id_injection_string = "currentTrailID='';\n";
     var tool_bar_state_injection_string = "toolbarShown=false;\n"
+    var power_button_url = 'powerButtonUrl="' + chrome.extension.getURL('/chrome_extension_images/power.png') + '";\n';
     if(wt_auth_token){
         auth_injection_string = "wt_auth_token='"+wt_auth_token + "';\n";
         if (current_trail_id){
@@ -55,13 +56,13 @@ function injectScripts(tabId){
     if (toolbar_display_state == "shown"){
         tool_bar_state_injection_string = "toolbarShown=true;\n"
     }
-    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string
+    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string+power_button_url
     createContentScript(0,starting_injection_string,tabId);
 }
 
 function createContentScript(index_of_script, contentScriptString,tabId){
     if (index_of_script >= scriptsToBeInjected.length){
-//        console.log(contentScriptString);
+        console.log(contentScriptString);
         chrome.tabs.executeScript(tabId,{code:contentScriptString});
         return false;
     }
@@ -140,13 +141,14 @@ function logInOrCreateUser(callback){
 }
 
 function signOut(){
-    localStorage.removeItem("wt_auth_token");
+    clearWtAuthToken();
+    clearCurrentTrailID();
     removeWtAuthTokenCookie();
     sendSignOutMessageToAllTabs();
 }
 
 function signIn(wt_auth_token){
-    localStorage["wt_auth_token"] = wt_auth_token;
+    setWtAuthToken(wt_auth_token);
     setWtAuthTokenCookie(wt_auth_token);
     sendSignInMessageToAllTabs();
 }
@@ -179,13 +181,6 @@ function getWtAuthTokenCookie(callback){
     },callback)
 }
 
-function getSignedOutCookie(callback){
-    return chrome.cookies.get({
-        url:domain,
-        name: "wt_signed_out"
-    },callback)
-}
-
 function setWtAuthTokenCookie(auth_token){
     var date = new Date();
     var secondsSinceEpoch = date.getTime()/1000;
@@ -194,16 +189,6 @@ function setWtAuthTokenCookie(auth_token){
         name: "wt_auth_token",
         expirationDate: secondsSinceEpoch + 315360000,
         value: auth_token
-    })
-}
-function setWtSignedOutCookie(auth_token){
-    var date = new Date();
-    var secondsSinceEpoch = date.getTime()/1000;
-    chrome.cookies.set({
-        url: domain,
-        name: "wt_signed_out",
-        expirationDate: secondsSinceEpoch + 315360000,
-        value: "signed_out"
     })
 }
 
@@ -216,21 +201,23 @@ function removeWtAuthTokenCookie(auth_token){
     })
 }
 
-function removeSignedOutCookie(){
-    chrome.cookies.remove({
-        url:domain,
-        name: "wt_signed_out"
-    },function(){
-        console.log("cookie removed!")
-    })
-}
-
 function getWtAuthToken(){
     return localStorage["wt_auth_token"];
 }
+function setWtAuthToken(wt_auth_token){
+    localStorage["wt_auth_token"] = wt_auth_token;
+}
+function clearWtAuthToken(){
+    localStorage.removeItem("wt_auth_token");
+}
+
 function getCurrentTrailID(){
     return localStorage["current_trail_ID"];
 }
+function clearCurrentTrailID(){
+    localStorage.removeItem("current_trail_ID");
+}
+
 
 function getToolBarDisplayState(){
     return localStorage["wt_toolbar_display_state"]

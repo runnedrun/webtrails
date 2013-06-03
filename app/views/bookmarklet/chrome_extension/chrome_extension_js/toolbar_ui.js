@@ -29,7 +29,7 @@ function initMyBookmarklet() {
 
     settingsButton = wt_$(document.createElement("img"));
     applyDefaultCSS(settingsButton);
-    settingsButton.attr('src', webTrailsUrl + "/images/power.png");
+    settingsButton.attr('src', powerButtonUrl);
     settingsButton.addClass("webtrails");
     settingsButton.css({
         margin: "0",
