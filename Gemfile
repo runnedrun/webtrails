@@ -10,9 +10,9 @@ group :production, :staging do
 end
 
 
-#group :development, :testing do
-#  gem 'sqlite3'
-#end
+group :development, :testing do
+  gem "rb-readline"
+end
 
 
 # Gems used only for assets and not required
@@ -26,7 +26,6 @@ end
 gem "pg", "0.11.0"
 gem "thin"
 gem 'jquery-rails'
-gem "rb-readline"
 gem 'faker'
 #gem 'devise'
 gem 'hpricot'
