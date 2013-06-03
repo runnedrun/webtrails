@@ -111,8 +111,11 @@ function trailSelectChanged() {
     }
 }
 
-function setTrailSelect(trails) {
-    trailSelect.empty();
+function setTrailSelect(trails, adding) {
+    console.log(adding,!adding);
+    if (!adding){
+        trailSelect.empty();
+    }
     wt_$.each(trails, function(id, name) {
         var option = wt_$(document.createElement('option'));
         applyDefaultCSS(option),
@@ -121,7 +124,10 @@ function setTrailSelect(trails) {
         if (String(id) == String(currentTrailID)) {
             option.attr('selected', 'selected');
         }
+        console.log
         trailSelect.append(option);
+
+//            trailSelect.prepend(option);
     });
 }
 
@@ -156,5 +162,9 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
     }
     if (request.hideToolBarOnAllTabs){
         hideToolbar();
+    }
+    if (request.addNewTrail){
+        console.log(request.addNewTrail);
+        setTrailSelect(request.addNewTrail,true);
     }
 });
