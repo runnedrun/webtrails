@@ -1,5 +1,5 @@
 class SitesController < ApplicationController
-  before_filter :get_user_from_wt_auth_header_or_cookie_or_return_401
+  before_filter :get_user_from_wt_auth_header_or_cookie_or_return_401, :except => [:show, :async_site_load]
   after_filter :cors_set_access_control_headers
 
   def cors_set_access_control_headers
