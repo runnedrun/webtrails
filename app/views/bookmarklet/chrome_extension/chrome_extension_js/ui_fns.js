@@ -14,10 +14,12 @@ function showOrHidePathDisplay(){
 function showToolbar(){
     trailDisplay.show();
     toolbarShown = true
-    if (mouseDown == 0) { // if the mouse is not pressed (not highlighting)
-        highlightedTextDetect(); // check to see if they highlighted anything for the addnote button
-    } else { // mouse is down, must be highlighting
-        possibleHighlightStart(); // get that highlight start event so when done highlighting, addnote appears
+    if (loggedIn) {
+        if (mouseDown == 0) { // if the mouse is not pressed (not highlighting)
+            highlightedTextDetect(); // check to see if they highlighted anything for the addnote button
+        } else { // mouse is down, must be highlighting
+            possibleHighlightStart(); // get that highlight start event so when done highlighting, addnote appears
+        }
     }
 }
 

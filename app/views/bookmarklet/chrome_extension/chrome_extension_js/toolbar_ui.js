@@ -20,7 +20,8 @@ function initMyBookmarklet() {
         "border-bottom-left-radius": "7px",
         "border-bottom" : "1px solid #aaa",
         "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
-        "left" : "0"
+        "left" : "0",
+        "text-align":"center"
     });
     if(!toolbarShown){
         trailDisplay.css("display","none");
@@ -34,7 +35,8 @@ function initMyBookmarklet() {
     settingsButton.css({
         margin: "0",
         padding: "0",
-        "margin-top": "6px"
+        "margin-top": "6px",
+        "cursor": "pointer"
 
     });
 
@@ -222,14 +224,14 @@ function initMyBookmarklet() {
 
     loggedOutMessage = wt_$("<div>");
     applyDefaultCSS(loggedOutMessage);
-    loggedOutMessage.html("Hit the power button on the right to sign in using Google -------->")
+    loggedOutMessage.html("Hit the power button on the right to sign in using Google")
     loggedOutMessage.css({
         "margin-right": "auto",
         "margin-left": "auto",
         "height": "100%",
         "width": "40%",
         "padding-top": "5px",
-        "font-size": "16px"
+        "font-size": "16px",
     });
     loggedOutMessage.addClass("loggedOutMessage");
 

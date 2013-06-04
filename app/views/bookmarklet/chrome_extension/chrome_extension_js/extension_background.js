@@ -1,7 +1,7 @@
-domain = "http://localhost:3000";
-domain_name = "localhost";
-//domain = "http://www.webtrails.co";
-//domain_name = "webtrails.co";
+//domain = "http://localhost:3000";
+//domain_name = "localhost";
+domain = "http://www.webtrails.co";
+domain_name = "webtrails.co";
 
 
 var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","toolbar_ui.js","ajax_fns.js","smart_grab.js","autoresize.js",
@@ -26,16 +26,18 @@ chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
 
 function injectToolbarAndCheckForSignInOrOutEvents(tab){
     setAuthTokenFromCookieIfNecessary();
-    console.log("tabid", tab.id);
     var callbackURL = 'http://www.google.com/robots.txt';
     var domain_re = RegExp("(.|^)"+domain_name+"$")
+    console.log(tab.url);
+    var beginningOfQuery = tab.url.indexOf("?")
+    var justUrl = tab.url.slice(0,beginningOfQuery);
     if (domain_re.exec(wt_$.url(tab.url).attr("host"))){
         //stuff that only happens on our own domain goes here
         if (getWtAuthToken()){
             getWtAuthTokenCookie(signOutIfSignedOutOfWebpage);
             checkForNewTrail();
         }
-    }else if (tab.url != callbackURL){
+    }else if (justUrl != callbackURL){
         chrome.tabs.executeScript(tab.id, {"code":"chrome.runtime.sendMessage({ loaded: [typeof(contentScriptLoaded), "+tab.id+",'"+tab.url+"']});"})
     }
 }
@@ -198,7 +200,7 @@ function removeWtAuthTokenCookie(auth_token){
         url:domain,
         name: "wt_auth_token"
     },function(){
-        console.log("cookie removed!")
+        console.log("auth token cookie removed!")
     })
 }
 
