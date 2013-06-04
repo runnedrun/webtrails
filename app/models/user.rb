@@ -43,9 +43,7 @@ class User < ActiveRecord::Base
         wt_auth_token = generate_wt_auth_token
         user.wt_authentication_token = wt_auth_token
       end
-      puts whitelisted
-      puts whitelisted=="bestroomintheworsthotel"
-      user.whitelisted = true if whitelisted=="bestroomintheworsthotel"
+      user.whitelisted = (whitelisted == "bestroomintheworsthotel")
       user.save!
     else
       return false

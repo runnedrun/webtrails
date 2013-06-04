@@ -6,7 +6,7 @@
     text-align: center;
 }
 
-#trails-display {
+.trails-display {
     margin-top: 25px;
 }
 
@@ -84,4 +84,8 @@
     overflow:hidden;
     border: 2px solid black;
     border-radius: 5px;
+}
+
+.removeTrailButton {
+    margin-top: 15px;
 }

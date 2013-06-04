@@ -6,6 +6,32 @@ $(function() {
         }
     })
   setupTrailScrolling();
+
+  $('.removeTrailButton').click(function(e) {
+    $(this).attr('disabled', 'disabled');
+    $(this).addClass('disabled');
+    deleteTrail($(this).attr('data-trail-id'));
+    e.preventDefault();
+    $(this).unbind();
+  });
+
+  function deleteTrail(trailID) {
+    $.ajax({
+        url: "/trails/delete",
+        type: "post",
+        data: {
+            "id" : trailID
+        },
+        success: function(){deleteTrailLocally(trailID);}
+    });
+  }
+
+  function deleteTrailLocally(trailID) {
+    $("#trail-container-" + trailID).animate({"opacity" : "0"}, 1000,
+      function(){ $("#trail-container-" + trailID).remove();}
+    );
+  }
+
 });
 
 function makeTrail(){
