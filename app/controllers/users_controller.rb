@@ -2,6 +2,7 @@ class UsersController < ApplicationController
   before_filter :get_user_from_wt_auth_header_or_cookie_or_return_401, :only => :sign_out
 
   def new
+    @whitelisted = params[:whitelisted]
   end
 
   def sign_out
@@ -34,11 +35,14 @@ class UsersController < ApplicationController
   end
 
   def oauth2_callback
-    puts "calling back now"
-    user = User.find_or_create_from_omniauth_hash(request.env["omniauth.auth"])
-    cookies.permanent[:wt_auth_token] = user.wt_authentication_token
-    #cookies.delete :wt_signed_out
-    redirect_to :controller => "trails", :action => "index"
+    whitelisted = request.env["omniauth.params"]["whitelisted"]
+    user = User.find_or_create_from_omniauth_hash(request.env["omniauth.auth"],whitelisted)
+    if user
+      cookies.permanent[:wt_auth_token] = user.wt_authentication_token
+      redirect_to :controller => "trails", :action => "index"
+    else
+      render_server_error_ajax
+    end
   end
 
 end

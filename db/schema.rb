@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130530031944) do
+ActiveRecord::Schema.define(:version => 20130604015406) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -82,6 +82,7 @@ ActiveRecord::Schema.define(:version => 20130530031944) do
     t.string   "auth_token"
     t.datetime "expires_on"
     t.string   "wt_authentication_token"
+    t.boolean  "whitelisted"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

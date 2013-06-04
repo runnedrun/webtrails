@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
   #       :omniauthable, :omniauth_providers => [:google_oauth2]
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :uid, :name, :provider, :auth_token, :expires_on
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :uid, :name, :provider, :auth_token, :expires_on, :whitelisted?
   has_and_belongs_to_many :trails
   def owned_trails
     self.trails.where(:owner_id=>self.id)
@@ -26,11 +26,11 @@ class User < ActiveRecord::Base
     end
   end
 
-  def self.find_or_create_from_omniauth_hash(omniauth_hash)
+  def self.find_or_create_from_omniauth_hash(omniauth_hash,whitelisted="bestroomintheworsthotel")
+    user = nil
     if omniauth_hash
       user = User.where(:uid => omniauth_hash["uid"]).first
-      unless user
-        puts "creating new user"
+      if !user
         user = User.create!(name: omniauth_hash["info"]["first_name"],
                             email: omniauth_hash["info"]["email"],
                             uid: omniauth_hash["uid"],
@@ -43,6 +43,9 @@ class User < ActiveRecord::Base
         wt_auth_token = generate_wt_auth_token
         user.wt_authentication_token = wt_auth_token
       end
+      puts whitelisted
+      puts whitelisted=="bestroomintheworsthotel"
+      user.whitelisted = true if whitelisted=="bestroomintheworsthotel"
       user.save!
     else
       return false

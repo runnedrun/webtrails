@@ -31,6 +31,9 @@ class ApplicationController < ActionController::Base
         render_incorrect_token
       end
     end
+    if @user and !@user.whitelisted?
+      render :template => 'users/not_whitelisted'
+    end
   end
 
   def get_user_or_set_nil
@@ -38,10 +41,8 @@ class ApplicationController < ActionController::Base
     puts "looking in header for token"
     wt_auth_token = request.headers["WT_AUTH_TOKEN"]
     if wt_auth_token
-      puts "got auth token from header"
       @user = User.find_by_wt_auth_token(wt_auth_token)
     else
-      puts "token not found in header"
       #render :status => 401, :json => ["please authenticate your request with a valid token"]
     end
 
@@ -52,7 +53,7 @@ class ApplicationController < ActionController::Base
       if wt_auth_token
         @user = User.find_by_wt_auth_token(wt_auth_token)
       else
-        puts("token not found")
+
       end
     end
   end
