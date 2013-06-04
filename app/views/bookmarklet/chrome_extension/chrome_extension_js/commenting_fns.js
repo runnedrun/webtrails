@@ -16,7 +16,8 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
         "position":"absolute",
         "border": "1px solid #ccc",
         "border-radius": "5px",
-        "font-family": "'Helvetica Neue', Helvetica, Arial, sans-serif"
+        "font-family": "'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "z-index": "2147483647"
     });
     commentOverlay.css("top", topPosition+"px");
     commentOverlay.css("left", leftPosition+"px");
