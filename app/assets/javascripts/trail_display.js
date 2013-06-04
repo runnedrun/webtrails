@@ -199,6 +199,10 @@ function clickJumpToSite(e){
 
 function switchToSite(siteID){
     closeNoteList();
+    if ($('.currentSite').length > 0) {
+        removeCurrentComment();
+        removeHighlight($(iframeContentWindow().document.body));
+    }
     if ($('#' + siteID).hasClass('shrunk')) {
         removeShrinkFromIframes();
     }
@@ -271,8 +275,8 @@ function gotoLastNoteforCurrentSite(){
 
 function scrollToAndHighlightNote(noteID){
     console.log('scrolling to note', noteID);
-    var contWindow = iframeContentWindow();
     currentNote = Notes[noteID];
+    var contWindow = iframeContentWindow();
     removeHighlight($(contWindow.document.body));
     removeCurrentComment();
     if(currentNote){
@@ -321,10 +325,8 @@ function expandOrCloseNoteList(){
     var currentNoteList = $(".noteList#site"+currentSiteID);
     if (currentNoteList.hasClass("open")){
         closeNoteList();
-        $('#showNoteList').text("Show Note List");
     }else{
         openNoteList(currentNoteList);
-        $('#showNoteList').text("Hide Note List");
     }
 }
 
@@ -332,11 +334,13 @@ function closeNoteList(){
     var allNoteLists = $(".noteList");
     allNoteLists.slideUp(200);
     allNoteLists.removeClass("open");
+    $('#showNoteList').text("Show Note List");
 }
 
 function openNoteList(noteList){
     noteList.slideDown(200);
     noteList.addClass("open");
+    $('#showNoteList').text("Hide Note List");
 }
 
 function updateNoteCount(){
@@ -657,6 +661,7 @@ function deleteSiteLocally(siteIndex) {
     $('#favicon' + siteID).remove();
 
 }
+
 
 function closeCurrentNoteAndRemoveHighlight(){
     console.log("closing and removing highlight");

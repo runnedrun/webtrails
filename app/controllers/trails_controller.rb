@@ -41,9 +41,10 @@ class TrailsController < ApplicationController
   def show
     @editAccess = !(!@user || !@user.trails.where(:id => params[:id]).first)
     @trail = Trail.where(:id => params[:id]).first
-
+    $stderr.puts "trail", @trail, !@trail
     if !@trail
-      render status => 401, :html => "you do not have access to this trail"
+      $stderr.puts "The end of that"
+      return render(:status => 404, :json => {:error => "No trail here."})
     end
 
     @sites = @trail.sites.sort_by(&:created_at)
@@ -51,7 +52,7 @@ class TrailsController < ApplicationController
       search_name = URI(site.url).host
       urls.push(["http://www.google.com/s2/favicons?domain=" + search_name, site.id, site.title])
     end
-    @favicon_urls_with_ids_and_titles
+    $stderr.puts @favicon_urls_with_ids_and_titles
 
     @site_note_hash = {}
     @sites.each {|site| @site_note_hash[site.id] = site.notes.map {|note| [note.content,note.id] }}
