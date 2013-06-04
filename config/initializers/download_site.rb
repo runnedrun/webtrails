@@ -293,8 +293,7 @@ class RemoteDocument
     end
   end
 
-  def save_import_tags(string,dir)
-    # $stderr.puts "saving import tags"
+  def save_import_tags(string,dir, urls_already_saved=[])
     import_tag_start = string.index("@import")
     if import_tag_start
       everything_before_import_tag = string[0...import_tag_start+7]
@@ -303,10 +302,8 @@ class RemoteDocument
       url_start = everything_after_import_tag =~ /'|"/
       new_line_index = everything_after_import_tag.index("\n") + import_tag_start
       if !url_start or !new_line_index or (url_start > new_line_index)
-         $stderr.puts "if hit"
          new_string = everything_before_import_tag  + save_import_tags(everything_after_import_tag,dir)
       else
-        $stderr.puts "else hit"
         everything_after_url_start = everything_after_import_tag[(url_start+1)..-1]
         url_end = everything_after_url_start =~ /'|"/
         everything_after_url = everything_after_url_start[url_end..-1]
@@ -314,37 +311,39 @@ class RemoteDocument
         url = everything_after_url_start[0...url_end]
 
         absolute_url = relative_url_for(url,dir)
-        $stderr.puts "before dest", absolute_url, dir
         dest = localize_url(absolute_url,dir)
         new_url = url
-        if !@shallow_save
-          #s3File = download_resource(absolute_url,dest)
-          s3File = false
-          css_string = html_get_site(absolute_url)
-          if css_string
-            css_string = save_css_urls_to_s3(css_string,dir,clean_uri)
-            s3File = write_to_aws(css_string, dest)
+        if !url.in?(urls_already_saved)
+          if !@shallow_save
+            #s3File = download_resource(absolute_url,dest)
+            s3File = false
+            $stderr.puts("actually got an import tag")
+            css_string = html_get_site(absolute_url)
+            if css_string
+              urls_already_saved.push(absolute_url)
+              css_string = save_css_urls_to_s3(css_string,dir,absolute_url,urls_already_saved)
+              s3File = write_to_aws(css_string, dest)
+            end
+            if s3File
+              s3File.acl = :public_read
+              new_url = s3File.public_url().to_s
+              urls_already_saved.push(new_url)
+            end
+          else
+            new_url= generate_AWS_URL(dest)
           end
-          if s3File
-            s3File.acl = :public_read
-            $stderr.puts "public url", s3File.public_url()
-            new_url = s3File.public_url().to_s
-          end
-        else
-          $stderr.puts "dest:", dest
-          new_url= generate_AWS_URL(dest)
         end
-        new_string = everything_before_url + new_url + save_import_tags(everything_after_url,dir)
-      end
+        new_string = everything_before_url + new_url + save_import_tags(everything_after_url,dir,urls_already_saved)
+    end
       return new_string
     else
       return string
     end
   end
 
-  def save_css_urls_to_s3(css_string,dir,css_file_url)
+  def save_css_urls_to_s3(css_string,dir,css_file_url,urls_already_saved = [])
     # $stderr.puts "saving css urls to s3"
-    css_string = save_import_tags(css_string,dir)
+    css_string = save_import_tags(css_string,dir, urls_already_saved)
     # $stderr.puts "Done with import tags and back to save css"
     beginning_of_url = css_string.index("url(")
     if beginning_of_url
@@ -354,7 +353,7 @@ class RemoteDocument
         url = url_onward[0..end_of_url-1].gsub(/\s+/, "")
         url = url[1..-2] if ((url[0] == "'") or (url[0] == '"'))
         new_url = url
-        if !url.index("data:")
+        if !url.index("data:") and !url.in?(urls_already_saved)
           source = relative_url_for(url,css_file_url)
           dest = localize_url(source,dir)
           if !@shallow_save
@@ -363,7 +362,8 @@ class RemoteDocument
             data = html_get_site(source)
             if data
               if File.extname(source) == ".css"
-                data = save_css_urls_to_s3(data,dir,source)
+                urls_already_saved.push(source)
+                data = save_css_urls_to_s3(data,dir,source,urls_already_saved)
               end
               s3File = write_to_aws(data,dest)
             end
@@ -371,6 +371,7 @@ class RemoteDocument
               s3File.acl = :public_read
               # $stderr.puts "public url save css", s3File.public_url()
               new_url = s3File.public_url().to_s
+              urls_already_saved.push(new_url)
             end
           else
             # $stderr.puts "save css generate url for", dest
@@ -382,7 +383,7 @@ class RemoteDocument
         new_url = ""
       end
       first_half = css_string[0..beginning_of_url+3]
-      second_half = save_css_urls_to_s3(url_onward[end_of_url..-1],dir,css_file_url)
+      second_half = save_css_urls_to_s3(url_onward[end_of_url..-1],dir,css_file_url,urls_already_saved)
       return (first_half + new_url + second_half)
     else
       return css_string

@@ -57,7 +57,7 @@ function saveSiteToTrail(successFunction, note){
                             if (data.exists) {
                               // Our page exists, and we should correct the save site button
                               saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
-                              saveSiteToTrailButton.unbind().click(function(){window.open(webTrailsUrl + '/trails/' + currentTrailID + "#end", '_blank');});
+                              saveSiteToTrailButton.unbind().click(function(){window.open(webTrailsUrl + '/trails/' + currentTrailID + "#"+String(data.id), '_blank');});
                               saveSiteToTrailButton.css({"cursor": "pointer"});
                             } else {
                                 setTimeout(updateSiteSavedButton, 5000); // check again
