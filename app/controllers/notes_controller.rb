@@ -44,12 +44,33 @@ class NotesController < ApplicationController
       trail = site.trail
       if trail.owner != @user
         render_not_authorized
+      else
+        note.delete
+        previous_note = site.reload.notes.find(:first, :order => "created_at DESC")
+        previous_note_id = previous_note ? previous_note.id : "none"
+        previous_note_content = previous_note ? previous_note.content : "none"
+        render :json => {"id" => previous_note_id, "content" => previous_note_content}
       end
-      note.delete
-      previous_note = site.reload.notes.find(:first, :order => "created_at DESC")
-      previous_note_id = previous_note ? previous_note.id : "none"
-      previous_note_content = previous_note ? previous_note.content : "none"
-      render :json => {"id" => previous_note_id, "content" => previous_note_content}
+    rescue
+      render_server_error_ajax
+    end
+  end
+
+  def update
+    begin
+      note = Note.find(params[:id])
+      site = note.site
+      trail = site.trail
+      puts params[:comment]
+      if trail.owner != @user
+        render_not_authorized
+      else
+        puts note.comment
+        note.comment = params[:comment]
+        note.save!
+        puts note.comment
+        render :json => {"content" => note.content}
+      end
     rescue
       render_server_error_ajax
     end
