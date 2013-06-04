@@ -5,6 +5,9 @@ var currentNoteIndex=-1;
 var presentationMode = false;
 var siteHash = {};
 var currentCommentBox;
+var nextNoteActivated = true;
+var previousNoteActivated = true;
+
 $(function(){
     // We should have the siteIDs set from the server page.
     // If we don't we probably shouldn't run this code on that page.
@@ -90,7 +93,10 @@ function readySite(data){
     var siteAttributes = {"noteIDs": noteIDs, "title" : data.title, "url" : data.url};
     siteHash[data.site_id]=siteAttributes;
     if (data.site_id == getCurrentSiteID()){
+        console.log("updating note count and disabling buttons");
         updateNoteCount();
+        deactivateOrReactivateNextNoteIfNecessary();
+        deactivateOrReactivatePreviousNoteIfNecessary();
     }
 }
 
@@ -98,7 +104,6 @@ function nextSite(){
     if (currentSiteIndex < siteIDs.length-1){
         var switchingToSiteID = siteIDs[currentSiteIndex+1];
         switchToSite(switchingToSiteID);
-        currentNoteIndex = -1;
         return true;
     }
     return false;
@@ -108,8 +113,9 @@ function previousSite(){
     if (currentSiteIndex > 0){
         var switchingToSiteID = siteIDs[currentSiteIndex-1];
         switchToSite(switchingToSiteID);
-        currentNoteIndex = -1;
+        return true
     }
+    return false
 }
 
 function showAllSites(){
@@ -144,6 +150,8 @@ function switchToSite(siteID){
     window.location.hash = "#" + currentSiteIndex;
     if(siteHash[getCurrentSiteID()]){
         //only run if sites notes have been loaded
+        deactivateOrReactivateNextNoteIfNecessary();
+        deactivateOrReactivatePreviousNoteIfNecessary();
         updateNoteCount();
     }
 }
@@ -165,7 +173,9 @@ function nextNote(){
         currentNoteIndex+=1;
         scrollToAndHighlightNote(getCurrentNoteID());
     } else {
-        if(nextSite()){
+        if (currentSiteIndex < siteIDs.length-1){
+            closeCurrentNoteAndRemoveHighlight();
+            nextSite()
             if (getNumberOfNotesForCurrentSite() > 0) {
                 nextNote();
             }
@@ -178,11 +188,11 @@ function previousNote(){
         currentNoteIndex-=1;
         scrollToAndHighlightNote(getCurrentNoteID());
     } else {
-        if (currentSiteIndex > 0) {
-            previousSite();
+        closeCurrentNoteAndRemoveHighlight();
+        if (previousSite()) {
             gotoLastNoteforCurrentSite();
-        } else {
-            switchToSite(siteIDs[0]);
+        }else{
+            updateNoteCount();
         }
     }
 }
@@ -221,6 +231,9 @@ function scrollToAndHighlightNote(noteID){
         currentNoteIndex = siteHash[getCurrentSiteID()]["noteIDs"].indexOf(String(noteID));
         updateNoteCount();
     }
+//
+    deactivateOrReactivateNextNoteIfNecessary();
+    deactivateOrReactivatePreviousNoteIfNecessary();
 }
 
 function removeHighlight(node){
@@ -265,7 +278,7 @@ function updateNoteCount(){
         var currentNote = currentNoteIndex + 1;
         $(".note-count").html(currentNote+"/"+numberOfNotes);
     }else{
-        $(".note-count").html("no notes for this site");
+        $(".note-count").html("0");
     }
 
 }
@@ -452,6 +465,7 @@ function deleteSiteFromTrail(siteIndex){
         },
         success: function() {deleteSiteLocally(siteIndex);}
     });
+
 }
 
 function removeSite() {
@@ -472,14 +486,76 @@ function deleteSiteLocally(siteIndex) {
     }
     siteIDs.splice(siteIndex,1);
     iframe.remove();
+    deactivateOrReactivateNextNoteIfNecessary();
+    deactivateOrReactivatePreviousNoteIfNecessary();
     $('#favicon' + siteID).remove();
+
 }
 
 function closeCurrentNoteAndRemoveHighlight(){
+    console.log("closing and removing highlight");
     removeCurrentComment();
     removeHighlight($(iframeContentWindow().document.body));
+    if ((getCurrentSiteID() == siteIDs[0]) && (currentNoteIndex==0)){
+        currentNoteIndex = -1;
+        deactivatePreviousNoteButton();
+    }
 }
 
 function deleteCurrentNoteLocally(){
     getNoteIDsForCurrentSite().splice(currentNoteIndex,1);
+}
+
+function reactivateNextNoteButton(){
+    var nextNoteButton = $("#nextNote");
+    nextNoteButton.addClass("btn-info").css("opacity","1");
+    nextNoteButton.click(nextNote);
+    nextNoteActivated = true
+}
+
+function reactivatePreviousNoteButton(){
+    var previousNoteButton = $("#previousNote");
+    previousNoteButton.addClass("btn-info").css("opacity",1);
+    previousNoteButton.click(previousNote);
+    previousNoteActivated = true
+}
+
+function deactivateNextNoteButton(){
+    var nextNoteButton = $("#nextNote");
+    nextNoteButton.removeClass("btn-info").css("opacity",".5");
+    nextNoteButton.unbind("click",nextNote);
+    nextNoteActivated = false;
+}
+
+function deactivatePreviousNoteButton(){
+    var previousNoteButton = $("#previousNote");
+    previousNoteButton.removeClass("btn-info").css("opacity",".5");
+    previousNoteButton.unbind("click",previousNote);
+    previousNoteActivated = false;
+}
+
+function deactivateOrReactivatePreviousNoteIfNecessary(){
+    var firstSiteId = siteIDs[0];
+    console.log(firstSiteId,getCurrentSiteID());
+    console.log(getCurrentNoteID(), -1);
+    console.log(previousNoteActivated);
+    if ((getCurrentSiteID() == firstSiteId) && (currentNoteIndex==-1) && previousNoteActivated){
+        console.log("deactivating");
+        deactivatePreviousNoteButton();
+
+    } else if (!((getCurrentSiteID() == firstSiteId) && (currentNoteIndex==-1)) && !previousNoteActivated) {
+        reactivatePreviousNoteButton();
+    }
+}
+
+function deactivateOrReactivateNextNoteIfNecessary(){
+    var lastSiteId = siteIDs[siteIDs.length-1];
+    var currentNoteIDs = getNoteIDsForCurrentSite();
+    if ((getCurrentSiteID() == lastSiteId) && (currentNoteIndex==currentNoteIDs.length-1) && nextNoteActivated){
+        deactivateNextNoteButton();
+    } else if (!((getCurrentSiteID() == lastSiteId) && (currentNoteIndex==-1)) && !nextNoteActivated){
+        reactivateNextNoteButton();
+    }
+
+
 }
