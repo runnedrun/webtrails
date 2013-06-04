@@ -2,12 +2,10 @@ console.log("ui_fns loaded");
 
 function showOrHidePathDisplay(){
     if (trailDisplay.is(":hidden")){
-        console.log("show toolbar");
         showToolbar();
         showToolbarOnAllTabs();
     }
     else {
-        console.log("hide toolbar");
         hideToolbar();
         hideToolbarOnAllTabs();
     }

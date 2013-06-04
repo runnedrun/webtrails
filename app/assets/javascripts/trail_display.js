@@ -48,8 +48,8 @@ $(function(){
 
 function removeLoadingFromSite(siteID) {
     console.log("removing loading from site:", siteID);
-        $('#loading-' + siteID).remove();
-        $('iframe#' + siteID).css('background', '');
+    $('#loading-' + siteID).remove();
+    $('iframe#' + siteID).css('background-image', 'none');
 }
 
 function loadIframes(siteID){
