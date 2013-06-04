@@ -27,10 +27,9 @@ class TrailsController < ApplicationController
       puts "creating trail"
       trail = Trail.create(:owner => @user, :name => params[:name])
       puts "setting cookie"
-      puts URI::escape(trail.id.to_s + "," + trail.name)
-      #gotta use this method of cookie setting so the spaces do not get escaped improperly
-      response['set-cookie'] = 'wt_new_trail='+ URI::escape(trail.id.to_s + "," + trail.name)
-      puts "cookie set"
+      cookies['wt_new_trail_name'] = URI::escape(trail.name)
+      cookies['wt_new_trail_id'] = URI::escape(trail.id.to_s)
+      puts "cookies set"
       render :json => {:message => "trail created"}, :status => 200
     rescue
       puts $!.message

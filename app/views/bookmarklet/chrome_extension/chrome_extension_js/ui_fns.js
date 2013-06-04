@@ -120,7 +120,6 @@ function setTrailSelect(trails, adding) {
     }
     wt_$.each(trails, function(id, name) {
         var option = wt_$(document.createElement('option'));
-        applyDefaultCSS(option),
         option.attr('value', id);
         option.text(name);
         if (String(id) == String(currentTrailID)) {

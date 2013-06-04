@@ -1,7 +1,7 @@
-//domain = "http://localhost:3000";
-//domain_name = "localhost";
-domain = "http://www.webtrails.co";
-domain_name = "webtrails.co";
+domain = "http://localhost:3000";
+domain_name = "localhost";
+//domain = "http://www.webtrails.co";
+//domain_name = "webtrails.co";
 
 
 var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","toolbar_ui.js","ajax_fns.js","smart_grab.js","autoresize.js",
@@ -222,29 +222,53 @@ function clearCurrentTrailID(){
 }
 
 function checkForNewTrail(){
+    console.log("checking for new trail")
     chrome.cookies.get({
         url:domain,
-        name: "wt_new_trail"
-    },getNewTrailFromCookie)
+        name: "wt_new_trail_name"
+    },getNewTrailNameFromCookie)
 }
-function removeNewTrailCookie(){
+
+function removeNewTrailNameCookie(){
     chrome.cookies.remove({
         url:domain,
-        name: "wt_new_trail"
+        name: "wt_new_trail_name"
+    })
+}
+function removeNewTrailIDCookie(){
+    chrome.cookies.remove({
+        url:domain,
+        name: "wt_new_trail_id"
     })
 }
 
-function getNewTrailFromCookie(cookie){
+function getNewTrailNameFromCookie(cookie){
     if (cookie){
-        console.log("got cookie");
+        console.log("got trail name cookie");
         var unencodedCookieString = decodeURIComponent(cookie.value);
-        var unencodedCookieArray =unencodedCookieString.split(",");
-        var trailId = unencodedCookieArray[0];
-        var trailName = unencodedCookieArray[1]
-        removeNewTrailCookie();
+        var trailName = unencodedCookieString.replace("%20", " ");
+        removeNewTrailNameCookie();
+        getTrailIDCookie(trailName);
+    }
+}
+
+function getTrailIDCookie(trailName){
+    chrome.cookies.get({
+        url:domain,
+        name: "wt_new_trail_id"
+    },function(cookie){
+        getNewTrailIDFromCookie(cookie,trailName)
+    })
+}
+function getNewTrailIDFromCookie(cookie,trailName){
+    if (cookie){
+        console.log("got trail ID cookie");
+        var trailId = decodeURIComponent(cookie.value);
+        removeNewTrailIDCookie();
         addNewTrailOnAllTabs(trailId,trailName);
     }
 }
+
 function addNewTrailOnAllTabs(trailId,trailName){
     var trail_obj = {};
     trail_obj[trailId] = trailName;
