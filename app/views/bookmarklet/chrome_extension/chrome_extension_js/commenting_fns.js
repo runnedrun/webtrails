@@ -81,7 +81,8 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
 }
 
 function postNoteAndComment(e,content,commentOverlay,xPos,yPos){
-    if (e.keyCode == 13){
+    var code = (e.keyCode ? e.keyCode : e.which);
+    if (code == 13 && !e.shiftKey){
         closeOverlay();
         saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos);
     }
