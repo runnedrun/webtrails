@@ -688,7 +688,7 @@ function reactivatePreviousNoteButton(){
 
 function deactivateNextNoteButton(){
     var nextNoteButton = $("#nextNote");
-    nextNoteButton.removeClass("btn-info").css("opacity",".5");
+    nextNoteButton.removeClass("btn-success").css("opacity",".5");
     nextNoteButton.unbind("click",nextNote);
     nextNoteActivated = false;
 }

@@ -70,13 +70,8 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
             markNodeForHighlight(node,0,node.length);
         }
     });
-
-//    commentBox.val("Hit enter, click away or type a comment now");
-
-//    doHighlight(document,"trailHighlight",parsedNoteContent);
     highlight_wtHighlights();
     wt_$(".trailHighlight").css("background-color","yellow");
-//    makePlaceholder(commentBox);
     return commentBox;
 }
 

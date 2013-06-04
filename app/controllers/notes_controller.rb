@@ -31,7 +31,7 @@ class NotesController < ApplicationController
       end
 
       @note = Note.create!(params[:note])
-      render :json => {"content" => @note.content, "id" => @note.id}, :status => 200
+      render :json => {"note_content" => @note.content, "note_id" => @note.id}, :status => 200
     rescue
       render_server_error_ajax
     end
@@ -49,7 +49,7 @@ class NotesController < ApplicationController
         previous_note = site.reload.notes.find(:first, :order => "created_at DESC")
         previous_note_id = previous_note ? previous_note.id : "none"
         previous_note_content = previous_note ? previous_note.content : "none"
-        render :json => {"id" => previous_note_id, "content" => previous_note_content}
+        render :json => {"note_id" => previous_note_id, "note_content" => previous_note_content}
       end
     rescue
       render_server_error_ajax

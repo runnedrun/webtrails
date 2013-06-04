@@ -69,7 +69,7 @@ function moveNoteToPrevious(noteContent){
 
 function updateNoteDisplay(data){
     console.log("update note display", data)
-    if (data.id == "none") {
+    if (data.note_id == "none") {
         console.log("deleting the note text")
         moveNoteToPrevious("No more notes on this page.  Go ahead and take a few.");
         deleteNoteButton.css({
@@ -78,8 +78,8 @@ function updateNoteDisplay(data){
         });
         deleteNoteButton.attr("disabled","disabled");
     }else{
-        previousNoteID = data.id;
-        moveNoteToPrevious(data.content);
+        previousNoteID = data.note_id;
+        moveNoteToPrevious(data.note_content);
         deleteNoteButton.removeAttr("disabled");
         deleteNoteButton.css({
             "color": "#333",
