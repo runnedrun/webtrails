@@ -679,7 +679,7 @@ function deleteCurrentNoteLocally(){
 
 function reactivateNextNoteButton(){
     var nextNoteButton = $("#nextNote");
-    nextNoteButton.addClass("btn-info").css("opacity","1");
+    nextNoteButton.addClass("btn-success").css("opacity","1");
     nextNoteButton.click(nextNote);
     nextNoteActivated = true
 }
