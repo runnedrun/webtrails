@@ -27,8 +27,7 @@
 
 .sites-display-container {
     white-space: nowrap;
-    overflow-y: hidden;
-    overflow-x: scroll;
+    overflow: hidden;
 }
 
 .sites-display {

@@ -1,7 +1,7 @@
-domain = "http://localhost:3000";
-domain_name = "localhost";
-//domain = "http://www.webtrails.co";
-//domain_name = "webtrails.co";
+// domain = "http://localhost:3000";
+// domain_name = "localhost";
+domain = "http://www.webtrails.co";
+domain_name = "webtrails.co";
 
 
 var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","toolbar_ui.js","ajax_fns.js","smart_grab.js","autoresize.js",
@@ -36,6 +36,10 @@ function injectToolbarAndCheckForSignInOrOutEvents(tab){
         if (getWtAuthToken()){
             getWtAuthTokenCookie(signOutIfSignedOutOfWebpage);
             checkForNewTrail();
+        }
+        if (tab.url.indexOf('/trails') == -1) {
+            // if we are not on a /trails/:index view page, then we can still use this toolbar
+            chrome.tabs.executeScript(tab.id, {"code":"chrome.runtime.sendMessage({ loaded: [typeof(contentScriptLoaded), "+tab.id+",'"+tab.url+"']});"})
         }
     }else if (justUrl != callbackURL){
         chrome.tabs.executeScript(tab.id, {"code":"chrome.runtime.sendMessage({ loaded: [typeof(contentScriptLoaded), "+tab.id+",'"+tab.url+"']});"})
@@ -115,13 +119,13 @@ chrome.runtime.onMessage.addListener(
             addToolbarDisplayStateToLocalStorage("hidden")
             hideToolbarOnAllTabs();
         }
-        console.log(request);
         if (request.loaded && (request.loaded[0] !== "string")){
             var tabId = request.loaded[1];
             var tabUrl = request.loaded[2];
             injectScripts(tabId);
         }
-    })
+    }
+);
 
 function logInOrCreateUser(callback){
     var authToken =  googleAuth.getAccessToken();

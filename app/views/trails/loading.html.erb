@@ -15,6 +15,7 @@
         if (data.exists) {
           // Our page exists, and we should refresh to get the new hotness.
           document.location.reload(true);
+          parent.removeLoadingFromSite(id);
         }
       });
     }, 5000);
