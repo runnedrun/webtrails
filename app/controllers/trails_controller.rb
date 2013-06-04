@@ -57,19 +57,28 @@ class TrailsController < ApplicationController
     @sites.each {|site| @site_note_hash[site.id] = site.notes.map {|note| [note.content,note.id] }}
   end
 
-
-  def index
-    @trails = @user.trails.sort_by(&:created_at)
-    puts @user.email
-    @favicon_urls = @trails.map do |trail|
+  def get_favicons_for_trails(trails)
+    trails.map do |trail|
       trail.sites = trail.sites.sort_by(&:created_at)
       trail.sites.map do |site|
         search_name = URI(site.url).host
         "http://www.google.com/s2/favicons?domain=" + search_name
       end
     end
+  end
+
+  def index
+    @trails = @user.trails.sort_by(&:created_at)
+    puts @user.email
+    @favicon_urls = get_favicons_for_trails(@trails)
 
     @trails.each {|trail| trail.sites.sort_by!(&:created_at)}
+
+
+    @other_trails = (Trail.all - @trails).sample(10)
+    @other_favicon_urls = get_favicons_for_trails(@other_trails)
+
+    @other_trails.each {|trail| trail.sites.sort_by!(&:created_at)}
   end
 
   def site_list
