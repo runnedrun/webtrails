@@ -46,11 +46,15 @@ $(function(){
     switchToSite(currentSiteID);
 });
 
-function loadIframes(siteID){
-    $('iframe#' + siteID).load(function() {
-        console.log("removing loading from site:", siteID);
+function removeLoadingFromSite(siteID) {
+    console.log("removing loading from site:", siteID);
         $('#loading-' + siteID).remove();
         $('iframe#' + siteID).css('background', '');
+}
+
+function loadIframes(siteID){
+    $('iframe#' + siteID).load(function() {
+        removeLoadingFromSite(siteID);
     });
     $('iframe#' + siteID).attr("src", requestUrl + "/sites/" + siteID);
     $.ajax({
