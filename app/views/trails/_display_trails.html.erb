@@ -8,12 +8,13 @@
               <div class="row-fluid">
                 <div class = "offset4 span4 centered">
                   <a class="" href="<%= request.protocol + (request.port.blank? ? request.host : request.host_with_port) %>/trails/<%= trail.id%>">
-                    <h3><%= trail.name %></h3>
+                    <h3 id="trail-name-<%= trail.id%>"><%= trail.name %></h3>
                   </a>
                 </div>
                 <% if editAccess %>
-                  <div class="offset3 span1 centered">
-                    <button class="btn btn-danger removeTrailButton" data-trail-id="<%= trail.id %>"><i class="icon-trash"></i></button>
+                  <div class="offset2 span2 centered">
+                    <button class="btn btn-info edit-trail-button" data-trail-id="<%= trail.id %>" id="edit-trail-<%= trail.id %>"><i class="icon-pencil"></i></button>
+                    <button class="btn btn-danger remove-trail-button" data-trail-id="<%= trail.id %>"><i class="icon-trash"></i></button>
                   </div>
                 <% end %>
               </div>
