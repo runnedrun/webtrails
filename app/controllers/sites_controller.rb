@@ -76,6 +76,7 @@ class SitesController < ApplicationController
   end
 
   def async_site_load
+    $stderr.puts "Async site load " + String(params[:site_id])
     site = Site.find(params[:site_id])
 
     notes = []
