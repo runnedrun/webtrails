@@ -81,6 +81,18 @@ class TrailsController < ApplicationController
     @other_trails.each {|trail| trail.sites.sort_by!(&:created_at)}
   end
 
+  def delete
+    trail = Trail.find(params[:id])
+    if trail
+      site_owner = trail.owner
+      if site_owner != @user
+        render_not_authorized
+      end
+      trail.delete
+    end
+    render :json => {"error" => nil}, :status => 200
+  end
+
   def site_list
     current_trail_id = params[:trail_id]
     trail = nil
