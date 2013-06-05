@@ -59,6 +59,7 @@ class SitesController < ApplicationController
         render :json => {:trail_id => trail_id, :site_id => site_id}, :status => 200
       end
     rescue
+      puts $!.message
       render_server_error_ajax
     end
   end

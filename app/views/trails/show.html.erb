@@ -14,7 +14,7 @@
     <iframe id=<%= site.id %> data-site-id="<%= site.id %>" class="siteDisplay notCurrent"></iframe>
   <%- end %>
   <% if @sites.empty?%>
-    <h2> No sites added to this trail. Get to trailing some websites with the Chrome Extension before you can come here to view them!</h2>
+    <h2 class="no-trails-placeholder"> No sites added to this trail. Get to trailing some websites with the Chrome Extension before you can come here to view them!</h2>
    <% end %>
 </div>
 <div id="siteClickDivs"></div>
