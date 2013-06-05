@@ -6,6 +6,7 @@ gem 'rails', '3.1.1'
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
 group :production, :staging do
+
 end
 
 
@@ -37,6 +38,8 @@ gem "omniauth"
 gem 'omniauth-google-oauth2'
 gem 'rake', '10.0.3'
 gem 'open_uri_redirections'
+gem "workless", "~> 1.1.1"
+
 
 
 

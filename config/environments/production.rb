@@ -62,4 +62,8 @@ Webtrails::Application.configure do
 
   ENV["SAME_DOMAIN"] = 'www.webtrails.co'
 
+  config.after_initialize do
+    Delayed::Job.scaler = Delayed::Job.scaler = :heroku_cedar
+  end
+
 end

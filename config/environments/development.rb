@@ -36,4 +36,8 @@ Webtrails::Application.configure do
   ENV["SAME_DOMAIN"] = 'localhost'
   ENV["DATABASE_URL"] = "postgres://proto1:throwaway@localhost/proto1_development"
 
+  config.after_initialize do
+    Delayed::Job.scaler = Delayed::Job.scaler = :local
+  end
+
 end
