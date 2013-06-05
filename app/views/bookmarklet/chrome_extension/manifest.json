@@ -1,10 +1,10 @@
 {
     "name": "Webtrails",
-    "version": "1.0",
+    "version": "3.0",
     "manifest_version": 2,
-    "description": "The chrome extension for webtrails",
+    "description": "The chrome extension for webtrails.co",
     "browser_action": {
-        "default_icon": "icon.png"
+        "default_icon": "man.png"
     },
     "background": {
         "scripts": ["chrome_extension_js/jquery191.js","oauth2/oauth2.js","chrome_extension_js/extension_background.js","chrome_extension_js/jquery_url_parser.js"]
