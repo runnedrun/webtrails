@@ -1,7 +1,8 @@
-domain = "http://localhost:3000";
-domain_name = "localhost";
-//domain = "http://www.webtrails.co";
-//domain_name = "webtrails.co";
+//domain = "http://localhost:3000";
+//domain_name = "localhost";
+domain = "http://www.webtrails.co";
+domain_name = "webtrails.co";
+message_sending = {}
 
 
 var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","toolbar_ui.js","ajax_fns.js","smart_grab.js","autoresize.js",
@@ -19,7 +20,9 @@ chrome.tabs.onReplaced.addListener(function(addedTabId, removedTabId) {
 });
 
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
+    console.log(changeInfo);
     if (changeInfo.status == 'complete') {
+        console.log("reloaded fired")
         injectToolbarAndCheckForSignInOrOutEvents(tab);
     }
 })
@@ -39,11 +42,20 @@ function injectToolbarAndCheckForSignInOrOutEvents(tab){
         }
         if (tab.url.indexOf('/trails') == -1) {
             // if we are not on a /trails/:index view page, then we can still use this toolbar
-            chrome.tabs.executeScript(tab.id, {"code":"chrome.runtime.sendMessage({ loaded: [typeof(contentScriptLoaded), "+tab.id+",'"+tab.url+"']});"})
+            askTabForLoaded(tab);
         }
     }else if (justUrl != callbackURL){
-        chrome.tabs.executeScript(tab.id, {"code":"chrome.runtime.sendMessage({ loaded: [typeof(contentScriptLoaded), "+tab.id+",'"+tab.url+"']});"})
+        askTabForLoaded(tab);
     }
+}
+
+function askTabForLoaded(tab) {
+    if (!message_sending[tab.id]){
+        console.log("sending message")
+        message_sending[tab.id] = Date.now();
+        chrome.tabs.executeScript(tab.id, {"code":"chrome.runtime.sendMessage({ loaded: [typeof(contentScriptLoaded), "+tab.id+",'"+tab.url+"']});"});
+    }
+    cleanUpMessageSendingObject();
 }
 
 function injectScripts(tabId){
@@ -54,6 +66,7 @@ function injectScripts(tabId){
     var trail_id_injection_string = "currentTrailID='';\n";
     var tool_bar_state_injection_string = "toolbarShown=false;\n"
     var power_button_url = 'powerButtonUrl="' + chrome.extension.getURL('/chrome_extension_images/power.png') + '";\n';
+    var content_script_loaded = 'contentScriptLoaded = "loaded";'
     if(wt_auth_token){
         auth_injection_string = "wt_auth_token='"+wt_auth_token + "';\n";
         if (current_trail_id){
@@ -63,7 +76,7 @@ function injectScripts(tabId){
     if (toolbar_display_state == "shown"){
         tool_bar_state_injection_string = "toolbarShown=true;\n"
     }
-    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string+power_button_url
+    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string+power_button_url + content_script_loaded
     createContentScript(0,starting_injection_string,tabId);
 }
 
@@ -120,8 +133,12 @@ chrome.runtime.onMessage.addListener(
             hideToolbarOnAllTabs();
         }
         if (request.loaded && (request.loaded[0] !== "string")){
+            console.log(request.loaded)
             var tabId = request.loaded[1];
             var tabUrl = request.loaded[2];
+            if (message_sending[tabId]){
+                delete message_sending[tabId];
+            }
             injectScripts(tabId);
         }
     }
@@ -143,6 +160,17 @@ function logInOrCreateUser(callback){
         },
         error: function(error){
           console.log("error!",error);
+        }
+    })
+}
+
+function cleanUpMessageSendingObject(){
+    console.log("cleaning up sending message object")
+    var currentTime = Date.now();
+    wt_$(message_sending).each(function(tabId,time){
+        if (currentTime - time > 10 * 1000){
+            delete message_sending[tabId];
+            console.log("cleaned up for tabId", tabId);
         }
     })
 }
