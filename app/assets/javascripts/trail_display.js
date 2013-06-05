@@ -445,6 +445,16 @@ function createCommentOverlay(commentText,xPos,yPos){
     if (commentText && (typeof commentText == "string") && commentText != "") {
         commentContainer.append(commentOverlay);
         closeCommentContainer.css({"border-left": "1px solid black"});
+    } else {
+        closeCommentContainer.css({
+            "-webkit-border-top-left-radius": "5px",
+            "-webkit-border-bottom-left-radius": "5px",
+            "-moz-border-radius-topleft": "5px",
+            "-moz-border-radius-bottomleft": "5px",
+            "border-top-left-radius": "5px",
+            "border-bottom-left-radius": "5px",
+            "border-left":"2px solid black"
+        });
     }
 
     commentContainer.append(closeCommentContainer);
