@@ -1,7 +1,7 @@
 console.log("commenting loaded");
 
 function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
-    var overlayHeight =spacing;
+    var overlayHeight =20;
     //make this dynamic so the size of the comment box changes based on page size
     var overlayWidth = 400;
 
