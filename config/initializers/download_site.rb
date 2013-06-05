@@ -37,9 +37,23 @@ class RemoteDocument
     # $stderr.puts "mirror", @shallow_save, @dir
     @encoding = source.encoding.to_s
     @contents = Nokogiri::HTML( source, nil ,@encoding )
-    process_contents
+    begin
+      process_contents
+    rescue
+      $stderr.puts "failed while processing contents"
+      $stderr.puts $!.message
+      $stderr.puts $!.backtrace
+      raise "saving to aws failed"
+    end
     # $stderr.puts "done processing contents"
-    save_locally(dir)
+    begin
+      save_locally(dir)
+    rescue
+      $stderr.puts "failed while saving locally"
+      $stderr.puts $!.message
+      $stderr.puts $!.backtrace
+      raise "saving to aws failed"
+    end
   end
 
 
@@ -138,6 +152,7 @@ class RemoteDocument
   #=end
   def localize_url(url, dir)
     # $stderr.puts "localizing url"
+    #$stderr.puts "localizing: " + url.to_s
     path = url.gsub(/^[|[:alpha]]+:\/\//, '')
     path.gsub!(/^[.\/]+/, '')
     path.gsub!(/[^-_.\/[:alnum:]]/, '_')
@@ -151,7 +166,8 @@ class RemoteDocument
     short_path_wo_extension = short_path_wo_extension.gsub(/\/+$/,"")
     short_path_wo_extension = short_path_wo_extension.gsub(/\.\./,"")
     short_path_wo_extension = short_path_wo_extension.gsub(/\/\//,"/")
-    File.join(dir, short_path_wo_extension + extension)
+    #$stderr.puts "result= " + File.join(dir, short_path_wo_extension.to_S + extension).to_s
+    File.join(dir, short_path_wo_extension.to_s + extension.to_s)
   end
 
 
@@ -162,7 +178,7 @@ class RemoteDocument
   def url_for(str)
     # $stderr.puts "url for a href"
     if @uri.scheme
-      url_base = @uri.scheme + "://" +  @uri.host
+      url_base = @uri.scheme + "://" +  @uri.host.to_s
     elsif @uri.host
       url_base = @uri.host
     else
@@ -170,7 +186,7 @@ class RemoteDocument
     end
 
     return str if str =~ /^[|[:alpha:]]+:\/\//
-    return (@uri.scheme+"://"+ str[2..-1]) if str =~ /^\/\//
+    return (@uri.scheme.to_s+"://"+ str[2..-1]) if str =~ /^\/\//
     if str[0] != "/"
       return File.join(File.dirname(@uri.to_s),str) if @uri.path.index(".")
       return File.join(@uri.to_s,str)
@@ -182,21 +198,25 @@ class RemoteDocument
     # $stderr.puts "relative url"
     relative_dir = relative_dir.to_s
     relative_uri = URI(relative_dir)
-    if @uri.scheme
-      url_base = @uri.scheme + "://" +  @uri.host
-    elsif @uri.host
-      url_base = @uri.host
-    else
-      url_base = ""
+    if relative_uri.path.index(".")
+      relative_path = File.dirname(relative_uri.path.to_s)
     end
+    if relative_uri.scheme
+      url_base = File.join(relative_uri.scheme.to_s + "://" + relative_uri.host.to_s,relative_path.to_s)
+    elsif relative_dir =~ /^\/\//
+      url_base = File.join(@uri.scheme.to_s + "://" + relative_uri.host, relative_path.to_s)
+    else
+      url_base = File.join(@uri.scheme.to_s + "://" +  @uri.host.to_s, relative_path.to_s)
+    end
+    uri_base = URI(url_base)
+
 
     return str if str =~ /^[|[:alpha:]]+:\/\//
-    return (relative_uri.scheme+"://"+ str[2..-1]) if str =~ /^\/\//
+    return (uri_base.scheme.to_s+"://"+ str[2..-1]) if str =~ /^\/\//
     if str[0] != "/"
-      return File.join(File.dirname(relative_dir),str) if relative_uri.path.index(".")
-      return File.join(relative_dir,str)
+      return File.join(url_base.to_s,str)
     end
-    File.join(url_base, str)
+    File.join(uri_base.scheme.to_s + "://" + uri_base.host.to_s,str)
   end
 
 
@@ -207,6 +227,9 @@ class RemoteDocument
     user_agent = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:13.0) Gecko/20100101 Firefox/13.0"
     begin
       url_no_dot_dot = url.to_s.gsub(/\/\w*\/\.\.\//,"/")
+      if url_no_dot_dot.index("ui.base.css") or url_no_dot_dot.index("ui.theme.css")
+        $stderr.puts "here's the url, any 404?" + url_no_dot_dot.to_s
+      end
       resp = open(url_no_dot_dot, "User-Agent" => user_agent, :allow_redirections => :all)
       return resp.read
     rescue
@@ -243,7 +266,7 @@ class RemoteDocument
 
 # Make sure dir is localized_url'd
   def generate_AWS_URL(dir)
-    "https://s3.amazonaws.com/TrailsSitesProto/"+dir
+    "https://s3.amazonaws.com/TrailsSitesProto/"+dir.to_s
   end
 
   #=begin rdoc
@@ -301,16 +324,34 @@ class RemoteDocument
     end
   end
 
-  def save_import_tags(string,dir, urls_already_saved=[])
+  def save_import_tags(string,dir_to_save_in,containing_css_url, urls_already_saved=[])
     import_tag_start = string.index("@import")
     if import_tag_start
       everything_before_import_tag = string[0...import_tag_start+7]
       everything_after_import_tag = string[import_tag_start+7..-1]
 
       url_start = everything_after_import_tag =~ /'|"/
-      new_line_index = everything_after_import_tag.index("\n") + import_tag_start
-      if !url_start or !new_line_index or (url_start > new_line_index)
-         new_string = everything_before_import_tag  + save_import_tags(everything_after_import_tag,dir)
+      new_line_index = everything_after_import_tag.index("\n")
+      paren_index = everything_after_import_tag.index(")")
+
+      $stderr.puts "new line index=" + new_line_index.to_s
+      $stderr.puts "new line index=" + paren_index.to_s
+
+      if !new_line_index and !paren_index
+        end_line_index = 0
+      elsif !new_line_index
+        end_line_index = paren_index
+      elsif !paren_index
+        end_line_index = new_line_index
+      else
+        end_line_index = new_line_index > paren_index ? paren_index : new_line_index
+      end
+
+      $stderr.puts "end_line_index: " + end_line_index.to_s
+      $stderr.puts "url start: " + url_start.to_s
+
+      if !url_start or (url_start > end_line_index)
+         new_string = everything_before_import_tag  + save_import_tags(everything_after_import_tag,dir_to_save_in,containing_css_url,urls_already_saved)
       else
         everything_after_url_start = everything_after_import_tag[(url_start+1)..-1]
         url_end = everything_after_url_start =~ /'|"/
@@ -318,8 +359,8 @@ class RemoteDocument
         everything_before_url = everything_before_import_tag + everything_after_import_tag[0..url_start]
         url = everything_after_url_start[0...url_end]
 
-        absolute_url = relative_url_for(url,dir)
-        dest = localize_url(absolute_url,dir)
+        absolute_url = relative_url_for(url,containing_css_url)
+        dest = localize_url(absolute_url,dir_to_save_in)
         new_url = url
         if !url.in?(urls_already_saved)
           if !@shallow_save
@@ -329,7 +370,7 @@ class RemoteDocument
             css_string = html_get_site(absolute_url)
             if css_string
               urls_already_saved.push(absolute_url)
-              css_string = save_css_urls_to_s3(css_string,dir,absolute_url,urls_already_saved)
+              css_string = save_css_urls_to_s3(css_string,dir_to_save_in,absolute_url,urls_already_saved)
               s3File = write_to_aws(css_string, dest)
             end
             if s3File
@@ -341,7 +382,7 @@ class RemoteDocument
             new_url= generate_AWS_URL(dest)
           end
         end
-        new_string = everything_before_url + new_url + save_import_tags(everything_after_url,dir,urls_already_saved)
+        new_string = everything_before_url + new_url + save_import_tags(everything_after_url,dir_to_save_in,absolute_url,urls_already_saved)
     end
       return new_string
     else
@@ -351,7 +392,7 @@ class RemoteDocument
 
   def save_css_urls_to_s3(css_string,dir,css_file_url,urls_already_saved = [])
     # $stderr.puts "saving css urls to s3"
-    css_string = save_import_tags(css_string,dir, urls_already_saved)
+    css_string = save_import_tags(css_string,dir, css_file_url,urls_already_saved)
     # $stderr.puts "Done with import tags and back to save css"
     beginning_of_url = css_string.index("url(")
     if beginning_of_url

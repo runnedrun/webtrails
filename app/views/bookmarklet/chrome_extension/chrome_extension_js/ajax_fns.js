@@ -12,7 +12,7 @@ function saveSiteToTrail(successFunction, note){
     var currentHTML = getCurrentSiteHTML();
     if (siteSavedDeeply && !currentSiteTrailID) {
         console.log("saved already, but not returned yet");
-        setTimeout(function(){saveSiteToTrail(successFunction)}, 100);
+        setTimeout(function(){saveSiteToTrail(successFunction, note)}, 100);
         return;
     }
     wt_$.ajax({
