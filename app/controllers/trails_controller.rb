@@ -70,15 +70,13 @@ class TrailsController < ApplicationController
   def index
     @trails = @user.trails.sort_by(&:created_at)
     puts @user.email
-    @favicon_urls = get_favicons_for_trails(@trails)
-
     @trails.each {|trail| trail.sites.sort_by!(&:created_at)}
+    @favicon_urls = get_favicons_for_trails(@trails)
 
 
     @other_trails = (Trail.all - @trails).sample(10)
-    @other_favicon_urls = get_favicons_for_trails(@other_trails)
-
     @other_trails.each {|trail| trail.sites.sort_by!(&:created_at)}
+    @other_favicon_urls = get_favicons_for_trails(@other_trails)
   end
 
   def delete
