@@ -50,7 +50,13 @@ class RemoteDocument
     # $stderr.puts "processing contents"
     @contents.xpath('//base').each do |base|
       if base.parent.node_name == "head"
-        @uri = URI(base.attribute("href"))
+        begin
+          if base.attribute("href")
+            @uri = URI(base.attribute("href"))
+          end
+        rescue
+          $stderr.puts "bad uri in the base tag: " + base.attribute("href").to_s
+        end
       end
       if base.parent.node_name != "iframe"
         base.remove
@@ -66,10 +72,11 @@ class RemoteDocument
       iframe.set_attribute("src","")
     end
 
-    @noscript_tags = @contents.xpath( '//noscript' )
+    @noscript_tags = @contents.xpath('//noscript')
     @js_tags = @contents.xpath('//script')
-    @noscript_tags.each { |tag| tag.remove }
-    @js_tags.each { |tag| tag.remove }
+
+    @noscript_tags.remove
+    @js_tags.remove
 
     css_parsed_src  = save_css_urls_to_s3(@contents.to_html,File.join(@dir,"images"),@uri)
     @contents = Nokogiri::HTML(css_parsed_src,nil,@encoding)
@@ -199,7 +206,8 @@ class RemoteDocument
   def html_get_site(url)
     user_agent = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:13.0) Gecko/20100101 Firefox/13.0"
     begin
-      resp = open(url.to_s, "User-Agent" => user_agent)
+      url_no_dot_dot = url.to_s.gsub(/\/\w*\/\.\.\//,"/")
+      resp = open(url_no_dot_dot, "User-Agent" => user_agent, :allow_redirections => :all)
       return resp.read
     rescue
       $stderr.puts url.to_s+" returned 400 or something"

@@ -16,8 +16,8 @@ var trailDisplay,
     loggedIn = false;
     faviconsFetched = false;
     contentScriptLoaded = "loaded";
-//    webTrailsUrl = "http://localhost:3000";
-   webTrailsUrl = "http://www.webtrails.co";
+    webTrailsUrl = "http://localhost:3000";
+//   webTrailsUrl = "http://www.webtrails.co";
 
 
 
@@ -30,8 +30,9 @@ wt_$(initMyBookmarklet);
 function getCurrentSiteHTML(){
     var htmlClone = wt_$(document.getElementsByTagName('html')[0]).clone();
     removeToolbarFromPage(htmlClone); // edits in-place
+    removeAllUnusedTags(htmlClone);
     var processedHtml = createMasterStyleSheet(htmlClone[0]); //gets the element, not the jquery object
-    return processedHtml.innerHTML;
+    return processedHtml.outerHTML;
 }
 
 function verifyKeyPress(e){

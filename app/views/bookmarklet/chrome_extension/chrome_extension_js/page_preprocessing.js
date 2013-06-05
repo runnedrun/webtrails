@@ -5,6 +5,12 @@ function removeToolbarFromPage($htmlClone) {
   $htmlClone.find('.webtrails').remove();
 }
 
+function removeAllUnusedTags($htmlClone){
+    $htmlClone.find("script").remove();
+    $htmlClone.find("noscript").remove();
+    $htmlClone.find("meta").remove();
+}
+
 function createMasterStyleSheet(html){
     var newStyleSheetString = "";
     wt_$(document.styleSheets).each(function(i,stylesheet){

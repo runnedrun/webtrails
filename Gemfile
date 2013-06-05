@@ -36,6 +36,8 @@ gem 'rspec', :require => false
 gem "omniauth"
 gem 'omniauth-google-oauth2'
 gem 'rake', '10.0.3'
+gem 'open_uri_redirections'
+
 
 
 
