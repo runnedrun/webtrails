@@ -523,6 +523,9 @@ function createCommentOverlay(commentText,xPos,yPos){
     var overlayHeightString = getComputedStyleOfElementInIframe(commentContainer[0],"height");
     var overlayHeightFloat = parseFloat(overlayHeightString.slice(0,overlayHeightString.length -2));
     var topPosition  =  yPos - spacing - overlayHeightFloat;
+    if (topPosition < 0) {
+        topPosition = yPos + spacing * 2;
+    }
     var leftPosition = xPos;
 
     commentContainer.css("top", topPosition+"px");
