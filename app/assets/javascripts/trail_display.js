@@ -550,7 +550,7 @@ function editCurrentComment($commentText,$editContainer){
             saveCommentToServer($commentText,$editContainer)
             return false
         }
-    })
+    });
     commentText.focus();
 }
 function saveCommentToServer($commentText,$editContainer){
@@ -564,7 +564,7 @@ function saveCommentToServer($commentText,$editContainer){
             "comment": $commentText.html()
         },
         success: function(resp){console.log("note saved");noteUpdateCallback(resp,$commentText,$editContainer)}
-    })
+    });
 }
 
 function noteUpdateCallback(resp, $commentText,$editContainer){

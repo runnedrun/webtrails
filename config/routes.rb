@@ -64,7 +64,7 @@ Webtrails::Application.routes.draw do
   match "trail/site_list", :controller => "trails", :action => "site_list"
   match 'trail/site_list', :controller => 'trails', :action => 'options', :constraints => {:method => 'OPTIONS'}
   match 'trails/delete', :controller => "trails", :action => 'delete', :constraints => {:method => 'POST'}
-
+  match 'trails/update', :controller => "trails", :action => 'update'
 
   match 'users/new', :controller => 'users', :action => "new"
   match 'users/login_or_create_gmail_user', :controller => 'users', :action => 'login_or_create_gmail_user', :constraints => {:method => 'POST'}
@@ -80,7 +80,7 @@ Webtrails::Application.routes.draw do
   resources :notes, :only=>[:create]
   match '/notes', :controller => 'notes', :action => 'options', :constraints => {:method => 'OPTIONS'}
   match '/notes/delete', :controller => "notes", :action => 'delete', :constraints => {:method => 'POST'}
-  match '/notes/update', :controller => "notes", :action => 'update'
+  match '/notes/update', :controller => "notes", :action => 'update', :constraints => {:method => 'POST'}
 
   match "/bookmarklet_js", :controller => 'bookmarklets', :action => "get_js"
   match '/bookmarklet_js', :controller => 'bookmarklets', :action => 'options', :constraints => {:method => 'OPTIONS'}

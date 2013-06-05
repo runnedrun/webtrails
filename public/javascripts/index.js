@@ -2,12 +2,62 @@ $(function() {
   $("#trail-create-button").click(makeTrail);
     $("#trail-name").keypress(function(e) {
         if(e.which == 13) {
-            makeTrail()
+            makeTrail();
         }
     })
   setupTrailScrolling();
 
-  $('.removeTrailButton').click(function(e) {
+  $('.edit-trail-button').click(editTrailName);
+
+  function editTrailName(e) {
+    console.log("nice click");
+    var trailID = $(this).attr('data-trail-id');
+    var $trailname = $('#trail-name-' + trailID);
+    $trailname.attr("contentEditable","true");
+
+    $(this).find("i").removeClass("icon-pencil").addClass("icon-ok");
+    $(this).unbind("click");
+    $(this).click(function(){saveTrailNameToServer($trailname.text(), trailID);});
+
+    $trailname.keypress(function(e){
+        var code = (e.keyCode ? e.keyCode : e.which);
+        if (code == 13 && !e.shiftKey){
+            saveTrailNameToServer($trailname.text(), trailID);
+            e.preventDefault();
+        }
+    });
+    $trailname.click(function(e){
+      e.preventDefault();
+    });
+    $trailname.focus();
+    $trailname.select();
+  }
+
+  function saveTrailNameToServer(trailName, trailID) {
+    console.log("saving to server", trailName, trailID);
+    $.ajax({
+        url: "/trails/update",
+        type: "post",
+        data: {
+            "id" : trailID,
+            "name": trailName
+        },
+        success: function(resp){console.log("trail saved");updateTrailCallback(trailID);}
+    });
+  }
+
+  function updateTrailCallback(trailID) {
+    var $trailname = $('#trail-name-' + trailID);
+    var $editButton = $('#edit-trail-' + trailID);
+    $trailname.attr("contentEditable","false");
+    $editButton.find("i").removeClass("icon-ok").addClass("icon-pencil");
+    $editButton.unbind("click");
+    $editButton.click(editTrailName);
+    $trailname.blur();
+    $trailname.unbind();
+  }
+
+  $('.remove-trail-button').click(function(e) {
     $(this).attr('disabled', 'disabled');
     $(this).addClass('disabled');
     deleteTrail($(this).attr('data-trail-id'));

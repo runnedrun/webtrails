@@ -42,7 +42,7 @@ class TrailsController < ApplicationController
     @trail = Trail.where(:id => params[:id]).first
     $stderr.puts "trail", @trail, !@trail
     if !@trail
-      $stderr.puts "The end of that"
+      $stderr.puts "show has no trail", params[:id]
       return render(:status => 404, :json => {:error => "No trail here."})
     end
 
@@ -91,6 +91,23 @@ class TrailsController < ApplicationController
       trail.delete
     end
     render :json => {"error" => nil}, :status => 200
+  end
+
+  def update
+    $stderr.puts "Got to update"
+    begin
+      trail = Trail.find(params[:id])
+      if trail.owner != @user
+        render_not_authorized
+      else
+        trail.name = params[:name]
+        trail.save!
+        render :json => {"name" => trail.name}
+      end
+    rescue
+      $stderr.puts $!.message
+      render_server_error_ajax
+    end
   end
 
   def site_list

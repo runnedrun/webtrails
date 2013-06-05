@@ -85,6 +85,10 @@
     border-radius: 5px;
 }
 
-.removeTrailButton {
+.remove-trail-button {
+    margin-top: 15px;
+}
+
+.edit-trail-button {
     margin-top: 15px;
 }
