@@ -1,5 +1,10 @@
 /* SITES */
 
+.no-trails-placeholder{
+    text-align: center;
+    margin-top: 20%;
+}
+
 .siteDisplay {
     top: 0px;
     height: 100%;

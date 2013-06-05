@@ -1,7 +1,7 @@
 class CreateSites < ActiveRecord::Migration
   def up
     create_table :sites do |t|
-      t.string :url
+      t.text :url
       t.timestamps
     end
   end

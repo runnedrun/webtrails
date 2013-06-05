@@ -1,6 +1,6 @@
 class AddTitleToSites < ActiveRecord::Migration
   def up
-    add_column :sites, :title, :string
+    add_column :sites, :title, :text
   end
 
   def down
