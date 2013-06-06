@@ -1,6 +1,6 @@
 {
     "name": "Webtrails",
-    "version": "3.0.4",
+    "version": "3.0.5",
     "manifest_version": 2,
     "description": "The chrome extension for webtrails.co",
     "browser_action": {
