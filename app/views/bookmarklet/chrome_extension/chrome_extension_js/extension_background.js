@@ -1,7 +1,7 @@
-domain = "http://localhost:3000";
-domain_name = "localhost";
-//domain = "http://www.webtrails.co";
-//domain_name = "webtrails.co";
+//domain = "http://localhost:3000";
+//domain_name = "localhost";
+domain = "http://www.webtrails.co";
+domain_name = "webtrails.co";
 message_sending = {}
 
 
@@ -50,7 +50,7 @@ function injectToolbarAndCheckForSignInOrOutEvents(tab){
 }
 
 function askTabForLoaded(tab) {
-    if (!message_sending[tab.id]){
+    if (!message_sending[tab.id+":"+tab.url]){
         console.log("sending message")
         message_sending[tab.id+":"+tab.url] = Date.now();
         chrome.tabs.executeScript(tab.id, {"code":"chrome.runtime.sendMessage({ loaded: [typeof(contentScriptLoaded), "+tab.id+",'"+tab.url+"']});"});
