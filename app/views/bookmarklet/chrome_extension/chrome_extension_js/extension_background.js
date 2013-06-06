@@ -1,5 +1,5 @@
-//domain = "http://localhost:3000";
-//domain_name = "localhost";
+// domain = "http://localhost:3000";
+// domain_name = "localhost";
 domain = "http://www.webtrails.co";
 domain_name = "webtrails.co";
 message_sending = {}
