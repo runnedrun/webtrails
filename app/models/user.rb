@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  def self.find_or_create_from_omniauth_hash(omniauth_hash,whitelisted="bestroomintheworsthotel")
+  def self.find_or_create_from_omniauth_hash(omniauth_hash,whitelisted="boothedog")
     user = nil
     if omniauth_hash
       user = User.where(:uid => omniauth_hash["uid"]).first
@@ -43,7 +43,7 @@ class User < ActiveRecord::Base
         wt_auth_token = generate_wt_auth_token
         user.wt_authentication_token = wt_auth_token
       end
-      user.whitelisted = true if whitelisted == "bestroomintheworsthotel"
+      user.whitelisted = true if whitelisted == "boothedog"
       user.save!
     else
       return false

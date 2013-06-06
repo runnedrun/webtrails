@@ -15,6 +15,8 @@ function saveSiteToTrail(successFunction, note){
         setTimeout(function(){saveSiteToTrail(successFunction, note)}, 100);
         return;
     }
+    console.log(currentHTML);
+    console.log(wt_$(currentHTML).find("wthighlight"));
     wt_$.ajax({
         url: webTrailsUrl + "/sites",
         type: "post",

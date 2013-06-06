@@ -98,6 +98,8 @@ class RemoteDocument
     @css_tags = @contents.xpath( '//link[@rel="stylesheet"]' )
     @img_tags = @contents.xpath( '//img[@src]' )
     @links = @contents.xpath( '//a[@href]' )
+    wthighlights = @contents.xpath("//wthighlight")
+    $stderr.puts wthighlights.length
     convert_links_to_open_in_a_new_tab
 
 
