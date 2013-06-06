@@ -3,6 +3,7 @@ class UsersController < ApplicationController
 
   def new
     @whitelisted = params[:whitelisted]
+    @whitelisted_okay = (@whitelisted == "bestroomintheworsthotel")
   end
 
   def sign_out

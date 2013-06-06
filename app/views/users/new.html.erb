@@ -15,5 +15,8 @@
 <div class="row-fluid">
     <div class="span12 splash_content">
       <%= link_to("sign in using google","/auth/google_oauth2?whitelisted=#@whitelisted", :class =>"zocial google") %>
+      <% if not @whitelisted_okay %>
+      <span>We are in a closed Beta, but sign-in to be added later. You'll be the first to know when Webtrails is available!</span>
+      <% end %>
     </div>
 </div>
