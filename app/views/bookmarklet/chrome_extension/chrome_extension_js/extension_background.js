@@ -14,13 +14,13 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 });
 
 chrome.tabs.onReplaced.addListener(function(addedTabId, removedTabId) {
+    console.log("replacing");
     chrome.tabs.get(addedTabId,function(tab){
         injectToolbarAndCheckForSignInOrOutEvents(tab);
     })
 });
 
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
-    console.log(changeInfo);
     if (changeInfo.status == 'complete') {
         console.log("reloaded fired")
         injectToolbarAndCheckForSignInOrOutEvents(tab);
@@ -52,13 +52,14 @@ function injectToolbarAndCheckForSignInOrOutEvents(tab){
 function askTabForLoaded(tab) {
     if (!message_sending[tab.id]){
         console.log("sending message")
-        message_sending[tab.id] = Date.now();
+        message_sending[tab.id+":"+tab.url] = Date.now();
         chrome.tabs.executeScript(tab.id, {"code":"chrome.runtime.sendMessage({ loaded: [typeof(contentScriptLoaded), "+tab.id+",'"+tab.url+"']});"});
     }
     cleanUpMessageSendingObject();
 }
 
 function injectScripts(tabId){
+    console.log("injecting");
     var wt_auth_token = getWtAuthToken();
     var current_trail_id = getCurrentTrailID();
     var toolbar_display_state = getToolBarDisplayState();
@@ -82,7 +83,6 @@ function injectScripts(tabId){
 
 function createContentScript(index_of_script, contentScriptString,tabId){
     if (index_of_script >= scriptsToBeInjected.length){
-//        console.log(contentScriptString);
         chrome.tabs.executeScript(tabId,{code:contentScriptString});
         return false;
     }
@@ -108,8 +108,6 @@ chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.login){
             googleAuth.authorize(function() {
-                console.log("authorized");
-                console.log("now getting user information from server");
                 logInOrCreateUser(function(resp){
                     sendResponse({"wt_auth_token": resp.wt_authentication_token});
                 });
@@ -133,11 +131,12 @@ chrome.runtime.onMessage.addListener(
             hideToolbarOnAllTabs();
         }
         if (request.loaded && (request.loaded[0] !== "string")){
-            console.log(request.loaded)
+            console.log("got message back");
             var tabId = request.loaded[1];
             var tabUrl = request.loaded[2];
-            if (message_sending[tabId]){
-                delete message_sending[tabId];
+            if (message_sending[tabId+":"+tabUrl]){
+                console.log("deleting message");
+                delete message_sending[tabId+":"+tabUrl];
             }
             injectScripts(tabId);
         }
@@ -167,10 +166,9 @@ function logInOrCreateUser(callback){
 function cleanUpMessageSendingObject(){
     console.log("cleaning up sending message object")
     var currentTime = Date.now();
-    wt_$(message_sending).each(function(tabId,time){
-        if (currentTime - time > 10 * 1000){
+    wt_$.each(message_sending,function(tabId,time){
+        if ((currentTime - time) > (10 * 1000)){
             delete message_sending[tabId];
-            console.log("cleaned up for tabId", tabId);
         }
     })
 }
@@ -304,7 +302,6 @@ function getNewTrailIDFromCookie(cookie,trailName){
 function addNewTrailOnAllTabs(trailId,trailName){
     var trail_obj = {};
     trail_obj[trailId] = trailName;
-    console.log(trail_obj);
     sendMessageToAllTabs({addNewTrail:trail_obj});
 }
 
