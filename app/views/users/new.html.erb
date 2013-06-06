@@ -4,19 +4,26 @@
 <div class="row-fluid">
     <div class="span4">
         <img src="/images/webtrails_logo_ninja.png">
+        <div class="splash_content">
+            <%= link_to("sign in using google","/auth/google_oauth2?whitelisted=#@whitelisted", :class =>"zocial google") %>
+            <% if not @whitelisted_okay %>
+                <div class="not_whitelisted">We are in a closed Beta, but sign-in to be added later. You'll be the first to know when Webtrails is available!</div>
+            <% end %>
+        </div>
     </div>
 
     <div class="row-fluid">
-        <div class="span8 wt_title">
-            Webtrails
+        <div class="span8">
+            <div class="wt_title">
+                Webtrails
+            </div>
+            <iframe class="wt_video" width="839px" height="470px" src="http://www.youtube.com/embed/dcyespbCj3U?rel=0&modestbranding=1&autoplay=1&autohide=1" frameborder="0" allowfullscreen></iframe>
+
         </div>
     </div>
 </div>
 <div class="row-fluid">
     <div class="span12 splash_content">
-      <%= link_to("sign in using google","/auth/google_oauth2?whitelisted=#@whitelisted", :class =>"zocial google") %>
-      <% if not @whitelisted_okay %>
-      <span>We are in a closed Beta, but sign-in to be added later. You'll be the first to know when Webtrails is available!</span>
-      <% end %>
+      
     </div>
 </div>

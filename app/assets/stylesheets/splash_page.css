@@ -1,9 +1,17 @@
 .wt_title{
     font-size: 200px;
-    margin-top: 350px;
+    margin-top: 150px;
+}
+
+.wt_video{
+  margin-top:100px;
 }
 
 .splash_content{
     margin-top:100px;
     text-align: center;
+}
+
+.not_whitelisted {
+  padding:25px;
 }
