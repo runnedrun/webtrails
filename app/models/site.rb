@@ -1,6 +1,9 @@
 class Site < ActiveRecord::Base
   has_many :notes, :dependent => :delete_all
   belongs_to :trail
+  default_scope order('position ASC')
+  after_create :set_position
+
 
   def self.save_site_to_aws(html,url, trail_id, shallow_save,site_id)
     $stderr.puts "save_site_to_aws", url, trail_id, shallow_save, site_id
@@ -13,6 +16,11 @@ class Site < ActiveRecord::Base
     site = Site.find(site_id)
     # $stderr.puts "asset path:", remote.asset_path
     site.update_attributes({:archive_location => remote.asset_path.to_s, :html_encoding => remote.encoding})
+  end
+
+  def set_position
+    self.position = self.trail.sites.length-1
+    self.save!()
   end
 
   def build_notes(attrs)

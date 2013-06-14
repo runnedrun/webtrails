@@ -46,7 +46,7 @@ class TrailsController < ApplicationController
       return render(:status => 404, :json => {:error => "No trail here."})
     end
 
-    @sites = @trail.sites.sort_by(&:created_at)
+    @sites = @trail.sites
     @favicon_urls_with_ids_and_titles = @sites.inject([]) do |urls, site|
       search_name = URI(site.url).host
       urls.push(["http://www.google.com/s2/favicons?domain=" + search_name, site.id, site.title])
@@ -108,6 +108,26 @@ class TrailsController < ApplicationController
     end
   end
 
+  def update_site_positions
+    begin
+      trail = Trail.find(params[:id])
+      if trail.owner != @user
+        render_not_authorized
+      else
+        site_positions = params[:site_position_hash]
+        all_sites_authorized = trail.update_site_positions(site_positions)
+        if all_sites_authorized
+          render :json => {"status" => "success"}
+        else
+          render_not_authorized
+        end
+      end
+    rescue
+      $stderr.puts $!.message
+      render_server_error_ajax
+    end
+  end
+
   def site_list
     current_trail_id = params[:trail_id]
     trail = nil
@@ -125,7 +145,7 @@ class TrailsController < ApplicationController
     end
 
     if trail
-      favicons_and_urls = trail.sites.sort_by(&:created_at).inject([]) do |fav_list, site|
+      favicons_and_urls = trail.sites.inject([]) do |fav_list, site|
         fav_list.push(["http://www.google.com/s2/favicons?domain=" + URI(site.url).host.to_s,site.url])
       end
       favicons_and_urls.push(["http://www.google.com/s2/favicons?domain=" + URI(params[:current_url]).host.split(".")[-2..-1].to_s,"#"])

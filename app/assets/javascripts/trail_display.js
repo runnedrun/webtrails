@@ -7,7 +7,11 @@ var siteHash = {};
 var currentCommentBox;
 var nextNoteActivated = true;
 var previousNoteActivated = true;
-// var siteIDS is declared in the html, using erb
+// var siteIDS
+// var requestUrl
+// var editAccess
+// var trailID
+// are all declared in the html, using erb
 
 $(function(){
     // We should have the siteIDs set from the server page.
@@ -128,7 +132,6 @@ function previousSite(){
 }
 
 function showAllSites(){
-    console.log("currently showing all sites:", $('iframe').hasClass('shrunk'));
     if ($('iframe').hasClass('shrunk')) {
         removeShrinkFromIframes();
         switchToSite(getCurrentSiteID());
@@ -162,9 +165,11 @@ function shrinkIframes() {
         "transform": "scale(" + percentPerIframe + ", " + percentPerIframe + ")"
     });
     var iframesPerRow = 4;
+
     var marginOffset = (1 - iframesPerRow * percentPerIframe)/(2 * iframesPerRow);
     // console.log("offset:", marginOffset);
-    $('iframe').addClass('shrunk').each(function(index, iframe) {
+    $.each(siteIDs,function(index,siteID){
+        var iframe  = $('iframe#'+siteID).addClass('shrunk')
         var row = Math.floor(index/iframesPerRow);
         var col = index - row * iframesPerRow;
         var leftProp = (1 + 2 * col) * marginOffset + col * percentPerIframe;
@@ -174,8 +179,8 @@ function shrinkIframes() {
 
         var $clickdiv = $(document.createElement('div'));
         $clickdiv.addClass('siteClickDiv');
-        $clickdiv.css({left: (leftProp * 100) + "%" , 
-            top: (topProp * 100) + "%", 
+        $clickdiv.css({left: (leftProp * 100) + "%" ,
+            top: (topProp * 100) + "%",
             width: (percentPerIframe * 100) + "%",
             height: (percentPerIframe * 100) + "%"});
         $clickdiv.click(function(e){
@@ -762,13 +767,36 @@ function makeFaviconsDragable(){
 function changeSiteOrder(event, ui){
     var faviconThatWasDragged = ui.item;
     var siteID;
+    var sitePositionHash = {}
+
     $(".siteFavicons").children().each(function(i,child){
         var $child = $(child);
         var $faviconImage = $child.find(".faviconImage");
         siteID = $faviconImage.attr("id").replace(/\D+/,"")
-        siteIDs[$child.index()] = siteID;
+        var faviconIndex = $child.index();
+        siteIDs[faviconIndex] = siteID;
         if ($faviconImage.hasClass("activeFavicon")){
-            currentSiteIndex = $child.index();
+            currentSiteIndex = faviconIndex;
+            window.location.hash = faviconIndex;
+       }
+        sitePositionHash[siteID] = faviconIndex;
+    });
+
+    //saving the new positions server sid3
+    $.ajax({
+        url:"/trails/update_site_positions",
+        method:"post",
+        data:{
+            "site_position_hash": sitePositionHash,
+            "id" : trailID
+        },
+        success:function(){
+            console.log("updated positions server side");
         }
-    })
+    });
+
+    //rearranging the iframes if show all sites is toggled
+    if ($('iframe').hasClass('shrunk')) {
+        shrinkIframes();
+    }
 }

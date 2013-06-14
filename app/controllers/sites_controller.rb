@@ -27,7 +27,6 @@ class SitesController < ApplicationController
       trail_id = params[:site][:trail_id]
       shallow_save = params[:shallow_save]
 
-
       if trail_id.empty?
         new_trail = Trail.create!(:name => "New Trail!")
         new_trail.owner = @user
@@ -107,6 +106,8 @@ class SitesController < ApplicationController
     render :json => {:exists => !site.archive_location.nil?,:id => site.id}, :status => 200
   end
 
+  private
+
   def get_site_if_owned_by_user(id)
     site = Site.find(id)
     if site
@@ -118,6 +119,8 @@ class SitesController < ApplicationController
     end
     return site
   end
+
+
 
 end
 

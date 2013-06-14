@@ -65,6 +65,8 @@ Webtrails::Application.routes.draw do
   match 'trail/site_list', :controller => 'trails', :action => 'options', :constraints => {:method => 'OPTIONS'}
   match 'trails/delete', :controller => "trails", :action => 'delete', :constraints => {:method => 'POST'}
   match 'trails/update', :controller => "trails", :action => 'update'
+  match 'trails/update_site_positions', :controller => "trails", :action => 'update_site_positions'
+
 
   match 'users/new', :controller => 'users', :action => "new"
   match 'users/login_or_create_gmail_user', :controller => 'users', :action => 'login_or_create_gmail_user', :constraints => {:method => 'POST'}

@@ -1,5 +1,5 @@
 class Trail < ActiveRecord::Base
-  has_many :sites, :dependent => :delete_all
+  has_many :sites, :dependent => :delete_all, :autosave => true
   has_and_belongs_to_many :users
 
   def owner=(user)
@@ -18,6 +18,25 @@ class Trail < ActiveRecord::Base
     if self.owner_id
       User.find(self.owner_id)
     end
+  end
+
+  def update_site_positions(site_position_hash)
+    sites = []
+    all_authorized = true
+    site_position_hash.each_with_index do |site_id_and_position,index|
+      site_id = site_id_and_position[0]
+      position = site_id_and_position[1]
+      site = self.sites.find(site_id)
+      if site
+        site.position = position.to_i
+        sites.push(site)
+      else
+        all_authorized = false
+      end
+    end
+
+    sites.each(&:save!) if all_authorized
+    return all_authorized
   end
 
   def build_site_with_notes(attrs)
