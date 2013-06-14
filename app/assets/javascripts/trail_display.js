@@ -7,6 +7,7 @@ var siteHash = {};
 var currentCommentBox;
 var nextNoteActivated = true;
 var previousNoteActivated = true;
+// var siteIDS is declared in the html, using erb
 
 $(function(){
     // We should have the siteIDs set from the server page.
@@ -42,7 +43,7 @@ $(function(){
     $(".faviconImage").click(clickJumpToSite);
 
     initializeAutoResize();
-
+    makeFaviconsDragable();
     switchToSite(currentSiteID);
 });
 
@@ -749,4 +750,25 @@ function deactivateOrReactivateNextNoteIfNecessary(){
     } else if (!((getCurrentSiteID() == lastSiteId) && (currentNoteIndex==-1)) && !nextNoteActivated){
         reactivateNextNoteButton();
     }
+}
+
+function makeFaviconsDragable(){
+    $(".siteFavicons").sortable({
+        containment: ".siteFaviconsHolder",
+        update: changeSiteOrder
+    });
+}
+
+function changeSiteOrder(event, ui){
+    var faviconThatWasDragged = ui.item;
+    var siteID;
+    $(".siteFavicons").children().each(function(i,child){
+        var $child = $(child);
+        var $faviconImage = $child.find(".faviconImage");
+        siteID = $faviconImage.attr("id").replace(/\D+/,"")
+        siteIDs[$child.index()] = siteID;
+        if ($faviconImage.hasClass("activeFavicon")){
+            currentSiteIndex = $child.index();
+        }
+    })
 }

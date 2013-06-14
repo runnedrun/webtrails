@@ -1,7 +1,7 @@
-// domain = "http://localhost:3000";
-// domain_name = "localhost";
-domain = "http://www.webtrails.co";
-domain_name = "webtrails.co";
+domain = "http://localhost:3000";
+domain_name = "localhost";
+//domain = "http://www.webtrails.co";
+//domain_name = "webtrails.co";
 message_sending = {}
 
 
@@ -21,8 +21,9 @@ chrome.tabs.onReplaced.addListener(function(addedTabId, removedTabId) {
 });
 
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
-    if (changeInfo.status == 'complete') {
-        console.log("reloaded fired")
+    if (changeInfo.status == 'loading') {
+        console.log("loading fired")
+        console.log("loading     fired")
         injectToolbarAndCheckForSignInOrOutEvents(tab);
     }
 })

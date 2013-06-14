@@ -8,6 +8,7 @@
 </script>
 <script src="/bootstrap/js/bootstrap.min.js"> </script>
 <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 
 <div class="siteDisplayDiv">
   <%- @sites.each_with_index do |site,i| %>
@@ -37,7 +38,7 @@
 <div class="siteFaviconsHolder">
   <div class="siteFavicons">
       <%- @favicon_urls_with_ids_and_titles.each_with_index do |favicon_id_and_title,i| %>
-          <div class="faviconContainer">
+          <div class="faviconContainer favicon<%= favicon_id_and_title[1]%>">
             <img class="faviconImage" src="<%= favicon_id_and_title[0] %>" id="favicon<%= favicon_id_and_title[1] %>" data-ot="<%= @sites[i].title%>" data-ot-delay="0" data-ot-tip-joint="bottom" data-ot-style="dark" data-site-url="<%= @sites[i].url%>" data-site-index="<%= i %>"/>
             <img src="/images/loading_small.gif" class="faviconLoading" id ="loading-<%= favicon_id_and_title[1]%>"/>
           </div>
