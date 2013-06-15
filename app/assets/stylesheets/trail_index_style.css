@@ -32,6 +32,7 @@
 
 .sites-display {
     max-height: 500px;
+    min-height: 50px;
     /*position: relative;*/
     left: 0px;
 }

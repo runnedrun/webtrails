@@ -1,6 +1,7 @@
 class Site < ActiveRecord::Base
   has_many :notes, :dependent => :delete_all
   belongs_to :trail
+  belongs_to :user
   default_scope order('position ASC')
   after_create :set_position
 

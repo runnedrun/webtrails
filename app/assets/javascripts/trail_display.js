@@ -767,27 +767,26 @@ function makeFaviconsDragable(){
 function changeSiteOrder(event, ui){
     var faviconThatWasDragged = ui.item;
     var siteID;
-    var sitePositionHash = {}
+    var siteArray = []
 
-    $(".siteFavicons").children().each(function(i,child){
+    $(".siteFavicons").children().each(function(faviconIndex,child){
         var $child = $(child);
         var $faviconImage = $child.find(".faviconImage");
         siteID = $faviconImage.attr("id").replace(/\D+/,"")
-        var faviconIndex = $child.index();
-        siteIDs[faviconIndex] = siteID;
+        siteArray.push(siteID);
+        siteIDs[faviconIndex] = siteID
         if ($faviconImage.hasClass("activeFavicon")){
             currentSiteIndex = faviconIndex;
             window.location.hash = faviconIndex;
        }
-        sitePositionHash[siteID] = faviconIndex;
     });
 
     //saving the new positions server sid3
     $.ajax({
-        url:"/trails/update_site_positions",
+        url:"/trails/update_site_list",
         method:"post",
         data:{
-            "site_position_hash": sitePositionHash,
+            "site_array": siteArray,
             "id" : trailID
         },
         success:function(){
@@ -796,6 +795,7 @@ function changeSiteOrder(event, ui){
     });
 
     //rearranging the iframes if show all sites is toggled
+
     if ($('iframe').hasClass('shrunk')) {
         shrinkIframes();
     }

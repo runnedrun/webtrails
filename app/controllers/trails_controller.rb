@@ -70,7 +70,7 @@ class TrailsController < ApplicationController
   def index
     @trails = @user.trails.sort_by(&:created_at)
     puts @user.email
-    @trails.each {|trail| trail.sites.sort_by!(&:created_at)}
+    @trails.each {|trail| trail.sites}
     @favicon_urls = get_favicons_for_trails(@trails)
 
 
@@ -86,7 +86,7 @@ class TrailsController < ApplicationController
       if site_owner != @user
         render_not_authorized
       end
-      trail.delete
+      trail.destroy
     end
     render :json => {"error" => nil}, :status => 200
   end
@@ -108,14 +108,14 @@ class TrailsController < ApplicationController
     end
   end
 
-  def update_site_positions
+  def update_site_list
     begin
       trail = Trail.find(params[:id])
       if trail.owner != @user
         render_not_authorized
       else
-        site_positions = params[:site_position_hash]
-        all_sites_authorized = trail.update_site_positions(site_positions)
+        site_positions = params[:site_array]
+        all_sites_authorized = trail.update_site_list(site_positions)
         if all_sites_authorized
           render :json => {"status" => "success"}
         else

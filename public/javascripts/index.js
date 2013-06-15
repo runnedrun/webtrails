@@ -45,68 +45,38 @@ $(function() {
       return clickedSite
     }
 
-  function makeSitesDraggable(){
+    function makeSitesDraggable(){
         $(".user-trails .sites-display").addClass("drag-between").sortable({
             connectWith: ".drag-between",
             zIndex: 9999,
             helper: createHelper,
-            update: function(){console.log("dropped and dragged")}//changeSiteOrder
+            stop: moveSiteToNewTrail
         });
     }
 
-//    $(".user-trails .site-display").mousedown(function(e){
-//        var clickedSite = $(e.delegateTarget);
-//        var clickedSiteClone = $(e.delegateTarget).clone();
-//        var clickedSiteStyle  = clickedSite.offset()
-//        var clickedSiteTop = clickedSiteStyle.top
-//        var clickedSiteLeft = clickedSiteStyle.left
-//        clickedSiteClone.css({
-//            position:"absolute",
-//            top:clickedSiteTop,
-//            left:clickedSiteLeft
-//        })
-//        clickedSite.addClass("dragging-clone");
-//
-//        $(".user-trails .site-display").mouseup(function(){
-//
-//        })
-//    })
 
-    function changeSiteOrder(event, ui){
-        var faviconThatWasDragged = ui.item;
-        var siteID;
-        var sitePositionHash = {}
-
-        $(".siteFavicons").children().each(function(i,child){
-            var $child = $(child);
-            var $faviconImage = $child.find(".faviconImage");
-            siteID = $faviconImage.attr("id").replace(/\D+/,"")
-            var faviconIndex = $child.index();
-            siteIDs[faviconIndex] = siteID;
-            if ($faviconImage.hasClass("activeFavicon")){
-                currentSiteIndex = faviconIndex;
-                window.location.hash = faviconIndex;
-            }
-            sitePositionHash[siteID] = faviconIndex;
-        });
-
+    function moveSiteToNewTrail(event, ui){
+        var siteThatWasDragged = ui.item;
+        var newTrailContainer = siteThatWasDragged.parent()
+        var trailID = newTrailContainer.data().trailId
+        var siteArray = newTrailContainer.children().map(function(i,child){
+            return $(child).data().siteId
+        }).get();
+        //replace the href so it goes to the new trail
+        var siteLink = siteThatWasDragged.find(".site-link");
+        siteLink.attr("href", "/trails/"+String(trailID) + "#" + siteThatWasDragged.data().siteId);
         //saving the new positions server sid3
         $.ajax({
-            url:"/trails/update_site_positions",
+            url:"/trails/update_site_list",
             method:"post",
             data:{
-                "site_position_hash": sitePositionHash,
+                "site_array": siteArray,
                 "id" : trailID
             },
             success:function(){
-                console.log("updated positions server side");
+                console.log("updated trail server side");
             }
         });
-
-        //rearranging the iframes if show all sites is toggled
-        if ($('iframe').hasClass('shrunk')) {
-            shrinkIframes();
-        }
     }
 
   function saveTrailNameToServer(trailName, trailID) {

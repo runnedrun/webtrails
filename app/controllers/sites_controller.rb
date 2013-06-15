@@ -70,7 +70,7 @@ class SitesController < ApplicationController
       if site_owner != @user
         render_not_authorized
       end
-      site.delete
+      site.destroy
     end
     render :json => {"error" => nil}, :status => 200
   end
