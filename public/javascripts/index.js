@@ -6,6 +6,8 @@ $(function() {
         }
     })
   setupTrailScrolling();
+  makeSitesDraggable();
+
 
   $('.edit-trail-button').click(editTrailName);
 
@@ -32,6 +34,80 @@ $(function() {
     $trailname.focus();
     $trailname.select();
   }
+
+  function createHelper(e, element){
+      var clickedSite = $(element)
+      var clickedSiteClone = clickedSite.clone();
+      clickedSiteClone.css({
+          position:"absolute"
+      })
+      clickedSite.addClass("dragging-clone");
+      return clickedSite
+    }
+
+  function makeSitesDraggable(){
+        $(".user-trails .sites-display").addClass("drag-between").sortable({
+            connectWith: ".drag-between",
+            zIndex: 9999,
+            helper: createHelper,
+            update: function(){console.log("dropped and dragged")}//changeSiteOrder
+        });
+    }
+
+//    $(".user-trails .site-display").mousedown(function(e){
+//        var clickedSite = $(e.delegateTarget);
+//        var clickedSiteClone = $(e.delegateTarget).clone();
+//        var clickedSiteStyle  = clickedSite.offset()
+//        var clickedSiteTop = clickedSiteStyle.top
+//        var clickedSiteLeft = clickedSiteStyle.left
+//        clickedSiteClone.css({
+//            position:"absolute",
+//            top:clickedSiteTop,
+//            left:clickedSiteLeft
+//        })
+//        clickedSite.addClass("dragging-clone");
+//
+//        $(".user-trails .site-display").mouseup(function(){
+//
+//        })
+//    })
+
+    function changeSiteOrder(event, ui){
+        var faviconThatWasDragged = ui.item;
+        var siteID;
+        var sitePositionHash = {}
+
+        $(".siteFavicons").children().each(function(i,child){
+            var $child = $(child);
+            var $faviconImage = $child.find(".faviconImage");
+            siteID = $faviconImage.attr("id").replace(/\D+/,"")
+            var faviconIndex = $child.index();
+            siteIDs[faviconIndex] = siteID;
+            if ($faviconImage.hasClass("activeFavicon")){
+                currentSiteIndex = faviconIndex;
+                window.location.hash = faviconIndex;
+            }
+            sitePositionHash[siteID] = faviconIndex;
+        });
+
+        //saving the new positions server sid3
+        $.ajax({
+            url:"/trails/update_site_positions",
+            method:"post",
+            data:{
+                "site_position_hash": sitePositionHash,
+                "id" : trailID
+            },
+            success:function(){
+                console.log("updated positions server side");
+            }
+        });
+
+        //rearranging the iframes if show all sites is toggled
+        if ($('iframe').hasClass('shrunk')) {
+            shrinkIframes();
+        }
+    }
 
   function saveTrailNameToServer(trailName, trailID) {
     console.log("saving to server", trailName, trailID);

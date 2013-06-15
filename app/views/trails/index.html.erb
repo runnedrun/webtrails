@@ -1,5 +1,6 @@
 <script src="/bootstrap/js/bootstrap.min.js"> </script>
 <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <script src="/javascripts/index.js"> </script>
 
 <div class="row-fluid">
@@ -16,9 +17,14 @@
     <button class="btn btn-primary" type="button" id="trail-create-button">Create!</button>
   </div>
 </div>
+<div class="user-trails">
+  <%= render :partial => "display_trails", :locals => {:trails => @trails, :favicon_urls => @favicon_urls, :editAccess => true} %>
+</div>
 
-<%= render :partial => "display_trails", :locals => {:trails => @trails, :favicon_urls => @favicon_urls, :editAccess => true} %>
 <div class="centered">
   <h1>Some Other Public Trails</h1>
 </div>
-<%= render :partial => "display_trails", :locals => {:trails => @other_trails, :favicon_urls => @other_favicon_urls, :editAccess => false} %>   
+
+<div class="public-trails">
+    <%= render :partial => "display_trails", :locals => {:trails => @other_trails, :favicon_urls => @other_favicon_urls, :editAccess => false} %>
+</div>
