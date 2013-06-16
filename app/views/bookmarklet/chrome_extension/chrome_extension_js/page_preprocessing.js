@@ -22,6 +22,5 @@ function createMasterStyleSheet(html){
     masterStyleSheet.className = "masterStylesheet";
     wt_$(html.getElementsByTagName("head")[0]).prepend(masterStyleSheet);
     masterStyleSheet.html(newStyleSheetString);
-    window.master = masterStyleSheet;
     return html;
 }

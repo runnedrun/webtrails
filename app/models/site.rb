@@ -19,6 +19,16 @@ class Site < ActiveRecord::Base
     site.update_attributes({:archive_location => remote.asset_path.to_s, :html_encoding => remote.encoding})
   end
 
+  def update_html(html)
+    uri = URI(self.archive_location)
+    bucket_location = uri.path.gsub(/(\/TrailsSitesProto\/)|(\/TrailsSitesProto)/,"")
+    s3 = AWS::S3.new
+    bucket = s3.buckets["TrailsSitesProto"]
+    newFile = bucket.objects[bucket_location]
+    newFile.write(html)
+    newFile.acl = :public_read
+  end
+
   def set_position
     self.position = self.trail.sites.length-1
     self.save!()

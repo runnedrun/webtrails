@@ -42,13 +42,49 @@ class SitesController < ApplicationController
       $stderr.puts "shallow_save at create", shallow_save, params[:site][:id]
       if shallow_save != ""
         site_id = params[:site][:id]
+        site = trail.sites.find(site_id)
+        if !site
+          render_not_authorized
+        end
         shallow_save=true
       else
         site_id = Site.create!(params[:site]).id
         shallow_save=false
       end
+
       Site.delay.save_site_to_aws(html,url,trail_id,shallow_save,site_id)
 
+      if (params[:note] and params[:note] != "none")
+        # We should save the note, too.
+        params[:note][:site_id] = site_id
+        @note = Note.create!(params[:note])
+        render :json => {:trail_id => trail_id, :site_id => site_id, :note_content => @note.content, :note_id => @note.id}, :status => 200
+      else
+        render :json => {:trail_id => trail_id, :site_id => site_id}, :status => 200
+      end
+    rescue
+      puts $!.message
+      render_server_error_ajax
+    end
+  end
+
+  #this performs a save without doing any kind of parsing of html, which is only
+  #ok when you're saving from view page, with already parsed html
+  def new_note_from_view_page
+    begin
+      html = params[:html]
+      trail_id = params[:site][:trail_id]
+      trail = @user.trails.where(:id => trail_id).first
+      if !trail
+        render_not_authorized
+      end
+      site_id = params[:site][:id]
+      site = trail.sites.find(site_id)
+      if !site
+        render_not_authorized
+      end
+
+      site.update_html(html)
       if (params[:note] and params[:note] != "none")
         # We should save the note, too.
         params[:note][:site_id] = site_id
@@ -96,6 +132,7 @@ class SitesController < ApplicationController
     if site.archive_location.nil?
       render :template => 'trails/loading'
     else
+      puts site.archive_location
       @html = open(site.archive_location).read.force_encoding(site.html_encoding).html_safe
       render :layout => false, :text => @html
     end

@@ -8,7 +8,7 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     var topPosition  =  yPos + spacing;
     var leftPosition = xPos > overlayWidth ? (xPos - overlayWidth) : xPos;
 
-    var commentOverlay = wt_$(document.createElement("div"));
+    var commentOverlay = $(getCurrentSiteDocument().createElement("div"));
     applyDefaultCSS(commentOverlay);
     commentOverlay.css({
         "background": "#f0f0f0",
@@ -23,7 +23,7 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     commentOverlay.css("left", leftPosition+"px");
     commentOverlay.addClass("commentOverlay").addClass("webtrails");
 
-    var commentDescription = wt_$(document.createElement("div"))
+    var commentDescription = $(getCurrentSiteDocument().createElement("div"))
 //    applyDefaultCSS(commentDescription);
     commentDescription.html("Hit enter, click away or type a comment here")
     commentDescription.css({
@@ -33,7 +33,7 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
         "display": "block"
     });
 
-    var commentBox = wt_$(document.createElement("textarea"));
+    var commentBox = $(getCurrentSiteDocument().createElement("textarea"));
     applyDefaultCSS(commentBox);
     commentBox.css({
         "font-size":"12px",
@@ -51,16 +51,16 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
         "background-color": "white"
     });
 
-    wt_$(document.body).append(commentOverlay);
-    wt_$(commentOverlay).append(commentDescription);
-    wt_$(commentOverlay).append(commentBox);
+    $(getCurrentSiteDocument().body).append(commentOverlay);
+    $(commentOverlay).append(commentDescription);
+    $(commentOverlay).append(commentBox);
     var noteContent = String(highlightedRange);
     commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,xPos,yPos));
-    wt_$(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,xPos,yPos));
+    $(getCurrentSiteDocument()).mousedown(clickAwayWithClosure(noteContent,commentOverlay,xPos,yPos));
     commentBox.autosize();
     commentBox.focus();
     var nodes = highlightedRange.getNodes();
-    wt_$.each(nodes,function(i,node){
+    $.each(nodes,function(i,node){
         if (i == 0){
             markNodeForHighlight(node,highlightedRange.startOffset,node.length);
         }
@@ -72,7 +72,7 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
         }
     });
     highlight_wtHighlights();
-    wt_$(".trailHighlight").css("background-color","yellow");
+    $(".trailHighlight").css("background-color","yellow");
     return commentBox;
 }
 
@@ -93,32 +93,25 @@ function clickAwayWithClosure(noteContent,commentOverlay,xPos,yPos){
 }
 
 function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY){
-    noteCount++;
-    console.log("note count incremented", noteCount);
-    var noteCountAtSave = noteCount;
-    saveSiteToTrail(
-        function(site_data){
-            console.log("done saving"); 
-            currentSiteTrailID = site_data.site_id;
-            console.log(currentSiteTrailID);
-            updateNoteDisplay(site_data);
-        },
-        {content: content, comment: comment, comment_location_x: commentLocationX, comment_location_y: commentLocationY, client_side_id: "client_side_id_"+ (noteCount - 1), scroll_x: window.scrollX, scroll_y:window.scrollY}
+//    noteCount++;
+    addNewNoteToClientSiteStorage();
+    saveNewNote(
+        {content: content, comment: comment, comment_location_x: commentLocationX, comment_location_y: commentLocationY, client_side_id: "client_side_id_"+ (getNumberOfNotesForCurrentSite() - 1), scroll_x: currentSite[0].contentWindow.scrollX, scroll_y:currentSite[0].contentWindow.scrollY}
     );
 }
 
 function closeOverlay(){
-    var overlay = wt_$(".commentOverlay")
-    wt_$(document).unbind("mousedown");
-    wt_$(document).mousedown(function(){mouseDown=1});
-    wt_$(document).mousedown(possibleHighlightStart);
+    var overlay = $(getCurrentSiteDocument()).find(".commentOverlay")
+    $(getCurrentSiteDocument()).unbind("mousedown");
+    $(getCurrentSiteDocument()).mousedown(function(){mouseDown=1});
+    $(getCurrentSiteDocument()).mousedown(possibleHighlightStart);
     overlay.remove();
     unhighlight_wtHighlights();
 }
 
 function clickAway(e,content,commentOverlay,xPos,yPos){
-    var clickedNode = wt_$(e.target);
-    if (clickedNode != commentOverlay && (wt_$.inArray(e.target,commentOverlay.children())==-1)){
+    var clickedNode = $(e.target);
+    if (clickedNode != commentOverlay && ($.inArray(e.target,commentOverlay.children())==-1)){
         closeOverlay(commentOverlay);
         saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos);
     }
@@ -135,31 +128,35 @@ function markNodeForHighlight(node,start_offset, end_offset){
         }
         var unhighlighted_prepend = contents.slice(0,start_offset);
         var unhighlighted_append = contents.slice(end_offset,contents.length);
-        var new_marker = document.createElement("wtHighlight");
-        wt_$(new_marker).addClass("highlightMe");
-        wt_$(new_marker).addClass('client_side_id_' + String(noteCount));
+        var new_marker = getCurrentSiteDocument().createElement("wtHighlight");
+        $(new_marker).addClass("highlightMe");
+        $(new_marker).addClass('client_side_id_' + String(getNumberOfNotesForCurrentSite()));
 
         new_marker.innerHTML = highlighted_contents;
         var node_to_replace = node;
         node_to_replace.parentNode.replaceChild(new_marker,node_to_replace);
 
         if (unhighlighted_prepend.length !== 0 ){
-            var text_before_marker = wt_$(document.createTextNode(unhighlighted_prepend));
+            var text_before_marker = $(getCurrentSiteDocument().createTextNode(unhighlighted_prepend));
             text_before_marker.insertBefore(new_marker);
         }
         if (unhighlighted_append.length !== 0){
-            var text_after_marker = wt_$(document.createTextNode(unhighlighted_append));
+            var text_after_marker = $(getCurrentSiteDocument().createTextNode(unhighlighted_append));
             text_after_marker.insertAfter(new_marker);
         }
     } else {
-//        wt_$(node).wrap("wtHighlight");
+//        $(node).wrap("wtHighlight");
     }
 }
 
 function highlight_wtHighlights(){
-    wt_$("wtHighlight.highlightMe").css("background","yellow");
+    $("wtHighlight.highlightMe").css("background","yellow");
 }
 
 function unhighlight_wtHighlights(){
-    wt_$("wtHighlight.highlightMe").removeClass("highlightMe").css("background","");
+    $("wtHighlight.highlightMe").removeClass("highlightMe").css("background","");
+}
+
+function addNewNoteToClientSiteStorage(){
+    console.log("adding new note client side");
 }

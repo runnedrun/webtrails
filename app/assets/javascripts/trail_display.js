@@ -30,6 +30,10 @@ $(function(){
         }
     }
     var currentSiteID = String(siteIDs[currentSiteIndex]);
+
+    rangy.init();
+    initializeAutoResize();
+
     currentSite = $("#"+currentSiteID);
     setTimeout(makeIframes, 1);
     $("#nextSite").click(nextSite);
@@ -46,10 +50,21 @@ $(function(){
     $(".noteWrapper").click(clickJumpToNote);
     $(".faviconImage").click(clickJumpToSite);
 
-    initializeAutoResize();
     makeFaviconsDragable();
     switchToSite(currentSiteID);
 });
+
+function initializeNoteTaking(siteID){
+    console.log("initializing note taking")
+    var iframeDocumentBeingInitialized = $("#"+String(siteID))[0].contentWindow.document;
+    $(iframeDocumentBeingInitialized.body).mousedown(function() {
+        mouseDown=1;
+    });
+    $(iframeDocumentBeingInitialized.body).mouseup(function(){
+        mouseDown=0;
+    });
+    $(iframeDocumentBeingInitialized).mousedown(possibleHighlightStart);
+}
 
 function removeLoadingFromSite(siteID) {
     console.log("removing loading from site:", siteID);
@@ -60,6 +75,7 @@ function removeLoadingFromSite(siteID) {
 function loadIframes(siteID){
     $('iframe#' + siteID).load(function() {
         removeLoadingFromSite(siteID);
+        initializeNoteTaking(siteID);
     });
     $('iframe#' + siteID).attr("src", requestUrl + "/sites/" + siteID);
     $.ajax({
@@ -384,6 +400,7 @@ function createCommentOverlay(commentText,xPos,yPos){
         "line-height": "normal",
     });
     commentContainer.addClass("commentOverlay");
+    commentContainer.addClass("webtrails");
 
     var commentOverlay = $("<div>");
     commentOverlay.html(commentText);
@@ -799,4 +816,39 @@ function changeSiteOrder(event, ui){
     if ($('iframe').hasClass('shrunk')) {
         shrinkIframes();
     }
+}
+
+function getCurrentSiteDocument(){
+    return currentSite[0].contentWindow.document
+}
+
+function getCurrentIframeHTML(){
+    var htmlClone = $(getCurrentSiteDocument().getElementsByTagName('html')[0]).clone();
+    removeInsertedHtml(htmlClone); // edits in-place
+    return htmlClone[0].outerHTML;
+}
+
+function removeInsertedHtml($htmlClone) {
+    $htmlClone.find('.webtrails').remove();
+}
+
+function saveNewNote(note){
+    console.log("saving new note to trail");
+    var currentHTML = getCurrentIframeHTML();
+    var currentSiteUrl = $('.activeFavicon').attr("data-site-url");
+    var currentSiteTitle = $('.activeFavicon').attr("data-ot");
+    console.log(getCurrentSiteID());
+    $.ajax({
+        url: "/sites/new_note_from_view_page",
+        type: "post",
+        data: {
+            "site[id]":getCurrentSiteID(), //this is probably unnecesary
+            "site[trail_id]":trailID,
+            "note": note || "none",
+            "html": currentHTML,
+        },
+        success: function(resp){
+            console.log("successs!");
+        }
+    });
 }
