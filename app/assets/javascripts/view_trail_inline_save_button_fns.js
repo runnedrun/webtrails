@@ -1,9 +1,11 @@
 console.log("inline save loaded");
 
-function possibleHighlightStart(){
+function possibleHighlightStart(e){
     console.log("possible highlight start")
     mouseDown = 1;
-    $(getCurrentSiteDocument()).mouseup(function(){mouseDown = 0; highlightedTextDetect()});
+    if (!$(e.target).hasClass("webtrails")){
+        $(getCurrentSiteDocument()).mouseup(function(){mouseDown = 0; highlightedTextDetect()});
+    }
 }
 
 function highlightedTextDetect(){
@@ -82,7 +84,8 @@ function insertSaveButtonIntoNodeContent(highlightedTextRange){
     var textNodeContent = insertionNode.textContent;
     var firstHalfOfNode =  textNodeContent.slice(0,endOffset);
     var secondHalfOfNode =  textNodeContent.slice(endOffset);
-    var saveSpan = $("<span class='inlineSaveButton webtrails'></span>");
+    var saveSpan = $("<span></span>");
+    saveSpan.addClass("webtrails inline-save-button");
     saveSpan.html("Save note");
     saveSpan.css("width", "0");
 
@@ -103,10 +106,10 @@ function insertSaveButtonIntoNodeContent(highlightedTextRange){
 }
 
 function insertAbsolutelyPositionedSaveButton(left,top){
-    var saveSpan = $("<span class='inlineSaveButton webtrails'></span>");
+    var saveSpan = $("<span></span>");
+    saveSpan.addClass("inline-save-button webtrails");
     applyDefaultCSS(saveSpan);
     saveSpan.html("+Save note");
-    saveSpan.addClass("inlineSaveButton");
     saveSpan.css({
         "background" : "#f0f0f0",
         "font-size" : "12px",
@@ -118,21 +121,28 @@ function insertAbsolutelyPositionedSaveButton(left,top){
         "cursor": "pointer",
         "z-index": "2147483647",
         "border": "1px solid #ccc",
-        "padding": "2px"
+        "padding": "2px",
+        "-webkit-touch-callout": "none",
+        "-webkit-user-select": "none",
+        "-khtml-user-select": "none",
+        "-moz-user-select": "none",
+        "-ms-user-select": "none",
+        "user-select": "none"
     });
+
     $(getCurrentSiteDocument().body).append(saveSpan)
     return saveSpan
 }
 
 function removeInlineSaveButton(e){
-    if (!$(e.target).is(".inlineSaveButton")){
-        $(".inlineSaveButton").remove();
+    if (!$(e.target).is(".inline-save-button")){
+        $(getCurrentSiteDocument()).find(".inline-save-button").remove();
     }
 }
 
 function clickAndRemoveSaveButton(e,overlayLeft,overlayTop,overLaySpacing,highlightedRange){
-    makeCommentOverlay(overlayLeft, overlayTop,overLaySpacing,highlightedRange);
-    $(".inlineSaveButton").remove();
+    makeCommentCreateOverlay(overlayLeft, overlayTop,overLaySpacing,highlightedRange);
+    $(getCurrentSiteDocument()).find(".inline-save-button").remove();
 }
 
 function getNodeLineHeight(element) {

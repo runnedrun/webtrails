@@ -55,8 +55,8 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     wt_$(commentOverlay).append(commentDescription);
     wt_$(commentOverlay).append(commentBox);
     var noteContent = String(highlightedRange);
-    commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,xPos,yPos));
-    wt_$(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,xPos,yPos));
+    commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
+    wt_$(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
     commentBox.autosize();
     commentBox.focus();
     var nodes = highlightedRange.getNodes();
@@ -71,6 +71,7 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
             markNodeForHighlight(node,0,node.length);
         }
     });
+    console.log("got to here, highlighting");
     highlight_wtHighlights();
     wt_$(".trailHighlight").css("background-color","yellow");
     return commentBox;
@@ -81,6 +82,8 @@ function postNoteAndComment(e,content,commentOverlay,xPos,yPos){
     if (code == 13 && !e.shiftKey){
         closeOverlay();
         saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos);
+    }  else if (code == 27){
+        closeOverlay();
     }
 }
 

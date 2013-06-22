@@ -1,6 +1,6 @@
 console.log("commenting loaded");
 
-function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
+function makeCommentCreateOverlay(xPos, yPos, spacing,highlightedRange){
     var overlayHeight =20;
     //make this dynamic so the size of the comment box changes based on page size
     var overlayWidth = 400;
@@ -55,14 +55,20 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     $(commentOverlay).append(commentDescription);
     $(commentOverlay).append(commentBox);
     var noteContent = String(highlightedRange);
-    commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,xPos,yPos));
-    $(getCurrentSiteDocument()).mousedown(clickAwayWithClosure(noteContent,commentOverlay,xPos,yPos));
+    commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
+    $(getCurrentSiteDocument()).mousedown(clickAwayWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
     commentBox.autosize();
     commentBox.focus();
     var nodes = highlightedRange.getNodes();
+
+    // the start offset indicates the offset from the beginning of the first text node,
+    // if the range does not begin with a text node we have to walk the range until we find one.
+    var reachedFirstTextNode = false;
     $.each(nodes,function(i,node){
-        if (i == 0){
-            markNodeForHighlight(node,highlightedRange.startOffset,node.length);
+        if (i == 0 || !reachedFirstTextNode){
+            console.log("first node");
+            console.log(highlightedRange.startOffset);
+            reachedFirstTextNode = markNodeForHighlight(node,highlightedRange.startOffset,node.length);
         }
         else if (i == (nodes.length-1)){
             markNodeForHighlight(node,0,highlightedRange.endOffset);
@@ -81,6 +87,8 @@ function postNoteAndComment(e,content,commentOverlay,xPos,yPos){
     if (code == 13 && !e.shiftKey){
         closeOverlay();
         saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos);
+    } else if(code == 27){
+        closeOverlay();
     }
 }
 
@@ -94,10 +102,16 @@ function clickAwayWithClosure(noteContent,commentOverlay,xPos,yPos){
 
 function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY){
 //    noteCount++;
-    addNewNoteToClientSiteStorage();
-    saveNewNote(
-        {content: content, comment: comment, comment_location_x: commentLocationX, comment_location_y: commentLocationY, client_side_id: "client_side_id_"+ (getNumberOfNotesForCurrentSite() - 1), scroll_x: currentSite[0].contentWindow.scrollX, scroll_y:currentSite[0].contentWindow.scrollY}
-    );
+    var newNote = {
+        content: content,
+        comment: comment,
+        comment_location_x: commentLocationX,
+        comment_location_y: commentLocationY,
+        client_side_id: "client_side_id_"+ (getNumberOfNotesForCurrentSite()),
+        scroll_x: currentSite[0].contentWindow.scrollX,
+        scroll_y:currentSite[0].contentWindow.scrollY
+    };
+    saveNewNote(newNote);
 }
 
 function closeOverlay(){
@@ -144,19 +158,17 @@ function markNodeForHighlight(node,start_offset, end_offset){
             var text_after_marker = $(getCurrentSiteDocument().createTextNode(unhighlighted_append));
             text_after_marker.insertAfter(new_marker);
         }
+        return true;
     } else {
-//        $(node).wrap("wtHighlight");
+        console.log("not a text node");
+        return false;
     }
 }
 
 function highlight_wtHighlights(){
-    $("wtHighlight.highlightMe").css("background","yellow");
+    $(getCurrentSiteDocument()).find("wtHighlight.highlightMe").css("background","yellow");
 }
 
 function unhighlight_wtHighlights(){
-    $("wtHighlight.highlightMe").removeClass("highlightMe").css("background","");
-}
-
-function addNewNoteToClientSiteStorage(){
-    console.log("adding new note client side");
+    $(getCurrentSiteDocument()).find("wtHighlight.highlightMe").removeClass("highlightMe").css("background","");
 }

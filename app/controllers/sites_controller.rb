@@ -85,14 +85,9 @@ class SitesController < ApplicationController
       end
 
       site.update_html(html)
-      if (params[:note] and params[:note] != "none")
-        # We should save the note, too.
-        params[:note][:site_id] = site_id
-        @note = Note.create!(params[:note])
-        render :json => {:trail_id => trail_id, :site_id => site_id, :note_content => @note.content, :note_id => @note.id}, :status => 200
-      else
-        render :json => {:trail_id => trail_id, :site_id => site_id}, :status => 200
-      end
+      params[:note][:site_id] = site_id
+      @note = Note.create!(params[:note])
+      render :json => {:trail_id => trail_id, :site_id => site_id, :note => @note}, :status => 200
     rescue
       puts $!.message
       render_server_error_ajax
@@ -115,13 +110,8 @@ class SitesController < ApplicationController
     $stderr.puts "Async site load " + String(params[:site_id])
     site = Site.find(params[:site_id])
 
-    notes = []
-    site.notes.each_with_index do |note, i|
-      notes[i] = {"content" => note.content, "scroll_x" => note.scroll_x, "scroll_y" => note.scroll_y, "note_id" => note.id,
-                  "comment" => note.comment, "comment_location_x" => note.comment_location_x,
-                  "comment_location_y" => note.comment_location_y, "client_side_id" => note.client_side_id}
-    end
 
+    notes = site.notes
     notes.sort_by! {|note| Integer(note["client_side_id"].sub("client_side_id_",""))}
     render :json => {"notes" => notes, "site_id" => site.id, "domain" => site.domain, "url" => site.url, "title" => site.title}, :status => 200
   end

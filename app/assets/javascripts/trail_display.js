@@ -116,8 +116,8 @@ function readySite(data){
     console.log("readying site:", data.site_id);
     var noteIDs=[];
     $.each(data.notes, function(i,note){
-        noteIDs.push(String(note.note_id));
-        Notes[note.note_id] = note;
+        noteIDs.push(String(note.id));
+        Notes[note.id] = note;
     })
     var siteAttributes = {"noteIDs": noteIDs, "title" : data.title, "url" : data.url};
     siteHash[data.site_id]=siteAttributes;
@@ -301,35 +301,32 @@ function gotoLastNoteforCurrentSite(){
 
 function scrollToAndHighlightNote(noteID){
     console.log('scrolling to note', noteID);
-    currentNote = Notes[noteID];
     var contWindow = iframeContentWindow();
-    removeHighlight($(contWindow.document.body));
-    removeCurrentComment();
-    if(currentNote){
+    if(Notes[noteID]){
+        currentNote = Notes[noteID];
+        removeHighlight($(contWindow.document.body));
+        removeCurrentComment();
         var highlights = $(contWindow.document.body).find("."+currentNote.client_side_id);
         highlights.css("background-color","yellow");
 
         //go through all the highlighted elements and find the first one above the scroll position, then put the comment box there.
-        offsets = $(highlights[0]).offset();
-        highlights.each(function(i,highlight){
-            if ($(highlight).offset().top > currentNote.comment_location_y){
-                offsets = $(highlight).offset();
-                return false;
-            }
-        });
-
+        var topHighlight = $(highlights[0]);
+        var bottomHighlight = $(highlights[highlights.length-1]);
+        var topOfHighlight = topHighlight.offset().top;
         var windowHeight = $(window).height();
-        var scrollPosition = offsets.top - windowHeight/2;
+        var scrollPosition = topOfHighlight - windowHeight/2;
         $(contWindow).scrollTop(scrollPosition);
 
-        var commentDisplay = createCommentOverlay(currentNote.comment,offsets.left,offsets.top);
+        var bottomHighlightOffsets = bottomHighlight.offset();
+        console.log(bottomHighlightOffsets);
+        var bottomHighlightBottom = bottomHighlightOffsets.top + bottomHighlight.height();
+        var commentDisplay = createCommentOverlay(currentNote.comment,bottomHighlightOffsets.left,bottomHighlightBottom);
         currentCommentBox = commentDisplay;
-        currentNoteIndex = siteHash[getCurrentSiteID()]["noteIDs"].indexOf(String(noteID));
+        currentNoteIndex = getNoteIDsForCurrentSite().indexOf(String(noteID));
         updateNoteCount();
+        deactivateOrReactivateNextNoteIfNecessary();
+        deactivateOrReactivatePreviousNoteIfNecessary();
     }
-//
-    deactivateOrReactivateNextNoteIfNecessary();
-    deactivateOrReactivatePreviousNoteIfNecessary();
 }
 
 function removeHighlight(node){
@@ -347,8 +344,7 @@ function higlightCurrentSiteFavicon(currentSiteID){
 }
 
 function expandOrCloseNoteList(){
-    var currentSiteID = siteIDs[currentSiteIndex];
-    var currentNoteList = $(".noteList#site"+currentSiteID);
+    var currentNoteList = $(".noteList#site"+getCurrentSiteID());
     if (currentNoteList.hasClass("open")){
         closeNoteList();
     }else{
@@ -370,8 +366,7 @@ function openNoteList(noteList){
 }
 
 function updateNoteCount(){
-    var noteIds = getNoteIDsForCurrentSite();
-    var numberOfNotes = noteIds.length;
+    var numberOfNotes = getNumberOfNotesForCurrentSite();
     if (numberOfNotes > 0){
         var currentNote = currentNoteIndex + 1;
         $(".note-count").html(currentNote+"/"+numberOfNotes);
@@ -388,7 +383,7 @@ function clickJumpToNote(e){
 }
 
 function createCommentOverlay(commentText,xPos,yPos){
-    var spacing = 25;
+    var spacing = 10;
     var overlayMaxWidth = 300;
 
     var commentContainer = $("<div>");
@@ -557,10 +552,11 @@ function createCommentOverlay(commentText,xPos,yPos){
 //    var overlayWidth = getComputedStyleOfElementInIframe(commentOverlay,"width");
     var overlayHeightString = getComputedStyleOfElementInIframe(commentContainer[0],"height");
     var overlayHeightFloat = parseFloat(overlayHeightString.slice(0,overlayHeightString.length -2));
-    var topPosition  =  yPos - spacing - overlayHeightFloat;
-    if (topPosition < 0) {
-        topPosition = yPos + spacing * 2;
-    }
+    var topPosition  =  yPos;
+    var topPosition  =  yPos + spacing
+//    if (topPosition < 0) {
+//        topPosition = yPos + spacing * 2;
+//    }
     var leftPosition = xPos;
 
     commentContainer.css("top", topPosition+"px");
@@ -767,7 +763,7 @@ function deactivateOrReactivatePreviousNoteIfNecessary(){
 function deactivateOrReactivateNextNoteIfNecessary(){
     var lastSiteId = siteIDs[siteIDs.length-1];
     var currentNoteIDs = getNoteIDsForCurrentSite();
-    if ((getCurrentSiteID() == lastSiteId) && (currentNoteIndex==currentNoteIDs.length-1) && nextNoteActivated){
+    if ((getCurrentSiteID() == lastSiteId) && (currentNoteIndex==getNumberOfNotesForCurrentSite()-1) && nextNoteActivated){
         deactivateNextNoteButton();
     } else if (!((getCurrentSiteID() == lastSiteId) && (currentNoteIndex==-1)) && !nextNoteActivated){
         reactivateNextNoteButton();
@@ -832,6 +828,35 @@ function removeInsertedHtml($htmlClone) {
     $htmlClone.find('.webtrails').remove();
 }
 
+function addNewNoteToClientSideStorage(resp){
+    console.log("adding new note client side");
+    var note = resp.note;
+    getNoteIDsForCurrentSite().push(String(note.id));
+    Notes[note.id] = note;
+//    scrollToAndHighlightNote(note.id);
+    updateNoteCount();
+    addNoteToNoteList(note.content,note.id);
+    deactivateOrReactivateNextNoteIfNecessary();
+}
+
+function addNoteToNoteList(noteContent,noteID){
+    console.log("adding note to note list");
+    console.log("content: ", noteContent);
+    console.log("id: ", noteID);
+    var noteDisplay = $(".noteList#site"+String(getCurrentSiteID()));
+    console.log(noteDisplay);
+    var noteWrapper = $("<div></div>");
+    noteWrapper.addClass("noteWrapper");
+
+    var noteContentDiv = $("<div></div>");
+    noteContentDiv.attr("id","note"+String(noteID));
+    noteContentDiv.addClass("noteContent testing1");
+    noteContentDiv.html(noteContent);
+
+    noteWrapper.append(noteContentDiv);
+    noteDisplay.append(noteWrapper);
+}
+
 function saveNewNote(note){
     console.log("saving new note to trail");
     var currentHTML = getCurrentIframeHTML();
@@ -847,8 +872,6 @@ function saveNewNote(note){
             "note": note || "none",
             "html": currentHTML,
         },
-        success: function(resp){
-            console.log("successs!");
-        }
+        success: addNewNoteToClientSideStorage
     });
 }
