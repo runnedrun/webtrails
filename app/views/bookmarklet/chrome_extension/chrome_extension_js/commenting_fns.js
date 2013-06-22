@@ -60,9 +60,13 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     commentBox.autosize();
     commentBox.focus();
     var nodes = highlightedRange.getNodes();
+
+    // the start offset indicates the offset from the beginning of the first text node,
+    // if the range does not begin with a text node we have to walk the range until we find one.
+    var reachedFirstTextNode = false;
     wt_$.each(nodes,function(i,node){
-        if (i == 0){
-            markNodeForHighlight(node,highlightedRange.startOffset,node.length);
+        if (i == 0 || !reachedFirstTextNode){
+            reachedFirstTextNode = markNodeForHighlight(node,highlightedRange.startOffset,node.length);
         }
         else if (i == (nodes.length-1)){
             markNodeForHighlight(node,0,highlightedRange.endOffset);
@@ -154,8 +158,10 @@ function markNodeForHighlight(node,start_offset, end_offset){
             var text_after_marker = wt_$(document.createTextNode(unhighlighted_append));
             text_after_marker.insertAfter(new_marker);
         }
+        return true;
     } else {
 //        wt_$(node).wrap("wtHighlight");
+        return false;
     }
 }
 

@@ -66,8 +66,6 @@ function makeCommentCreateOverlay(xPos, yPos, spacing,highlightedRange){
     var reachedFirstTextNode = false;
     $.each(nodes,function(i,node){
         if (i == 0 || !reachedFirstTextNode){
-            console.log("first node");
-            console.log(highlightedRange.startOffset);
             reachedFirstTextNode = markNodeForHighlight(node,highlightedRange.startOffset,node.length);
         }
         else if (i == (nodes.length-1)){
@@ -160,7 +158,6 @@ function markNodeForHighlight(node,start_offset, end_offset){
         }
         return true;
     } else {
-        console.log("not a text node");
         return false;
     }
 }
@@ -171,4 +168,59 @@ function highlight_wtHighlights(){
 
 function unhighlight_wtHighlights(){
     $(getCurrentSiteDocument()).find("wtHighlight.highlightMe").removeClass("highlightMe").css("background","");
+}
+
+
+// this is the functionality for saving to server and updating client side storage
+
+function removeInsertedHtml($htmlClone) {
+    $htmlClone.find('.webtrails').remove();
+}
+
+function addNewNoteToClientSideStorage(resp){
+    console.log("adding new note client side");
+    var note = resp.note;
+    getNoteIDsForCurrentSite().push(String(note.id));
+    Notes[note.id] = note;
+//    scrollToAndHighlightNote(note.id);
+    updateNoteCount();
+    addNoteToNoteList(note.content,note.id);
+    deactivateOrReactivateNextNoteIfNecessary();
+}
+
+function addNoteToNoteList(noteContent,noteID){
+    console.log("adding note to note list");
+    console.log("content: ", noteContent);
+    console.log("id: ", noteID);
+    var noteDisplay = $(".noteList#site"+String(getCurrentSiteID()));
+    console.log(noteDisplay);
+    var noteWrapper = $("<div></div>");
+    noteWrapper.addClass("noteWrapper");
+
+    var noteContentDiv = $("<div></div>");
+    noteContentDiv.attr("id","note"+String(noteID));
+    noteContentDiv.addClass("noteContent testing1");
+    noteContentDiv.html(noteContent);
+
+    noteWrapper.append(noteContentDiv);
+    noteDisplay.append(noteWrapper);
+}
+
+function saveNewNote(note){
+    console.log("saving new note to trail");
+    var currentHTML = getCurrentIframeHTML();
+    var currentSiteUrl = $('.activeFavicon').attr("data-site-url");
+    var currentSiteTitle = $('.activeFavicon').attr("data-ot");
+    console.log(getCurrentSiteID());
+    $.ajax({
+        url: "/sites/new_note_from_view_page",
+        type: "post",
+        data: {
+            "site[id]":getCurrentSiteID(), //this is probably unnecesary
+            "site[trail_id]":trailID,
+            "note": note || "none",
+            "html": currentHTML,
+        },
+        success: addNewNoteToClientSideStorage
+    });
 }
