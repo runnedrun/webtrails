@@ -36,30 +36,35 @@ function gotoLastNoteforCurrentSite(){
 function scrollToAndHighlightNote(noteID){
     console.log('scrolling to note', noteID);
     var contWindow = iframeContentWindow();
+
     if(Notes[noteID]){
         currentNote = Notes[noteID];
-        removeHighlight($(contWindow.document.body));
-        removeCurrentComment();
+        closeCurrentNoteAndRemoveHighlight();
         var highlights = $(contWindow.document.body).find("."+currentNote.client_side_id);
-        highlights.css("background-color","yellow");
+        if (highlights.length){
+            console.log("highlights", highlights);
+            highlights.css("background-color","yellow");
 
-        //go through all the highlighted elements and find the first one above the scroll position, then put the comment box there.
-        var topHighlight = $(highlights[0]);
-        var bottomHighlight = $(highlights[highlights.length-1]);
-        var topOfHighlight = topHighlight.offset().top;
-        var windowHeight = $(window).height();
-        var scrollPosition = topOfHighlight - windowHeight/2;
-        $(contWindow).scrollTop(scrollPosition);
+            //go through all the highlighted elements and find the first one above the scroll position, then put the comment box there.
+            var topHighlight = $(highlights[0]);
+            var bottomHighlight = $(highlights[highlights.length-1]);
+            var topOfHighlight = topHighlight.offset().top;
+            var windowHeight = $(window).height();
+            var scrollPosition = topOfHighlight - windowHeight/2;
+            $(contWindow).scrollTop(scrollPosition);
 
-        var bottomHighlightOffsets = bottomHighlight.offset();
-        console.log(bottomHighlightOffsets);
-        var bottomHighlightBottom = bottomHighlightOffsets.top + bottomHighlight.height();
-        var commentDisplay = createCommentOverlay(currentNote.comment,bottomHighlightOffsets.left,bottomHighlightBottom);
-        currentCommentBox = commentDisplay;
+            var bottomHighlightOffsets = bottomHighlight.offset();
+            var bottomHighlightBottom = bottomHighlightOffsets.top + bottomHighlight.height();
+            var commentDisplay = createCommentOverlay(currentNote.comment,bottomHighlightOffsets.left,bottomHighlightBottom);
+            currentCommentBox = commentDisplay;
+        } else {
+            currentCommentBox = false;
+        }
         currentNoteIndex = getNoteIDsForCurrentSite().indexOf(String(noteID));
         updateNoteCount();
         deactivateOrReactivateNextNoteIfNecessary();
         deactivateOrReactivatePreviousNoteIfNecessary();
+        highlightNoteInList(noteID);
     }
 }
 
@@ -100,23 +105,6 @@ function updateNoteCount(){
 
 }
 
-function clickJumpToNote(e){
-    var noteWrapper = $(e.delegateTarget);
-    console.log(noteWrapper.data());
-    var noteID = noteWrapper.data("note-id");
-    var siteID = noteWrapper.data("site-id");
-    // close the last note
-    $(".selected-note").removeClass("selected-note").find(".noteContent").css("max-height","").dotdotdot();
-    highlightNoteInList(noteWrapper);
-    scrollToAndHighlightNote(noteID);
-}
-
-function highlightNoteInList($noteElement){
-    $noteElement.addClass("selected-note");
-    var contentElement = $noteElement.find(".noteContent");
-    contentElement.trigger("destroy.dot").css("max-height","none");
-}
-
 function deleteCurrentNoteFromTrail(){
     var currentNoteID = getCurrentNoteID();
 //    console.log(currentNote);
@@ -141,6 +129,7 @@ function deleteNoteFromTrail(noteID){
 function closeCurrentNoteAndRemoveHighlight(){
     console.log("closing and removing highlight");
     removeCurrentComment();
+    unhighlightCurrentNoteInList();
     removeHighlight($(iframeContentWindow().document.body));
     if ((getCurrentSiteID() == siteIDs[0]) && (currentNoteIndex==0)){
         currentNoteIndex = -1;

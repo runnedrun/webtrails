@@ -2,13 +2,13 @@ function initOrDisableNoteView(){
     if (noteViewActive){
         disableNoteViewMode();
     }else{
-        initNoteViewMode()
+        initNoteViewMode(.6)
     }
 }
 
-function initNoteViewMode(){
-    initHalfSiteView();
-    showNoteList();
+function initNoteViewMode(scale){
+    initHalfSiteView(scale);
+    showNoteList(scale);
     noteViewActive = true;
 }
 
@@ -18,9 +18,9 @@ function disableNoteViewMode(){
     noteViewActive = false;
 }
 
-function initHalfSiteView(){
+function initHalfSiteView(scale){
     var iframes = $("iframe");
-    scaleIframe(iframes,.5);
+    scaleIframe(iframes,scale);
     iframes.each(disableSelectionInIframe);
 //    $(".siteDisplayDiv").addClass("span6");
 //    $(".siteDisplayDiv").css({width:"50%"});
@@ -34,8 +34,33 @@ function disableHalfSiteView(){
         height:"100%",
         width:"100%"
     });
-    $(".siteDisplayDiv").css({width:"100%"});
+//    $(".siteDisplayDiv").css({width:"100%"});
 //    $(".siteDisplayDiv").removeClass("span6");
+}
+
+function clickJumpToNote(e){
+    var noteWrapper = $(e.delegateTarget);
+    console.log(noteWrapper.data());
+    var noteID = noteWrapper.data("note-id");
+    var siteID = noteWrapper.data("site-id");
+    // close the last note
+    console.log(getCurrentSiteID(),siteID);
+    if ( String(siteID) != getCurrentSiteID()){
+        console.log("switching sites")
+        switchToSite(siteID);
+    }
+    scrollToAndHighlightNote(noteID);
+}
+
+function highlightNoteInList(noteID){
+    var $noteElement = $(".noteInfo[data-note-id="+noteID+"]");
+    $noteElement.addClass("selected-note");
+    var contentElement = $noteElement.find(".noteContent");
+    contentElement.trigger("destroy.dot").css("max-height","none");
+}
+
+function unhighlightCurrentNoteInList(){
+    $(".selected-note").removeClass("selected-note").find(".noteContent").css("max-height","").dotdotdot();
 }
 
 function preventClick(e){
@@ -84,8 +109,10 @@ function scaleIframe($iframe,iframeScale){
     });
 }
 
-function showNoteList(){
-    $(".noteViewer").show();
+function showNoteList(scale){
+    $(".noteViewer").show().css({
+        "width": 100-(scale*100)+"%"
+    });
     $(".noteContent").dotdotdot();
 }
 

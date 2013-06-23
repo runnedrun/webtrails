@@ -13,7 +13,7 @@
 <!--<div class="row-fluid">-->
     <div class="siteDisplayDiv">
       <%- @sites.each_with_index do |site,i| %>
-        <iframe allowtransparency=true frameborder=0 id=<%= site.id %> data-site-id="<%= site.id %>" class="siteDisplay notCurrent"></iframe>
+        <iframe id=<%= site.id %> data-site-id="<%= site.id %>" class="siteDisplay notCurrent"></iframe>
       <%- end %>
       <% if @sites.empty?%>
         <h2 class="no-trails-placeholder"> No sites added to this trail. Get to trailing some websites with the Chrome Extension before you can come here to view them!</h2>
@@ -22,24 +22,26 @@
     <div id="siteClickDivs"></div>
 
     <div class="noteViewer">
-      <%- i = 0  %>
-      <%- @site_note_hash.each do |site_id, notes| %>
-          <div class="noteListHeader" data-site-id=<%= site_id %>>
-            <img class="faviconImage" src="<%= @favicon_urls_with_ids_and_titles[i][0] %>" />
-            <span><%= @sites[i].title%></span>
-          </div>
-          <div class="noteList">
-            <table class="noteWrapper table table-bordered">
+      <table class="noteWrapper table table-bordered">
+          <%- i = 0  %>
+          <%- @site_note_hash.each do |site_id, notes| %>
+            <tr>
+              <th colspan="2" class="noteListHeader" data-site-id=<%= site_id %>>
+                <img class="faviconImage" src="<%= @favicon_urls_with_ids_and_titles[i][0] %>" />
+                <span><%= @sites[i].title%></span>
+              </th>
+            </tr>
+            <div class="noteList">
                 <%- notes.each do |note| %>
                   <tr class=noteInfo data-note-id="<%= note.id %>" data-site-id="<%= site_id %>">
                     <td class=noteContentCell><div class="noteContent"><%= note.content %></div></td>
                     <td><div class="noteComment"><%= note.comment %></div></td>
                   </tr>
                 <%-	end %>
-            </table>
-          </div>
-          <%- i += 1 %>
-      <%- end %>
+            </div>
+            <%- i += 1 %>
+          <%- end %>
+      </table>
     </div>
 <!--</div>-->
 <div class="viewTrailToolbar">

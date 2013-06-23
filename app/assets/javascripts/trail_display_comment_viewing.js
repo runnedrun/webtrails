@@ -126,7 +126,7 @@ function createCommentOverlay(commentText,xPos,yPos){
         editCommentContainer.append(editComment);
         editCommentContainer.click(function(e){editCurrentComment(commentOverlay,editCommentContainer)});
         // or if you click the words, you can edit them.
-        commentOverlay.click(function(e){editCurrentComment(commentOverlay,editCommentContainer)});
+        commentOverlay.dblclick(function(e){editCurrentComment(commentOverlay,editCommentContainer)});
 
         var deleteCommentContainer = $("<div>");
         deleteCommentContainer.css({

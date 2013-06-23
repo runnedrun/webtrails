@@ -83,6 +83,7 @@ function shrinkIframes() {
 
 function switchToSite(siteID){
 //    closeNoteList();
+    siteID = String(siteID);
     if ($('.currentSite').length > 0) {
         removeCurrentComment();
         removeHighlight($(iframeContentWindow().document.body));
@@ -92,7 +93,7 @@ function switchToSite(siteID){
     }
     $('iframe').addClass("notCurrent").removeClass("currentSite");
     console.log("switching to siteID", siteID);
-    currentSite = $("#"+String(siteID));
+    currentSite = $("#"+siteID);
     // console.log(currentSite);
     currentSite.removeClass("notCurrent").addClass("currentSite");
     highlightCurrentSiteFavicon(siteID);
