@@ -101,9 +101,20 @@ function updateNoteCount(){
 }
 
 function clickJumpToNote(e){
-    var noteWrapper = e.target;
-    var noteID = noteWrapper.id.slice(4);
+    var noteWrapper = $(e.delegateTarget);
+    console.log(noteWrapper.data());
+    var noteID = noteWrapper.data("note-id");
+    var siteID = noteWrapper.data("site-id");
+    // close the last note
+    $(".selected-note").removeClass("selected-note").find(".noteContent").css("max-height","").dotdotdot();
+    highlightNoteInList(noteWrapper);
     scrollToAndHighlightNote(noteID);
+}
+
+function highlightNoteInList($noteElement){
+    $noteElement.addClass("selected-note");
+    var contentElement = $noteElement.find(".noteContent");
+    contentElement.trigger("destroy.dot").css("max-height","none");
 }
 
 function deleteCurrentNoteFromTrail(){

@@ -82,7 +82,7 @@ function shrinkIframes() {
 // scrolls the favicon carousel to the appropriate place for the active favicon
 
 function switchToSite(siteID){
-    closeNoteList();
+//    closeNoteList();
     if ($('.currentSite').length > 0) {
         removeCurrentComment();
         removeHighlight($(iframeContentWindow().document.body));

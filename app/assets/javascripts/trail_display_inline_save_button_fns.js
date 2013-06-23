@@ -3,7 +3,7 @@ console.log("inline save loaded");
 function possibleHighlightStart(e){
     console.log("possible highlight start")
     mouseDown = 1;
-    if (!$(e.target).hasClass("webtrails")){
+    if (!$(e.target).hasClass("webtrails") && !noteViewActive){
         $(getCurrentSiteDocument()).mouseup(function(){mouseDown = 0; highlightedTextDetect()});
     }
 }

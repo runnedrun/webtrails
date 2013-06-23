@@ -10,7 +10,8 @@ var siteHash = {};
 var currentCommentBox;
 var nextNoteActivated = true;
 var previousNoteActivated = true;
-// var siteIDS
+var noteViewActive = false;
+// var siteIDs
 // var requestUrl
 // var editAccess
 // var trailID
@@ -49,8 +50,9 @@ $(function(){
         $("#removeSite").remove();
     }
     $('#showAllSitesButton').click(showAllSites);
-    $("#showNoteList").click(expandOrCloseNoteList);
-    $(".noteWrapper").click(clickJumpToNote);
+//    $("#showNoteList").click(expandOrCloseNoteList);
+    $("#showNoteList").click(initOrDisableNoteView);
+    $(".noteInfo").click(clickJumpToNote);
     $(".faviconImage").click(clickJumpToSite);
 
     makeFaviconsDragable();
@@ -136,4 +138,13 @@ function switchToPresentationMode(){
 //    $(currentSite[0].contentWindow.documenon-wrapping div full screennt.body).css({"height": "100%","width": "100%","z-index":"0"});
     insertHTMLInIframe("<div class=overlay style='background-color: #666666;z-index:99998; height: 100%; width: 100%;position: fixed; top:0; right: 0; opacity: .6;'>", currentSite);
     presentationMode = true;
+}
+
+// this is an attempt to fix the weird highligh/scroll bug which pops up when you go into not view mode
+function lockScrollPositionOfSiteDisplayDiv(){
+    console.log("locking scroll position");
+    $(".siteDisplayDiv").scroll(function(e){
+        console.log("scrolleddddd");
+//            e.target.scrollTop = 0;
+    })
 }

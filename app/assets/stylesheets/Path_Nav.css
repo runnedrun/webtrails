@@ -9,7 +9,7 @@
     top: 0px;
     height: 100%;
     width: 100%;
-    z-index: 0;
+    z-index: 100;
 }
 
 .notCurrent.siteDisplay{
@@ -18,7 +18,8 @@
 
 .siteDisplayDiv {
     width: 100%;
-    height: 96%
+    height: 93%;
+    overflow:hidden;
 }
 
 .highlight {
@@ -135,17 +136,18 @@
     margin-top:3px;
 }
 
-.noteLists {
-    position: fixed;
-    z-index: 100;
-    right:0;
-    bottom:37px;
-    width: 20%;
-    background-color: #f0f0f0;
-}
-
-.noteList {
-    border: #aaa solid 1px;
+.noteViewer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 0;
+    /*float: right;*/
+    height: 93%;
+    width: 50%;
+    background-color: #FAFAFA;
+    border: #aaa solid 2px;
+    vertical-align: top;
+    /*display: inline-block;*/
     display: none;
 }
 
@@ -155,11 +157,9 @@
     font-size: 12px;
     color: #333;
     overflow: hidden;
-    margin: 4px
 }
 
 .noteWrapper {
-    border-bottom: 1px solid #ccc;
 }
 
 iframe {
@@ -206,3 +206,23 @@ iframe.shrunk {
     padding: 0px 10px 0px 10px
 }
 
+.noteInfo {
+}
+
+.noteContent {
+    max-height: 2.4em;
+    line-height: 1.2em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.noteComment {
+}
+
+.noteContentCell{
+    width: 50%;
+}
+
+.selected-note{
+    outline: 2px solid #9ecaed;
+}

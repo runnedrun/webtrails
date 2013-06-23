@@ -54,7 +54,7 @@ class TrailsController < ApplicationController
     $stderr.puts @favicon_urls_with_ids_and_titles
 
     @site_note_hash = {}
-    @sites.each {|site| @site_note_hash[site.id] = site.notes.map {|note| [note.content,note.id] }}
+    @sites.each {|site| @site_note_hash[site.id] = site.notes}
   end
 
   def get_favicons_for_trails(trails)

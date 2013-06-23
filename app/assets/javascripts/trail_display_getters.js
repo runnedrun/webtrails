@@ -37,3 +37,7 @@ function getCurrentIframeHTML(){
 function iframeContentWindow(){
     return $(".currentSite")[0].contentWindow;
 }
+
+function getSiteDocumentByID(siteID){
+    $("#"+siteID)[0].contentWindow.document
+}

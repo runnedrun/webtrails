@@ -10,28 +10,38 @@
 <script src="/bootstrap/js/bootstrap.min.js"> </script>
 <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<!--<div class="row-fluid">-->
+    <div class="siteDisplayDiv">
+      <%- @sites.each_with_index do |site,i| %>
+        <iframe allowtransparency=true frameborder=0 id=<%= site.id %> data-site-id="<%= site.id %>" class="siteDisplay notCurrent"></iframe>
+      <%- end %>
+      <% if @sites.empty?%>
+        <h2 class="no-trails-placeholder"> No sites added to this trail. Get to trailing some websites with the Chrome Extension before you can come here to view them!</h2>
+       <% end %>
+    </div>
+    <div id="siteClickDivs"></div>
 
-<div class="siteDisplayDiv">
-  <%- @sites.each_with_index do |site,i| %>
-    <iframe id=<%= site.id %> data-site-id="<%= site.id %>" class="siteDisplay notCurrent"></iframe>
-  <%- end %>
-  <% if @sites.empty?%>
-    <h2 class="no-trails-placeholder"> No sites added to this trail. Get to trailing some websites with the Chrome Extension before you can come here to view them!</h2>
-   <% end %>
-</div>
-<div id="siteClickDivs"></div>
-
-<div class="noteLists">
-  <%- @site_note_hash.each do |site_id, note_contents_and_id| %>
-      <div class="noteList" id=site<%= site_id %>>
-        <%- note_contents_and_id.each do |content, id| %>
-            <div class="noteWrapper">
-                <div class="noteContent" id="note<%= id %>"><%= content %></div>
-            </div>
-        <%-	end %>
-      </div>
-  <%- end %>
-</div>
+    <div class="noteViewer">
+      <%- i = 0  %>
+      <%- @site_note_hash.each do |site_id, notes| %>
+          <div class="noteListHeader" data-site-id=<%= site_id %>>
+            <img class="faviconImage" src="<%= @favicon_urls_with_ids_and_titles[i][0] %>" />
+            <span><%= @sites[i].title%></span>
+          </div>
+          <div class="noteList">
+            <table class="noteWrapper table table-bordered">
+                <%- notes.each do |note| %>
+                  <tr class=noteInfo data-note-id="<%= note.id %>" data-site-id="<%= site_id %>">
+                    <td class=noteContentCell><div class="noteContent"><%= note.content %></div></td>
+                    <td><div class="noteComment"><%= note.comment %></div></td>
+                  </tr>
+                <%-	end %>
+            </table>
+          </div>
+          <%- i += 1 %>
+      <%- end %>
+    </div>
+<!--</div>-->
 <div class="viewTrailToolbar">
 
 <a class="btn btn-mini navigateButton" id="goToAll" href="<%= Webtrails::Application::AJAX_REQUEST_URL %>" target="_blank">All Trails</a>
