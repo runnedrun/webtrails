@@ -48,7 +48,7 @@ class SitesController < ApplicationController
         end
         shallow_save=true
       else
-        site_id = Site.create!(params[:site]).id
+        site_id = Site.create!(params[:site].merge(:user_id => @user.id)).id
         shallow_save=false
       end
 
@@ -87,7 +87,7 @@ class SitesController < ApplicationController
       site.update_html(html)
       params[:note][:site_id] = site_id
       @note = Note.create!(params[:note])
-      render :json => {:trail_id => trail_id, :site_id => site_id, :note => @note}, :status => 200
+      render :json => {:trail_id => trail_id,:site_id => site_id,:note => @note,:new_note_row => render_to_string(partial: 'trails/note_row', locals: { :note => @note, :site_id => site_id })}, :status => 200
     rescue
       puts $!.message
       render_server_error_ajax

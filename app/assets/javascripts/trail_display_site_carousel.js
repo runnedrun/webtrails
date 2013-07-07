@@ -5,8 +5,7 @@ function scroll_favicon_carousel(activeFaviconIndex){
 }
 
 function clickJumpToSite(e){
-    var switchingToSiteWithExtraName = $(e.currentTarget).attr("id");
-    var switchingToSiteID = switchingToSiteWithExtraName.replace(/\D+/,"");
+    var switchingToSiteID = $(e.currentTarget).data("site-id")
     switchToSite(switchingToSiteID);
 }
 

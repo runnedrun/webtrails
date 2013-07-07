@@ -184,26 +184,18 @@ function addNewNoteToClientSideStorage(resp){
     Notes[note.id] = note;
 //    scrollToAndHighlightNote(note.id);
     updateNoteCount();
-    addNoteToNoteList(note.content,note.id);
+    addNoteToNoteList(resp.site_id, resp.new_note_row);
     deactivateOrReactivateNextNoteIfNecessary();
 }
 
-function addNoteToNoteList(noteContent,noteID){
-    console.log("adding note to note list");
-    console.log("content: ", noteContent);
-    console.log("id: ", noteID);
-    var noteDisplay = $(".noteList#site"+String(getCurrentSiteID()));
-    console.log(noteDisplay);
-    var noteWrapper = $("<div></div>");
-    noteWrapper.addClass("noteWrapper");
+function addNoteToNoteList(siteID, noteHtml){
+    console.log("note html",noteHtml);
+    var noteDisplays = $(".noteInfo[data-site-id="+String(siteID)+"]");
+    //insert the new note after the last note with the same siteID
+    var newNoteDisplay = noteDisplays.last().after(noteHtml);
 
-    var noteContentDiv = $("<div></div>");
-    noteContentDiv.attr("id","note"+String(noteID));
-    noteContentDiv.addClass("noteContent testing1");
-    noteContentDiv.html(noteContent);
-
-    noteWrapper.append(noteContentDiv);
-    noteDisplay.append(noteWrapper);
+    newNoteDisplay.click(clickJumpToNote);
+    newNoteDisplay.find(".noteComment").click(makeNoteCommentEditable);
 }
 
 function saveNewNote(note){

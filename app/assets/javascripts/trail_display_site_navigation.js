@@ -21,6 +21,9 @@ function showAllSites(){
         removeShrinkFromIframes();
         switchToSite(getCurrentSiteID());
     } else {
+        if (noteViewActive){
+            disableNoteViewMode();
+        }
         shrinkIframes();
     }
 }
@@ -145,6 +148,7 @@ function deleteSiteLocally(siteIndex) {
     }
     siteIDs.splice(siteIndex,1);
     iframe.remove();
+    removeSiteFromNoteList(siteID);
     deactivateOrReactivateNextNoteIfNecessary();
     deactivateOrReactivatePreviousNoteIfNecessary();
     $('#favicon' + siteID).remove();

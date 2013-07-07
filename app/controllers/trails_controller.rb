@@ -112,6 +112,7 @@ class TrailsController < ApplicationController
     begin
       trail = Trail.find(params[:id])
       if trail.owner != @user
+        puts "trail not owned by user"
         render_not_authorized
       else
         site_positions = params[:site_array]

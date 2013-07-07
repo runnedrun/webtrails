@@ -25,20 +25,15 @@
       <table class="noteWrapper table table-bordered">
           <%- i = 0  %>
           <%- @site_note_hash.each do |site_id, notes| %>
-            <tr>
-              <th colspan="2" class="noteListHeader" data-site-id=<%= site_id %>>
+            <tr class="note-list-header click-to-change-site" data-site-id="<%= site_id %>">
+              <th colspan="2">
                 <img class="faviconImage" src="<%= @favicon_urls_with_ids_and_titles[i][0] %>" />
                 <span><%= @sites[i].title%></span>
               </th>
             </tr>
-            <div class="noteList">
                 <%- notes.each do |note| %>
-                  <tr class=noteInfo data-note-id="<%= note.id %>" data-site-id="<%= site_id %>">
-                    <td class=noteContentCell><div class="noteContent"><%= note.content %></div></td>
-                    <td><div class="noteComment"><%= note.comment %></div></td>
-                  </tr>
+                  <%= render :partial => "note_row", :locals => {:note => note, :site_id => site_id} %>
                 <%-	end %>
-            </div>
             <%- i += 1 %>
           <%- end %>
       </table>
@@ -52,7 +47,7 @@
   <div class="siteFavicons">
       <%- @favicon_urls_with_ids_and_titles.each_with_index do |favicon_id_and_title,i| %>
           <div class="faviconContainer favicon<%= favicon_id_and_title[1]%>">
-            <img class="faviconImage" src="<%= favicon_id_and_title[0] %>" id="favicon<%= favicon_id_and_title[1] %>" data-ot="<%= @sites[i].title%>" data-ot-delay="0" data-ot-tip-joint="bottom" data-ot-style="dark" data-site-url="<%= @sites[i].url%>" data-site-index="<%= i %>"/>
+            <img class="faviconImage click-to-change-site" src="<%= favicon_id_and_title[0] %>" id="favicon<%= favicon_id_and_title[1] %>" data-site-id="<%= favicon_id_and_title[1] %>" data-ot="<%= @sites[i].title%>" data-ot-delay="0" data-ot-tip-joint="bottom" data-ot-style="dark" data-site-url="<%= @sites[i].url%>" data-site-index="<%= i %>"/>
             <img src="/images/loading_small.gif" class="faviconLoading" id ="loading-<%= favicon_id_and_title[1]%>"/>
           </div>
       <%- end %>

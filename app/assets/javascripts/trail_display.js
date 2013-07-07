@@ -53,7 +53,9 @@ $(function(){
 //    $("#showNoteList").click(expandOrCloseNoteList);
     $("#showNoteList").click(initOrDisableNoteView);
     $(".noteInfo").click(clickJumpToNote);
-    $(".faviconImage").click(clickJumpToSite);
+    $(".noteComment").click(makeNoteCommentEditable);
+
+    $(".click-to-change-site").click(clickJumpToSite);
 
     makeFaviconsDragable();
     switchToSite(currentSiteID);

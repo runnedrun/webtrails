@@ -27,12 +27,15 @@ class Trail < ActiveRecord::Base
     site_array.each_with_index do |site_id,index|
       position = index
       site = Site.find(site_id)
+      puts site.user_id
+      puts owner_id
       if site and (site.user_id == owner_id)
         site.position = position.to_i
         site.trail = self
         sites.push(site)
       else
         all_authorized = false
+        puts "a site did not exist or was not owned by the user"
       end
     end
 

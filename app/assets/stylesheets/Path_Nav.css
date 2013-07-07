@@ -149,6 +149,7 @@
     vertical-align: top;
     /*display: inline-block;*/
     display: none;
+    overflow: scroll;
 }
 
 .noteWrapper {
@@ -215,6 +216,10 @@ iframe.shrunk {
     line-height: 1.2em;
 }
 
+.noteComment:focus {
+    outline-width: 0;
+}
+
 .noteContentCell{
     width: 50%;
 }
@@ -225,4 +230,5 @@ iframe.shrunk {
 
 .noteListHeader {
     background-color: #E1E1E1;
+    cursor: pointer;
 }

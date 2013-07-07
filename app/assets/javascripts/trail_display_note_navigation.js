@@ -38,8 +38,11 @@ function scrollToAndHighlightNote(noteID){
     var contWindow = iframeContentWindow();
 
     if(Notes[noteID]){
-        currentNote = Notes[noteID];
         closeCurrentNoteAndRemoveHighlight();
+
+        currentNote = Notes[noteID];
+        currentNoteIndex = getNoteIDsForCurrentSite().indexOf(String(noteID));
+
         var highlights = $(contWindow.document.body).find("."+currentNote.client_side_id);
         if (highlights.length){
             console.log("highlights", highlights);
@@ -55,12 +58,12 @@ function scrollToAndHighlightNote(noteID){
 
             var bottomHighlightOffsets = bottomHighlight.offset();
             var bottomHighlightBottom = bottomHighlightOffsets.top + bottomHighlight.height();
-            var commentDisplay = createCommentOverlay(currentNote.comment,bottomHighlightOffsets.left,bottomHighlightBottom);
+            var commentDisplay = createCommentOverlay(currentNote.comment,noteID,bottomHighlightOffsets.left,bottomHighlightBottom);
             currentCommentBox = commentDisplay;
         } else {
             currentCommentBox = false;
         }
-        currentNoteIndex = getNoteIDsForCurrentSite().indexOf(String(noteID));
+
         updateNoteCount();
         deactivateOrReactivateNextNoteIfNecessary();
         deactivateOrReactivatePreviousNoteIfNecessary();
@@ -95,6 +98,7 @@ function openNoteList(noteList){
 }
 
 function updateNoteCount(){
+    console.log("currentNoteIndex",currentNoteIndex);
     var numberOfNotes = getNumberOfNotesForCurrentSite();
     if (numberOfNotes > 0){
         var currentNote = currentNoteIndex + 1;
@@ -122,7 +126,7 @@ function deleteNoteFromTrail(noteID){
         data: {
             "id" : noteID
         },
-        success: function(){deleteCurrentNoteLocally(); closeCurrentNoteAndRemoveHighlight()}
+        success: function(){deleteCurrentNoteLocally(noteID); closeCurrentNoteAndRemoveHighlight()}
     })
 }
 
@@ -137,8 +141,9 @@ function closeCurrentNoteAndRemoveHighlight(){
     }
 }
 
-function deleteCurrentNoteLocally(){
+function deleteCurrentNoteLocally(noteID){
     getNoteIDsForCurrentSite().splice(currentNoteIndex,1);
+    removeNoteFromNoteList(noteID);
 }
 
 function reactivateNextNoteButton(){

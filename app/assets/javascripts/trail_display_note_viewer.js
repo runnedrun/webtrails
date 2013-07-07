@@ -7,6 +7,10 @@ function initOrDisableNoteView(){
 }
 
 function initNoteViewMode(scale){
+    if ($('iframe').hasClass('shrunk')) {
+        removeShrinkFromIframes();
+        switchToSite(getCurrentSiteID());
+    }
     initHalfSiteView(scale);
     showNoteList(scale);
     noteViewActive = true;
@@ -38,6 +42,25 @@ function disableHalfSiteView(){
 //    $(".siteDisplayDiv").removeClass("span6");
 }
 
+function makeNoteCommentEditable(e){
+    console.log("editing note");
+    var noteInfo = $(e.delegateTarget);
+    if (noteInfo.parent().parent().hasClass("selected-note")){
+        editCurrentComment(noteInfo);
+        return false
+    }
+}
+
+function updateNoteOnClickAway(e,$commentText) {
+    console.log("checking for click away", e.target);
+    console.log($commentText.parent()[0]);
+    if ((e.target != $commentText[0])){
+        // if the click is anywhere but the comment then save the note and unselect
+        console.log("saving note");
+        saveCommentToServer($commentText);
+    }
+}
+
 function clickJumpToNote(e){
     var noteWrapper = $(e.delegateTarget);
     console.log(noteWrapper.data());
@@ -55,6 +78,14 @@ function clickJumpToNote(e){
 function highlightNoteInList(noteID){
     var $noteElement = $(".noteInfo[data-note-id="+noteID+"]");
     $noteElement.addClass("selected-note");
+
+    $(".noteComment").css({
+        "cursor":"pointer"
+    })
+    $noteElement.find(".noteComment").css({
+        "cursor": "text"
+    })
+
     var contentElement = $noteElement.find(".noteContent");
     contentElement.trigger("destroy.dot").css("max-height","none");
 }
@@ -64,20 +95,19 @@ function unhighlightCurrentNoteInList(){
 }
 
 function preventClick(e){
-    console.log("default prevented")
-    e.preventDefault();
+    var $target = $(e.target);
+    // check if the clicked thing is the comment box, we need that clickable for editing
+    if (!($target.is(".comment-text") || $target.parents(".comment-text").length)){
+        console.log("default prevented")
+        return false
+    } else{
+        console.log("clicked comment box, allowing");
+        return true
+    }
 }
 
 function disableSelectionInIframe(i,iframe){
     $(iframe.contentWindow.document.body).mousedown(preventClick);
-    $(iframe.contentWindow.document.body).css({
-        "-webkit-touch-callout": "none",
-        "-webkit-user-select": "none",
-        "-khtml-user-select": "none",
-        "-moz-user-select": "none",
-        "-ms-user-select": "none",
-        "user-select": "none"
-    })
 }
 
 function enableSelectionInIframe(i,iframe){
@@ -118,4 +148,17 @@ function showNoteList(scale){
 
 function hideNoteList(){
     $(".noteViewer").hide();
+}
+
+function removeSiteFromNoteList(siteID){
+    var header = $(".note-list-header[data-site-id="+siteID+"]");
+    var notes =  $(".noteInfo[data-site-id="+siteID+"]");
+
+    header.remove();
+    notes.remove();
+}
+
+function removeNoteFromNoteList(noteID){
+    var note =  $(".noteInfo[data-note-id="+noteID+"]");
+    note.remove();
 }
