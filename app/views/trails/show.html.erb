@@ -22,9 +22,9 @@
     <div id="siteClickDivs"></div>
 
     <div class="noteViewer">
-      <table class="noteWrapper table table-bordered">
           <%- i = 0  %>
           <%- @site_note_hash.each do |site_id, notes| %>
+          <table class="noteWrapper table table-bordered" data-site-id="<%= site_id %>">
             <tr class="note-list-header click-to-change-site" data-site-id="<%= site_id %>">
               <th colspan="2">
                 <img class="faviconImage" src="<%= @favicon_urls_with_ids_and_titles[i][0] %>" />
@@ -62,6 +62,6 @@
 <button class="btn btn-success navigateButton" id="nextNote"><b>Next</b></button>
 <span class="note-count navigateButton">loading...</span>
 <button id="showAllSitesButton" class="btn btn-warning navigateButton showList">Show All Sites</button>
-<button class="btn btn-warning navigateButton showList" id="showNoteList" href="#">Show Note List</button>
+<button class="btn btn-warning navigateButton showList" id="showNoteList" href="#">Research View</button>
 
 </div>

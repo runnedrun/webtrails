@@ -61,14 +61,11 @@ class NotesController < ApplicationController
       note = Note.find(params[:id])
       site = note.site
       trail = site.trail
-      puts params[:comment]
       if trail.owner != @user
         render_not_authorized
       else
-        puts note.comment
         note.comment = params[:comment]
         note.save!
-        puts note.comment
         render :json => {"content" => note.content}
       end
     rescue

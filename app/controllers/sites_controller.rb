@@ -39,8 +39,9 @@ class SitesController < ApplicationController
         end
       end
 
-      $stderr.puts "shallow_save at create", shallow_save, params[:site][:id]
+      puts "shallow_save at create", shallow_save, params[:site][:id]
       if shallow_save != ""
+        puts "getting a shallow save"
         site_id = params[:site][:id]
         site = trail.sites.find(site_id)
         if !site
@@ -51,7 +52,7 @@ class SitesController < ApplicationController
         site_id = Site.create!(params[:site].merge(:user_id => @user.id)).id
         shallow_save=false
       end
-
+      puts "delaying a save site"
       Site.delay.save_site_to_aws(html,url,trail_id,shallow_save,site_id)
 
       if (params[:note] and params[:note] != "none")
@@ -107,12 +108,8 @@ class SitesController < ApplicationController
   end
 
   def async_site_load
-    $stderr.puts "Async site load " + String(params[:site_id])
     site = Site.find(params[:site_id])
-
-
     notes = site.notes
-    notes.sort_by! {|note| Integer(note["client_side_id"].sub("client_side_id_",""))}
     render :json => {"notes" => notes, "site_id" => site.id, "domain" => site.domain, "url" => site.url, "title" => site.title}, :status => 200
   end
 
@@ -122,7 +119,6 @@ class SitesController < ApplicationController
     if site.archive_location.nil?
       render :template => 'trails/loading'
     else
-      puts site.archive_location
       @html = open(site.archive_location).read.force_encoding(site.html_encoding).html_safe
       render :layout => false, :text => @html
     end
@@ -131,6 +127,22 @@ class SitesController < ApplicationController
   def exists
     site = get_site_if_owned_by_user(params[:id])
     render :json => {:exists => !site.archive_location.nil?,:id => site.id}, :status => 200
+  end
+
+  def update_note_list
+    begin
+      site = get_site_if_owned_by_user(params[:id])
+      note_positions = params[:note_array]
+      all_notes_authorized = site.update_note_list(note_positions)
+      if all_notes_authorized
+        render :json => {"status" => "success"}
+      else
+        render_not_authorized
+      end
+    rescue
+      $stderr.puts $!.message
+      render_server_error_ajax
+    end
   end
 
   private

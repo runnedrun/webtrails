@@ -336,9 +336,6 @@ class RemoteDocument
       new_line_index = everything_after_import_tag.index("\n")
       paren_index = everything_after_import_tag.index(")")
 
-      $stderr.puts "new line index=" + new_line_index.to_s
-      $stderr.puts "new line index=" + paren_index.to_s
-
       if !new_line_index and !paren_index
         end_line_index = 0
       elsif !new_line_index
@@ -348,9 +345,6 @@ class RemoteDocument
       else
         end_line_index = new_line_index > paren_index ? paren_index : new_line_index
       end
-
-      $stderr.puts "end_line_index: " + end_line_index.to_s
-      $stderr.puts "url start: " + url_start.to_s
 
       if !url_start or (url_start > end_line_index)
          new_string = everything_before_import_tag  + save_import_tags(everything_after_import_tag,dir_to_save_in,containing_css_url,urls_already_saved)
@@ -464,11 +458,12 @@ class RemoteDocument
     @contents.xpath('//iframe').each_with_index {|iframe,i| iframe.inner_html = @iframe_srcs[i] }
 
     if !@is_iframe
-      @save_path = File.join(dir, File.basename(@uri.to_s))
+      @save_path = File.basename(@uri.path.to_s)
       @save_path += '.html' if @save_path !~ /\.((html?)|(txt))$/
-      newFile = write_to_aws(@contents.to_html.force_encoding(@encoding), localize_url(@save_path, dir))
+      newFile = write_to_aws(@contents.to_html.force_encoding(@encoding), localize_url(@save_path,dir))
       newFile.acl = :public_read
       @asset_path = newFile.public_url().to_s
+      $stderr.puts("this the url it is saved at: "+ @asset_path)
       return true
     else
       return @contents.to_html

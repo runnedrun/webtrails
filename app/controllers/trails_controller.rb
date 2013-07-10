@@ -40,7 +40,6 @@ class TrailsController < ApplicationController
   def show
     @editAccess = !(!@user || !@user.trails.where(:id => params[:id]).first)
     @trail = Trail.where(:id => params[:id]).first
-    $stderr.puts "trail", @trail, !@trail
     if !@trail
       $stderr.puts "show has no trail", params[:id]
       return render(:status => 404, :json => {:error => "No trail here."})
@@ -51,7 +50,6 @@ class TrailsController < ApplicationController
       search_name = URI(site.url).host
       urls.push(["http://www.google.com/s2/favicons?domain=" + search_name, site.id, site.title])
     end
-    $stderr.puts @favicon_urls_with_ids_and_titles
 
     @site_note_hash = {}
     @sites.each {|site| @site_note_hash[site.id] = site.notes}
@@ -69,7 +67,6 @@ class TrailsController < ApplicationController
 
   def index
     @trails = @user.trails.sort_by(&:created_at)
-    puts @user.email
     @trails.each {|trail| trail.sites}
     @favicon_urls = get_favicons_for_trails(@trails)
 
@@ -92,7 +89,6 @@ class TrailsController < ApplicationController
   end
 
   def update
-    $stderr.puts "Got to update"
     begin
       trail = Trail.find(params[:id])
       if trail.owner != @user

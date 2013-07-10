@@ -13,12 +13,14 @@ function initNoteViewMode(scale){
     }
     initHalfSiteView(scale);
     showNoteList(scale);
+    $("#showNoteList").text("Presentation View")
     noteViewActive = true;
 }
 
 function disableNoteViewMode(){
     disableHalfSiteView();
     hideNoteList();
+    $("#showNoteList").text("Research View")
     noteViewActive = false;
 }
 
@@ -161,4 +163,43 @@ function removeSiteFromNoteList(siteID){
 function removeNoteFromNoteList(noteID){
     var note =  $(".noteInfo[data-note-id="+noteID+"]");
     note.remove();
+}
+
+function makeNotesDragable(){
+    $(".noteWrapper").each(function(i,wrapper){
+            $(wrapper).sortable({
+                containment: $(wrapper),
+                update: updateNoteOrder,
+                items: ".noteInfo"
+            });
+        })
+}
+
+function updateNoteOrder(event, ui){
+    console.log("updated note order");
+    var noteThatWasDragged = $(ui.item);
+    var noteID = noteThatWasDragged.data("note-id")
+    var siteID = noteThatWasDragged.data("site-id");
+    var noteArray = $(".noteInfo[data-site-id="+siteID+"]").map(function(i,note){
+        return String($(note).data("note-id"));
+    });
+    noteArray = $.makeArray(noteArray);
+    console.log("current note ID", getCurrentNoteID())
+    console.log(noteArray);
+    currentNoteIndex = noteArray.indexOf(getCurrentNoteID())
+    siteHash[siteID]["noteIDs"] = noteArray;
+    updateNoteCount();
+    deactivateOrReactivatePreviousNoteIfNecessary();
+    deactivateOrReactivateNextNoteIfNecessary();
+    $.ajax({
+        url:"/sites/update_note_list",
+        method:"post",
+        data:{
+            "note_array": noteArray,
+            "id" : siteID
+        },
+        success:function(){
+            console.log("updated positions server side");
+        }
+    })
 }

@@ -58,6 +58,7 @@ $(function(){
     $(".click-to-change-site").click(clickJumpToSite);
 
     makeFaviconsDragable();
+    makeNotesDragable();
     switchToSite(currentSiteID);
 });
 

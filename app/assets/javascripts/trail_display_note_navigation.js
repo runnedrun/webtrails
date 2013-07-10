@@ -1,6 +1,7 @@
 function nextNote(){
     if (currentNoteIndex < (getNumberOfNotesForCurrentSite()-1)){
         currentNoteIndex+=1;
+        console.log("added 1 to current note index, now:", currentNoteIndex);
         scrollToAndHighlightNote(getCurrentNoteID());
     } else {
         if (currentSiteIndex < siteIDs.length-1){
@@ -67,6 +68,7 @@ function scrollToAndHighlightNote(noteID){
         updateNoteCount();
         deactivateOrReactivateNextNoteIfNecessary();
         deactivateOrReactivatePreviousNoteIfNecessary();
+        console.log(noteID);
         highlightNoteInList(noteID);
     }
 }

@@ -232,3 +232,9 @@ iframe.shrunk {
     background-color: #E1E1E1;
     cursor: pointer;
 }
+/*overriding the bootstrap default for table*/
+
+.table.noteWrapper {
+    margin:0;
+    border-top: none;
+}

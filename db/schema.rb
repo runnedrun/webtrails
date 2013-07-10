@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130615214520) do
+ActiveRecord::Schema.define(:version => 20130709032811) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(:version => 20130615214520) do
     t.integer  "comment_location_x"
     t.integer  "comment_location_y"
     t.string   "client_side_id"
+    t.integer  "position"
   end
 
   create_table "sites", :force => true do |t|
