@@ -141,6 +141,9 @@ chrome.runtime.onMessage.addListener(
             }
             injectScripts(tabId);
         }
+        if (request.parseAndResolve){
+            parse_page_and_resolve_urls(request.parseAndResolve);
+        }
     }
 );
 

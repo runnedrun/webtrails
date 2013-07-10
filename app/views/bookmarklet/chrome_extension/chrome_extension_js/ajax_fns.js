@@ -15,25 +15,45 @@ function saveSiteToTrail(successFunction, note){
         setTimeout(function(){saveSiteToTrail(successFunction, note)}, 100);
         return;
     }
-    wt_$.ajax({
-        url: webTrailsUrl + "/sites",
-        type: "post",
-        crossDomain: true,
-        beforeSend: signRequestWithWtAuthToken,
-        data: {
-            "site[id]":currentSiteTrailID, //this is probably unnecesary
-            "site[url]":currentSite,
-            "site[trail_id]":currentTrailID,
-            "site[title]": document.title,
-            "note": note || "none",
-            "html": currentHTML,
-            "shallow_save": currentSiteTrailID  //this is empty string if it's the first time the site is saved.
-        },
-        success: function(resp){
-            setCurrentTrailID(resp.trail_id);
-            successFunction(resp);
+    console.log("sending message");
+    var stylesheetHrefs = []
+    var stylesheetContents = []
+    wt_$.each(wt_$.makeArray(document.styleSheets),function(i,stylesheet){
+        var owner = stylesheet.ownerNode
+        if (owner.nodeName == "LINK"){
+            stylesheetHrefs.push(owner.href);
+        }else if(owner.nodeName == "STYLE"){
+            stylesheetContents.push(owner.innerHTML);
         }
+    })
+    chrome.runtime.sendMessage({
+        parseAndResolve:{
+           html: currentHTML,
+           stylesheet_hrefs: stylesheetHrefs,
+           stylesheet_contents: stylesheetContents
+        }
+    }, function(response){
+        console.log("parsing now!");
     });
+//    wt_$.ajax({
+//        url: webTrailsUrl + "/sites",
+//        type: "post",
+//        crossDomain: true,
+//        beforeSend: signRequestWithWtAuthToken,
+//        data: {
+//            "site[id]":currentSiteTrailID, //this is probably unnecesary
+//            "site[url]":currentSite,
+//            "site[trail_id]":currentTrailID,
+//            "site[title]": document.title,
+//            "note": note || "none",
+//            "html": currentHTML,
+//            "shallow_save": currentSiteTrailID  //this is empty string if it's the first time the site is saved.
+//        },
+//        success: function(resp){
+//            setCurrentTrailID(resp.trail_id);
+//            successFunction(resp);
+//        }
+//    });
 //    document.onmousemove = mouseStopDetect();
 
     if (!siteSavedDeeply){
