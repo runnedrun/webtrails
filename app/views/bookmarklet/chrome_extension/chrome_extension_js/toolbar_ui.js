@@ -60,7 +60,7 @@ function initMyBookmarklet() {
     applyDefaultCSS(noteDisplayWrapper);
     noteDisplayWrapper.css({
         "height":"18px",
-        "width": "40%",
+        "width": "30%",
         "float":"right",
         "margin-left": "3%",
         "opacity": "1",
@@ -78,7 +78,7 @@ function initMyBookmarklet() {
     previousNoteDisplay = wt_$(document.createElement("div"));
     applyDefaultCSS(previousNoteDisplay);
     previousNoteDisplay.css({
-        "margin-left": "5px",
+        "margin-left": "1%",
         "font-size": "12px",
         "overflow": "hidden",
         "text-overflow": "ellipsis",
@@ -94,15 +94,18 @@ function initMyBookmarklet() {
         "height":"100%",
         "display": "inline-block",
         "float": "left",
-        "margin-top": "3px"
+        "margin-top": "3px",
+        "width": "7%",
+        "overflow": "hidden",
+        "margin-left": "1%"
     });
     linkToTrailWrapper.addClass("webtrails");
 
     var linkToTrail = wt_$(document.createElement("a"));
     applyDefaultCSS(linkToTrail);
     linkToTrail.css({
-        "margin-left": "5px",
-        "margin-right": "5px",
+        "margin-left": "1%",
+        "margin-right": "1%",
         "font-size": "12px",
         "color": "#333",
         "font-weight": "bold",
@@ -117,7 +120,7 @@ function initMyBookmarklet() {
 //    applyDefaultCSS(trailSelect);
     trailSelect.css({
         "float": "left",
-        "margin-left": "5px",
+        "margin-left": "1%",
         "margin-right": "0px",
         "margin-top": "3px",
         "margin-bottom": "0",
@@ -145,7 +148,7 @@ function initMyBookmarklet() {
         "font-weight": "bold",
         "height":"18px",
         "margin-top" : "2px",
-        "margin-right": "5px",
+        "margin-right": "1%",
         "width": "7%",
         "float": "right",
         "border": "1px solid #aaa",
@@ -215,7 +218,7 @@ function initMyBookmarklet() {
         "margin-top": "2px",
         "border-radius": "7px",
         "border": "1px solid #ccc",
-        "width": "14%",
+        "width": "15%",
         "display": "inline-block",
         "overflow":"auto"
     });
@@ -229,7 +232,7 @@ function initMyBookmarklet() {
         "margin-right": "auto",
         "margin-left": "auto",
         "height": "100%",
-        "width": "40%",
+        "width": "30%",
         "padding-top": "5px",
         "font-size": "16px",
     });
