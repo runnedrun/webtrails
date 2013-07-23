@@ -69,6 +69,11 @@ class SitesController < ApplicationController
     end
   end
 
+  def generate_site_id
+    new_site = Site.create(params[:site])
+    render :json => {:trail_id => new_site.trail_id, :id => new_site.id, }
+  end
+
   #this performs a save without doing any kind of parsing of html, which is only
   #ok when you're saving from view page, with already parsed html
   def new_note_from_view_page

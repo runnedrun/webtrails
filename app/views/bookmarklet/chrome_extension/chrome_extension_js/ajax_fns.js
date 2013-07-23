@@ -6,18 +6,11 @@ function signRequestWithWtAuthToken(xhr,ajaxRequest){
     xhr.setRequestHeader("Accept","application/json");
 }
 
-function saveSiteToTrail(successFunction, note){
-    console.log("saving site to trail:", currentSiteTrailID);
-    var currentSite = window.location.href;
-    var currentHTML = getCurrentSiteHTML();
-    if (siteSavedDeeply && !currentSiteTrailID) {
-        console.log("saved already, but not returned yet");
-        setTimeout(function(){saveSiteToTrail(successFunction, note)}, 100);
-        return;
-    }
+function parsePageBeforeSavingSite(resp){
     console.log("sending message");
     var stylesheetHrefs = []
     var stylesheetContents = []
+    var currentHTML = getCurrentSiteHTML();
     wt_$.each(wt_$.makeArray(document.styleSheets),function(i,stylesheet){
         var owner = stylesheet.ownerNode
         if (owner.nodeName == "LINK"){
@@ -26,15 +19,41 @@ function saveSiteToTrail(successFunction, note){
             stylesheetContents.push(owner.innerHTML);
         }
     })
+
     chrome.runtime.sendMessage({
         parseAndResolve:{
-           html: currentHTML,
-           stylesheet_hrefs: stylesheetHrefs,
-           stylesheet_contents: stylesheetContents
+            html: currentHTML,
+            stylesheet_hrefs: stylesheetHrefs,
+            stylesheet_contents: stylesheetContents,
+            current_site_id: resp.id,
+            current_trail_id: resp.trail_id
         }
     }, function(response){
         console.log("parsing now!");
     });
+}
+
+function saveSiteToTrail(successFunction, note){
+    console.log("saving site to trail:", currentSiteTrailID);
+    var currentSite = window.location.href;
+    if (siteSavedDeeply && !currentSiteTrailID) {
+        console.log("saved already, but not returned yet");
+        setTimeout(function(){saveSiteToTrail(successFunction, note)}, 100);
+        return;
+    }
+
+    wt_$.ajax({
+        url: webTrailsUrl + "/sites/get_new_site_id",
+        type: "post",
+        crossDomain: true,
+        beforeSend: signRequestWithWtAuthToken,
+        data: {
+            "site[url]":currentSite,
+            "site[trail_id]":currentTrailID,
+            "site[title]": document.title
+        },
+        success: parsePageBeforeSavingSite
+    })
 //    wt_$.ajax({
 //        url: webTrailsUrl + "/sites",
 //        type: "post",

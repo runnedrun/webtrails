@@ -80,6 +80,7 @@ Webtrails::Application.routes.draw do
   match '/sites/delete', :controller => "sites", :action => 'delete', :constraints => {:method => 'POST'}
   match '/sites/new_note_from_view_page', :controller => "sites", :action => "new_note_from_view_page", :constraints => {:method => 'POST'}
   match 'sites/update_note_list', :controller => 'sites', :action => 'update_note_list'
+  match '/sites/get_new_site_id', :controller => 'sites', :action => 'generate_site_id'
 
   resources :notes, :only=>[:create]
   match '/notes', :controller => 'notes', :action => 'options', :constraints => {:method => 'OPTIONS'}
