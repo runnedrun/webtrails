@@ -26,7 +26,8 @@ function parsePageBeforeSavingSite(resp){
             stylesheet_hrefs: stylesheetHrefs,
             stylesheet_contents: stylesheetContents,
             current_site_id: resp.id,
-            current_trail_id: resp.trail_id
+            current_trail_id: resp.trail_id,
+            current_location: window.location.href
         }
     }, function(response){
         console.log("parsing now!");
