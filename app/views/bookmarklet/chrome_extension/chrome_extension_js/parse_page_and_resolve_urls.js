@@ -7,18 +7,25 @@ function parse_page_and_resolve_urls(siteInfo){
     var currentSiteID = siteInfo.current_site_id;
     var currentTrailID = siteInfo.current_trail_id;
     var currentLocation = siteInfo.current_location;
-    console.log("current location",currentLocation);
     var html = siteInfo.html;
-//    console.log("stylesheet hrefs",stylesheetHrefs);
-//    console.log("stylesheet contents",stylesheetContents);
-//    console.log("site ID: ",currentSiteID);
-//    console.log("trail id: ",currentTrailID);
-//    console.log("siteInfo",siteInfo);
     var uniqueTime = Date.now();
-    callbackTracker[uniqueTime] = {styleSheetsLeft: stylesheetHrefs.length,styleSheets:{}, originalToAwsUrlMap: {}};
+    callbackTracker[uniqueTime] = {
+        styleSheetsLeft: stylesheetHrefs.length+stylesheetContents.length,
+        styleSheets:{},
+        originalToAwsUrlMap: {},
+        inlineStyleSheetCount:0
+    };
     wt_$.each(stylesheetHrefs,function(i,href){
         getCssAndParse(href,currentLocation,uniqueTime,currentSiteID,currentTrailID)
     })
+    wt_$.each(stylesheetContents,function(i,css){
+        console.log("parsing inline style");
+        parseCSSAndReplaceUrls(css,currentSiteID,currentTrailID,"",currentLocation,uniqueTime);
+    })
+}
+
+function parseHtmlAndResolveUrls() {
+
 }
 
 function getCssAndParse(cssLocation,currentLocation,uniqueTime,currentSiteID,currentTrailID){
@@ -39,16 +46,15 @@ function getCssAndParse(cssLocation,currentLocation,uniqueTime,currentSiteID,cur
 }
 
 function updateCallbackTracker(originalToAwsUrlMap,newCSS,awsLocationForCss,uniqueTime){
-    console.log("another success");
     wt_$.extend(callbackTracker[uniqueTime]["originalToAwsUrlMap"],originalToAwsUrlMap);
     callbackTracker[uniqueTime]["styleSheets"][awsLocationForCss] = newCSS;
     checkIfAllStyleSheetsAreLoaded(uniqueTime);
 }
 
 function checkIfAllStyleSheetsAreLoaded(uniqueTime){
-    callbackTracker[uniqueTime]["styleSheetsLeft"]-=1;
-    console.log(callbackTracker[uniqueTime]["styleSheetsLeft"], " requests left");
-    if (callbackTracker[uniqueTime]["styleSheetsLeft"] == 0){
+    var numberOfStylesheetsLeft = callbackTracker[uniqueTime]["styleSheetsLeft"]-=1
+    console.log(numberOfStylesheetsLeft, " requests left");
+    if (numberOfStylesheetsLeft == 0){
         console.log("all requests done");
     }
 }
@@ -69,10 +75,9 @@ function parseCSSAndReplaceUrls(css,siteID,trailID,cssLocation,currentLocation,u
     var newCSS = css.replace(importOrUrlRegex, function(matchedGroup, capturedImportUrl, capturedUrl,urlIndex){
         if (capturedImportUrl){
             var absoluteUrl = URI(capturedImportUrl).absoluteTo(cssLocation).absoluteTo(currentLocation);
-            console.log("making an import request to:", absoluteUrl.href());
             callbackTracker[uniqueTime]["styleSheetsLeft"]+=1
             getCssAndParse(absoluteUrl.href(),currentLocation,uniqueTime,siteID, trailID);
-            return "@import url('" + generateAwsUrl(capturedImportUrl,siteID,trailID) + "')";
+            return "@import url('" + generateAwsUrl(capturedImportUrl,siteID,trailID,uniqueTime) + "')";
         }else{
             // get rid of spaces, just in case
             capturedUrl = capturedUrl.replace(" ","");
@@ -80,20 +85,22 @@ function parseCSSAndReplaceUrls(css,siteID,trailID,cssLocation,currentLocation,u
             if (capturedUrl.match(/^data:/)){
                 return matchedGroup
             }
-            var newUrl = generateAwsUrl(capturedUrl,siteID,trailID);
+            var newUrl = generateAwsUrl(capturedUrl,siteID,trailID,uniqueTime);
             var absoluteUrl = URI(capturedUrl).absoluteTo(cssLocation).absoluteTo(currentLocation);
             originalToAwsUrlMap[absoluteUrl.href()] = newUrl;
             return "url("+newUrl+")";
         }
 
     });
-    updateCallbackTracker(originalToAwsUrlMap,newCSS,generateAwsUrl(cssLocation,siteID,trailID),uniqueTime);
+    updateCallbackTracker(originalToAwsUrlMap,newCSS,generateAwsUrl(cssLocation,siteID,trailID,uniqueTime),uniqueTime);
 }
 
-function generateAbsoluteUrl(directory,relativeDirectory){
-}
-
-function generateAwsUrl(url,siteID,trailID){
+function generateAwsUrl(url,siteID,trailID,uniqueTime){
+    if (url == ""){
+        //must be an inline style
+        var uniqueString = String(callbackTracker[uniqueTime]["inlineStyleSheetCount"] += 1)
+        return AWSBase + "/"+String(trailID)+"/"+String(siteID)+"/wt_inline_style_" + uniqueString
+    }
     // get rid of leading httpX://
     path = url.replace(/^\w+:\/\//,"");
     // get rid of leading slashes
