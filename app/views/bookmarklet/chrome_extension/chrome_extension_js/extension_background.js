@@ -14,7 +14,6 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 });
 
 chrome.tabs.onReplaced.addListener(function(addedTabId, removedTabId) {
-    console.log("replacing");
     chrome.tabs.get(addedTabId,function(tab){
         injectToolbarAndCheckForSignInOrOutEvents(tab);
     })
@@ -22,8 +21,6 @@ chrome.tabs.onReplaced.addListener(function(addedTabId, removedTabId) {
 
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
     if (changeInfo.status == 'loading') {
-        console.log("loading fired")
-        console.log("loading     fired")
         injectToolbarAndCheckForSignInOrOutEvents(tab);
     }
 })
@@ -32,7 +29,6 @@ function injectToolbarAndCheckForSignInOrOutEvents(tab){
     setAuthTokenFromCookieIfNecessary();
     var callbackURL = 'http://www.google.com/robots.txt';
     var domain_re = RegExp("(.|^)"+domain_name+"$")
-    console.log(tab.url);
     var beginningOfQuery = tab.url.indexOf("?")
     var justUrl = tab.url.slice(0,beginningOfQuery);
     if (domain_re.exec(wt_$.url(tab.url).attr("host"))){
@@ -52,7 +48,6 @@ function injectToolbarAndCheckForSignInOrOutEvents(tab){
 
 function askTabForLoaded(tab) {
     if (!message_sending[tab.id+":"+tab.url]){
-        console.log("sending message")
         message_sending[tab.id+":"+tab.url] = Date.now();
         chrome.tabs.executeScript(tab.id, {"code":"chrome.runtime.sendMessage({ loaded: [typeof(contentScriptLoaded), "+tab.id+",'"+tab.url+"']});"});
     }
@@ -60,7 +55,6 @@ function askTabForLoaded(tab) {
 }
 
 function injectScripts(tabId){
-    console.log("injecting");
     var wt_auth_token = getWtAuthToken();
     var current_trail_id = getCurrentTrailID();
     var toolbar_display_state = getToolBarDisplayState();
@@ -78,7 +72,7 @@ function injectScripts(tabId){
     if (toolbar_display_state == "shown"){
         tool_bar_state_injection_string = "toolbarShown=true;\n"
     }
-    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string+power_button_url + content_script_loaded
+    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string+power_button_url + content_script_loaded;
     createContentScript(0,starting_injection_string,tabId);
 }
 
@@ -131,18 +125,22 @@ chrome.runtime.onMessage.addListener(
             addToolbarDisplayStateToLocalStorage("hidden")
             hideToolbarOnAllTabs();
         }
-        if (request.loaded && (request.loaded[0] !== "string")){
-            console.log("got message back");
+        if (request.loaded && (request.loaded[0] == "undefined")){
             var tabId = request.loaded[1];
             var tabUrl = request.loaded[2];
             if (message_sending[tabId+":"+tabUrl]){
-                console.log("deleting message");
                 delete message_sending[tabId+":"+tabUrl];
             }
             injectScripts(tabId);
         }
         if (request.parseAndResolve){
             parse_page_and_resolve_urls(request.parseAndResolve);
+            if (!request.parseAndResolve.iframe){
+                console.log("sending message to iframes")
+                chrome.tabs.sendRequest(sender.tab.id, {parse_and_resolve_iframe_urls:request.parseAndResolve});
+            }else{
+                console.log("message sent to iframes, now getting parse requests from all iframe");
+            }
         }
     }
 );
@@ -168,7 +166,6 @@ function logInOrCreateUser(callback){
 }
 
 function cleanUpMessageSendingObject(){
-    console.log("cleaning up sending message object")
     var currentTime = Date.now();
     wt_$.each(message_sending,function(tabId,time){
         if ((currentTime - time) > (10 * 1000)){

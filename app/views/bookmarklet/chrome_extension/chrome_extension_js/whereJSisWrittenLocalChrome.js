@@ -28,14 +28,6 @@ String.prototype.splice = function( idx, rem, s ) {
 
 wt_$(initMyBookmarklet);
 
-function getCurrentSiteHTML(){
-    var htmlClone = wt_$(document.getElementsByTagName('html')[0]).clone();
-    removeToolbarFromPage(htmlClone); // edits in-place
-    removeAllUnusedTags(htmlClone);
-    var processedHtml = createMasterStyleSheet(htmlClone[0]); //gets the element, not the jquery object
-    return processedHtml.outerHTML;
-}
-
 function verifyKeyPress(e){
     var code = (e.keyCode ? e.keyCode : e.which);
     if (code == 27 && e.shiftKey){    //tilda = 192, esc is code == 27

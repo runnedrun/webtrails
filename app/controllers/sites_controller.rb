@@ -71,7 +71,7 @@ class SitesController < ApplicationController
 
   def generate_site_id
     new_site = Site.create(params[:site])
-    render :json => {:trail_id => new_site.trail_id, :id => new_site.id, }
+    render :json => {:current_trail_id => new_site.trail_id, :current_site_id => new_site.id, }
   end
 
   #this performs a save without doing any kind of parsing of html, which is only
