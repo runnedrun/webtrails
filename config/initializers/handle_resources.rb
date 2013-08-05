@@ -103,10 +103,10 @@ class ResourceHandler
     begin
       newFile = @bucket.objects[aws_path]
       #puts data[0..100]
-      newFile.write(data)
-      newFile.acl = :public_read
+      newFile.write(data,:acl => :public_read)
+      #newFile.acl = :public_read
       #puts "resource saved to: " + newFile.public_url().to_s
-      return newFile.public_url().to_s
+      return "https://s3.amazonaws.com/TrailsSitesProto/" + aws_path #newFile.public_url().to_s
     rescue
       $stderr.puts aws_path.to_s+"had a problem saving"
       puts $!.message
