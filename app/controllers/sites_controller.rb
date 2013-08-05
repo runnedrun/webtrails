@@ -22,16 +22,23 @@ class SitesController < ApplicationController
   end
 
   def create
-    puts params.keys
     site = Site.find(params[:siteID])
     resources_to_download = params[:originalToAwsUrlMap] || {}
     style_sheets_to_save = params[:styleSheets] || {}
     html_to_save = params[:html]
     is_iframe = params[:isIframe]
 
-    ResourceHandler.new(resources_to_download,html_to_save,style_sheets_to_save,site, is_iframe)
+    puts params[:isIframe]
+    #EM.next_tick do
+    #  ResourceHandler.new(resources_to_download,html_to_save,style_sheets_to_save,site, is_iframe)
+    #end
+    Fiber.new do
+      EM.synchrony do
+        puts "into snychrony we go"
+        ResourceHandler.new(resources_to_download,html_to_save,style_sheets_to_save,site, is_iframe)
+      end
+    end.resume
     render :json => {"message" => "success!"}
-
   end
 
   #def create

@@ -60,7 +60,14 @@ function parseHtmlAndResolveUrls(html,cb) {
         var href = aref.getAttribute("href");
         if (!href.match(/^\s*javascript:/)){
             aref.setAttribute("target","_blank");
-            aref.setAttribute("src", URI(href).absoluteTo(cb.baseURI).href());
+            aref.setAttribute("href", URI(href).absoluteTo(cb.baseURI).href());
+        }
+    })
+
+    $html.find("link[href]").each(function(i,link){
+        var href = link.getAttribute("href");
+        if (!href.match(/^\s*javascript:/)){
+            link.setAttribute("href",generateAwsUrl(href,cb.siteID,cb.trailID)[0]);
         }
     })
 
@@ -183,8 +190,8 @@ function generateAwsUrl(url,siteID,trailID){
     if (short_path_wo_extension[0]!="/"){
         short_path_wo_extension = "/" + short_path_wo_extension;
     }
-    var filePath = "/"+String(trailID)+"/"+String(siteID)+short_path_wo_extension + "." + extension;
-    var newLocation = AWSBase + filePath;
+    var filePath = String(trailID)+"/"+String(siteID)+short_path_wo_extension + "." + extension;
+    var newLocation = AWSBase + "/" + filePath;
     return [newLocation,filePath]
 }
 
