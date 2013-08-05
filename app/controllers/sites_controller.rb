@@ -1,4 +1,5 @@
 class SitesController < ApplicationController
+
   before_filter :get_user_from_wt_auth_header_or_cookie_or_return_401, :except => [:show, :async_site_load]
   after_filter :cors_set_access_control_headers
 
@@ -21,53 +22,66 @@ class SitesController < ApplicationController
   end
 
   def create
-    begin
-      html = params[:html]
-      url = params[:site][:url]
-      trail_id = params[:site][:trail_id]
-      shallow_save = params[:shallow_save]
+    puts params.keys
+    site = Site.find(params[:siteID])
+    resources_to_download = params[:originalToAwsUrlMap] || {}
+    style_sheets_to_save = params[:styleSheets] || {}
+    html_to_save = params[:html]
+    is_iframe = params[:isIframe]
 
-      if trail_id.empty?
-        new_trail = Trail.create!(:name => "New Trail!")
-        new_trail.owner = @user
-        trail_id = new_trail.id
-        params[:site][:trail_id] = trail_id
-      else
-        trail = @user.trails.where(:id => trail_id).first
-        if !trail
-          render_not_authorized
-        end
-      end
+    ResourceHandler.new(resources_to_download,html_to_save,style_sheets_to_save,site, is_iframe)
+    render :json => {"message" => "success!"}
 
-      puts "shallow_save at create", shallow_save, params[:site][:id]
-      if shallow_save != ""
-        puts "getting a shallow save"
-        site_id = params[:site][:id]
-        site = trail.sites.find(site_id)
-        if !site
-          render_not_authorized
-        end
-        shallow_save=true
-      else
-        site_id = Site.create!(params[:site].merge(:user_id => @user.id)).id
-        shallow_save=false
-      end
-      puts "delaying a save site"
-      Site.delay.save_site_to_aws(html,url,trail_id,shallow_save,site_id)
-
-      if (params[:note] and params[:note] != "none")
-        # We should save the note, too.
-        params[:note][:site_id] = site_id
-        @note = Note.create!(params[:note])
-        render :json => {:trail_id => trail_id, :site_id => site_id, :note_content => @note.content, :note_id => @note.id}, :status => 200
-      else
-        render :json => {:trail_id => trail_id, :site_id => site_id}, :status => 200
-      end
-    rescue
-      puts $!.message
-      render_server_error_ajax
-    end
   end
+
+  #def create
+  #  begin
+  #    html = params[:html]
+  #    url = params[:site][:url]
+  #    trail_id = params[:site][:trail_id]
+  #    shallow_save = params[:shallow_save]
+  #
+  #    if trail_id.empty?
+  #      new_trail = Trail.create!(:name => "New Trail!")
+  #      new_trail.owner = @user
+  #      trail_id = new_trail.id
+  #      params[:site][:trail_id] = trail_id
+  #    else
+  #      trail = @user.trails.where(:id => trail_id).first
+  #      if !trail
+  #        render_not_authorized
+  #      end
+  #    end
+  #
+  #    puts "shallow_save at create", shallow_save, params[:site][:id]
+  #    if shallow_save != ""
+  #      puts "getting a shallow save"
+  #      site_id = params[:site][:id]
+  #      site = trail.sites.find(site_id)
+  #      if !site
+  #        render_not_authorized
+  #      end
+  #      shallow_save=true
+  #    else
+  #      site_id = Site.create!(params[:site].merge(:user_id => @user.id)).id
+  #      shallow_save=false
+  #    end
+  #    puts "delaying a save site"
+  #    Site.delay.save_site_to_aws(html,url,trail_id,shallow_save,site_id)
+  #
+  #    if (params[:note] and params[:note] != "none")
+  #      # We should save the note, too.
+  #      params[:note][:site_id] = site_id
+  #      @note = Note.create!(params[:note])
+  #      render :json => {:trail_id => trail_id, :site_id => site_id, :note_content => @note.content, :note_id => @note.id}, :status => 200
+  #    else
+  #      render :json => {:trail_id => trail_id, :site_id => site_id}, :status => 200
+  #    end
+  #  rescue
+  #    puts $!.message
+  #    render_server_error_ajax
+  #  end
+  #end
 
   def generate_site_id
     new_site = Site.create(params[:site])
@@ -163,6 +177,7 @@ class SitesController < ApplicationController
     end
     return site
   end
+
 
 
 

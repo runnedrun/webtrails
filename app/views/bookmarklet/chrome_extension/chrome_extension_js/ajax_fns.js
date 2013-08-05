@@ -23,7 +23,8 @@ function saveSiteToTrail(successFunction, note){
         data: {
             "site[url]":currentSite,
             "site[trail_id]":currentTrailID,
-            "site[title]": document.title
+            "site[title]": document.title,
+            "site[domain]": document.domain
         },
         success: parsePageBeforeSavingSite
     })

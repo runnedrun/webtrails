@@ -7,17 +7,18 @@ class Site < ActiveRecord::Base
 
 
   def self.save_site_to_aws(html,url, trail_id, shallow_save,site_id)
-    $stderr.puts "save_site_to_aws"
-    $stderr.puts "url: " + url
-    $stderr.puts "trail_id: "+ trail_id.to_s
-    $stderr.puts "shallow_save: "+ shallow_save.to_s
-    $stderr.puts "site_id: " + site_id.to_s
 
-    remote = RemoteDocument.new(url,html)
-    path = "/" + trail_id.to_s + "/" + site_id.to_s
-    remote.mirror(path,shallow_save)
-    site = Site.find(site_id)
-    site.update_attributes({:archive_location => remote.asset_path.to_s, :html_encoding => remote.encoding})
+    #$stderr.puts "save_site_to_aws"
+    #$stderr.puts "url: " + url
+    #$stderr.puts "trail_id: "+ trail_id.to_s
+    #$stderr.puts "shallow_save: "+ shallow_save.to_s
+    #$stderr.puts "site_id: " + site_id.to_s
+    #
+    #remote = RemoteDocument.new(url,html)
+    #path = "/" + trail_id.to_s + "/" + site_id.to_s
+    #remote.mirror(path,shallow_save)
+    #site = Site.find(site_id)
+    #site.update_attributes({:archive_location => remote.asset_path.to_s, :html_encoding => remote.encoding})
   end
 
   def update_html(html)
