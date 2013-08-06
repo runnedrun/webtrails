@@ -10,8 +10,9 @@ function parse_page_and_resolve_urls(siteInfo){
     var currentLocation = siteInfo.current_location;
     var html = siteInfo.html;
     var isIframe = siteInfo.iframe
+    var htmlAttributes = siteInfo.html_attributes
 
-    console.log("is iframe?", isIframe);
+    console.log("html attribtues", htmlAttributes);
 
     var callbackTracker = {
         siteID: currentSiteID,
@@ -29,18 +30,23 @@ function parse_page_and_resolve_urls(siteInfo){
         getCssAndParse(href, callbackTracker)
     })
 
-    parseHtmlAndResolveUrls(siteInfo.html,callbackTracker);
+    parseHtmlAndResolveUrls(siteInfo.html,htmlAttributes,callbackTracker);
 }
 
-function parseHtmlAndResolveUrls(html,cb) {
+function parseHtmlAndResolveUrls(html,htmlAttributes,cb) {
     var newDoc = document.implementation.createHTMLDocument().documentElement;
     newDoc.innerHTML = html;
     var $html = wt_$(newDoc);
-    var styleTags = $html.find("style");
+
+    wt_$.each(htmlAttributes,function(attributeName,attributeValue){
+        $html.attr(attributeName,attributeValue);
+    })
 
     $html.find("style").each(function(i,styleElement){
         styleElement.innerHTML = parseCSSAndReplaceUrls(styleElement.innerHTML,"",cb);
     })
+
+
 
     var originalToAwsUrlMap = cb.originalToAwsUrlMap;
 

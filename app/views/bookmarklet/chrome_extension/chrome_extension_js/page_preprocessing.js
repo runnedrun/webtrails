@@ -25,6 +25,12 @@ function parsePageBeforeSavingSite(resp){
     var stylesheetHrefs = []
     var stylesheetContents = []
     var currentHTML = getCurrentSiteHTML();
+    var html_attributes = {};
+
+    wt_$.each(wt_$("html")[0].attributes,function(i,attribute){
+        html_attributes[attribute.name] = attribute.value;
+    })
+
     wt_$.each(wt_$.makeArray(document.styleSheets),function(i,stylesheet){
         var owner = stylesheet.ownerNode
         if (owner.nodeName == "LINK"){
@@ -43,7 +49,8 @@ function parsePageBeforeSavingSite(resp){
             current_trail_id: resp.current_trail_id,
             current_location: window.location.href,
             base_uri: document.baseURI,
-            iframe: resp.iframe
+            iframe: resp.iframe,
+            html_attributes: html_attributes
         }
     }, function(response){
         console.log("parsing now!");
