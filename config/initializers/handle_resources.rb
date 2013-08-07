@@ -23,14 +23,6 @@ class ResourceHandler
     @stylesheets_saved = false
     @resources_mirrored = false
 
-    #Fiber.new {
-    #  resources_to_download. each do |resource_location,aws_path|
-    #      puts "Setting up HTTP request #1"
-    #      data = async_fetch('http://www.google.com/')
-    #      puts "Fetched page #1: #{data.response_header.status}"
-    #  end
-    #}.resume
-
     EM::Synchrony::Iterator.new(resources_to_download, resources_to_download.length).each do |url, iter|
       resource_location = url[0]
       aws_path = url[1]
@@ -59,8 +51,10 @@ class ResourceHandler
   end
 
   def mirror_resource_to_aws(url,place_to_save,iter)
-    resp = html_get_site(url) { |http|
-      #puts "returned from get for: " + url
+    resp = html_get_site(url,iter) { |http|
+      if url == "https://fbexternal-a.akamaihd.net/safe_image.php?d=AQDQblnpvCgfNzRE&url=http%3A%2F%2Ffb.ecn.api.tiles.virtualearth.net%2Fapi%2FGetMap.ashx%3Fb%3Dr%252Cmkt.en-US%252Cstl.fb%26key%3DAqSHdMNkhSvgWwMhbqyiqgW1IhMNeV56Gb0WkfgEDm6jSsfX9gDGmlOUEt3i44Jk%26td%3DD1%26c%3D39.150700962286%252C-77.205137284316%26h%3D64%26w%3D64%26ppl%3D37%252C%252C39.1507%252C-77.2051%26z%3D10&jq=100"
+        puts "returned from get for the resource"
+      end
       async_write_to_aws(place_to_save,http.response,iter)
     }
   end
@@ -83,12 +77,12 @@ class ResourceHandler
     end
   end
 
-  def html_get_site(url,&callback)
+  def html_get_site(url,iter,&callback)
     user_agent = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:13.0) Gecko/20100101 Firefox/13.0"
     url_no_dot_dot = url.to_s.gsub(/\/\w*\/\.\.\//,"/")
     #resp = (url_no_dot_dot, "User-Agent" => user_agent, :allow_redirections => :all)
     http = EventMachine::HttpRequest.new(url_no_dot_dot, "User-Agent" => user_agent, :allow_redirections => :all).aget
-    http.errback { puts "request failed for: #{url_no_dot_dot}" }
+    http.errback { puts "request failed for: #{url_no_dot_dot}";iter.next }
     http.callback &callback
   end
 

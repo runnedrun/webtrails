@@ -184,6 +184,8 @@ function generateAwsUrl(url,siteID,trailID){
     path = path.replace(/^\/+/,"");
     // convert colons and such to underscores
     path = path.replace(/[^-_.\/[:alnum:]]/g,"_");
+    // replace &, = and ? with _
+    path = path.replace(/[&=?%]/g,"_");
 
     var path_in_parts = path.split(".");
     var extension = path_in_parts.slice(1).pop() || "";
