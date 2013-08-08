@@ -52,14 +52,14 @@ class ResourceHandler
 
   def mirror_resource_to_aws(url,place_to_save,iter)
     resp = html_get_site(url,iter) { |http|
-      if url == "https://fbexternal-a.akamaihd.net/safe_image.php?d=AQDQblnpvCgfNzRE&url=http%3A%2F%2Ffb.ecn.api.tiles.virtualearth.net%2Fapi%2FGetMap.ashx%3Fb%3Dr%252Cmkt.en-US%252Cstl.fb%26key%3DAqSHdMNkhSvgWwMhbqyiqgW1IhMNeV56Gb0WkfgEDm6jSsfX9gDGmlOUEt3i44Jk%26td%3DD1%26c%3D39.150700962286%252C-77.205137284316%26h%3D64%26w%3D64%26ppl%3D37%252C%252C39.1507%252C-77.2051%26z%3D10&jq=100"
-        puts "returned from get for the resource"
-      end
       async_write_to_aws(place_to_save,http.response,iter)
     }
   end
 
   def save_stylesheet_to_aws(aws_path,stylesheet)
+    if aws_path.include?("5/335/fbstatic-a.akamaihd.net/rsrc.php/v2/y4/r/-PAXP-deijE.gif")
+      puts "saving to the path: " + aws_path
+    end
     async_write_to_aws(aws_path,stylesheet)
     @stylesheets_to_save.delete(aws_path)
     if @stylesheets_to_save.empty?

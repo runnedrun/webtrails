@@ -28,10 +28,6 @@ class SitesController < ApplicationController
     html_to_save = params[:html]
     is_iframe = params[:isIframe]
 
-    puts params[:isIframe]
-    #EM.next_tick do
-    #  ResourceHandler.new(resources_to_download,html_to_save,style_sheets_to_save,site, is_iframe)
-    #end
     Fiber.new do
       EM.synchrony do
         puts "into snychrony we go"

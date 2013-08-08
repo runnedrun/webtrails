@@ -54,9 +54,17 @@ function parseHtmlAndResolveUrls(html,htmlAttributes,cb) {
         var imageUrl = imageElement.getAttribute("src");
         if (!imageUrl.match(/^data:/)){
             var newUrlAndFilePath = generateAwsUrl(imageUrl,cb.siteID,cb.trailID);
+            var newUrl = newUrlAndFilePath[0];
+            var filePath = newUrlAndFilePath[1];
             var absoluteUrl = URI(imageUrl).absoluteTo(cb.baseURI).href();
-            originalToAwsUrlMap[absoluteUrl] = newUrlAndFilePath[1];
-            imageElement.setAttribute('src',newUrlAndFilePath[0]);
+
+            if (originalToAwsUrlMap[absoluteUrl]){
+                newUrl = generateAwsUrlFromAwsPath(originalToAwsUrlMap[absoluteUrl]);
+            } else {
+                originalToAwsUrlMap[absoluteUrl] = filePath;
+            }
+
+            imageElement.setAttribute('src',newUrl);
         }
     })
 
@@ -164,7 +172,11 @@ function parseCSSAndReplaceUrls(css,resourceLocation,cb){
             var newUrl = newUrlAndFilePath[0];
             var filePath = newUrlAndFilePath[1];
             var absoluteUrl = URI(capturedUrl).absoluteTo(resourceLocation).absoluteTo(cb.baseURI).href();
-            originalToAwsUrlMap[absoluteUrl] = filePath;
+            if (originalToAwsUrlMap[absoluteUrl]){
+                newUrl = generateAwsUrlFromAwsPath(originalToAwsUrlMap[absoluteUrl]);
+            } else {
+                originalToAwsUrlMap[absoluteUrl] = filePath;
+            }
             return "url("+newUrl+")";
         }
     });
@@ -173,10 +185,7 @@ function parseCSSAndReplaceUrls(css,resourceLocation,cb){
 
 function generateAwsUrl(url,siteID,trailID){
     if (url == ""){
-        //must be an inline style or style attribute
         return false
-//        var uniqueString = String(callbackTracker[uniqueTime]["inlineStyleSheetCount"] += 1)
-//        return AWSBase + "/"+String(trailID)+"/"+String(siteID)+"/wt_inline_style_" + uniqueString
     }
     // get rid of leading httpX://
     path = url.replace(/^\w+:\/\//,"");
@@ -185,7 +194,6 @@ function generateAwsUrl(url,siteID,trailID){
     // convert colons and such to underscores
     path = path.replace(/[^-_.\/[:alnum:]]/g,"_");
     // replace &, = and ? with _
-    path = path.replace(/[&=?%]/g,"_");
 
     var path_in_parts = path.split(".");
     var extension = path_in_parts.slice(1).pop() || "";
@@ -195,12 +203,22 @@ function generateAwsUrl(url,siteID,trailID){
     short_path_wo_extension = short_path_wo_extension.replace(/\/+$/g,"");
     short_path_wo_extension = short_path_wo_extension.replace(/\.\./g,"");
     short_path_wo_extension = short_path_wo_extension.replace(/\/\//g,"/");
+
     if (short_path_wo_extension[0]!="/"){
         short_path_wo_extension = "/" + short_path_wo_extension;
     }
-    var filePath = String(trailID)+"/"+String(siteID)+short_path_wo_extension + "." + extension;
-    var newLocation = AWSBase + "/" + filePath;
+
+    var shortPath = short_path_wo_extension + "." + extension
+    var escapedShortPath = wt_$.map(shortPath.split("/"),function(sect,i){ return encodeURIComponent(sect) }).join("/");
+
+    var filePath = String(trailID)+"/"+String(siteID)+ shortPath;
+    var escapedFilePath = String(trailID)+"/"+String(siteID)+ escapedShortPath;
+    var newLocation = generateAwsUrlFromAwsPath(escapedFilePath);
     return [newLocation,filePath]
+}
+
+function generateAwsUrlFromAwsPath(path){
+    return AWSBase + "/" + path
 }
 
 function generateImportOrUrlRegex(){
