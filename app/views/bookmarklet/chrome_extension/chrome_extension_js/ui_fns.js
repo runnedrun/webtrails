@@ -105,7 +105,7 @@ function clearFaviconHolder() {
 function trailSelectChanged() {
     try {
         // console.log(currentTrailID, typeof currentTrailID, wt_$(this).val());
-        setCurrentTrailID(parseInt(wt_$(this).val()));
+        setTrailID(parseInt(wt_$(this).val()));
         clearFaviconHolder();
         fetchFavicons();
     } catch(e) {

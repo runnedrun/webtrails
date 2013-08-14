@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130709032811) do
+ActiveRecord::Schema.define(:version => 20130813071853) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -54,6 +54,8 @@ ActiveRecord::Schema.define(:version => 20130709032811) do
     t.string   "html_encoding"
     t.integer  "position"
     t.integer  "user_id"
+    t.text     "saved_resources",   :default => ""
+    t.text     "saved_stylesheets", :default => ""
   end
 
   create_table "trails", :force => true do |t|
@@ -70,7 +72,6 @@ ActiveRecord::Schema.define(:version => 20130709032811) do
 
   create_table "users", :force => true do |t|
     t.string   "email",                   :default => "", :null => false
-    t.string   "encrypted_password",      :default => "", :null => false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"

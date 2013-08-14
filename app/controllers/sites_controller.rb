@@ -34,6 +34,7 @@ class SitesController < ApplicationController
         ResourceHandler.new(resources_to_download,html_to_save,style_sheets_to_save,site, is_iframe)
       end
     end.resume
+
     render :json => {"message" => "success!"}
   end
 
@@ -87,7 +88,9 @@ class SitesController < ApplicationController
   #end
 
   def generate_site_id
-    new_site = Site.create(params[:site])
+    new_site = Site.create(params[:site].merge({:user_id => @user.id}))
+    Note.create!(params[:note].merge({:site_id => new_site.id})) if params[:note]
+
     render :json => {:current_trail_id => new_site.trail_id, :current_site_id => new_site.id, }
   end
 
@@ -141,7 +144,7 @@ class SitesController < ApplicationController
     if site.archive_location.nil?
       render :template => 'trails/loading'
     else
-      @html = open(site.archive_location).read.force_encoding(site.html_encoding).html_safe
+      @html = open(site.archive_location).read.html_safe
       render :layout => false, :text => @html
     end
   end

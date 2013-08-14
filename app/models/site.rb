@@ -6,21 +6,6 @@ class Site < ActiveRecord::Base
   after_create :set_position
 
 
-  def self.save_site_to_aws(html,url, trail_id, shallow_save,site_id)
-
-    #$stderr.puts "save_site_to_aws"
-    #$stderr.puts "url: " + url
-    #$stderr.puts "trail_id: "+ trail_id.to_s
-    #$stderr.puts "shallow_save: "+ shallow_save.to_s
-    #$stderr.puts "site_id: " + site_id.to_s
-    #
-    #remote = RemoteDocument.new(url,html)
-    #path = "/" + trail_id.to_s + "/" + site_id.to_s
-    #remote.mirror(path,shallow_save)
-    #site = Site.find(site_id)
-    #site.update_attributes({:archive_location => remote.asset_path.to_s, :html_encoding => remote.encoding})
-  end
-
   def update_html(html)
     uri = URI(self.archive_location)
     bucket_location = uri.path.gsub(/(\/TrailsSitesProto\/)|(\/TrailsSitesProto)/,"")
@@ -34,6 +19,24 @@ class Site < ActiveRecord::Base
   def set_position
     self.position = self.trail.sites.length-1
     self.save!()
+  end
+
+  def add_to_resource_set(resource_array)
+    new_resource_string = resource_array.to_a.join("|#|")
+    existing_resource_string = self.saved_resources
+    existing_resource_string += "|#|" if !existing_resource_string.empty?
+    self.saved_resources = existing_resource_string + new_resource_string
+    self.save!
+  end
+
+  def update_resource_set(resource_array)
+    new_resource_string = resource_array.to_a.join("|#|")
+    self.saved_resources = new_resource_string
+    self.save!
+  end
+
+  def retrieve_resource_set
+    return self.saved_resources.split("|#|").to_set
   end
 
   def update_note_list(note_array)
@@ -54,12 +57,4 @@ class Site < ActiveRecord::Base
     return all_authorized
   end
 
-  def build_notes(attrs)
-    if attrs.class != String
-      note_array = attrs.values.inject([]) do |note_array, note|
-        note.merge!(:site_id => self.id)
-        Note.create!(note)
-      end
-    end
-  end
 end

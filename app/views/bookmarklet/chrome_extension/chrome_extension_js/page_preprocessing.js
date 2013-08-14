@@ -50,7 +50,8 @@ function parsePageBeforeSavingSite(resp){
             current_location: window.location.href,
             base_uri: document.baseURI,
             iframe: resp.iframe,
-            html_attributes: html_attributes
+            html_attributes: html_attributes,
+            shallow_save: resp.shallow_save
         }
     }, function(response){
         console.log("parsing now!");

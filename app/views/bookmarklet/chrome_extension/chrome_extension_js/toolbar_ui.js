@@ -263,7 +263,7 @@ function initMyBookmarklet() {
     saveSiteToTrailButton.css({
         "text-align":"center"
     });
-    saveSiteToTrailButton.click(function(){saveSiteToTrail(setSiteID)});
+    saveSiteToTrailButton.click(function(){saveSiteToTrail()});
 
     trailDisplay.append(trailSelect);
 

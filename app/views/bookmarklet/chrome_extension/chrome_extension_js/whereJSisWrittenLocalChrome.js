@@ -5,7 +5,7 @@ var trailDisplay,
     mouseDown = 0,
     previousNoteDisplay,
     noteDisplayWrapper,
-    currentSiteTrailID="",
+    currentSiteID="",
     trailSelect,
     saveSiteToTrailButton,
     deleteNoteButton,
@@ -35,8 +35,8 @@ function verifyKeyPress(e){
     }
 }
 
-function setSiteID(response){
-    currentSiteTrailID = response.site_id
+function setSiteID(siteID){
+    currentSiteID = siteID
 }
 
 // if error returns null
@@ -63,7 +63,7 @@ function isTextNode(node) {
     return node.nodeType == 3;
 }
 
-function setCurrentTrailID(ID){
+function setTrailID(ID){
     currentTrailID = ID;
     chrome.runtime.sendMessage({setCurrentTrailID:ID}, function(response) {
         console.log(response);
