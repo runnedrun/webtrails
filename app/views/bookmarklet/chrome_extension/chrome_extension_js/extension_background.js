@@ -5,7 +5,7 @@ domain_name = "localhost";
 message_sending = {}
 
 
-var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","toolbar_ui.js","ajax_fns.js","smart_grab.js","autoresize.js",
+var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","trail_preview.js","toolbar_ui.js","ajax_fns.js","smart_grab.js","autoresize.js",
     "jquery_elipsis.js","search_and_highlight.js","css_property_defaults.js","inline_save_button_fns.js","ui_fns.js","commenting_fns.js",
     "whereJSisWrittenLocalChrome.js"];
 
@@ -141,6 +141,9 @@ chrome.runtime.onMessage.addListener(
             }else{
                 console.log("message sent to iframes, now getting parse requests from all iframe");
             }
+        }
+        if (request.updateStoredSites){
+            updateSiteIdList(request.updateStoredSites.siteList,request.updateStoredSites.htmlMap);
         }
     }
 );
@@ -332,6 +335,61 @@ function showToolbarOnAllTabs(){
 
 function hideToolbarOnAllTabs(){
     sendMessageToAllTabs({"hideToolBarOnAllTabs":"do it!"})
+}
+
+function setSiteInLocalStorage(siteId,html){
+    localStorage[siteId] = html;
+    var siteIdList = localStorage["sideIdList"];
+    if (siteIdList) {
+        localStorage["siteIdList"] = siteIdList + "," + String(siteId);
+    } else {
+        localStorage["siteIdList"] = String(siteId);
+    }
+}
+
+function getAllSitesFromLocalStorage(){
+    var siteIds = getSiteIdListFromLocalStorage();
+    return getAllSitesFromLocalStorage(siteIds);
+}
+
+function getSiteIdListFromLocalStorage(){
+    return (localStorage["siteIdList"] || "").split(",");
+}
+
+function getSitesFromLocalStorage(siteIDs){
+    var sitesObject = {}
+    wt_$.each(siteIDs,function(i,siteID){
+        sitesObject[siteID] = localStorage[siteID];
+    })
+    return sitesObject;
+}
+
+function updateSiteIdList(newSiteIdList,siteIdsToHtmlLocation){
+    var oldSiteIdList = getSiteIdListFromLocalStorage() || [];
+    wt_$.each(oldSiteIdList,function(i,item){
+        var indexInNewList = newSiteIdList.indexOf(item);
+        if (!(indexInNewList > -1)){
+            localStorage.removeItem(item);
+        }
+    })
+    wt_$.each(newSiteIdList,function(i,item){
+        var indexInOldList = oldSiteIdList.indexOf(item);
+        if (!(indexInOldList > -1)){
+            storeHtmlForSite(item,siteIdsToHtmlLocation[item]);
+        }
+    })
+    localStorage["siteIdList"] = newSiteIdList.join(",");
+}
+
+function storeHtmlForSite(siteId,htmlLocation){
+    localStorage[siteId] = "fetching page"
+    wt_$.ajax({
+        url: htmlLocation,
+        type: "get",
+        success: function(html){
+            localStorage[siteId] = html;
+        }
+    })
 }
 
 function sendMessageToAllTabs(message){

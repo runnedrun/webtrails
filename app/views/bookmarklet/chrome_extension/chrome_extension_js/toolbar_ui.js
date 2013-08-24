@@ -23,9 +23,9 @@ function initMyBookmarklet() {
         "left" : "0",
         "text-align":"center"
     });
-    if(!toolbarShown){
+//    if(!toolbarShown){
         trailDisplay.css("display","none");
-    }
+//    }
     trailDisplay.disableSelection();
 
     settingsButton = wt_$(document.createElement("img"));
@@ -225,6 +225,12 @@ function initMyBookmarklet() {
     faviconHolder.addClass("webtrails");
     faviconHolder.attr("id", "faviconHolder");
 
+    var trailPreviewIframe = wt_$("<iframe class='wt-trail-preview'></iframe>");
+    trailPreviewIframe.css({
+        height: "200px",
+        display: "none",
+    })
+
     loggedOutMessage = wt_$("<div>");
     applyDefaultCSS(loggedOutMessage);
     loggedOutMessage.html("Hit the power button on the right to sign in using Google")
@@ -239,6 +245,7 @@ function initMyBookmarklet() {
     loggedOutMessage.addClass("loggedOutMessage");
 
     //adding all the toolbar elements to the DOM.
+    wt_$(document.body).prepend(trailPreviewIframe);
     wt_$(document.body).prepend(trailDisplay);
 
     trailDisplay.append(settingsButtonWrapper);
@@ -305,6 +312,12 @@ function initMyBookmarklet() {
     }catch (e) {}
 }
 
+function insertTrailPreview(resp){
+    trailPreview = new TrailPreview();
+    trailPreview.init();
+    trailPreview.show();
+}
+
 function initSignedInExperience(){
     loggedIn = true;
     if (!faviconsFetched){
@@ -321,6 +334,7 @@ function initSignedInExperience(){
         return false
     })
     wt_$(document).mousedown(possibleHighlightStart);
+    retrieveSiteData();
 }
 
 function initSignedOutExperience(){

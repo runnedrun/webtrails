@@ -1,0 +1,18 @@
+<script type="text/javascript">
+    var requestUrl = "<%= Webtrails::Application::AJAX_REQUEST_URL %>";
+    var siteIDs = [ <%- @sites.each do |site|%>
+        "<%= site.id %>",
+        <%- end %>
+    ];
+    var trailID = <%= @trail.id %>;
+</script>
+<div class="siteDisplayDiv">
+  <%- @sites.each_with_index do |site,i| %>
+      <iframe data-site-id="<%= site.id %>" class="siteDisplay notCurrent" src=<%= site.archive_location %>>
+      </iframe>
+  <%- end %>
+  <% if @sites.empty?%>
+      <h2 class="no-trails-placeholder"> No sites added to this trail. Get to trailing some websites with the Chrome Extension before you can come here to view them!</h2>
+  <% end %>
+</div>
+

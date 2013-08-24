@@ -65,6 +65,41 @@ class TrailsController < ApplicationController
     end
   end
 
+  def toolbar_preview
+    begin
+      @trail = Trail.find(params[:trail_id])
+
+      if !@trail or @trail.owner != @user
+        render_not_authorized
+      else
+        @sites = @trail.sites
+        @note_hash = @sites.inject({}) do |note_hash,site|
+          site.notes.each do |note|
+            note_hash[note.id] = {
+                :client_site_id => note.client_side_id,
+                :site_id => note.site_id,
+                :comment => note.comment,
+            }
+
+            note_hash[:order] = note_hash.fetch(:order,[]).push(note.id)
+          end
+          note_hash
+        end
+        puts "getting here"
+        render :json => {
+          :preview_html => render_to_string(:partial => 'trails/toolbar_preview',
+                                            :locals => { :trail => @trail, :sites => @sites},
+          ),
+          :note_hash => @note_hash
+        }
+      end
+    rescue StandardError => e
+      puts e.message
+      puts e.backtrace[0..2].join("\n")
+      render_server_error_ajax
+    end
+  end
+
   def index
     @trails = @user.trails.sort_by(&:created_at)
     @trails.each {|trail| trail.sites}

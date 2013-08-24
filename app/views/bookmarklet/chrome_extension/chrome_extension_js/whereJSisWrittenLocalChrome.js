@@ -13,14 +13,11 @@ var trailDisplay,
     siteHTML = getCurrentSiteHTML(),
     noteCount = 0,
     siteSavedDeeply = false,
+    trailPreview = false
     loggedIn = false;
     faviconsFetched = false;
 //    webTrailsUrl = "http://www.webtrails.co";
     webTrailsUrl = "http://localhost:3000";
-
-
-
-
 
 String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
@@ -32,6 +29,8 @@ function verifyKeyPress(e){
     var code = (e.keyCode ? e.keyCode : e.which);
     if (code == 27 && e.shiftKey){    //tilda = 192, esc is code == 27
         showOrHidePathDisplay();
+    } else if (e.altKey){
+        displaySaveButtonWhileKeyIsPressed()
     }
 }
 

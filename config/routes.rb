@@ -66,11 +66,13 @@ Webtrails::Application.routes.draw do
   match 'trails/delete', :controller => "trails", :action => 'delete', :constraints => {:method => 'POST'}
   match 'trails/update', :controller => "trails", :action => 'update'
   match 'trails/update_site_list', :controller => "trails", :action => 'update_site_list'
+  match 'trail/toolbar_preview', :controller => "trails", :action => 'toolbar_preview'
 
 
   match 'users/new', :controller => 'users', :action => "new"
   match 'users/login_or_create_gmail_user', :controller => 'users', :action => 'login_or_create_gmail_user', :constraints => {:method => 'POST'}
   match 'users/sign_out', :controller => 'users', :action => "sign_out"
+  match 'users/get_all_sites', :controller => 'users', :action => "get_all_sites"
 
   resources :sites, :only=>[:create,:show]
   match '/sites', :controller => 'sites', :action => 'options', :constraints => {:method => 'OPTIONS'}

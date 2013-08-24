@@ -10,13 +10,14 @@ function possibleHighlightStart(){
 }
 
 function highlightedTextDetect(){
-    if(!trailDisplay.is(":hidden")){
+//    if(!trailDisplay.is(":hidden")){
         //this probably breaks a lot of pages
         wt_$(document).unbind("mouseup");
         if (!rangy.getSelection().isCollapsed){
-            addSaveButtonNextToNote(rangy.getSelection().getRangeAt(0));
+            return addSaveButtonNextToNote(rangy.getSelection().getRangeAt(0));
         }
-    }
+//    }
+    return false
 }
 
 function addSaveButtonNextToNote(highlightedTextRange){
@@ -50,6 +51,7 @@ function addSaveButtonNextToNote(highlightedTextRange){
     saveSpan.click(function(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedRange){return function(e){clickAndRemoveSaveButton(e,saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedRange)} }(saveButtonLeft,saveButtonTop,nodeLineHeight,rangy.getSelection().getRangeAt(0)));
     //make sure this gets handled, so no existing callback gets the event and captures it.
     wt_$(document).mousedown(removeInlineSaveButton);
+    return saveSpan
 }
 
 function getHighlightedTextRange(){

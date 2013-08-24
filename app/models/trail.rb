@@ -60,4 +60,8 @@ class Trail < ActiveRecord::Base
     site = Site.create!(site_attrs)
   end
 
+  def site_list
+    self.sites.map(&:id)
+  end
+
 end

@@ -6,6 +6,17 @@ function signRequestWithWtAuthToken(xhr,ajaxRequest){
     xhr.setRequestHeader("Accept","application/json");
 }
 
+function retrieveSiteData(){
+    console.log("fethcing site data now!");
+
+    wt_$.ajax({
+        url: webTrailsUrl + "/users/get_all_sites",
+        type: "get",
+        beforeSend: signRequestWithWtAuthToken,
+        success: updateStoredSites
+    })
+}
+
 function saveSiteToTrail(note){
     console.log("saving site to trail:", currentSiteID);
     var currentSite = window.location.href;

@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_filter :get_user_from_wt_auth_header_or_cookie_or_return_401, :only => :sign_out
+  before_filter :get_user_from_wt_auth_header_or_cookie_or_return_401, :only => [:sign_out,:get_all_sites]
 
   def new
     @whitelisted = params[:whitelisted]
@@ -42,6 +42,17 @@ class UsersController < ApplicationController
     else
       render_server_error_ajax
     end
+  end
+
+  def get_all_sites
+    trail_site_hash = {}
+    @user.trails.each do |trail|
+      trail_site_hash[trail.id] = {:site_list => trail.site_list, :html_hash => {}}
+      trail.sites.each do |site|
+        trail_site_hash[trail.id][:html_hash][site.id] = site.archive_location
+      end
+    end
+    render :json => trail_site_hash
   end
 
 end

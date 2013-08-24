@@ -3,11 +3,11 @@ console.log("ui_fns loaded");
 function showOrHidePathDisplay(){
     if (trailDisplay.is(":hidden")){
         showToolbar();
-        showToolbarOnAllTabs();
+//        showToolbarOnAllTabs();
     }
     else {
         hideToolbar();
-        hideToolbarOnAllTabs();
+//        hideToolbarOnAllTabs();
     }
 }
 
@@ -21,6 +21,7 @@ function showToolbar(){
             possibleHighlightStart(); // get that highlight start event so when done highlighting, addnote appears
         }
     }
+    trailPreview || loadTrailPreview(currentTrailID);
 }
 
 function hideToolbar(){
@@ -28,6 +29,18 @@ function hideToolbar(){
     toolbarShown = false;
     wt_$(".inlineSaveButton").remove();
     closeOverlay();
+}
+
+function displaySaveButtonWhileKeyIsPressed(keycode){
+    keycode = typeof keycode == "undefined" ? keycode : "18";
+    var saveButton = highlightedTextDetect()
+    wt_$(document.body).keyup(function(e){
+        if (e.keycode == keycode && saveButton){
+            saveButton.remove()
+            wt_$(document).unbind("keyup",arguments.callee)
+        }
+    })
+
 }
 
 function addSiteFaviconToDisplay(domain,url) {
@@ -125,9 +138,7 @@ function setTrailSelect(trails, adding) {
         if (String(id) == String(currentTrailID)) {
             option.attr('selected', 'selected');
         }
-        console.log
         trailSelect.append(option);
-
 //            trailSelect.prepend(option);
     });
 }
@@ -143,7 +154,6 @@ function hideToolbarOnAllTabs(){
         console.log("toolbar hidden on all tabs")
     });
 }
-
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
     if (request.logOutAllTabs){
@@ -169,3 +179,15 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         setTrailSelect(request.addNewTrail,true);
     }
 });
+
+function updateStoredSites(resp){
+    for(trailId in resp){
+        chrome.runtime.sendMessage({
+            updateStoredSites:{
+                siteList: resp[trailId].site_list,
+                htmlMap: resp[trailId].html_hash
+            }
+        })
+    }
+
+}
