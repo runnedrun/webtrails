@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_filter :get_user_from_wt_auth_header_or_cookie_or_return_401, :only => [:sign_out,:get_all_sites]
+  before_filter :get_user_from_wt_auth_header_or_cookie_or_return_401, :only => [:sign_out,:get_all_trail_data]
 
   def new
     @whitelisted = params[:whitelisted]
@@ -44,15 +44,21 @@ class UsersController < ApplicationController
     end
   end
 
-  def get_all_sites
+  def get_all_trail_data
     trail_site_hash = {}
     @user.trails.each do |trail|
-      trail_site_hash[trail.id] = {:site_list => trail.site_list, :html_hash => {}}
+      trail_site_hash[trail.id] = {:site_list => trail.site_list, :html_hash => {}, :note_hash => {}}
       trail.sites.each do |site|
         trail_site_hash[trail.id][:html_hash][site.id] = site.archive_location
+        note_hash = trail_site_hash[trail.id][:note_hash][site.id] = {}
+        note_hash[:note_id_list] = site.note_list
+        note_hash[:comments] = site.notes.inject({}) do |hash,note|
+          hash[note.id] = {:comment => note.comment, :client_side_id => note.client_side_id}
+          hash
+        end
       end
     end
-    render :json => trail_site_hash
+    render :json => {:trail_hash => trail_site_hash, :user_id => @user.id}
   end
 
 end

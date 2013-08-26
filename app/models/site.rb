@@ -57,4 +57,8 @@ class Site < ActiveRecord::Base
     return all_authorized
   end
 
+  def note_list()
+    self.notes.map(&:id)
+  end
+
 end

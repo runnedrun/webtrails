@@ -21,7 +21,7 @@ function showToolbar(){
             possibleHighlightStart(); // get that highlight start event so when done highlighting, addnote appears
         }
     }
-    trailPreview || loadTrailPreview(currentTrailID);
+    TrailPreview.show();
 }
 
 function hideToolbar(){
@@ -117,8 +117,8 @@ function clearFaviconHolder() {
 
 function trailSelectChanged() {
     try {
-        // console.log(currentTrailID, typeof currentTrailID, wt_$(this).val());
-        setTrailID(parseInt(wt_$(this).val()));
+        // console.log(Trails.getCurrentTrailId(), typeof currentTrailID, wt_$(this).val());
+        Trails.switchToTrail(parseInt(wt_$(this).val()));
         clearFaviconHolder();
         fetchFavicons();
     } catch(e) {
@@ -135,7 +135,7 @@ function setTrailSelect(trails, adding) {
         var option = wt_$(document.createElement('option'));
         option.attr('value', id);
         option.text(name);
-        if (String(id) == String(currentTrailID)) {
+        if (String(id) == String(Trails.getCurrentTrailId())) {
             option.attr('selected', 'selected');
         }
         trailSelect.append(option);
@@ -162,9 +162,9 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
     if (request.logInAllTabs){
         wt_auth_token = request.logInAllTabs[0]
         var newTrailID = request.logInAllTabs[1]
-        if (currentTrailID != newTrailID){
+        if (Trails.getCurrentTrailId() != newTrailID){
             faviconsFetched = false;
-            currentTrailID = newTrailID;
+            Trails.switchToTrail(newTrailID);
         }
         initSignedInExperience();
     }
@@ -181,13 +181,12 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
 });
 
 function updateStoredSites(resp){
-    for(trailId in resp){
-        chrome.runtime.sendMessage({
-            updateStoredSites:{
-                siteList: resp[trailId].site_list,
-                htmlMap: resp[trailId].html_hash
-            }
-        })
-    }
-
+    chrome.runtime.sendMessage({
+        updateStoredTrailData:{
+            trailObject: resp.trail_hash,
+            userId: resp.user_id
+        }
+    })
 }
+
+

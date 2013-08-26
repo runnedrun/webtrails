@@ -23,7 +23,20 @@ String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
 };
 
-wt_$(initMyBookmarklet);
+wt_$(initExtension);
+
+function initExtension(){
+    console.log("init extension");
+    initializeTrailsObject(makeToolBar);
+}
+
+function initializeTrailsObject(callback){
+    console.log("get trails object");
+    chrome.runtime.sendMessage({getTrailsObject:"get it!"}, function(response) {
+        Trails = new TrailsObject(response,startingTrailID);
+        callback(Trails)
+    });
+}
 
 function verifyKeyPress(e){
     var code = (e.keyCode ? e.keyCode : e.which);
@@ -62,9 +75,3 @@ function isTextNode(node) {
     return node.nodeType == 3;
 }
 
-function setTrailID(ID){
-    currentTrailID = ID;
-    chrome.runtime.sendMessage({setCurrentTrailID:ID}, function(response) {
-        console.log(response);
-    });
-}

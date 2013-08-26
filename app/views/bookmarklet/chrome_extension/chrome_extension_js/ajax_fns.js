@@ -6,17 +6,6 @@ function signRequestWithWtAuthToken(xhr,ajaxRequest){
     xhr.setRequestHeader("Accept","application/json");
 }
 
-function retrieveSiteData(){
-    console.log("fethcing site data now!");
-
-    wt_$.ajax({
-        url: webTrailsUrl + "/users/get_all_sites",
-        type: "get",
-        beforeSend: signRequestWithWtAuthToken,
-        success: updateStoredSites
-    })
-}
-
 function saveSiteToTrail(note){
     console.log("saving site to trail:", currentSiteID);
     var currentSite = window.location.href;
@@ -34,13 +23,13 @@ function saveSiteToTrail(note){
             beforeSend: signRequestWithWtAuthToken,
             data: {
                 "site[url]":currentSite,
-                "site[trail_id]":currentTrailID,
+                "site[trail_id]":Trails.getCurrentTrailId(),
                 "site[title]": document.title,
                 "site[domain]": document.domain,
                 "note": note || {}
             },
             success: function(resp){
-                setTrailID(resp.current_trail_id);
+                Trails.switchToTrail(resp.current_trail_id);
                 setSiteID(resp.current_site_id);
                 parsePageBeforeSavingSite(resp)
             }
@@ -57,7 +46,7 @@ function saveSiteToTrail(note){
             success: function(resp){
                 parsePageBeforeSavingSite(wt_$.extend(resp,{
                     current_site_id:currentSiteID,
-                    current_trail_id:currentTrailID,
+                    current_trail_id:Trails.getCurrentTrailId(),
                     shallow_save: true
                 }))
             }
@@ -85,7 +74,7 @@ function saveSiteToTrail(note){
                             if (data.exists) {
                               // Our page exists, and we should correct the save site button
                               saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
-                              saveSiteToTrailButton.unbind().click(function(){window.open(webTrailsUrl + '/trails/' + currentTrailID + "#"+String(data.id), '_blank');});
+                              saveSiteToTrailButton.unbind().click(function(){window.open(webTrailsUrl + '/trails/' + Trails.getCurrentTrailId() + "#"+String(data.id), '_blank');});
                               saveSiteToTrailButton.css({"cursor": "pointer"});
                             } else {
                                 setTimeout(updateSiteSavedButton, 2000); // check again
@@ -108,12 +97,12 @@ function fetchFavicons(){
         type: "get",
         crossDomain: true,
         data: {
-            "trail_id": currentTrailID,
+            "trail_id": Trails.getCurrentTrailId(),
             "current_url": currentSite
         },
         beforeSend: signRequestWithWtAuthToken,
         success: function(resp){
-            setTrailID(resp.trail_id);
+            Trails.switchToTrail(resp.trail_id);
             addFaviconsToDisplay(resp);
             setTrailSelect(resp.trails);
         }

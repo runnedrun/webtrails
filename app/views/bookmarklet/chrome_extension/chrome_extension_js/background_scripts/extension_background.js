@@ -5,9 +5,9 @@ domain_name = "localhost";
 message_sending = {}
 
 
-var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","trail_preview.js","toolbar_ui.js","ajax_fns.js","smart_grab.js","autoresize.js",
-    "jquery_elipsis.js","search_and_highlight.js","css_property_defaults.js","inline_save_button_fns.js","ui_fns.js","commenting_fns.js",
-    "whereJSisWrittenLocalChrome.js"];
+var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","trails_objects.js","trail_preview.js","toolbar_ui.js",
+    "ajax_fns.js","smart_grab.js","autoresize.js","search_and_highlight.js","css_property_defaults.js","inline_save_button_fns.js",
+    "ui_fns.js","commenting_fns.js","whereJSisWrittenLocalChrome.js"];
 
 chrome.browserAction.onClicked.addListener(function(tab) {
   chrome.tabs.executeScript(tab.id, {code:"showOrHidePathDisplay()"});
@@ -59,14 +59,14 @@ function injectScripts(tabId){
     var current_trail_id = getCurrentTrailID();
     var toolbar_display_state = getToolBarDisplayState();
     var auth_injection_string = "wt_auth_token=undefined;\n";
-    var trail_id_injection_string = "currentTrailID='';\n";
+    var trail_id_injection_string = "startingTrailID='';\n";
     var tool_bar_state_injection_string = "toolbarShown=false;\n"
     var power_button_url = 'powerButtonUrl="' + chrome.extension.getURL('/chrome_extension_images/power.png') + '";\n';
     var content_script_loaded = 'contentScriptLoaded = "loaded";'
     if(wt_auth_token){
         auth_injection_string = "wt_auth_token='"+wt_auth_token + "';\n";
         if (current_trail_id){
-            trail_id_injection_string = "currentTrailID='"+current_trail_id + "';\n";
+            trail_id_injection_string = "startingTrailID='"+current_trail_id + "';\n";
         }
     }
     if (toolbar_display_state == "shown"){
@@ -74,6 +74,8 @@ function injectScripts(tabId){
     }
     var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string+power_button_url + content_script_loaded;
     createContentScript(0,starting_injection_string,tabId);
+    // update the local trail data
+    retrieveTrailData();
 }
 
 function createContentScript(index_of_script, contentScriptString,tabId){
@@ -142,11 +144,38 @@ chrome.runtime.onMessage.addListener(
                 console.log("message sent to iframes, now getting parse requests from all iframe");
             }
         }
-        if (request.updateStoredSites){
-            updateSiteIdList(request.updateStoredSites.siteList,request.updateStoredSites.htmlMap);
+        if (request.getTrailsObject){
+            console.log("got message,sending rsponse");
+            sendResponse(getTrailsObject(getUserId()));
         }
     }
 );
+
+function retrieveTrailData(){
+    console.log("fethcing site data now!");
+    wt_$.ajax({
+        url: domain + "/users/get_all_trail_data",
+        type: "get",
+        beforeSend: signRequestWithWtAuthToken,
+        success: function(resp){
+            updateStoredTrailData(resp.trail_hash,resp.user_id)
+        }
+    })
+}
+
+function updateStoredTrailData(trailObject,userId){
+    var trailIds = [];
+    setUserId(userId);
+    wt_$.each(trailObject,function(trailId,trail){
+        updateSiteData(trail.site_list,trail.html_hash, trailId);
+        wt_$.each(trail.note_hash,function(siteId,noteObject){
+            console.log(noteObject.note_id_list);
+            updateNoteData(noteObject.note_id_list,noteObject.comments,siteId);
+        })
+        trailIds.push(trailId);
+    })
+    updateTrailIdList(trailIds,userId)
+}
 
 function logInOrCreateUser(callback){
     var authToken =  googleAuth.getAccessToken();
@@ -180,6 +209,7 @@ function cleanUpMessageSendingObject(){
 function signOut(){
     clearWtAuthToken();
     clearCurrentTrailID();
+    clearUserId()
     removeWtAuthTokenCookie();
     sendSignOutMessageToAllTabs();
 }
@@ -196,65 +226,6 @@ function signOutIfSignedOutOfWebpage(cookie){
     }
 }
 
-function setAuthTokenFromCookieIfNecessary(){
-    if (!getWtAuthToken()){
-        getWtAuthTokenCookie(setAuthTokenFromCookie)
-    }
-}
-
-function setAuthTokenFromCookie(cookie){
-    if(cookie){
-        var auth_token = cookie.value;
-        if(auth_token){
-            signIn(auth_token);
-        }
-    }
-}
-
-function getWtAuthTokenCookie(callback){
-    return chrome.cookies.get({
-        url:domain,
-        name: "wt_auth_token"
-    },callback)
-}
-
-function setWtAuthTokenCookie(auth_token){
-    var date = new Date();
-    var secondsSinceEpoch = date.getTime()/1000;
-    chrome.cookies.set({
-        url: domain,
-        name: "wt_auth_token",
-        expirationDate: secondsSinceEpoch + 315360000,
-        value: auth_token
-    })
-}
-
-function removeWtAuthTokenCookie(auth_token){
-    chrome.cookies.remove({
-        url:domain,
-        name: "wt_auth_token"
-    },function(){
-        console.log("auth token cookie removed!")
-    })
-}
-
-function getWtAuthToken(){
-    return localStorage["wt_auth_token"];
-}
-function setWtAuthToken(wt_auth_token){
-    localStorage["wt_auth_token"] = wt_auth_token;
-}
-function clearWtAuthToken(){
-    localStorage.removeItem("wt_auth_token");
-}
-
-function getCurrentTrailID(){
-    return localStorage["current_trail_ID"];
-}
-function clearCurrentTrailID(){
-    localStorage.removeItem("current_trail_ID");
-}
-
 function checkForNewTrail(){
     console.log("checking for new trail")
     chrome.cookies.get({
@@ -263,62 +234,11 @@ function checkForNewTrail(){
     },getNewTrailNameFromCookie)
 }
 
-function removeNewTrailNameCookie(){
-    chrome.cookies.remove({
-        url:domain,
-        name: "wt_new_trail_name"
-    })
-}
-function removeNewTrailIDCookie(){
-    chrome.cookies.remove({
-        url:domain,
-        name: "wt_new_trail_id"
-    })
-}
-
-function getNewTrailNameFromCookie(cookie){
-    if (cookie){
-        console.log("got trail name cookie");
-        var unencodedCookieString = decodeURIComponent(cookie.value);
-        var trailName = unencodedCookieString.replace("%20", " ");
-        removeNewTrailNameCookie();
-        getTrailIDCookie(trailName);
-    }
-}
-
-function getTrailIDCookie(trailName){
-    chrome.cookies.get({
-        url:domain,
-        name: "wt_new_trail_id"
-    },function(cookie){
-        getNewTrailIDFromCookie(cookie,trailName)
-    })
-}
-function getNewTrailIDFromCookie(cookie,trailName){
-    if (cookie){
-        console.log("got trail ID cookie");
-        var trailId = decodeURIComponent(cookie.value);
-        removeNewTrailIDCookie();
-        addNewTrailOnAllTabs(trailId,trailName);
-    }
-}
 
 function addNewTrailOnAllTabs(trailId,trailName){
     var trail_obj = {};
     trail_obj[trailId] = trailName;
     sendMessageToAllTabs({addNewTrail:trail_obj});
-}
-
-function getToolBarDisplayState(){
-    return localStorage["wt_toolbar_display_state"]
-}
-
-function addTrailIdToLocalStorage(ID){
-    localStorage["current_trail_ID"] = ID;
-}
-
-function addToolbarDisplayStateToLocalStorage(state){
-    localStorage["wt_toolbar_display_state"] = String(state);
 }
 
 function sendSignOutMessageToAllTabs(){
@@ -337,61 +257,6 @@ function hideToolbarOnAllTabs(){
     sendMessageToAllTabs({"hideToolBarOnAllTabs":"do it!"})
 }
 
-function setSiteInLocalStorage(siteId,html){
-    localStorage[siteId] = html;
-    var siteIdList = localStorage["sideIdList"];
-    if (siteIdList) {
-        localStorage["siteIdList"] = siteIdList + "," + String(siteId);
-    } else {
-        localStorage["siteIdList"] = String(siteId);
-    }
-}
-
-function getAllSitesFromLocalStorage(){
-    var siteIds = getSiteIdListFromLocalStorage();
-    return getAllSitesFromLocalStorage(siteIds);
-}
-
-function getSiteIdListFromLocalStorage(){
-    return (localStorage["siteIdList"] || "").split(",");
-}
-
-function getSitesFromLocalStorage(siteIDs){
-    var sitesObject = {}
-    wt_$.each(siteIDs,function(i,siteID){
-        sitesObject[siteID] = localStorage[siteID];
-    })
-    return sitesObject;
-}
-
-function updateSiteIdList(newSiteIdList,siteIdsToHtmlLocation){
-    var oldSiteIdList = getSiteIdListFromLocalStorage() || [];
-    wt_$.each(oldSiteIdList,function(i,item){
-        var indexInNewList = newSiteIdList.indexOf(item);
-        if (!(indexInNewList > -1)){
-            localStorage.removeItem(item);
-        }
-    })
-    wt_$.each(newSiteIdList,function(i,item){
-        var indexInOldList = oldSiteIdList.indexOf(item);
-        if (!(indexInOldList > -1)){
-            storeHtmlForSite(item,siteIdsToHtmlLocation[item]);
-        }
-    })
-    localStorage["siteIdList"] = newSiteIdList.join(",");
-}
-
-function storeHtmlForSite(siteId,htmlLocation){
-    localStorage[siteId] = "fetching page"
-    wt_$.ajax({
-        url: htmlLocation,
-        type: "get",
-        success: function(html){
-            localStorage[siteId] = html;
-        }
-    })
-}
-
 function sendMessageToAllTabs(message){
     chrome.windows.getAll({populate:true}, function(windows){
         wt_$.each(windows,function(index,window){
@@ -401,3 +266,10 @@ function sendMessageToAllTabs(message){
         })
     } )
 }
+
+function signRequestWithWtAuthToken(xhr,ajaxRequest){
+    xhr.setRequestHeader("WT_AUTH_TOKEN",getWtAuthToken());
+    xhr.setRequestHeader("Accept","application/json");
+}
+
+

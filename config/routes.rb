@@ -72,7 +72,7 @@ Webtrails::Application.routes.draw do
   match 'users/new', :controller => 'users', :action => "new"
   match 'users/login_or_create_gmail_user', :controller => 'users', :action => 'login_or_create_gmail_user', :constraints => {:method => 'POST'}
   match 'users/sign_out', :controller => 'users', :action => "sign_out"
-  match 'users/get_all_sites', :controller => 'users', :action => "get_all_sites"
+  match 'users/get_all_trail_data', :controller => 'users', :action => "get_all_trail_data"
 
   resources :sites, :only=>[:create,:show]
   match '/sites', :controller => 'sites', :action => 'options', :constraints => {:method => 'OPTIONS'}

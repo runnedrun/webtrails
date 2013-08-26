@@ -1,6 +1,6 @@
 console.log('toolbar ui loaded');
 
-function initMyBookmarklet() {
+function makeToolBar() {
     var displayHeight = "25px";
     trailDisplay = wt_$(document.createElement("div"));
     applyDefaultCSS(trailDisplay);
@@ -134,7 +134,7 @@ function initMyBookmarklet() {
 
     wt_$(linkToTrail).html("View Trail");
     wt_$(linkToTrail).click(function(event){
-        window.open(webTrailsUrl + "/trails/"+currentTrailID, "_blank")
+        window.open(webTrailsUrl + "/trails/"+Trails.getCurrentTrailId(), "_blank")
     })
 
 //    wt_$(linkToTrail).attr('href', "#");
@@ -226,10 +226,13 @@ function initMyBookmarklet() {
     faviconHolder.attr("id", "faviconHolder");
 
     var trailPreviewIframe = wt_$("<iframe class='wt-trail-preview'></iframe>");
+    applyDefaultCSS((trailPreviewIframe));
     trailPreviewIframe.css({
         height: "200px",
         display: "none",
+        width: "100%"
     })
+
 
     loggedOutMessage = wt_$("<div>");
     applyDefaultCSS(loggedOutMessage);
@@ -260,7 +263,7 @@ function initMyBookmarklet() {
 
     trailDisplay.append(shareTrailField);
     shareTrailField.click(function() {
-        shareTrailField.attr("value", webTrailsUrl + '/trails/'+currentTrailID);
+        shareTrailField.attr("value", webTrailsUrl + '/trails/'+Trails.getCurrentTrailId());
         shareTrailField.focus();
         shareTrailField.select();
         shareTrailField.css({"cursor": "text"});
@@ -284,9 +287,7 @@ function initMyBookmarklet() {
 
 
     initializeAutoResize();
-    initializeJqueryEllipsis();
-    previousNoteDisplay.ellipsis()
-
+    insertTrailPreview();
 
     if (wt_auth_token){
         initSignedInExperience()
@@ -312,10 +313,9 @@ function initMyBookmarklet() {
     }catch (e) {}
 }
 
-function insertTrailPreview(resp){
-    trailPreview = new TrailPreview();
-    trailPreview.init();
-    trailPreview.show();
+function insertTrailPreview(){
+    TrailPreview = new TPreview();
+    TrailPreview.init();
 }
 
 function initSignedInExperience(){
@@ -334,7 +334,6 @@ function initSignedInExperience(){
         return false
     })
     wt_$(document).mousedown(possibleHighlightStart);
-    retrieveSiteData();
 }
 
 function initSignedOutExperience(){

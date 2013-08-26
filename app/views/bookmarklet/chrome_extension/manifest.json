@@ -12,9 +12,11 @@
     },
     "update_url": "http://webtrails.co/chrome_extension_update.xml",
     "background": {
-        "scripts": ["chrome_extension_js/jquery191.js","oauth2/oauth2.js","chrome_extension_js/extension_background.js",
-            "chrome_extension_js/jquery_url_parser.js","chrome_extension_js/parse_page_and_resolve_urls.js",
-            "third_party_scripts/URI.js"]
+        "scripts": ["chrome_extension_js/jquery191.js","oauth2/oauth2.js","chrome_extension_js/background_scripts/extension_background.js",
+            "third_party_scripts/jquery_url_parser.js","chrome_extension_js/background_scripts/parse_page_and_resolve_urls.js",
+            "third_party_scripts/URI.js","chrome_extension_js/background_scripts/site_storage_accessors.js",
+            "chrome_extension_js/background_scripts/misc_storage_accessors.js","chrome_extension_js/background_scripts/auth_storage_accessors.js",
+            "chrome_extension_js/background_scripts/note_storage_accessors.js","chrome_extension_js/background_scripts/trail_storage_accessors.js"]
     },
     "content_scripts": [
         {
@@ -32,10 +34,11 @@
         "tabs", "*://*/*", "cookies"
     ],
     "web_accessible_resources" : ["chrome_extension_js/whereJSisWrittenLocalChrome.js","chrome_extension_js/toolbar_ui.js"
-        ,"chrome_extension_js/ajax_fns.js","chrome_extension_js/smart_grab.js","chrome_extension_js/jquery_elipsis.js",
+        ,"chrome_extension_js/ajax_fns.js","chrome_extension_js/smart_grab.js",
         "chrome_extension_js/search_and_highlight.js","chrome_extension_js/autoresize.js", "chrome_extension_js/ui_fns.js",
         "chrome_extension_js/commenting_fns.js", "chrome_extension_js/inline_save_button_fns.js","chrome_extension_js/rangy-core.js",
         "chrome_extension_js/jquery191.js","chrome_extension_js/page_preprocessing.js","chrome_extension_js/jquery_url_parser.js",
-        "chrome_extension_js/css_property_defaults.js","chrome_extension_js/trail_preview.js","chrome_extension_images/power.png","oauth2/oauth2.html"
+        "chrome_extension_js/css_property_defaults.js","chrome_extension_js/trail_preview.js","chrome_extension_images/power.png","oauth2/oauth2.html",
+        "chrome_extension_js/trails_objects.js"
         ]
 }
