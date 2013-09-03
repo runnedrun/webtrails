@@ -4,16 +4,16 @@ var trailDisplay,
     faviconHolder,
     mouseDown = 0,
     previousNoteDisplay,
-    noteDisplayWrapper,
+    previousNoteButton,
     currentSiteID="",
     trailSelect,
     saveSiteToTrailButton,
-    deleteNoteButton,
+    nextNoteButton,
     previousNoteID,
     siteHTML = getCurrentSiteHTML(),
     noteCount = 0,
     siteSavedDeeply = false,
-    trailPreview = false
+    TrailPreview = false
     loggedIn = false;
     faviconsFetched = false;
 //    webTrailsUrl = "http://www.webtrails.co";

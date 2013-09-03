@@ -15,17 +15,18 @@ function showToolbar(){
     trailDisplay.show();
     toolbarShown = true
     if (loggedIn) {
+        TrailPreview.show();
         if (mouseDown == 0) { // if the mouse is not pressed (not highlighting)
             highlightedTextDetect(); // check to see if they highlighted anything for the addnote button
         } else { // mouse is down, must be highlighting
             possibleHighlightStart(); // get that highlight start event so when done highlighting, addnote appears
         }
     }
-    TrailPreview.show();
 }
 
 function hideToolbar(){
     trailDisplay.hide();
+    TrailPreview.hide();
     toolbarShown = false;
     wt_$(".inlineSaveButton").remove();
     closeOverlay();
@@ -87,16 +88,16 @@ function updateNoteDisplay(data){
     if (data.note_id == "none") {
         console.log("deleting the note text")
         moveNoteToPrevious("No more notes on this page.  Go ahead and take a few.");
-        deleteNoteButton.css({
+        nextNoteButton.css({
             "color": "#aaa",
             "cursor": "default"
         });
-        deleteNoteButton.attr("disabled","disabled");
+        nextNoteButton.attr("disabled","disabled");
     }else{
         previousNoteID = data.note_id;
         moveNoteToPrevious(data.note_content);
-        deleteNoteButton.removeAttr("disabled");
-        deleteNoteButton.css({
+        nextNoteButton.removeAttr("disabled");
+        nextNoteButton.css({
             "color": "#333",
             "cursor": "pointer"
         });

@@ -56,36 +56,87 @@ function makeToolBar() {
     settingsButtonWrapper.addClass("webtrails");
     settingsButtonWrapper.addClass("wt_settingsButton");
 
-    noteDisplayWrapper = wt_$(document.createElement("div"));
-    applyDefaultCSS(noteDisplayWrapper);
-    noteDisplayWrapper.css({
-        "height":"18px",
-        "width": "30%",
-        "float":"right",
+    previousNoteButton = wt_$(document.createElement("button"));
+    applyDefaultCSS(previousNoteButton);
+    previousNoteButton.css({
+        "font-size": "12px",
+//        "color": "#aaa",
+        "font-weight": "bold",
+        "height": "18px",
+        "margin-top" : "2px",
         "margin-left": "3%",
-        "opacity": "1",
-        "overflow": "hidden",
-        "margin-top": "2px",
+        "width": "7%",
+        "float": "right",
+        "border": "1px solid #aaa",
         "border-top-left-radius": "5px",
         "border-bottom-left-radius": "5px",
         "background-color": "#d1d1d1",
-        "border": "1px solid #aaa",
-        "border-right-width": "0px",
-        "cursor": "default"
-    });
-    noteDisplayWrapper.addClass("noteDisplayWrapper").addClass("webtrails");;
-
-    previousNoteDisplay = wt_$(document.createElement("div"));
-    applyDefaultCSS(previousNoteDisplay);
-    previousNoteDisplay.css({
-        "margin-left": "1%",
-        "font-size": "12px",
-        "overflow": "hidden",
-        "text-overflow": "ellipsis",
+        "cursor": "default",
         "text-align": "center"
     });
-    previousNoteDisplay.addClass("webtrails");
-    previousNoteDisplay.html("Select text and press the save button to save notes.  Your last saved note will appear here");
+    previousNoteButton.html("Previous Note");
+    previousNoteButton.addClass("previousNoteButton").addClass("webtrails");;
+
+    nextNoteButton = wt_$(document.createElement("button"));
+    applyDefaultCSS(nextNoteButton);
+    nextNoteButton.css({
+        "font-size": "12px",
+//        "color": "#aaa",
+        "background-color": "#f0f0f0",
+        "font-weight": "bold",
+        "height":"18px",
+        "margin-top" : "2px",
+        "margin-right": "5px",
+        "width": "7%",
+        "float": "right",
+        "border": "1px solid #aaa",
+        "border-top-right-radius": "5px",
+        "border-bottom-right-radius": "5px",
+        "cursor": "default",
+        "text-align": "center"
+    });
+    nextNoteButton.html("Next Note");
+
+    deleteNoteButton = wt_$(document.createElement("img"));
+    applyDefaultCSS(deleteNoteButton);
+    deleteNoteButton.css({
+        "font-size": "12px",
+//        "color": "#aaa",
+//        "background-color": "#FF8080",
+        "font-weight": "bold",
+        "height":"18px",
+        "margin-top" : "2px",
+        "margin-right": "5px",
+        "width": "18px",
+        "float": "right",
+        "border": "1px solid #aaa",
+        "border-radius": "5px",
+        "cursor": "default",
+        "text-align": "center"
+    });
+    deleteNoteButton.attr("src","data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAQCAQAAABnqj2yAAAACXBIWXMAAAsTAAALEwEAmpwYAAADGGlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjaY2BgnuDo4uTKJMDAUFBUUuQe5BgZERmlwH6egY2BmYGBgYGBITG5uMAxIMCHgYGBIS8/L5UBFTAyMHy7xsDIwMDAcFnX0cXJlYE0wJpcUFTCwMBwgIGBwSgltTiZgYHhCwMDQ3p5SUEJAwNjDAMDg0hSdkEJAwNjAQMDg0h2SJAzAwNjCwMDE09JakUJAwMDg3N+QWVRZnpGiYKhpaWlgmNKflKqQnBlcUlqbrGCZ15yflFBflFiSWoKAwMD1A4GBgYGXpf8EgX3xMw8BSMDVQYqg4jIKAUICxE+CDEESC4tKoMHJQODAIMCgwGDA0MAQyJDPcMChqMMbxjFGV0YSxlXMN5jEmMKYprAdIFZmDmSeSHzGxZLlg6WW6x6rK2s99gs2aaxfWMPZ9/NocTRxfGFM5HzApcj1xZuTe4FPFI8U3mFeCfxCfNN45fhXyygI7BD0FXwilCq0A/hXhEVkb2i4aJfxCaJG4lfkaiQlJM8JpUvLS19QqZMVl32llyfvIv8H4WtioVKekpvldeqFKiaqP5UO6jepRGqqaT5QeuA9iSdVF0rPUG9V/pHDBYY1hrFGNuayJsym740u2C+02KJ5QSrOutcmzjbQDtXe2sHY0cdJzVnJRcFV3k3BXdlD3VPXS8Tbxsfd99gvwT//ID6wIlBS4N3hVwMfRnOFCEXaRUVEV0RMzN2T9yDBLZE3aSw5IaUNak30zkyLDIzs+ZmX8xlz7PPryjYVPiuWLskq3RV2ZsK/cqSql01jLVedVPrHzbqNdU0n22VaytsP9op3VXUfbpXta+x/+5Em0mzJ/+dGj/t8AyNmf2zvs9JmHt6vvmCpYtEFrcu+bYsc/m9lSGrTq9xWbtvveWGbZtMNm/ZarJt+w6rnft3u+45uy9s/4ODOYd+Hmk/Jn58xUnrU+fOJJ/9dX7SRe1LR68kXv13fc5Nm1t379TfU75/4mHeY7En+59lvhB5efB1/lv5dxc+NH0y/fzq64Lv4T8Ffp360/rP8f9/AA0ADzT6lvFdAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAACDSURBVHjavI4xCsJQEETfBltlO8Nv9AqpPICl5/CwniJo8dFCCNo7Fn8DxnxbB4aBfczumvilRYlk9GwAOOdtMCHEwTrJ5fJOipmJJGhoyaUfmc0EXj01mIA0+yUbNGXJ/jg1BILLfeoPVNM/kQnYXYf1kiej/XZqA7H6ar94jKiq9wBVaTFDLLMAdgAAAABJRU5ErkJggg==");
+    deleteNoteButton.addClass("deleteNoteButton").addClass("webtrails");
+
+    showCommentButton = wt_$(document.createElement("img"));
+    applyDefaultCSS(showCommentButton);
+    showCommentButton.css({
+        "font-size": "12px",
+//        "color": "#aaa",
+//        "background-color": "#FF8080",
+        "font-weight": "bold",
+        "height":"14px",
+        "margin-top" : "2px",
+        "margin-right": "50px",
+        "width": "14px",
+        "float": "right",
+        "padding": "2px",
+        "border": "1px solid #aaa",
+        "border-radius": "5px",
+        "cursor": "default",
+        "text-align": "center"
+    });
+    showCommentButton.attr("src","data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAACXBIWXMAAAsTAAALEwEAmpwYAAADGGlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjaY2BgnuDo4uTKJMDAUFBUUuQe5BgZERmlwH6egY2BmYGBgYGBITG5uMAxIMCHgYGBIS8/L5UBFTAyMHy7xsDIwMDAcFnX0cXJlYE0wJpcUFTCwMBwgIGBwSgltTiZgYHhCwMDQ3p5SUEJAwNjDAMDg0hSdkEJAwNjAQMDg0h2SJAzAwNjCwMDE09JakUJAwMDg3N+QWVRZnpGiYKhpaWlgmNKflKqQnBlcUlqbrGCZ15yflFBflFiSWoKAwMD1A4GBgYGXpf8EgX3xMw8BSMDVQYqg4jIKAUICxE+CDEESC4tKoMHJQODAIMCgwGDA0MAQyJDPcMChqMMbxjFGV0YSxlXMN5jEmMKYprAdIFZmDmSeSHzGxZLlg6WW6x6rK2s99gs2aaxfWMPZ9/NocTRxfGFM5HzApcj1xZuTe4FPFI8U3mFeCfxCfNN45fhXyygI7BD0FXwilCq0A/hXhEVkb2i4aJfxCaJG4lfkaiQlJM8JpUvLS19QqZMVl32llyfvIv8H4WtioVKekpvldeqFKiaqP5UO6jepRGqqaT5QeuA9iSdVF0rPUG9V/pHDBYY1hrFGNuayJsym740u2C+02KJ5QSrOutcmzjbQDtXe2sHY0cdJzVnJRcFV3k3BXdlD3VPXS8Tbxsfd99gvwT//ID6wIlBS4N3hVwMfRnOFCEXaRUVEV0RMzN2T9yDBLZE3aSw5IaUNak30zkyLDIzs+ZmX8xlz7PPryjYVPiuWLskq3RV2ZsK/cqSql01jLVedVPrHzbqNdU0n22VaytsP9op3VXUfbpXta+x/+5Em0mzJ/+dGj/t8AyNmf2zvs9JmHt6vvmCpYtEFrcu+bYsc/m9lSGrTq9xWbtvveWGbZtMNm/ZarJt+w6rnft3u+45uy9s/4ODOYd+Hmk/Jn58xUnrU+fOJJ/9dX7SRe1LR68kXv13fc5Nm1t379TfU75/4mHeY7En+59lvhB5efB1/lv5dxc+NH0y/fzq64Lv4T8Ffp360/rP8f9/AA0ADzT6lvFdAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAABdSURBVHjaYpR8zyDAgAk+MBr+Z8Ii/o+BCZswAwMTA3ZxBgaqSjB/wSbM/IXxvw0Di8l+BgbuOzMKNL/CZf4wMDAwMBj/t7t9zuE/C5o2SX6swgwM/1n+m2AKAwYAj4MXXMHl+7EAAAAASUVORK5CYII=");
+    showCommentButton.addClass("showCommentButton").addClass("webtrails");
 
 
     var linkToTrailWrapper = wt_$(document.createElement("div"));
@@ -136,30 +187,6 @@ function makeToolBar() {
     wt_$(linkToTrail).click(function(event){
         window.open(webTrailsUrl + "/trails/"+Trails.getCurrentTrailId(), "_blank")
     })
-
-//    wt_$(linkToTrail).attr('href', "#");
-
-    deleteNoteButton = wt_$(document.createElement("button"));
-    applyDefaultCSS(deleteNoteButton);
-    deleteNoteButton.css({
-        "font-size": "12px",
-        "color": "#aaa",
-        "background-color": "#f0f0f0",
-        "font-weight": "bold",
-        "height":"18px",
-        "margin-top" : "2px",
-        "margin-right": "1%",
-        "width": "7%",
-        "float": "right",
-        "border": "1px solid #aaa",
-        "border-top-right-radius": "5px",
-        "border-bottom-right-radius": "5px",
-        "cursor": "default",
-        "text-align": "center"
-    });
-
-    deleteNoteButton.html("Delete Note");
-    deleteNoteButton.addClass("deleteNote").addClass("webtrails");
 
     saveSiteToTrailButton = wt_$(document.createElement("button"));
     applyDefaultCSS(saveSiteToTrailButton);
@@ -225,13 +252,17 @@ function makeToolBar() {
     faviconHolder.addClass("webtrails");
     faviconHolder.attr("id", "faviconHolder");
 
-    var trailPreviewIframe = wt_$("<iframe class='wt-trail-preview'></iframe>");
-    applyDefaultCSS((trailPreviewIframe));
-    trailPreviewIframe.css({
-        height: "200px",
-        display: "none",
-        width: "100%"
-    })
+//    var trailPreviewIframe = wt_$("<iframe class='wt-trail-preview'></iframe>");
+//    applyDefaultCSS((trailPreviewIframe));
+//    trailPreviewIframe.css({
+//        height: "200px",
+//        display: "none",
+//        width: "100%",
+//        "z-index": "2147483647",
+//        position: "relative",
+//        top: "25px",
+//        border: "4px solid black"
+//    })
 
 
     loggedOutMessage = wt_$("<div>");
@@ -248,18 +279,17 @@ function makeToolBar() {
     loggedOutMessage.addClass("loggedOutMessage");
 
     //adding all the toolbar elements to the DOM.
-    wt_$(document.body).prepend(trailPreviewIframe);
+//    wt_$(document.body).prepend(trailPreviewIframe);
     wt_$(document.body).prepend(trailDisplay);
 
     trailDisplay.append(settingsButtonWrapper);
 
-    trailDisplay.append(deleteNoteButton);
-    deleteNoteButton.click(deletePreviousNote);
-    deleteNoteButton.attr("enabled","disabled");
-
-    trailDisplay.append(noteDisplayWrapper);
-
-    noteDisplayWrapper.append(previousNoteDisplay);
+    trailDisplay.append(showCommentButton)
+    trailDisplay.append(deleteNoteButton)
+    trailDisplay.append(nextNoteButton);
+//    deleteNoteButton.click(deletePreviousNote);
+//    deleteNoteButton.attr("enabled","disabled");
+    trailDisplay.append(previousNoteButton);
 
     trailDisplay.append(shareTrailField);
     shareTrailField.click(function() {
@@ -314,6 +344,7 @@ function makeToolBar() {
 }
 
 function insertTrailPreview(){
+    console.log("inserting the trail preview");
     TrailPreview = new TPreview();
     TrailPreview.init();
 }
@@ -325,7 +356,7 @@ function initSignedInExperience(){
         fetchFavicons();
         faviconsFetched = true;
     }
-    trailDisplay.children().show();
+    trailDisplay.children().not(".wt-site-preview").show();
     loggedOutMessage.hide();
     settingsButtonWrapper.css("background-color","#94FF70")
     settingsButtonWrapper.unbind("click");
