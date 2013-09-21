@@ -145,20 +145,24 @@ chrome.runtime.onMessage.addListener(
             }
         }
         if (request.getTrailsObject){
-            console.log("got message,sending rsponse");
             sendResponse(getTrailsObject(getUserId()));
+        }
+        if (request.updateTrailsObject){
+            console.log("received update trails message");
+            retrieveTrailData();
         }
     }
 );
 
 function retrieveTrailData(){
-    console.log("fethcing site data now!");
+    console.log("fethcing trail data now!");
     wt_$.ajax({
         url: domain + "/users/get_all_trail_data",
         type: "get",
         beforeSend: signRequestWithWtAuthToken,
         success: function(resp){
-            updateStoredTrailData(resp.trail_hash,resp.user_id)
+            console.log("goign to update stored trail data");
+            updateStoredTrailData(resp.trail_hash, resp.user_id);
         }
     })
 }
@@ -174,7 +178,15 @@ function updateStoredTrailData(trailObject,userId){
         })
         trailIds.push(trailId);
     })
-    updateTrailIdList(trailIds,userId)
+    updateTrailIdList(trailIds,userId);
+    console.log("trail data updated, pushing message to all tabs");
+    notifyAllTabsOfTrailObjectUpdate();
+}
+
+function notifyAllTabsOfTrailObjectUpdate(){
+    var trailsObject = getTrailsObject(getUserId());
+    console.log(trailsObject)
+    sendMessageToAllTabs({updateTrails: trailsObject});
 }
 
 function logInOrCreateUser(callback){

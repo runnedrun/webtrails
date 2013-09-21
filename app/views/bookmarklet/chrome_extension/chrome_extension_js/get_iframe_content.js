@@ -5,8 +5,10 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         console.log("checking if we need to parse this frame");
         var siteInfo = request.parse_and_resolve_iframe_urls;
         var frameLocation = window.location.href;
-        if ((typeof(contentScriptLoaded) == "undefined") && !(siteInfo.current_location == frameLocation)){
-            console.log("parsing this frame")
+        var isWtSitePreview = wt_$("head").hasClass("wt-site-preview");
+        console.log(wt_$("head"), wt_$("head").hasClass("wt-site-preview"));
+        if ((window !== top) && !(siteInfo.current_location == frameLocation) && !isWtSitePreview){
+            console.log("parsing this frame");
             parsePageBeforeSavingSite(wt_$.extend(siteInfo,{iframe:true}));
         }else{
             console.log("top window, not sending message");

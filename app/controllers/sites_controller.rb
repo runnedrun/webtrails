@@ -27,65 +27,18 @@ class SitesController < ApplicationController
     style_sheets_to_save = params[:styleSheets] || {}
     html_to_save = params[:html]
     is_iframe = params[:isIframe]
+    revision_number = params[:revision_number]
+    is_base_revision = params[:is_base_revision]
 
     Fiber.new do
       EM.synchrony do
         puts "into snychrony we go"
-        ResourceHandler.new(resources_to_download,html_to_save,style_sheets_to_save,site, is_iframe)
+        ResourceHandler.new(resources_to_download,html_to_save,style_sheets_to_save,site, is_iframe, revision_number, is_base_revision)
       end
     end.resume
 
     render :json => {"message" => "success!"}
   end
-
-  #def create
-  #  begin
-  #    html = params[:html]
-  #    url = params[:site][:url]
-  #    trail_id = params[:site][:trail_id]
-  #    shallow_save = params[:shallow_save]
-  #
-  #    if trail_id.empty?
-  #      new_trail = Trail.create!(:name => "New Trail!")
-  #      new_trail.owner = @user
-  #      trail_id = new_trail.id
-  #      params[:site][:trail_id] = trail_id
-  #    else
-  #      trail = @user.trails.where(:id => trail_id).first
-  #      if !trail
-  #        render_not_authorized
-  #      end
-  #    end
-  #
-  #    puts "shallow_save at create", shallow_save, params[:site][:id]
-  #    if shallow_save != ""
-  #      puts "getting a shallow save"
-  #      site_id = params[:site][:id]
-  #      site = trail.sites.find(site_id)
-  #      if !site
-  #        render_not_authorized
-  #      end
-  #      shallow_save=true
-  #    else
-  #      site_id = Site.create!(params[:site].merge(:user_id => @user.id)).id
-  #      shallow_save=false
-  #    end
-  #    puts "delaying a save site"
-  #    Site.delay.save_site_to_aws(html,url,trail_id,shallow_save,site_id)
-  #
-  #    if (params[:note] and params[:note] != "none")
-  #      # We should save the note, too.
-  #      params[:note][:site_id] = site_id
-  #      @note = Note.create!(params[:note])
-  #      render :json => {:trail_id => trail_id, :site_id => site_id, :note_content => @note.content, :note_id => @note.id}, :status => 200
-  #    else
-  #      render :json => {:trail_id => trail_id, :site_id => site_id}, :status => 200
-  #    end
-  #  rescue
-  #    puts $!.message
-  #    render_server_error_ajax
-  #  end
-  #end
 
   def generate_site_id
     new_site = Site.create(params[:site].merge({:user_id => @user.id}))
@@ -151,7 +104,7 @@ class SitesController < ApplicationController
 
   def exists
     site = get_site_if_owned_by_user(params[:id])
-    render :json => {:exists => !site.archive_location.nil?,:id => site.id}, :status => 200
+    render :json => {:exists => !site.archive_location.nil?,:id => site.id, }, :status => 200
   end
 
   def update_note_list

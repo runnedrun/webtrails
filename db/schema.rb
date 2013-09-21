@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130813071853) do
+ActiveRecord::Schema.define(:version => 20130918073310) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(:version => 20130813071853) do
     t.integer  "comment_location_y"
     t.string   "client_side_id"
     t.integer  "position"
+    t.integer  "site_revision_number"
   end
 
   create_table "sites", :force => true do |t|
@@ -54,8 +55,10 @@ ActiveRecord::Schema.define(:version => 20130813071853) do
     t.string   "html_encoding"
     t.integer  "position"
     t.integer  "user_id"
-    t.text     "saved_resources",   :default => ""
-    t.text     "saved_stylesheets", :default => ""
+    t.text     "saved_resources",      :default => ""
+    t.text     "saved_stylesheets",    :default => ""
+    t.text     "revision_numbers"
+    t.integer  "base_revision_number"
   end
 
   create_table "trails", :force => true do |t|

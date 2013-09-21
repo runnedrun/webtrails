@@ -12,6 +12,8 @@ function parse_page_and_resolve_urls(siteInfo){
     var isIframe = siteInfo.iframe
     var htmlAttributes = siteInfo.html_attributes
     var shallowSave = siteInfo.shallow_save
+    var revision = siteInfo.revision
+    var isBaseRevision = siteInfo.is_base_revision
 
     console.log("html attribtues", htmlAttributes);
 
@@ -25,7 +27,9 @@ function parse_page_and_resolve_urls(siteInfo){
         originalToAwsUrlMap: {},
         html: false,
         isIframe: !!isIframe,
-        shallowSave: shallowSave
+        shallowSave: shallowSave,
+        revision: revision,
+        is_base_revision: isBaseRevision
     };
 
     wt_$.each(stylesheetHrefs,function(i,href){

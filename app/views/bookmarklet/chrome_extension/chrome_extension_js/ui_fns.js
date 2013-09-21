@@ -156,6 +156,26 @@ function hideToolbarOnAllTabs(){
     });
 }
 
+function runWhenLoaded(fn, doc){
+    var doc = doc || document
+    var loadedCheck = setInterval(function(){
+        if (doc.readyState === "complete"){
+            fn();
+            clearInterval(loadedCheck);
+        }
+    },100);
+}
+
+function runWhenExists($query, callback){
+    var siteDocExistsCheck = setInterval(function(){
+        console.log("checking for site doc");
+        if(currentSiteFrame = wt_$($query).length){
+            clearInterval(siteDocExistsCheck);
+            callback()
+        }
+    },100)
+}
+
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
     if (request.logOutAllTabs){
         initSignedOutExperience();

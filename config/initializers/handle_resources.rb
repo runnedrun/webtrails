@@ -9,7 +9,7 @@ require "set"
 
 class ResourceHandler
 
-  def initialize(resources_to_download,html_to_save,stylesheets_to_save,site,is_iframe)
+  def initialize(resources_to_download, html_to_save, stylesheets_to_save, site, is_iframe, revision_number, is_base_revision)
     begin
       puts "inside resources handler"
       s3 = AWS::S3.new
@@ -25,6 +25,7 @@ class ResourceHandler
       @html_saved = false
       @stylesheets_saved = false
       @resources_mirrored = false
+
 
       EM::Synchrony::Iterator.new(resources_to_download, resources_to_download.length).each do |url, iter|
         resource_location = url[0]
@@ -47,6 +48,8 @@ class ResourceHandler
       if is_iframe == "false"
         puts "not iframe, saving!"
         site.archive_location = write_to_aws(html_to_save[0],html_to_save[1],false)
+        site.add_revision(revision_number)
+        site.base_revision_number = revision_number if is_base_revision
         site.save!
         puts "site saved to #{site.archive_location}"
       end

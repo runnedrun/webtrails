@@ -31,7 +31,7 @@ function saveSiteToTrail(note){
             success: function(resp){
                 Trails.switchToTrail(resp.current_trail_id);
                 setSiteID(resp.current_site_id);
-                parsePageBeforeSavingSite(resp)
+                parsePageBeforeSavingSite(wt_$.extend(resp,{isBaseRevision: true}));
             }
         })
     }  else {
@@ -72,20 +72,22 @@ function saveSiteToTrail(note){
                     },
                     success: function(data) {
                             if (data.exists) {
-                              // Our page exists, and we should correct the save site button
-                              saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
-                              saveSiteToTrailButton.unbind().click(function(){window.open(webTrailsUrl + '/trails/' + Trails.getCurrentTrailId() + "#"+String(data.id), '_blank');});
-                              saveSiteToTrailButton.css({"cursor": "pointer"});
+                                // Our page exists, and we should correct the save site button
+                                saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
+                                saveSiteToTrailButton.unbind().click(function(){window.open(webTrailsUrl + '/trails/' + Trails.getCurrentTrailId() + "#"+String(data.id), '_blank');});
+                                saveSiteToTrailButton.css({"cursor": "pointer"});
+                                console.log("updating local storage");
+                                updateTrailDataInLocalStorage();
                             } else {
-                                setTimeout(updateSiteSavedButton, 2000); // check again
+                                setTimeout(updateSiteSavedButton, 1000); // check again
                             }
                         }
                 });
             } else {
-                setTimeout(updateSiteSavedButton, 2000); // check again
+                setTimeout(updateSiteSavedButton, 1000); // check again
             }
         }
-        setTimeout(updateSiteSavedButton, 2000);
+        setTimeout(updateSiteSavedButton, 1000);
     }
 }
 

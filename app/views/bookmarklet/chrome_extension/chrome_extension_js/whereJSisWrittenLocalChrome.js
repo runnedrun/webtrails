@@ -23,18 +23,28 @@ String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
 };
 
-wt_$(initExtension);
+wt_$(initExtension());
+//initExtension();
 
 function initExtension(){
     console.log("init extension");
-    initializeTrailsObject(makeToolBar);
+    getTrailDataFromLocalStorage(function(response){
+        Trails = new TrailsObject(response, startingTrailID);
+        Trails.initTrails();
+        makeToolBar();
+    });
 }
 
-function initializeTrailsObject(callback){
-    console.log("get trails object");
+function getTrailDataFromLocalStorage(callback){
     chrome.runtime.sendMessage({getTrailsObject:"get it!"}, function(response) {
-        Trails = new TrailsObject(response,startingTrailID);
-        callback(Trails)
+        callback && callback(response);
+    });
+}
+
+function updateTrailDataInLocalStorage(){
+    console.log("send update message");
+    chrome.runtime.sendMessage({updateTrailsObject:"update it!"}, function(response) {
+        console.log("response: ", response);
     });
 }
 
@@ -48,7 +58,7 @@ function verifyKeyPress(e){
 }
 
 function setSiteID(siteID){
-    currentSiteID = siteID
+    currentSiteID = siteID;
 }
 
 // if error returns null

@@ -51,9 +51,12 @@ function parsePageBeforeSavingSite(resp){
             base_uri: document.baseURI,
             iframe: resp.iframe,
             html_attributes: html_attributes,
-            shallow_save: resp.shallow_save
+            shallow_save: resp.shallow_save,
+            revision: Trails.getCurrentRevision(),
+            is_base_revision: resp.isBaseRevision || false
         }
     }, function(response){
         console.log("parsing now!");
+        Trails.incrementRevision();
     });
 }

@@ -16,8 +16,8 @@ function makeToolBar() {
         "background": "#F0F0F0",
         "color": "#333",
         "line-height": "18px",
-        "border-bottom-right-radius": "7px",
-        "border-bottom-left-radius": "7px",
+//        "border-bottom-right-radius": "7px",
+//        "border-bottom-left-radius": "7px",
         "border-bottom" : "1px solid #aaa",
         "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
         "left" : "0",
@@ -70,7 +70,7 @@ function makeToolBar() {
         "border": "1px solid #aaa",
         "border-top-left-radius": "5px",
         "border-bottom-left-radius": "5px",
-        "background-color": "#d1d1d1",
+        "background-color": "#dedede",
         "cursor": "default",
         "text-align": "center"
     });
@@ -92,9 +92,11 @@ function makeToolBar() {
         "border": "1px solid #aaa",
         "border-top-right-radius": "5px",
         "border-bottom-right-radius": "5px",
+        "background-color": "#dedede",
         "cursor": "default",
         "text-align": "center"
     });
+    nextNoteButton.addClass("nextNoteButton").addClass("webtrails");
     nextNoteButton.html("Next Note");
 
     deleteNoteButton = wt_$(document.createElement("img"));
@@ -318,6 +320,11 @@ function makeToolBar() {
 
     initializeAutoResize();
     insertTrailPreview();
+//    setTimeout(insertTrailPreview,5000);
+//    runWhenLoaded(function(){
+//        console.log("about to insert trail preview");
+//        setTimeout(insertTrailPreview,1000);
+//    });
 
     if (wt_auth_token){
         initSignedInExperience()

@@ -39,6 +39,18 @@ class Site < ActiveRecord::Base
     return self.saved_resources.split("|#|").to_set
   end
 
+  def add_revision(revision_number)
+    self.revision_numbers = self.get_revisions.push(revision_number).join(",")
+  end
+
+  def get_revisions()
+    if rev_nums = self.revision_numbers
+      rev_nums.split()
+    else
+      []
+    end
+  end
+
   def update_note_list(note_array)
     notes = []
     all_authorized = true
