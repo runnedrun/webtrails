@@ -1,9 +1,5 @@
-#require 'celluloid/io'
-#require 'celluloid/autostart'
 require "em-synchrony"
 require "em-synchrony/em-http"
-#require 'eventmachine'
-#require 'em-http'
 require "fiber"
 require "set"
 
@@ -47,9 +43,9 @@ class ResourceHandler
 
       if is_iframe == "false"
         puts "not iframe, saving!"
-        site.archive_location = write_to_aws(html_to_save[0],html_to_save[1],false)
         site.add_revision(revision_number)
         site.base_revision_number = revision_number if is_base_revision
+        site.archive_location = write_to_aws(File.join(html_to_save[0],revision_number.to_s),html_to_save[1],false)
         site.save!
         puts "site saved to #{site.archive_location}"
       end

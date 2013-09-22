@@ -88,7 +88,13 @@ class SitesController < ApplicationController
   def async_site_load
     site = Site.find(params[:site_id])
     notes = site.notes
-    render :json => {"notes" => notes, "site_id" => site.id, "domain" => site.domain, "url" => site.url, "title" => site.title}, :status => 200
+    render(:json => {"notes" => notes,
+                     "site_id" => site.id,
+                     "domain" => site.domain,
+                     "url" => site.url,
+                     "title" => site.title,
+                     "base_revision" => site.base_revision_number,
+                    }, :status => 200)
   end
 
   def show
