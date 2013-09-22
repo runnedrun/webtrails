@@ -276,7 +276,7 @@ function makeToolBar() {
         "height": "100%",
         "width": "30%",
         "padding-top": "5px",
-        "font-size": "16px",
+        "font-size": "16px"
     });
     loggedOutMessage.addClass("loggedOutMessage");
 
@@ -319,7 +319,9 @@ function makeToolBar() {
 
 
     initializeAutoResize();
-    insertTrailPreview();
+    if (Trails.getCurrentTrail()) {
+        insertTrailPreview();
+    }
 //    setTimeout(insertTrailPreview,5000);
 //    runWhenLoaded(function(){
 //        console.log("about to insert trail preview");

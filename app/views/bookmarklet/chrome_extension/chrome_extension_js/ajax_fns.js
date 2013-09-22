@@ -31,23 +31,29 @@ function saveSiteToTrail(note){
             success: function(resp){
                 Trails.switchToTrail(resp.current_trail_id);
                 setSiteID(resp.current_site_id);
-                parsePageBeforeSavingSite(wt_$.extend(resp,{isBaseRevision: true}));
+                parsePageBeforeSavingSite(wt_$.extend(resp, {
+                    isBaseRevision: true,
+                    revision_number: Trails.getAndIncrementRevision()
+                }));
             }
         })
     }  else {
+        // get and increment so that the next note does not have the same revision number
+        var currentRevisionNumber = Trails.getAndIncrementRevision();
         wt_$.ajax({
             url: webTrailsUrl + "/notes",
             type: "post",
             crossDomain: true,
             beforeSend: signRequestWithWtAuthToken,
             data: {
-                "note": wt_$.extend(note,{site_id:currentSiteID})
+                "note": wt_$.extend(note, {site_id: currentSiteID, site_revision_number: currentRevisionNumber})
             },
             success: function(resp){
                 parsePageBeforeSavingSite(wt_$.extend(resp,{
-                    current_site_id:currentSiteID,
-                    current_trail_id:Trails.getCurrentTrailId(),
-                    shallow_save: true
+                    current_site_id: currentSiteID,
+                    current_trail_id: Trails.getCurrentTrailId(),
+                    shallow_save: true,
+                    revision_number: currentRevisionNumber
                 }))
             }
         })

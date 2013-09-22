@@ -28,11 +28,15 @@ wt_$(initExtension());
 
 function initExtension(){
     console.log("init extension");
-    getTrailDataFromLocalStorage(function(response){
-        Trails = new TrailsObject(response, startingTrailID);
-        Trails.initTrails();
+    if (wt_auth_token) {
+        getTrailDataFromLocalStorage(function(response){
+            Trails = new TrailsObject(response, startingTrailID);
+            Trails.initTrails();
+            makeToolBar();
+        });
+    } else {
         makeToolBar();
-    });
+    }
 }
 
 function getTrailDataFromLocalStorage(callback){

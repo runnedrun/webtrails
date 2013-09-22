@@ -45,8 +45,8 @@ class ResourceHandler
         puts "not iframe, saving!"
         site.add_revision(revision_number)
         site.base_revision_number = revision_number.to_i if is_base_revision
+        puts revision_number
         site.archive_location = write_to_aws(html_to_save[0], html_to_save[1], false, revision_number.to_s)
-        puts "base site revision is: ", site.base_revision_number
         site.save!
         puts "site saved to #{site.archive_location}"
       end
@@ -90,15 +90,16 @@ class ResourceHandler
     end.resume
   end
 
-  def write_to_aws(aws_path, data, resource_url, revision_number = "")
+  def write_to_aws(aws_path, data, resource_url, revision_number = false)
     begin
-      newFile = @bucket.objects[File.join(aws_path, revision_number.to_s)]
+      aws_path_with_rev = revision_number ? File.join(aws_path, revision_number.to_s) : aws_path
+      newFile = @bucket.objects[aws_path_with_rev]
       #puts data[0..100]
       newFile.write(data,:acl => :public_read)
       #newFile.acl = :public_read
       #puts "resource saved to: " + newFile.public_url().to_s
       @previously_saved_resource_set.add(resource_url) if resource_url
-      return "https://s3.amazonaws.com/TrailsSitesProto/" + aws_path #newFile.public_url().to_s
+      return "https://s3.amazonaws.com/TrailsSitesProto/" + aws_path_with_rev #newFile.public_url().to_s
     rescue
       $stderr.puts aws_path.to_s+"had a problem saving"
       puts $!.message

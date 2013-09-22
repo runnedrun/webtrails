@@ -1,3 +1,4 @@
+
 // the intitialization code for the trail display page
 // the rest of the functionality is split up in the various trail_display_<functionality>.js files
 
@@ -128,7 +129,7 @@ function readySite(data){
         Notes[note.id] = note;
     })
     var siteAttributes = {"noteIDs": noteIDs, "title" : data.title, "url" : data.url};
-    siteHash[data.site_id]=siteAttributes;
+    siteHash[data.site_id] = siteAttributes;
     if (data.site_id == getCurrentSiteID()){
         console.log("updating note count and disabling buttons");
         updateNoteCount();

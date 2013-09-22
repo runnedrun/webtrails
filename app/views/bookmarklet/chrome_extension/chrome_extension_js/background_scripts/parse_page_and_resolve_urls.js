@@ -36,7 +36,7 @@ function parse_page_and_resolve_urls(siteInfo){
         getCssAndParse(href, callbackTracker)
     })
 
-    parseHtmlAndResolveUrls(siteInfo.html,htmlAttributes,callbackTracker);
+    parseHtmlAndResolveUrls(siteInfo.html, htmlAttributes, callbackTracker);
 }
 
 function parseHtmlAndResolveUrls(html,htmlAttributes,cb) {
@@ -144,7 +144,7 @@ function checkIfAllResourcesAreParsed(callbackTracker){
         console.log("everything is parsed!");
         console.log(callbackTracker);
         wt_$.ajax({
-            url: domain+"/sites",
+            url: domain + "/sites",
             type: "post",
             crossDomain: true,
             data: callbackTracker,
@@ -199,6 +199,8 @@ function generateAwsUrl(url,siteID,trailID){
     path = path.replace(/^\/+/,"");
     // convert colons and such to underscores
     path = path.replace(/[^-_.\/[:alnum:]]/g,"_");
+    // get rid of hash
+    path = path.replace(/#/g,"");
     // replace &, = and ? with _
 
     var path_in_parts = path.split(".");

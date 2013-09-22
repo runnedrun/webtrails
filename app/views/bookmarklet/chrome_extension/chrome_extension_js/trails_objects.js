@@ -23,6 +23,11 @@ TrailsObject = function(trailsObject,currentTrailId){
         this.getCurrentTrail().incrementRevision();
     }
 
+    // returns current revision and increments the revision
+    this.getAndIncrementRevision = function(){
+        return this.getCurrentTrail().getAndIncrementRevision();
+    }
+
     this.updateTrails = function(localStorageTrailsObject){
         console.log("updating trail objexts");
         console.log(localStorageTrailsObject);
@@ -111,16 +116,24 @@ Trail = function(trailObject){
     }
 
     this.isCurrentTrail = function(){
-        return Trails.getCurrentTrail() == this && TrailPreview
-    }
+        return Trails.getCurrentTrail() == this && TrailPreview;
+    };
 
-    this.getCurrentRevision = function(){
-        return currentSiteRevision
-    }
+    this.getCurrentRevision = function() {
+        return currentSiteRevision;
+    };
 
-    this.incrementRevision = function(){
-        return currentSiteRevision += 1
-    }
+    this.incrementRevision = function() {
+        return currentSiteRevision += 1;
+    };
+
+    // gets the current revision and increments the revision
+    // not the best way to do this. should have mutex, but better than doing not at the same time
+    this.getAndIncrementRevision = function() {
+        var rev = this.getCurrentRevision();
+        this.incrementRevision();
+        return rev;
+    };
 
     var thisTrailObject = this;
     wt_$.each(trailObject.sites.siteObjects,function(siteId,siteObject){

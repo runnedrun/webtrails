@@ -22,8 +22,9 @@ function getCurrentSiteHTML(){
 
 function parsePageBeforeSavingSite(resp){
     console.log("sending message");
-    var stylesheetHrefs = []
-    var stylesheetContents = []
+    console.log("page_preprocessing.js parsePageBeforeSavingSite resp.revision_number = " + resp.revision_number);
+    var stylesheetHrefs = [];
+    var stylesheetContents = [];
     var currentHTML = getCurrentSiteHTML();
     var html_attributes = {};
 
@@ -52,11 +53,10 @@ function parsePageBeforeSavingSite(resp){
             iframe: resp.iframe,
             html_attributes: html_attributes,
             shallow_save: resp.shallow_save,
-            revision: Trails.getCurrentRevision(),
+            revision: resp.revision_number,
             is_base_revision: resp.isBaseRevision || false
         }
     }, function(response){
-        console.log("parsing now!");
-        Trails.incrementRevision();
+        console.log("page_preprocessing. parseAndResolve came back!");
     });
 }

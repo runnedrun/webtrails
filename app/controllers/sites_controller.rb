@@ -27,10 +27,8 @@ class SitesController < ApplicationController
     style_sheets_to_save = params[:styleSheets] || {}
     html_to_save = params[:html]
     is_iframe = params[:isIframe]
-    revision_number = params[:revision_number]
+    revision_number = params[:revision]
     is_base_revision = params[:is_base_revision]
-
-    puts revision_number, is_base_revision
 
     Fiber.new do
       EM.synchrony do
