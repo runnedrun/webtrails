@@ -99,7 +99,7 @@ class ResourceHandler
       #newFile.acl = :public_read
       #puts "resource saved to: " + newFile.public_url().to_s
       @previously_saved_resource_set.add(resource_url) if resource_url
-      return "https://s3.amazonaws.com/TrailsSitesProto/" + aws_path_with_rev #newFile.public_url().to_s
+      return "https://s3.amazonaws.com/TrailsSitesProto/" + aws_path #newFile.public_url().to_s
     rescue
       $stderr.puts aws_path.to_s+"had a problem saving"
       puts $!.message

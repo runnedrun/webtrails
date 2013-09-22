@@ -99,11 +99,11 @@ class SitesController < ApplicationController
 
   def show
     site = Site.find(params[:id])
-
+    puts site.base_archive_location
     if site.archive_location.nil?
       render :template => 'trails/loading'
     else
-      @html = open(site.archive_location).read.html_safe
+      @html = open(site.base_archive_location).read.html_safe
       render :layout => false, :text => @html
     end
   end

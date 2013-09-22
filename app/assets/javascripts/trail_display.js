@@ -109,12 +109,6 @@ function makeIframes(){
     });
 }
 
-function wrapHTMLInIframe(html,iframe){
-    var siteDoc = iframe[0].contentWindow.document;
-    var siteBody = $('body', siteDoc);
-    siteBody.wrapInner(html);
-}
-
 function insertHTMLInIframe(html,$iframe){
     var siteDoc = $iframe[0].contentWindow.document;
     var siteBody = $('body', siteDoc);

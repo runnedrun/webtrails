@@ -73,4 +73,8 @@ class Site < ActiveRecord::Base
     self.notes.map(&:id)
   end
 
+  def base_archive_location
+    File.join([self.archive_location, self.base_revision_number.to_s])
+  end
+
 end
