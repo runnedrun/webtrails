@@ -30,6 +30,8 @@ class SitesController < ApplicationController
     revision_number = params[:revision_number]
     is_base_revision = params[:is_base_revision]
 
+    puts revision_number, is_base_revision
+
     Fiber.new do
       EM.synchrony do
         puts "into snychrony we go"

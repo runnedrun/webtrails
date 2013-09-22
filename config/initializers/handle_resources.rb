@@ -44,8 +44,9 @@ class ResourceHandler
       if is_iframe == "false"
         puts "not iframe, saving!"
         site.add_revision(revision_number)
-        site.base_revision_number = revision_number if is_base_revision
-        site.archive_location = write_to_aws(File.join(html_to_save[0],revision_number.to_s),html_to_save[1],false)
+        site.base_revision_number = revision_number.to_i if is_base_revision
+        site.archive_location = write_to_aws(html_to_save[0], html_to_save[1], false, revision_number.to_s)
+        puts "base site revision is: ", site.base_revision_number
         site.save!
         puts "site saved to #{site.archive_location}"
       end
@@ -89,9 +90,9 @@ class ResourceHandler
     end.resume
   end
 
-  def write_to_aws(aws_path,data,resource_url)
+  def write_to_aws(aws_path, data, resource_url, revision_number = "")
     begin
-      newFile = @bucket.objects[aws_path]
+      newFile = @bucket.objects[File.join(aws_path, revision_number.to_s)]
       #puts data[0..100]
       newFile.write(data,:acl => :public_read)
       #newFile.acl = :public_read
