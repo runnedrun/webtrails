@@ -22,7 +22,8 @@ function getCurrentSiteHTML(){
 
 function parsePageBeforeSavingSite(resp){
     console.log("sending message");
-    console.log("page_preprocessing.js parsePageBeforeSavingSite resp.revision_number = " + resp.revision_number);
+    console.log("resp.revision_number = " + resp.revision_number);
+    console.log(resp);
     var stylesheetHrefs = [];
     var stylesheetContents = [];
     var currentHTML = getCurrentSiteHTML();
@@ -39,7 +40,13 @@ function parsePageBeforeSavingSite(resp){
         }else if(owner.nodeName == "STYLE"){
             stylesheetContents.push(owner.innerHTML);
         }
-    })
+    });
+
+//    if (!resp.shallowSave){
+//        changeObserver = new MutationSummary({callback: function(m){ console.log("mutation")}, queries: [{all: true}]});
+//    } else {
+//        console.log("summaries", changeObserver.takeSummaries());
+//    }
 
     chrome.runtime.sendMessage({
         parseAndResolve:{

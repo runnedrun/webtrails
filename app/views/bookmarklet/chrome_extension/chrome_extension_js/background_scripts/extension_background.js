@@ -5,9 +5,9 @@ domain_name = "localhost";
 message_sending = {}
 
 
-var scriptsToBeInjected = ["jquery191.js", "rangy-core.js","page_preprocessing.js","trails_objects.js","trail_preview.js","toolbar_ui.js",
+var scriptsToBeInjected = ["jquery191.js", "rangy-core.js", "page_preprocessing.js", "trails_objects.js","trail_preview.js","toolbar_ui.js",
     "ajax_fns.js","smart_grab.js","autoresize.js","search_and_highlight.js","css_property_defaults.js","inline_save_button_fns.js",
-    "ui_fns.js","commenting_fns.js","whereJSisWrittenLocalChrome.js"];
+    "ui_fns.js","commenting_fns.js","whereJSisWrittenLocalChrome.js", "mutation-summary.js"];
 
 chrome.browserAction.onClicked.addListener(function(tab) {
   chrome.tabs.executeScript(tab.id, {code:"showOrHidePathDisplay()"});
@@ -172,9 +172,8 @@ function updateStoredTrailData(trailObject,userId){
     setUserId(userId);
     wt_$.each(trailObject,function(trailId,trail){
         updateSiteData(trail.site_list,trail.html_hash, trailId);
-        wt_$.each(trail.note_hash,function(siteId,noteObject){
-            console.log(noteObject.note_id_list);
-            updateNoteData(noteObject.note_id_list,noteObject.comments,siteId);
+        wt_$.each(trail.note_hash, function(siteId,noteObject){
+            updateNoteData(noteObject.note_ids_in_order, noteObject.note_data, siteId);
         })
         trailIds.push(trailId);
     })

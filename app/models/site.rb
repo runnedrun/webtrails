@@ -45,7 +45,7 @@ class Site < ActiveRecord::Base
 
   def get_revisions()
     if rev_nums = self.revision_numbers
-      rev_nums.split()
+      rev_nums.split(",")
     else
       []
     end
@@ -70,7 +70,7 @@ class Site < ActiveRecord::Base
   end
 
   def note_list()
-    self.notes.map(&:id)
+    self.notes.map { |note| note.id.to_s }
   end
 
   def base_archive_location

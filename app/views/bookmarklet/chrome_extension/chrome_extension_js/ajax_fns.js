@@ -15,6 +15,10 @@ function saveSiteToTrail(note){
         return;
     }
 
+    var currentRevisionNumber = Trails.getAndIncrementRevision();
+    if (note) {
+        note = wt_$.extend(note, {site_revision_number: currentRevisionNumber});
+    }
     if (!siteSavedDeeply){
         wt_$.ajax({
             url: webTrailsUrl + "/sites/get_new_site_id",
@@ -26,27 +30,26 @@ function saveSiteToTrail(note){
                 "site[trail_id]":Trails.getCurrentTrailId(),
                 "site[title]": document.title,
                 "site[domain]": document.domain,
-                "note": note || {}
+                "note":  note || {}
             },
             success: function(resp){
                 Trails.switchToTrail(resp.current_trail_id);
                 setSiteID(resp.current_site_id);
                 parsePageBeforeSavingSite(wt_$.extend(resp, {
                     isBaseRevision: true,
-                    revision_number: Trails.getAndIncrementRevision()
+                    revision_number: currentRevisionNumber
                 }));
             }
         })
     }  else {
         // get and increment so that the next note does not have the same revision number
-        var currentRevisionNumber = Trails.getAndIncrementRevision();
         wt_$.ajax({
             url: webTrailsUrl + "/notes",
             type: "post",
             crossDomain: true,
             beforeSend: signRequestWithWtAuthToken,
             data: {
-                "note": wt_$.extend(note, {site_id: currentSiteID, site_revision_number: currentRevisionNumber})
+                "note": wt_$.extend(note, {site_id: currentSiteID})
             },
             success: function(resp){
                 parsePageBeforeSavingSite(wt_$.extend(resp,{

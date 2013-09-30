@@ -104,6 +104,7 @@ class SitesController < ApplicationController
       render :template => 'trails/loading'
     else
       @html = open(site.base_archive_location).read.html_safe
+      puts site.base_archive_location
       render :layout => false, :text => @html
     end
   end

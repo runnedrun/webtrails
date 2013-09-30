@@ -13,7 +13,8 @@ var trailDisplay,
     siteHTML = getCurrentSiteHTML(),
     noteCount = 0,
     siteSavedDeeply = false,
-    TrailPreview = false
+    TrailPreview = false,
+    changeObserver;
     loggedIn = false;
     faviconsFetched = false;
 //    webTrailsUrl = "http://www.webtrails.co";
@@ -63,6 +64,10 @@ function verifyKeyPress(e){
 
 function setSiteID(siteID){
     currentSiteID = siteID;
+}
+
+function mutcallback(t){
+    console.log(t)
 }
 
 // if error returns null

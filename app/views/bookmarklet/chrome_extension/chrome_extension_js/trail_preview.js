@@ -5,24 +5,24 @@ TPreview = function(){
     var currentSite = currentNote.site;
     var currentSiteFrame = false;
     var shown = false;
-    var trailPreview = this;
+    var thisTrailPreview = this;
 
     var nextNoteButton = wt_$(".nextNoteButton");
     var previousNoteButton = wt_$(".previousNoteButton");
 
-    function getIDoc($iframe){
+    function getIDoc($iframe) {
         return wt_$($iframe[0].contentWindow.document);
     }
 
-    function getSiteIDoc(site){
+    function getSiteIDoc(site) {
        return getIDoc(wt_$("[data-site-id='" + site.id + "']"));
     }
 
-    function getIWindow($iframe){
+    function getIWindow($iframe) {
         return wt_$($iframe[0].contentWindow);
     }
 
-    this.setIframeContent = function($iframe,html){
+    this.setIframeContent = function($iframe,html) {
         var iDoc = getIDoc($iframe)[0];
         iDoc.open();
         iDoc.writeln(html);
@@ -32,28 +32,36 @@ TPreview = function(){
         return wt_$($iframe[0].contentWindow);
     }
 
-    this.loadCurrentTrailIntoPreview = function(){
-        var trailPreview = this;
+    function updateIframeBody($iframe, html) {
+        console.log("updating body of iframe");
+        var newDoc = document.implementation.createHTMLDocument().documentElement;
+        newDoc.innerHTML = html;
+        var $html = wt_$(newDoc);
+        wt_$(getIDoc($iframe).body).replaceWith($html.find("body"));
+    }
+
+    function loadCurrentTrailIntoPreview() {
         var currentTrail = Trails.getCurrentTrail();
-        console.log("before adding all the iframes");
-
-        loadIframeSynchronously(currentTrail.getLastSite());
-
-        function loadIframeSynchronously(site){
-            if (!site){
+        loadSitesSynchronously(currentTrail.getLastSite());
+        function loadSitesSynchronously(site){
+            console.log("loading site:", site);
+            if (!site) {
                 return
+            } else {
+                addSiteToPreview(site)
+                    setTimeout(function(){
+                    loadSitesSynchronously(site.previousSite());
+                },1000);
             }
-            trailPreview.addSiteToPreview(site).load(function(){
-                loadIframeSynchronously(site.previousSite());
-            });
+
         }
     }
 
-    this.addSiteToPreview = function(site){
-        console.log("Adding: ", site.id);
-        var siteHtmlIfame = wt_$("<iframe data-trail-id='" + site.trail.id + "' data-site-id='"+site.id+"' seamless='seamless' class='wt-site-preview'>");
-        siteHtmlIfame.attr('src',"about:blank");
-        siteHtmlIfame.css({
+    function addEmptyIframeToPreview(site, revision) {
+        var siteHtmlIframe = wt_$("<iframe data-trail-id='" + site.trail.id + "' data-site-id='"+site.id+"' seamless='seamless' class='wt-site-preview'>");
+        console.log("iframe", siteHtmlIframe);
+        siteHtmlIframe.attr('src',"about:blank");
+        siteHtmlIframe.css({
             display : "none",
             width:"100%",
             "border-top": "2px gray solid",
@@ -63,19 +71,24 @@ TPreview = function(){
             "border-bottom": "2px solid grey",
             "z-index": "2147483647"
         });
-        trailDisplay.after(siteHtmlIfame);
-        var iframeContentWindow = trailPreview.setIframeContent(siteHtmlIfame, site.html);
+        trailDisplay.after(siteHtmlIframe);
+        return siteHtmlIframe
+    }
+
+    function addSiteToPreview(site, displayIframe) {
+        var siteHtmlIframe = addEmptyIframeToPreview(site, displayIframe);
+        var iframeContentWindow = thisTrailPreview.setIframeContent(siteHtmlIframe, site.getFirstRevisionHtml() || "");
         return iframeContentWindow
     }
 
-    this.init = function(){
-        this.loadCurrentTrailIntoPreview();
-        if (currentNote){
+    this.init = function() {
+//        loadCurrentTrailIntoPreview();
+        if (currentNote) {
             this.displayNote(currentNote);
         }
     }
 
-    this.show = function(){
+    this.show = function() {
         if (currentSiteFrame){
             currentSiteFrame.show();
             wt_$(document.body).css({
@@ -86,7 +99,7 @@ TPreview = function(){
         }
     }
 
-    this.hide = function(){
+    this.hide = function() {
         if (currentSiteFrame){
             currentSiteFrame.hide();
             shown = false;
@@ -96,26 +109,32 @@ TPreview = function(){
         }
     }
 
-    this.switchToSite = function(site){
-        var oldSiteFrame = currentSiteFrame;
-        currentSiteFrame = wt_$("[data-site-id='" + site.id + "']");
-        if (!(site == currentSite)){
-            currentSite = site;
-            if (shown){
-                oldSiteFrame.hide();
-                currentSiteFrame.show();
-            }
-        }
-        return currentSiteFrame
+    this.switchToNoteRevision = function(note, displayPreview) {
+        wt_$(".wt-site-preview").remove
+        var siteHtmlIframe = addEmptyIframeToPreview(note.site, displayPreview);
+        var iframeContentWindow = thisTrailPreview.setIframeContent(siteHtmlIframe, note.getRevisionHtml() || "Uh oh");
+        return iframeContentWindow
+//        var oldSiteFrame = currentSiteFrame;
+//        currentSiteFrame = wt_$("[data-site-id='" + note.site.id + "']");
+//        if (!(note.site == currentSite)) {
+//            currentSite = note.site;
+//            if (shown){
+//                oldSiteFrame.hide();
+//                currentSiteFrame.show();
+//            }
+//        }
+//        updateIframeBody(currentSiteFrame, note.getSiteRevisionHtml());
+//        return currentSiteFrame
+
     }
 
-    this.displayNote = function(note){
-        console.log("displaying note: ", note.id);
+    this.displayNote = function(note) {
         var trailPreview = this;
-        runWhenExists("[data-site-id='" + note.site.id + "']", function(){
-            trailPreview.switchToSite(note.site);
+        addSiteToPreview(note.site);
+        runWhenExists("[data-site-id='" + note.site.id + "']", function() {
+
             var $iDoc = getSiteIDoc(note.site);
-            runWhenLoaded(function(){
+            runWhenLoaded(function() {
                 var noteElements = trailPreview.highlightNote(note);
                 var noteLocation = noteElements.first().offset();
                 $iDoc.scrollTop(noteLocation.top-100).scrollLeft(noteLocation.left);
@@ -123,55 +142,57 @@ TPreview = function(){
         })
     }
 
-    this.highlightNote = function(note){
+    this.highlightNote = function(note) {
         var siteIDoc = getSiteIDoc(note.site);
         var noteElements = wt_$("." + note.clientSideId,siteIDoc);
-        trailPreview.highlightElements(noteElements);
+        thisTrailPreview.highlightElements(noteElements);
         return noteElements
     }
 
-    this.showNextNote = function(){
+    this.showNextNote = function() {
         var nextNote = currentNote.nextNote();
         if (nextNote) {
             currentNote = nextNote;
-            trailPreview.enableOrDisablePrevAndNextButtons(currentNote);
-            trailPreview.displayNote(nextNote);
+            thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
+            thisTrailPreview.displayNote(nextNote);
         } else {
             return false
         }
     }
 
-    this.showPreviousNote = function(){
+    this.showPreviousNote = function() {
         var previousNote = currentNote.previousNote();
         if (previousNote) {
             currentNote = previousNote;
-            trailPreview.enableOrDisablePrevAndNextButtons(currentNote);
-            trailPreview.displayNote(previousNote);
+            thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
+            thisTrailPreview.displayNote(previousNote);
         } else {
             return false
         }
     }
 
-    this.enableOrDisablePrevAndNextButtons = function(currentNote){
-        if(currentNote && currentNote.nextNote()){
+    this.enableOrDisablePrevAndNextButtons = function(currentNote) {
+        console.log("checking if note buttons should be enabled");
+        if(currentNote && currentNote.nextNote()) {
             nextNoteButton.enable();
         } else {
             nextNoteButton.disable();
         }
-        if(currentNote && currentNote.previousNote()){
+        if(currentNote && currentNote.previousNote()) {
+            console.log("enabling previous note");
             previousNoteButton.enable();
         } else {
             previousNoteButton.disable();
         }
     }
 
-    this.highlightElements = function($elements){
+    this.highlightElements = function($elements) {
         $elements.css({
             "background": "yellow"
         })
     }
 
-    this.updateWithNewNote = function(newNote){
+    this.updateWithNewNote = function(newNote) {
         console.log("updating preview with new note");
         if (!currentNote){
             currentNote = newNote;
@@ -180,10 +201,7 @@ TPreview = function(){
         this.enableOrDisablePrevAndNextButtons();
     }
 
-
-    console.log(nextNoteButton);
-
-    nextNoteButton.disable = previousNoteButton.disable = function(){
+    nextNoteButton.disable = previousNoteButton.disable = function() {
         this.prop('disabled', true);
         this.css({
             color: "grey"
@@ -191,7 +209,7 @@ TPreview = function(){
         this.enabled = false;
     }
 
-    nextNoteButton.enable = previousNoteButton.enable = function(){
+    nextNoteButton.enable = previousNoteButton.enable = function() {
         this.prop('disabled', false);
         this.css({
             color: "black"

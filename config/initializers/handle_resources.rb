@@ -48,7 +48,7 @@ class ResourceHandler
         puts revision_number
         site.archive_location = write_to_aws(html_to_save[0], html_to_save[1], false, revision_number.to_s)
         site.save!
-        puts "site saved to #{site.archive_location}"
+        puts "site saved to #{site.archive_location} with revision number #{revision_number}"
       end
       @site.update_resource_set(@previously_saved_resource_set)
       puts "done saving"
@@ -95,7 +95,7 @@ class ResourceHandler
       aws_path_with_rev = revision_number ? File.join(aws_path, revision_number.to_s) : aws_path
       newFile = @bucket.objects[aws_path_with_rev]
       #puts data[0..100]
-      newFile.write(data,:acl => :public_read)
+      newFile.write(data,:acl => :public_read, :expires => "Thu, 21 Mar 2042 08:16:32 GMT")
       #newFile.acl = :public_read
       #puts "resource saved to: " + newFile.public_url().to_s
       @previously_saved_resource_set.add(resource_url) if resource_url

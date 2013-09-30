@@ -61,7 +61,7 @@ class Trail < ActiveRecord::Base
   end
 
   def site_list
-    self.sites.map(&:id)
+    self.sites.map { |site| site.id.to_s }
   end
 
 end
