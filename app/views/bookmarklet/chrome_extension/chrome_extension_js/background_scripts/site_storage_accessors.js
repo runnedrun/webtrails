@@ -53,9 +53,9 @@ function updatedStoredHtmlForSite(siteId, htmlLocationAndRevisions){
     wt_$.each(revisions, function(i, revision) {
         var revisionAlreadExistsInStorage = oldSiteRevisionList.indexOf(revision) > -1
         if (!revisionAlreadExistsInStorage){
-            localStorage[siteId+ ":siteHtml:" + String(revision)] = "fetching page";
+//            localStorage[siteId+ ":siteHtml:" + String(revision)] = "fetching page";
             wt_$.ajax({
-                url: base_location+"/"+revision,
+                url: base_location.replace(/\/\s*$/,"")+"/"+revision,
                 type: "get",
                 success: function(html){
                     setRevisionInLocalStorage(siteId, revision, html);
@@ -82,6 +82,20 @@ function removeSiteDataFromLocalStorage(siteId) {
 
 function setSiteListInLocalStorage(trailId, siteList) {
     localStorage[String(trailId)+":siteIdList"] = siteList.join(",");
+}
+
+
+function addSiteIdToSiteList(siteId){
+    var siteIdString = localStorage["siteIdList"];
+    if (siteIdString) {
+        var siteIdList = siteIdString.split(",");
+        if (siteIdList.indexOf(siteId) == -1) {
+            siteIdList.push(siteId).join(",")
+            localStorage["siteIdList"] = siteIdList;
+        }
+    } else {
+        localStorage["siteIdList"] = String(siteId);
+    }
 }
 
 function getRevisionList(siteId) {

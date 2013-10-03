@@ -57,7 +57,10 @@ class UsersController < ApplicationController
         note_hash[:note_data] = site.notes.inject({}) do |hash,note|
           hash[note.id] = {:comment => note.comment,
                            :client_side_id => note.client_side_id,
-                           :site_revision_number => note.site_revision_number}
+                           :site_revision_number => note.site_revision_number,
+                           :scroll_x => note.scroll_x,
+                           :scroll_y => note.scroll_x,
+                           :id => note.id}
           hash
         end
       end

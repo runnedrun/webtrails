@@ -1,6 +1,10 @@
 console.log("commenting loaded");
 
 function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
+    if (!(((typeof xPos) == "number") && ((typeof yPos) == "number")) ){
+        butterBarNotification("Note failed to save properly, please try again.");
+        return
+    }
     var overlayHeight =20;
     //make this dynamic so the size of the comment box changes based on page size
     var overlayWidth = 400;
@@ -55,8 +59,8 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     wt_$(commentOverlay).append(commentDescription);
     wt_$(commentOverlay).append(commentBox);
     var noteContent = String(highlightedRange);
-    commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
-    wt_$(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
+    commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,leftPosition,topPosition, xPos, yPos));
+    wt_$(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,leftPosition,topPosition, xPos, yPos));
     commentBox.autosize();
     commentBox.focus();
     var nodes = highlightedRange.getNodes();
@@ -91,15 +95,15 @@ function postNoteAndComment(e,content,commentOverlay,xPos,yPos){
     }
 }
 
-function postNoteAndCommentWithClosure(noteContent,commentOverlay,xPos,yPos){
-    return function (e){postNoteAndComment(e,noteContent,commentOverlay,xPos,yPos)}
+function postNoteAndCommentWithClosure(noteContent,commentOverlay, commentX, commentY, noteX, noteY) {
+    return function (e){postNoteAndComment(e,noteContent,commentOverlay,commentX,commentY, noteX, noteY)}
 }
 
-function clickAwayWithClosure(noteContent,commentOverlay,xPos,yPos){
-    return function (e){clickAway(e,noteContent,commentOverlay,xPos,yPos)}
+function clickAwayWithClosure(noteContent,commentOverlay, commentX, commentY, noteX, noteY) {
+    return function (e){clickAway(e,noteContent,commentOverlay, commentX, commentY, noteX, noteY)}
 }
 
-function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY){
+function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY, noteX, noteY){
     noteCount++;
     console.log("note count incremented", noteCount);
     var noteCountAtSave = noteCount;
@@ -109,7 +113,7 @@ function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY
         comment_location_x: commentLocationX,
         comment_location_y: commentLocationY,
         client_side_id: "client_side_id_"+ (noteCount - 1),
-        scroll_x: window.scrollX, scroll_y:window.scrollY}
+        scroll_x: noteX, scroll_y:noteY}
     );
 }
 
@@ -122,11 +126,11 @@ function closeOverlay(){
     unhighlight_wtHighlights();
 }
 
-function clickAway(e,content,commentOverlay,xPos,yPos){
+function clickAway(e,content,commentOverlay,commentX, commentY, noteX, noteY){
     var clickedNode = wt_$(e.target);
     if (clickedNode != commentOverlay && (wt_$.inArray(e.target,commentOverlay.children())==-1)){
         closeOverlay(commentOverlay);
-        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos);
+        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(), commentX, commentY, noteX, noteY);
     }
 }
 

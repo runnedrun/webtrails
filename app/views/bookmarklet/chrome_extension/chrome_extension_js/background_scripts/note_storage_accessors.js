@@ -2,12 +2,7 @@ function getNotesObject(siteId){
     var notesObject = {noteObjects:{},order:[]};
     var noteIdList = getNoteList(siteId);
     wt_$.each(noteIdList,function(i,noteId){
-        var noteObject = notesObject["noteObjects"][noteId] = {}
-        var commentObject = getNoteCommentObject(noteId)
-        noteObject["comment"] = commentObject["comment"];
-        noteObject["clientSideId"] = commentObject["clientSideId"]
-        noteObject["siteRevisionNumber"] = getRevisionNumber(noteId);
-        noteObject["id"] = noteId;
+        notesObject["noteObjects"][noteId] = getNoteCommentObject(noteId);
     })
     notesObject["order"] = noteIdList;
     return notesObject;
@@ -25,23 +20,17 @@ function updateNoteData(noteIdsInOrder, noteDatas, siteId){
 
     wt_$.each(noteIdsInOrder, function(index, noteId){
         var noteData = noteDatas[noteId];
-        addNoteCommentToLocalStorage(noteId, noteData["comment"], noteData["client_side_id"])
-        setRevisionNumber(noteId, noteData.site_revision_number);
+        addNoteToLocalStorage(noteId, noteData)
     });
     setNoteList(siteId, noteIdsInOrder);
 }
 
-function addNoteCommentToLocalStorage(noteId,noteComment,clientSideId){
-    localStorage[String(noteId)+":commentAndClientSideId"] = String(clientSideId) + "/wt/" + noteComment;
-}
-
-function removeNoteCommentsFromLocalStorage(noteId){
-    localStorage.removeItem(String(noteId)+":commentAndClientSideId");
+function addNoteToLocalStorage(noteId, noteData){
+    localStorage[String(noteId)+":note"] = JSON.stringify(noteData);
 }
 
 function removeNote(noteId){
-    removeNoteCommentsFromLocalStorage(noteId);
-    removeRevisionNumber(noteId);
+    localStorage.removeItem(String(noteId)+":note");
 }
 
 function removeAllNotesForSite(siteId){
@@ -69,25 +58,17 @@ function removeNoteList(siteId) {
     localStorage.removeItem(String(siteId)+":noteIdList");
 }
 
-function setRevisionNumber(noteId, revisionNumber) {
-    localStorage[String(noteId)+":siteRevisionNumber"] = revisionNumber;
-}
-
-function getRevisionNumber(noteId) {
-    return localStorage[String(noteId)+":siteRevisionNumber"]
-}
-
-function removeRevisionNumber(noteId) {
-    localStorage.removeItem(String(noteId)+":siteRevisionNumber");
-}
-
 function getNoteCommentObject(noteId){
     var noteCommentObject = {};
-    var commentAndClientSideId =  localStorage[String(noteId) + ":commentAndClientSideId"];
-    if (commentAndClientSideId){
-        var split = commentAndClientSideId.split("/wt/");
-        noteCommentObject["clientSideId"] = split[0];
-        noteCommentObject["comment"] = split.slice(1).join("/wt/");
+    var commentJSON=  localStorage[String(noteId) + ":note"];
+    if (commentJSON){
+        var commentObject  = JSON.parse(commentJSON);
+        noteCommentObject["comment"]  = commentObject.comment;
+        noteCommentObject["clientSideId"]  = commentObject.client_side_id;
+        noteCommentObject["scrollX"] = commentObject.scrollX;
+        noteCommentObject["scrollY"] = commentObject.scrollY;
+        noteCommentObject["siteRevisionNumber"] = commentObject.site_revision_number;
+        noteCommentObject["id"] = commentObject.id;
         return noteCommentObject;
     }
     else{

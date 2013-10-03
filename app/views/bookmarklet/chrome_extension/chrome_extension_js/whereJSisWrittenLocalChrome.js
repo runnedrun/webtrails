@@ -31,6 +31,7 @@ function initExtension(){
     console.log("init extension");
     if (wt_auth_token) {
         getTrailDataFromLocalStorage(function(response){
+            console.log("local storage response", response);
             Trails = new TrailsObject(response, startingTrailID);
             Trails.initTrails();
             makeToolBar();

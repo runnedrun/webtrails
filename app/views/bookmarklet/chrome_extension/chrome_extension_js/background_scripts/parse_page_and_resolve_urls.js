@@ -226,7 +226,8 @@ function generateAwsUrl(url,siteID,trailID){
 }
 
 function generateAwsUrlFromAwsPath(path){
-    return AWSBase + "/" + path
+    //remove trailing slash
+    return AWSBase + "/" + path.replace(/\/\s*$/,"");
 }
 
 function generateImportOrUrlRegex(){

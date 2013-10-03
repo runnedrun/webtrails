@@ -238,6 +238,8 @@ Site = function(siteObject, parentTrail){
 Note = function(baseNoteObject, parentSite){
     var siteRevisionNumber = baseNoteObject.siteRevisionNumber;
     this.site = parentSite;
+    this.scrollX = baseNoteObject.scrollX;
+    this.scrollY = baseNoteObject.scrollY;
 
     this.getSiteRevisionHtml = function() {
         return this.site.getRevisionHtml(siteRevisionNumber)
@@ -295,4 +297,5 @@ Note = function(baseNoteObject, parentSite){
 
     this.update(baseNoteObject);
     if (this.site.trail.isCurrentTrail()) { TrailPreview.updateWithNewNote(this) }
+//    debugger;
 }

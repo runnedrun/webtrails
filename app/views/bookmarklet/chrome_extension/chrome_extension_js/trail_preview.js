@@ -29,7 +29,7 @@ TPreview = function(){
         iDoc.close();
         var headTag  = iDoc.getElementsByTagName("head")[0];
         headTag.className = headTag.className + " wt-site-preview";
-        return wt_$($iframe[0].contentWindow);
+        return $iframe[0].contentWindow.document;
     }
 
     function updateIframeBody($iframe, html) {
@@ -57,12 +57,12 @@ TPreview = function(){
         }
     }
 
-    function addEmptyIframeToPreview(site, revision) {
+    function addEmptyIframeToPreview(site, hideIframe) {
         var siteHtmlIframe = wt_$("<iframe data-trail-id='" + site.trail.id + "' data-site-id='"+site.id+"' seamless='seamless' class='wt-site-preview'>");
         console.log("iframe", siteHtmlIframe);
         siteHtmlIframe.attr('src',"about:blank");
         siteHtmlIframe.css({
-            display : "none",
+            display : hideIframe ? "none" :"block",
             width:"100%",
             "border-top": "2px gray solid",
             position: "fixed",
@@ -75,16 +75,16 @@ TPreview = function(){
         return siteHtmlIframe
     }
 
-    function addSiteToPreview(site, displayIframe) {
-        var siteHtmlIframe = addEmptyIframeToPreview(site, displayIframe);
-        var iframeContentWindow = thisTrailPreview.setIframeContent(siteHtmlIframe, site.getFirstRevisionHtml() || "");
-        return iframeContentWindow
+    function addSiteToPreview(site, displayPreview) {
+        var siteHtmlIframe = addEmptyIframeToPreview(site, displayPreview);
+        var iframeDocument = thisTrailPreview.setIframeContent(siteHtmlIframe, site.getFirstRevisionHtml() || "");
+        return iframeDocument
     }
 
     this.init = function() {
 //        loadCurrentTrailIntoPreview();
         if (currentNote) {
-            this.displayNote(currentNote);
+            this.displayNote(currentNote, true);
         }
     }
 
@@ -109,37 +109,21 @@ TPreview = function(){
         }
     }
 
-    this.switchToNoteRevision = function(note, displayPreview) {
-        wt_$(".wt-site-preview").remove
-        var siteHtmlIframe = addEmptyIframeToPreview(note.site, displayPreview);
-        var iframeContentWindow = thisTrailPreview.setIframeContent(siteHtmlIframe, note.getRevisionHtml() || "Uh oh");
-        return iframeContentWindow
-//        var oldSiteFrame = currentSiteFrame;
-//        currentSiteFrame = wt_$("[data-site-id='" + note.site.id + "']");
-//        if (!(note.site == currentSite)) {
-//            currentSite = note.site;
-//            if (shown){
-//                oldSiteFrame.hide();
-//                currentSiteFrame.show();
-//            }
-//        }
-//        updateIframeBody(currentSiteFrame, note.getSiteRevisionHtml());
-//        return currentSiteFrame
-
+    this.switchToNoteRevision = function(note, hidePreview) {
+        currentSiteFrame && currentSiteFrame.remove();
+        var siteHtmlIframe = addEmptyIframeToPreview(note.site, hidePreview);
+        var iframeDocument = thisTrailPreview.setIframeContent(siteHtmlIframe, note.getSiteRevisionHtml() || "Uh oh");
+        currentSiteFrame = siteHtmlIframe;
+        return wt_$(iframeDocument);
     }
 
-    this.displayNote = function(note) {
-        var trailPreview = this;
-        addSiteToPreview(note.site);
-        runWhenExists("[data-site-id='" + note.site.id + "']", function() {
-
-            var $iDoc = getSiteIDoc(note.site);
-            runWhenLoaded(function() {
-                var noteElements = trailPreview.highlightNote(note);
-                var noteLocation = noteElements.first().offset();
-                $iDoc.scrollTop(noteLocation.top-100).scrollLeft(noteLocation.left);
-            },$iDoc[0]);
-        })
+    this.displayNote = function(note, hidePreview) {
+        var $iDoc = thisTrailPreview.switchToNoteRevision(note, hidePreview);
+        runWhenLoaded(function() {
+            var noteElements = thisTrailPreview.highlightNote(note);
+            var noteLocation = noteElements.first().offset();
+            $iDoc.scrollTop(noteLocation.top-100).scrollLeft(noteLocation.left);
+        },$iDoc[0]);
     }
 
     this.highlightNote = function(note) {

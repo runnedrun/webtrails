@@ -94,12 +94,9 @@ class ResourceHandler
     begin
       aws_path_with_rev = revision_number ? File.join(aws_path, revision_number.to_s) : aws_path
       newFile = @bucket.objects[aws_path_with_rev]
-      #puts data[0..100]
-      newFile.write(data,:acl => :public_read, :expires => "Thu, 21 Mar 2042 08:16:32 GMT")
-      #newFile.acl = :public_read
-      #puts "resource saved to: " + newFile.public_url().to_s
+      newFile.write(data,:acl => :public_read, :cache_control => "max-age=157680000, public")
       @previously_saved_resource_set.add(resource_url) if resource_url
-      return "https://s3.amazonaws.com/TrailsSitesProto/" + aws_path #newFile.public_url().to_s
+      return "https://s3.amazonaws.com/TrailsSitesProto/" + aws_path
     rescue
       $stderr.puts aws_path.to_s+"had a problem saving"
       puts $!.message
