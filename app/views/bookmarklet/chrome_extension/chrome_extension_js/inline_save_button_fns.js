@@ -2,8 +2,6 @@ console.log("inline save loaded");
 
 function possibleHighlightStart(){
     if(!trailDisplay.is(":hidden")){
-        // this seems unused
-        // var startingSelectionCopy = rangy.getSelection().toString().slice(0);
         mouseDown = 1;
         wt_$(document).mouseup(function(){mouseDown = 0; highlightedTextDetect()});
     }
@@ -117,8 +115,8 @@ function insertAbsolutelyPositionedSaveButton(left,top){
         "font-size" : "12px",
         "color" : "#333",
         "position" : "absolute",
-        "top" : top - 2,
-        "left" : left +5,
+//        "top" : top - 2,
+//        "left" : left +5,
         "border-radius": "4px",
         "cursor": "pointer",
         "z-index": "2147483647",
@@ -126,6 +124,7 @@ function insertAbsolutelyPositionedSaveButton(left,top){
         "padding": "2px"
     });
     wt_$(document.body).append(saveSpan)
+    saveSpan.offset({top: top - 2, left: left + 5});
     return saveSpan
 }
 

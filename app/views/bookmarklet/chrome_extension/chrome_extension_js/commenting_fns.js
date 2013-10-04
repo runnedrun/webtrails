@@ -23,8 +23,8 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
         "font-family": "'Helvetica Neue', Helvetica, Arial, sans-serif",
         "z-index": "2147483647"
     });
-    commentOverlay.css("top", topPosition+"px");
-    commentOverlay.css("left", leftPosition+"px");
+//    commentOverlay.css("top", topPosition+"px");
+//    commentOverlay.css("left", leftPosition+"px");
     commentOverlay.addClass("commentOverlay").addClass("webtrails");
 
     var commentDescription = wt_$(document.createElement("div"))
@@ -58,6 +58,7 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     wt_$(document.body).append(commentOverlay);
     wt_$(commentOverlay).append(commentDescription);
     wt_$(commentOverlay).append(commentBox);
+    commentOverlay.offset({top: topPosition, left: leftPosition});
     var noteContent = String(highlightedRange);
     commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,leftPosition,topPosition, xPos, yPos));
     wt_$(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,leftPosition,topPosition, xPos, yPos));

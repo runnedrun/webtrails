@@ -32,33 +32,8 @@ TPreview = function(){
         return $iframe[0].contentWindow.document;
     }
 
-    function updateIframeBody($iframe, html) {
-        console.log("updating body of iframe");
-        var newDoc = document.implementation.createHTMLDocument().documentElement;
-        newDoc.innerHTML = html;
-        var $html = wt_$(newDoc);
-        wt_$(getIDoc($iframe).body).replaceWith($html.find("body"));
-    }
-
-    function loadCurrentTrailIntoPreview() {
-        var currentTrail = Trails.getCurrentTrail();
-        loadSitesSynchronously(currentTrail.getLastSite());
-        function loadSitesSynchronously(site){
-            console.log("loading site:", site);
-            if (!site) {
-                return
-            } else {
-                addSiteToPreview(site)
-                    setTimeout(function(){
-                    loadSitesSynchronously(site.previousSite());
-                },1000);
-            }
-
-        }
-    }
-
     function addEmptyIframeToPreview(site, hideIframe) {
-        var siteHtmlIframe = wt_$("<iframe data-trail-id='" + site.trail.id + "' data-site-id='"+site.id+"' seamless='seamless' class='wt-site-preview'>");
+        var siteHtmlIframe = wt_$("<iframe data-trail-id='" + site.trail.id + "' data-site-id='"+site.id+"' seamless='seamless' class='wt-site-preview webtrails'>");
         console.log("iframe", siteHtmlIframe);
         siteHtmlIframe.attr('src',"about:blank");
         siteHtmlIframe.css({
@@ -75,14 +50,7 @@ TPreview = function(){
         return siteHtmlIframe
     }
 
-    function addSiteToPreview(site, displayPreview) {
-        var siteHtmlIframe = addEmptyIframeToPreview(site, displayPreview);
-        var iframeDocument = thisTrailPreview.setIframeContent(siteHtmlIframe, site.getFirstRevisionHtml() || "");
-        return iframeDocument
-    }
-
     this.init = function() {
-//        loadCurrentTrailIntoPreview();
         if (currentNote) {
             this.displayNote(currentNote, true);
         }
@@ -95,6 +63,7 @@ TPreview = function(){
                 top: "225px",
                 position: "relative"
             });
+            wt_$(document.body).scrollTop(wt_$(document.body).scrollTop() + 225);
             shown = true
         }
     }
@@ -106,6 +75,7 @@ TPreview = function(){
             wt_$(document.body).css({
                 top:"0px"
             });
+            wt_$(document.body).scrollTop(wt_$(document.body).scrollTop() - 225);
         }
     }
 
@@ -156,7 +126,6 @@ TPreview = function(){
     }
 
     this.enableOrDisablePrevAndNextButtons = function(currentNote) {
-        console.log("checking if note buttons should be enabled");
         if(currentNote && currentNote.nextNote()) {
             nextNoteButton.enable();
         } else {
