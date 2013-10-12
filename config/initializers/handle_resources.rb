@@ -5,7 +5,8 @@ require "set"
 
 class ResourceHandler
 
-  def initialize(resources_to_download, html_to_save, stylesheets_to_save, site, is_iframe, revision_number, is_base_revision)
+  def initialize(resources_to_download, html_to_save, stylesheets_to_save, site, is_iframe, revision_number,
+      is_base_revision, character_encoding)
     begin
       puts "inside resources handler"
       s3 = AWS::S3.new
@@ -46,7 +47,8 @@ class ResourceHandler
         site.add_revision(revision_number)
         site.base_revision_number = revision_number.to_i if is_base_revision
         puts revision_number
-        site.archive_location = write_to_aws(html_to_save[0], html_to_save[1], false, revision_number.to_s)
+        site.archive_location = write_to_aws(html_to_save[0], html_to_save[1], false, revision_number.to_s,
+                                             {:content_type => "text/html; charset="+character_encoding})
         site.save!
         puts "site saved to #{site.archive_location} with revision number #{revision_number}"
       end
@@ -90,11 +92,11 @@ class ResourceHandler
     end.resume
   end
 
-  def write_to_aws(aws_path, data, resource_url, revision_number = false)
+  def write_to_aws(aws_path, data, resource_url, revision_number = false, options = {})
     begin
       aws_path_with_rev = revision_number ? File.join(aws_path, revision_number.to_s) : aws_path
       newFile = @bucket.objects[aws_path_with_rev]
-      newFile.write(data,:acl => :public_read, :cache_control => "max-age=157680000, public")
+      newFile.write(data,{:acl => :public_read, :cache_control => "max-age=157680000, public"}.merge(options))
       @previously_saved_resource_set.add(resource_url) if resource_url
       return "https://s3.amazonaws.com/TrailsSitesProto/" + aws_path
     rescue

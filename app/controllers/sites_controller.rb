@@ -29,11 +29,14 @@ class SitesController < ApplicationController
     is_iframe = params[:isIframe]
     revision_number = params[:revision]
     is_base_revision = params[:is_base_revision]
+    character_encoding = params[:character_encoding]
+    puts "char encoding=" + character_encoding
 
     Fiber.new do
       EM.synchrony do
         puts "into snychrony we go"
-        ResourceHandler.new(resources_to_download,html_to_save,style_sheets_to_save,site, is_iframe, revision_number, is_base_revision)
+        ResourceHandler.new(resources_to_download, html_to_save, style_sheets_to_save, site,
+                            is_iframe, revision_number, is_base_revision, character_encoding)
       end
     end.resume
 

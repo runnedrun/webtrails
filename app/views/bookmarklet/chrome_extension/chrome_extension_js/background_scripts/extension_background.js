@@ -161,7 +161,6 @@ function retrieveTrailData(){
         type: "get",
         beforeSend: signRequestWithWtAuthToken,
         success: function(resp){
-            console.log("goign to update stored trail data");
             updateStoredTrailData(resp.trail_hash, resp.user_id);
         }
     })
@@ -170,16 +169,19 @@ function retrieveTrailData(){
 function updateStoredTrailData(trailObject,userId){
     var trailIds = [];
     setUserId(userId);
-    wt_$.each(trailObject,function(trailId,trail){
-        updateSiteData(trail.site_list,trail.html_hash, trailId);
+    var deferreds = wt_$.map(trailObject,function(trail, trailId){
+        var deferreds = updateSiteData(trail.site_list,trail.html_hash, trailId);
         wt_$.each(trail.note_hash, function(siteId,noteObject){
             updateNoteData(noteObject.note_ids_in_order, noteObject.note_data, siteId);
-        })
+        });
         trailIds.push(trailId);
-    })
+        return deferreds;
+    });
     updateTrailIdList(trailIds,userId);
-    console.log("trail data updated, pushing message to all tabs");
-    notifyAllTabsOfTrailObjectUpdate();
+    wt_$.when.apply(wt_$, deferreds).always(function(responses){
+        console.log("trail data updated, pushing message to all tabs");
+        notifyAllTabsOfTrailObjectUpdate();
+    });
 }
 
 function notifyAllTabsOfTrailObjectUpdate(){

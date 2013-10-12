@@ -103,7 +103,8 @@ Trail = function(trailObject){
             var newSiteBaseObject = newTrailObject.sites.siteObjects[siteId];
             if (!(siteToUpdate  = sites[siteId])){
                 console.log("creating new site");
-                TrailPreview.addSiteToPreview(sites[siteId] = new Site(newSiteBaseObject, thisTrailObject));
+                var newSite = sites[siteId] = new Site(newSiteBaseObject, thisTrailObject)
+                if (newSite.firstNote()) TrailPreview.displayNote(newSite.firstNote());
             } else {
                 console.log("updating existing site");
                 siteToUpdate.updateNotes(newSiteBaseObject);

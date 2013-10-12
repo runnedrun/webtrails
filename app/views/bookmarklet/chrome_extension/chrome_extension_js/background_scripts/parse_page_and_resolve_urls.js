@@ -9,13 +9,12 @@ function parse_page_and_resolve_urls(siteInfo){
     var baseURI = siteInfo.base_uri;
     var currentLocation = siteInfo.current_location;
     var html = siteInfo.html;
-    var isIframe = siteInfo.iframe
-    var htmlAttributes = siteInfo.html_attributes
-    var shallowSave = siteInfo.shallow_save
-    var revision = siteInfo.revision
-    var isBaseRevision = siteInfo.is_base_revision
-
-    console.log("html attribtues", htmlAttributes);
+    var isIframe = siteInfo.iframe;
+    var htmlAttributes = siteInfo.html_attributes;
+    var shallowSave = siteInfo.shallow_save;
+    var revision = siteInfo.revision;
+    var isBaseRevision = siteInfo.is_base_revision;
+    var characterEncoding = siteInfo.character_encoding;
 
     var callbackTracker = {
         siteID: currentSiteID,
@@ -29,7 +28,8 @@ function parse_page_and_resolve_urls(siteInfo){
         isIframe: !!isIframe,
         shallowSave: shallowSave,
         revision: revision,
-        is_base_revision: isBaseRevision
+        is_base_revision: isBaseRevision,
+        character_encoding: characterEncoding
     };
 
     wt_$.each(stylesheetHrefs,function(i,href){
@@ -51,8 +51,6 @@ function parseHtmlAndResolveUrls(html,htmlAttributes,cb) {
     $html.find("style").each(function(i,styleElement){
         styleElement.innerHTML = parseCSSAndReplaceUrls(styleElement.innerHTML,"",cb);
     })
-
-
 
     var originalToAwsUrlMap = cb.originalToAwsUrlMap;
 

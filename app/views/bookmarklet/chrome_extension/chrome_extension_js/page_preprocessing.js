@@ -2,7 +2,8 @@ console.log("loaded pre-processing");
 
 // Edits in-place
 function removeToolbarFromPage($htmlClone) {
-  $htmlClone.find('.webtrails').remove();
+    $htmlClone.find('.webtrails').remove();
+    $htmlClone.find("body").css({"top": "0px"});
 }
 
 function removeAllUnusedTags($htmlClone){
@@ -33,6 +34,7 @@ function parsePageBeforeSavingSite(resp){
         html_attributes[attribute.name] = attribute.value;
     })
 
+
     wt_$.each(wt_$.makeArray(document.styleSheets),function(i,stylesheet){
         var owner = stylesheet.ownerNode
         if (owner.nodeName == "LINK"){
@@ -47,7 +49,6 @@ function parsePageBeforeSavingSite(resp){
 //    } else {
 //        console.log("summaries", changeObserver.takeSummaries());
 //    }
-
     chrome.runtime.sendMessage({
         parseAndResolve:{
             html: currentHTML,
@@ -61,7 +62,8 @@ function parsePageBeforeSavingSite(resp){
             html_attributes: html_attributes,
             shallow_save: resp.shallow_save,
             revision: resp.revision_number,
-            is_base_revision: resp.isBaseRevision || false
+            is_base_revision: resp.isBaseRevision || false,
+            character_encoding: document.characterSet
         }
     }, function(response){
         console.log("page_preprocessing. parseAndResolve came back!");

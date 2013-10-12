@@ -5,6 +5,13 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
         butterBarNotification("Note failed to save properly, please try again.");
         return
     }
+    try {
+        var nodes = highlightedRange.getNodes();
+    } catch (exception) {
+        butterBarNotification("Note failed to save properly, please try again.");
+        return
+    }
+
     var overlayHeight =20;
     //make this dynamic so the size of the comment box changes based on page size
     var overlayWidth = 400;
@@ -64,8 +71,6 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     wt_$(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,leftPosition,topPosition, xPos, yPos));
     commentBox.autosize();
     commentBox.focus();
-    var nodes = highlightedRange.getNodes();
-
     // the start offset indicates the offset from the beginning of the first text node,
     // if the range does not begin with a text node we have to walk the range until we find one.
     var reachedFirstTextNode = false;

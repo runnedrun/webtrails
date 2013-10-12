@@ -61,15 +61,16 @@ function butterBarNotification(message) {
 }
 
 function displaySaveButtonWhileKeyIsPressed(keycode){
-    keycode = typeof keycode == "undefined" ? keycode : "18";
-    var saveButton = highlightedTextDetect()
-    wt_$(document.body).keyup(function(e){
-        if (e.keycode == keycode && saveButton){
-            saveButton.remove()
-            wt_$(document).unbind("keyup",arguments.callee)
-        }
-    })
-
+    if (!toolbarShown) {
+        keycode = typeof keycode == "undefined" ? keycode : "18";
+        var saveButton = highlightedTextDetect();
+        wt_$(document.body).keyup(function(e){
+            if (e.keycode == keycode && saveButton){
+                saveButton.remove()
+                wt_$(document).unbind("keyup",arguments.callee)
+            }
+        })
+    }
 }
 
 function addSiteFaviconToDisplay(domain,url) {

@@ -32,10 +32,11 @@ function updateSiteData(newSiteIdList, siteIdsToHtmlLocationAndRevisions, trailI
             removeSiteDataFromLocalStorage(siteId);
         }
     });
-    wt_$.each(newSiteIdList,function(i,siteId){
-        updatedStoredHtmlForSite(siteId, siteIdsToHtmlLocationAndRevisions[siteId]);
+    var deferreds = wt_$.map(newSiteIdList,function(siteId,id){
+        return updatedStoredHtmlForSite(siteId, siteIdsToHtmlLocationAndRevisions[siteId]);
     });
     setSiteListInLocalStorage(trailId, newSiteIdList)
+    return deferreds
 }
 
 function updatedStoredHtmlForSite(siteId, htmlLocationAndRevisions){
@@ -49,22 +50,23 @@ function updatedStoredHtmlForSite(siteId, htmlLocationAndRevisions){
             removeRevisionFromLocalStorage(siteId, revision);
         }
     });
-
-    wt_$.each(revisions, function(i, revision) {
+    var deferreds = wt_$.map(revisions, function(revision, i) {
         var revisionAlreadExistsInStorage = oldSiteRevisionList.indexOf(revision) > -1
         if (!revisionAlreadExistsInStorage){
-//            localStorage[siteId+ ":siteHtml:" + String(revision)] = "fetching page";
-            wt_$.ajax({
+            console.log("getting new revision");
+            var deferred = wt_$.ajax({
                 url: base_location.replace(/\/\s*$/,"")+"/"+revision,
                 type: "get",
                 success: function(html){
                     setRevisionInLocalStorage(siteId, revision, html);
                 }
             })
+            return deferred
         }
     });
     setRevisionList(siteId, revisions);
     setBaseRevision(siteId, htmlLocationAndRevisions.base_revision);
+    return deferreds;
 }
 
 function removeSiteHtmlFromLocalStorage(siteId) {
