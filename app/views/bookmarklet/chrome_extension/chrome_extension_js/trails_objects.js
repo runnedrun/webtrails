@@ -103,11 +103,10 @@ Trail = function(trailObject){
             var newSiteBaseObject = newTrailObject.sites.siteObjects[siteId];
             if (!(siteToUpdate  = sites[siteId])){
                 console.log("creating new site");
-                var newSite = sites[siteId] = new Site(newSiteBaseObject, thisTrailObject)
-                if (newSite.firstNote()) TrailPreview.displayNote(newSite.firstNote());
+                sites[siteId] = new Site(newSiteBaseObject, thisTrailObject)
             } else {
                 console.log("updating existing site");
-                siteToUpdate.updateNotes(newSiteBaseObject);
+                siteToUpdate.updateSite(newSiteBaseObject);
             }
         })
     }
@@ -204,15 +203,18 @@ Site = function(siteObject, parentTrail){
         }
     };
 
-    this.updateNotes = function(newSiteBaseObject){
+    this.updateSite = function(newSiteBaseObject){
+        this.revisions = newSiteBaseObject.html;
+        siteObject = newSiteBaseObject;
+
         wt_$.each(newSiteBaseObject.notes.order, function(i, noteId){
-            var existingNoteObject;
+            var existingNoteObject = notes[noteId];
             var newBaseNoteObject = newSiteBaseObject.notes.noteObjects[noteId];
-            if (!(existingNoteObject = notes[noteId])){
-                var newNote = thisSiteObject.addNote(newBaseNoteObject);
-                if (thisSiteObject.trail.isCurrentTrail()){
-                    TrailPreview.updateWithNewNote(newNote);
-                }
+            if (!(existingNoteObject)){
+                thisSiteObject.addNote(newBaseNoteObject);
+//                if (thisSiteObject.trail.isCurrentTrail()){
+//                    TrailPreview.updateWithNewNote(newNote);
+//                }
             } else {
                 notes[noteId].update(newBaseNoteObject);
             }
@@ -298,5 +300,4 @@ Note = function(baseNoteObject, parentSite){
 
     this.update(baseNoteObject);
     if (this.site.trail.isCurrentTrail()) { TrailPreview.updateWithNewNote(this) }
-//    debugger;
 }

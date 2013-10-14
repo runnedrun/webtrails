@@ -62,17 +62,6 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
         "background-color": "white"
     });
 
-    wt_$(document.body).append(commentOverlay);
-    wt_$(commentOverlay).append(commentDescription);
-    wt_$(commentOverlay).append(commentBox);
-    commentOverlay.offset({top: topPosition, left: leftPosition});
-    var noteContent = String(highlightedRange);
-    commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,leftPosition,topPosition, xPos, yPos));
-    wt_$(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,leftPosition,topPosition, xPos, yPos));
-    commentBox.autosize();
-    commentBox.focus();
-    // the start offset indicates the offset from the beginning of the first text node,
-    // if the range does not begin with a text node we have to walk the range until we find one.
     var reachedFirstTextNode = false;
     wt_$.each(nodes,function(i,node){
         if (i == 0 || !reachedFirstTextNode){
@@ -85,31 +74,49 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
             markNodeForHighlight(node,0,node.length);
         }
     });
-    console.log("got to here, highlighting");
-    highlight_wtHighlights();
+
+    var first = highlight_wtHighlights().first();
+    console.log("first hightlight is", first);
+    var firstElementOffsets = first.offset();
+    console.log("offsets are:", firstElementOffsets);
     wt_$(".trailHighlight").css("background-color","yellow");
+
+    wt_$(document.body).append(commentOverlay);
+    wt_$(commentOverlay).append(commentDescription);
+    wt_$(commentOverlay).append(commentBox);
+    commentOverlay.offset({top: topPosition, left: leftPosition});
+    var noteContent = String(highlightedRange);
+    commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
+    wt_$(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
+    commentBox.autosize();
+    commentBox.focus();
+    // the start offset indicates the offset from the beginning of the first text node,
+    // if the range does not begin with a text node we have to walk the range until we find one.
+
     return commentBox;
 }
 
 function postNoteAndComment(e,content,commentOverlay,xPos,yPos){
     var code = (e.keyCode ? e.keyCode : e.which);
     if (code == 13 && !e.shiftKey){
+        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(), xPos, yPos);
         closeOverlay();
-        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(),xPos,yPos);
     }  else if (code == 27){
         closeOverlay();
     }
 }
 
-function postNoteAndCommentWithClosure(noteContent,commentOverlay, commentX, commentY, noteX, noteY) {
-    return function (e){postNoteAndComment(e,noteContent,commentOverlay,commentX,commentY, noteX, noteY)}
+function postNoteAndCommentWithClosure(noteContent,commentOverlay, commentX, commentY) {
+    return function (e){postNoteAndComment(e,noteContent,commentOverlay,commentX,commentY)}
 }
 
-function clickAwayWithClosure(noteContent,commentOverlay, commentX, commentY, noteX, noteY) {
-    return function (e){clickAway(e,noteContent,commentOverlay, commentX, commentY, noteX, noteY)}
+function clickAwayWithClosure(noteContent,commentOverlay, commentX, commentY) {
+    return function (e){clickAway(e,noteContent,commentOverlay, commentX, commentY)}
 }
 
-function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY, noteX, noteY){
+function saveNoteAndRefreshAWS(content,comment, commentLocationX, commentLocationY){
+    var noteOffsets = wt_$("wtHighlight.highlightMe").first().offset();
+    console.log("note offsets", noteOffsets);
     noteCount++;
     console.log("note count incremented", noteCount);
     var noteCountAtSave = noteCount;
@@ -119,7 +126,7 @@ function saveNoteAndRefreshAWS(content,comment,commentLocationX,commentLocationY
         comment_location_x: commentLocationX,
         comment_location_y: commentLocationY,
         client_side_id: "client_side_id_"+ (noteCount - 1),
-        scroll_x: noteX, scroll_y:noteY}
+        scroll_x: noteOffsets.left, scroll_y: noteOffsets.top  - (TrailPreview.shown ?  TrailPreview.height + 25 : 0)}
     );
 }
 
@@ -132,11 +139,11 @@ function closeOverlay(){
     unhighlight_wtHighlights();
 }
 
-function clickAway(e,content,commentOverlay,commentX, commentY, noteX, noteY){
+function clickAway(e,content,commentOverlay,commentX, commentY){
     var clickedNode = wt_$(e.target);
     if (clickedNode != commentOverlay && (wt_$.inArray(e.target,commentOverlay.children())==-1)){
+        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(), commentX, commentY);
         closeOverlay(commentOverlay);
-        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(), commentX, commentY, noteX, noteY);
     }
 }
 
@@ -175,7 +182,7 @@ function markNodeForHighlight(node,start_offset, end_offset){
 }
 
 function highlight_wtHighlights(){
-    wt_$("wtHighlight.highlightMe").css("background","yellow");
+    return wt_$("wtHighlight.highlightMe").css("background","yellow");
 }
 
 function unhighlight_wtHighlights(){

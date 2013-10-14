@@ -65,8 +65,8 @@ function getNoteCommentObject(noteId){
         var commentObject  = JSON.parse(commentJSON);
         noteCommentObject["comment"]  = commentObject.comment;
         noteCommentObject["clientSideId"]  = commentObject.client_side_id;
-        noteCommentObject["scrollX"] = commentObject.scrollX;
-        noteCommentObject["scrollY"] = commentObject.scrollY;
+        noteCommentObject["scrollX"] = commentObject.scroll_x;
+        noteCommentObject["scrollY"] = commentObject.scroll_y;
         noteCommentObject["siteRevisionNumber"] = commentObject.site_revision_number;
         noteCommentObject["id"] = commentObject.id;
         return noteCommentObject;

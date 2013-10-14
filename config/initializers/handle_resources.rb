@@ -5,7 +5,7 @@ require "set"
 
 class ResourceHandler
 
-  def initialize(resources_to_download, html_to_save, stylesheets_to_save, site, is_iframe, revision_number,
+  def initialize(resources_to_download, html_to_save, stylesheets_to_save, site, note, is_iframe, revision_number,
       is_base_revision, character_encoding)
     begin
       puts "inside resources handler"
@@ -50,6 +50,10 @@ class ResourceHandler
         site.archive_location = write_to_aws(html_to_save[0], html_to_save[1], false, revision_number.to_s,
                                              {:content_type => "text/html; charset="+character_encoding})
         site.save!
+        if note
+          note.site_revision_number = revision_number
+          note.save!
+        end
         puts "site saved to #{site.archive_location} with revision number #{revision_number}"
       end
       @site.update_resource_set(@previously_saved_resource_set)
@@ -58,6 +62,7 @@ class ResourceHandler
     rescue
       puts "resource handler failed with error:"
       puts $!.message
+      puts $!.backtrace
     end
   end
 

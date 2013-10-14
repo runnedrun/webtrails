@@ -88,6 +88,8 @@ Webtrails::Application.routes.draw do
   match '/notes', :controller => 'notes', :action => 'options', :constraints => {:method => 'OPTIONS'}
   match '/notes/delete', :controller => "notes", :action => 'delete', :constraints => {:method => 'POST'}
   match '/notes/update', :controller => "notes", :action => 'update', :constraints => {:method => 'POST'}
+  match '/note/ready', :controller => "notes", :action => 'ready', :constraints => {:method => 'GET'}
+
 
   match "/bookmarklet_js", :controller => 'bookmarklets', :action => "get_js"
   match '/bookmarklet_js', :controller => 'bookmarklets', :action => 'options', :constraints => {:method => 'OPTIONS'}

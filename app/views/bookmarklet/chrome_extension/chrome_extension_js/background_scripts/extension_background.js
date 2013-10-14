@@ -169,6 +169,7 @@ function retrieveTrailData(){
 function updateStoredTrailData(trailObject,userId){
     var trailIds = [];
     setUserId(userId);
+    console.log("trail object from server", trailObject);
     var deferreds = wt_$.map(trailObject,function(trail, trailId){
         var deferreds = updateSiteData(trail.site_list,trail.html_hash, trailId);
         wt_$.each(trail.note_hash, function(siteId,noteObject){

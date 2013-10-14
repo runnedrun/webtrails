@@ -16,9 +16,11 @@ function saveSiteToTrail(note){
     }
 
     var currentRevisionNumber = Trails.getAndIncrementRevision();
-    if (note) {
-        note = wt_$.extend(note, {site_revision_number: currentRevisionNumber});
-    }
+//    if (note) {
+//        note = wt_$.extend(note, {site_revision_number: currentRevisionNumber});
+//    }
+
+    console.log("note is ", note);
     if (!siteSavedDeeply){
         wt_$.ajax({
             url: webTrailsUrl + "/sites/get_new_site_id",
@@ -56,8 +58,10 @@ function saveSiteToTrail(note){
                     current_site_id: currentSiteID,
                     current_trail_id: Trails.getCurrentTrailId(),
                     shallow_save: true,
-                    revision_number: currentRevisionNumber
-                }))
+                    revision_number: currentRevisionNumber,
+                    update_on_finish: true
+                }));
+                updateTrailDataWhenNoteReady(resp.note_id);
             }
         })
     }
@@ -132,5 +136,26 @@ function deletePreviousNote(){
         },
         success: updateNoteDisplay
     })
+}
+
+function updateTrailDataWhenNoteReady(noteId){
+    var existsRequest = setInterval(function(){
+        wt_$.ajax({
+            url: webTrailsUrl + "/note/ready",
+            type: "get",
+            crossDomain: true,
+            beforeSend: signRequestWithWtAuthToken,
+            data: {
+                "id": noteId
+            },
+            success: function(resp){
+                if (resp.ready){
+                    console.log("note ready, updating");
+                    clearInterval(existsRequest);
+                    updateTrailDataInLocalStorage();
+                }
+            }
+        })
+    }, 1000)
 }
 

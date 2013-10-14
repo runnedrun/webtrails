@@ -63,9 +63,13 @@ function parsePageBeforeSavingSite(resp){
             shallow_save: resp.shallow_save,
             revision: resp.revision_number,
             is_base_revision: resp.isBaseRevision || false,
-            character_encoding: document.characterSet
+            character_encoding: document.characterSet,
+            note_id: resp.note_id
         }
     }, function(response){
         console.log("page_preprocessing. parseAndResolve came back!");
+        if (resp.update_on_finish) {
+            updateTrailDataInLocalStorage();
+        }
     });
 }

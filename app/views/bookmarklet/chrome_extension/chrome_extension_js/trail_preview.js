@@ -6,6 +6,7 @@ TPreview = function(){
     var currentSiteFrame = false;
     var shown = false;
     var thisTrailPreview = this;
+    this.height = 200;
 
     var nextNoteButton = wt_$(".nextNoteButton");
     var previousNoteButton = wt_$(".previousNoteButton");
@@ -37,11 +38,11 @@ TPreview = function(){
         console.log("iframe", siteHtmlIframe);
         siteHtmlIframe.attr('src',"about:blank");
         siteHtmlIframe.css({
-            display : hideIframe ? "none" :"block",
+            visibility: hideIframe ? "hidden" :"visible",
             width:"100%",
             "border-top": "2px gray solid",
             position: "fixed",
-            height: "200px",
+            height: thisTrailPreview.height + "px",
             top: "25px",
             "border-bottom": "2px solid grey",
             "z-index": "2147483647"
@@ -58,24 +59,26 @@ TPreview = function(){
 
     this.show = function() {
         if (currentSiteFrame){
-            currentSiteFrame.show();
+            var pageOffset = thisTrailPreview.height + 25
+            currentSiteFrame.css({visibility: "visible"});
             wt_$(document.body).css({
-                top: "225px",
+                top: pageOffset + "px",
                 position: "relative"
             });
-            wt_$(document.body).scrollTop(wt_$(document.body).scrollTop() + 225);
+            wt_$(document.body).scrollTop(wt_$(document.body).scrollTop() + pageOffset);
             shown = true
         }
     }
 
     this.hide = function() {
         if (currentSiteFrame){
-            currentSiteFrame.hide();
+            var pageOffset = thisTrailPreview.height + 25
+            currentSiteFrame.css({visibility: "hidden"});
             shown = false;
             wt_$(document.body).css({
                 top:"0px"
             });
-            wt_$(document.body).scrollTop(wt_$(document.body).scrollTop() - 225);
+            wt_$(document.body).scrollTop(wt_$(document.body).scrollTop() - pageOffset);
         }
     }
 
@@ -89,10 +92,18 @@ TPreview = function(){
 
     this.displayNote = function(note, hidePreview) {
         var $iDoc = thisTrailPreview.switchToNoteRevision(note, hidePreview);
+        $iDoc.scrollTop(note.scrollY-100).scrollLeft(note.scrollX);
+        currentNote = note;
         runWhenLoaded(function() {
             var noteElements = thisTrailPreview.highlightNote(note);
             var noteLocation = noteElements.first().offset();
-            $iDoc.scrollTop(noteLocation.top-100).scrollLeft(noteLocation.left);
+            var scrollTop = noteLocation.top-100;
+            var scrollLeft = noteLocation.left;
+            if ((Math.abs(noteLocation.top - note.scrollY) > 10) || (Math.abs(noteLocation.left - note.scrollX) > 10)){
+                console.log("correcting scroll", noteLocation.top, note.scrollY);
+                console.log(noteLocation.left, note.scrollX);
+                $iDoc.scrollTop(scrollTop).scrollLeft(scrollLeft);
+            }
         },$iDoc[0]);
     }
 
@@ -106,9 +117,8 @@ TPreview = function(){
     this.showNextNote = function() {
         var nextNote = currentNote.nextNote();
         if (nextNote) {
-            currentNote = nextNote;
-            thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
             thisTrailPreview.displayNote(nextNote);
+            thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
         } else {
             return false
         }
@@ -117,9 +127,8 @@ TPreview = function(){
     this.showPreviousNote = function() {
         var previousNote = currentNote.previousNote();
         if (previousNote) {
-            currentNote = previousNote;
-            thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
             thisTrailPreview.displayNote(previousNote);
+            thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
         } else {
             return false
         }
@@ -147,9 +156,10 @@ TPreview = function(){
 
     this.updateWithNewNote = function(newNote) {
         console.log("updating preview with new note");
-        if (!currentNote){
+        if (!currentNote || (parseInt(currentNote.site.id) <= parseInt(newNote.site.id))){
+            console.log("switching to new note");
             currentNote = newNote;
-            this.displayNote(currentNote);
+            this.displayNote(currentNote, !shown);
         }
         this.enableOrDisablePrevAndNextButtons();
     }

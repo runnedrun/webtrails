@@ -22,32 +22,40 @@ class SitesController < ApplicationController
   end
 
   def create
-    site = Site.find(params[:siteID])
-    resources_to_download = params[:originalToAwsUrlMap] || {}
-    style_sheets_to_save = params[:styleSheets] || {}
-    html_to_save = params[:html]
-    is_iframe = params[:isIframe]
-    revision_number = params[:revision]
-    is_base_revision = params[:is_base_revision]
-    character_encoding = params[:character_encoding]
-    puts "char encoding=" + character_encoding
+    begin
+      site = Site.find(params[:siteID])
+      params[:noteId] ? note = Note.find(params[:noteId]) : note = false
+      resources_to_download = params[:originalToAwsUrlMap] || {}
+      style_sheets_to_save = params[:styleSheets] || {}
+      html_to_save = params[:html]
+      is_iframe = params[:isIframe]
+      revision_number = params[:revision]
+      is_base_revision = params[:isBaseRevision]
+      character_encoding = params[:characterEncoding]
 
-    Fiber.new do
-      EM.synchrony do
-        puts "into snychrony we go"
-        ResourceHandler.new(resources_to_download, html_to_save, style_sheets_to_save, site,
-                            is_iframe, revision_number, is_base_revision, character_encoding)
-      end
-    end.resume
 
-    render :json => {"message" => "success!"}
+      Fiber.new do
+        EM.synchrony do
+          puts "into snychrony we go"
+          ResourceHandler.new(resources_to_download, html_to_save, style_sheets_to_save, site, note,
+                              is_iframe, revision_number, is_base_revision, character_encoding)
+        end
+      end.resume
+
+      render :json => {"message" => "success!"}
+    rescue
+      puts "site create failed"
+      puts $!.message
+      puts $!.backtrace
+      render_server_error_ajax
+    end
   end
 
   def generate_site_id
     new_site = Site.create(params[:site].merge({:user_id => @user.id}))
-    Note.create!(params[:note].merge({:site_id => new_site.id})) if params[:note]
+    params[:note] ? new_note = Note.create!(params[:note].merge({:site_id => new_site.id})) : new_note = false
 
-    render :json => {:current_trail_id => new_site.trail_id, :current_site_id => new_site.id, }
+    render :json => {:current_trail_id => new_site.trail_id, :current_site_id => new_site.id, :note_id => new_note.id}
   end
 
   #this performs a save without doing any kind of parsing of html, which is only

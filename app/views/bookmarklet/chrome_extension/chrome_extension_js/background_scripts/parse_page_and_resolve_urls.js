@@ -28,8 +28,9 @@ function parse_page_and_resolve_urls(siteInfo){
         isIframe: !!isIframe,
         shallowSave: shallowSave,
         revision: revision,
-        is_base_revision: isBaseRevision,
-        character_encoding: characterEncoding
+        isBaseRevision: isBaseRevision,
+        characterEncoding: characterEncoding,
+        noteId: siteInfo.note_id
     };
 
     wt_$.each(stylesheetHrefs,function(i,href){

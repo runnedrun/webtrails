@@ -59,7 +59,7 @@ class UsersController < ApplicationController
                            :client_side_id => note.client_side_id,
                            :site_revision_number => note.site_revision_number,
                            :scroll_x => note.scroll_x,
-                           :scroll_y => note.scroll_x,
+                           :scroll_y => note.scroll_y,
                            :id => note.id}
           hash
         end

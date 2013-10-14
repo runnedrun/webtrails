@@ -75,4 +75,26 @@ class NotesController < ApplicationController
     end
   end
 
+  def ready
+    begin
+      note = Note.find(params[:id])
+      site = note.site
+      trail = site.trail
+      if trail.owner != @user
+        render_not_authorized
+      else
+        if note.site_revision_number
+          render :json => {"ready" => true}
+        else
+          render :json => {"ready" => false}
+        end
+      end
+    rescue
+      puts "note exists failed"
+      puts $!.message
+      puts $!.backtrace.to_a
+      render_server_error_ajax
+    end
+  end
+
 end
