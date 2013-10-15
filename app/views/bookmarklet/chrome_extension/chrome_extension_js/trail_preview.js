@@ -10,6 +10,7 @@ TPreview = function(){
 
     var nextNoteButton = wt_$(".nextNoteButton");
     var previousNoteButton = wt_$(".previousNoteButton");
+    var showCommentButton = wt_$(".showCommentButton");
 
     function getIDoc($iframe) {
         return wt_$($iframe[0].contentWindow.document);
@@ -45,7 +46,7 @@ TPreview = function(){
             height: thisTrailPreview.height + "px",
             top: "25px",
             "border-bottom": "2px solid grey",
-            "z-index": "2147483647"
+            "z-index": "2147483645"
         });
         trailDisplay.after(siteHtmlIframe);
         return siteHtmlIframe
@@ -154,6 +155,21 @@ TPreview = function(){
         })
     }
 
+    this.displayComment = function() {
+        wt_$(".wt-note-comment").remove();
+        var commentBox = wt_$("<div></div>").css({
+            position: "fixed",
+            height: thisTrailPreview.height,
+            top: "25px",
+            right: "0px",
+            width: "150px",
+            background: "grey",
+            "z-index": "2147483647"
+        }).addClass("wt-note-comment");
+        commentBox.html(currentNote.comment || "no comment");
+        wt_$(document.body).append(commentBox);
+    }
+
     this.updateWithNewNote = function(newNote) {
         console.log("updating preview with new note");
         if (!currentNote || (parseInt(currentNote.site.id) <= parseInt(newNote.site.id))){
@@ -180,6 +196,7 @@ TPreview = function(){
         this.enabled = true;
     }
 
+    showCommentButton.click(this.displayComment);
     nextNoteButton.click(this.showNextNote);
     previousNoteButton.click(this.showPreviousNote);
     this.enableOrDisablePrevAndNextButtons(currentNote);

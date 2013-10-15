@@ -11,7 +11,7 @@ function makeToolBar() {
         "position":"fixed",
         "top":"0px",
         "text-align":"left",
-        "z-index": "2147483646",
+        "z-index": "2147483644",
         "opacity": "1",
         "background": "#F0F0F0",
         "color": "#333",
