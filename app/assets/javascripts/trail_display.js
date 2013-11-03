@@ -55,7 +55,7 @@ $(function(){
 //    } else {
 //        $("#removeSite").remove();
 //    }
-    $('#showAllSitesButton').click(showAllSites);
+//    $('#showAllSitesButton').click(showAllSites);
 ////    $("#showNoteList").click(expandOrCloseNoteList);
 //    $("#showNoteList").click(initOrDisableNoteView);
 //    $(".noteInfo").click(clickJumpToNote);
@@ -107,15 +107,17 @@ function fetchSiteHtml() {
     });
 
     $.when.apply($, deferreds).always(function(){
-      console.log("html retrieval complete");
-      var trailsHash = {};
-      trailsHash[trailDisplayHash.id] = trailDisplayHash;
+        console.log("html retrieval complete");
+        var trailsHash = {};
+        trailsHash[trailDisplayHash.id] = trailDisplayHash;
 
-      Trails = new TrailsObject(trailsHash, trailDisplayHash.id);
-      Trails.initTrails();
-      Trail = Trails.getCurrentTrail();
-      TrailPreview = new TPreview();
-      Trails.switchToTrail(Trail.id);
+        Trails = new TrailsObject(trailsHash, trailDisplayHash.id);
+        Trails.initTrails();
+        Trail = Trails.getCurrentTrail();
+        TrailPreview = new TPreview();
+        PanelView = new PanelView(TrailPreview);
+        Toolbar = new TToolBar(TrailPreview, PanelView);
+        Trails.switchToTrail(Trail.id);
     })
 }
 
@@ -185,4 +187,18 @@ function lockScrollPositionOfSiteDisplayDiv(){
         console.log("scrolleddddd");
 //            e.target.scrollTop = 0;
     })
+}
+
+function getIDoc($iframe) {
+    return $($iframe[0].contentWindow.document);
+}
+
+function runWhenLoaded(fn, doc){
+    var doc = doc || document;
+    var loadedCheck = setInterval(function(){
+        if (doc.readyState === "complete"){
+            clearInterval(loadedCheck);
+            fn();
+        }
+    },100);
 }

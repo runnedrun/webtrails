@@ -182,6 +182,7 @@ Site = function(siteObject, parentTrail){
     this.revisions = siteObject.html;
     this.id = siteObject.id;
     this.trail = parentTrail;
+    this.url = siteObject.url;
 
 
     var thisSiteObject = this;

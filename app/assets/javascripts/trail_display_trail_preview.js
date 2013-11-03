@@ -9,16 +9,20 @@ TPreview = function(){
     var commentBoxToggled = false;
     this.height = 200;
 
-    function getIDoc($iframe) {
-        return $($iframe[0].contentWindow.document);
-    }
-
     function getSiteIDoc(site) {
        return getIDoc($(".wt-site-preview[data-site-id='" + site.id + "']"));
     }
 
     function getIWindow($iframe) {
         return $($iframe[0].contentWindow);
+    }
+
+    this.getCurrentNote = function() { return currentNote }
+    this.hide = function() {
+        currentSiteFrame && currentSiteFrame.hide();
+    }
+    this.show = function() {
+        currentSiteFrame && currentSiteFrame.show();
     }
 
     this.setIframeContent = function($iframe,html) {
@@ -45,10 +49,9 @@ TPreview = function(){
     }
 
     this.initWithTrail = function(trailToPreview) {
-        currentTrail = trailToPreview
-        currentNote = new BaseRevisionNote(trailToPreview.getFirstSite());
-        if (currentNote) {
-            console.log("going to display note");
+        currentTrail = trailToPreview;
+        if (trailToPreview.getFirstSite()) {
+            currentNote = new BaseRevisionNote(trailToPreview.getFirstSite());
             this.displayNote(currentNote);
         } else if (currentSiteFrame){
             // for multitrail display, whenever I get around to making it
@@ -81,7 +84,7 @@ TPreview = function(){
                 }
             },$iDoc[0]);
         }
-        this.toolBar.enableOrDisablePrevAndNextButtons(currentNote)
+        Toolbar.enableOrDisableButtons(currentNote)
     }
 
     this.highlightNote = function(note) {
@@ -115,7 +118,7 @@ TPreview = function(){
     this.showNextSite = function() {
         var nextSite = currentNote.site.nextSite();
         if (nextSite) {
-            thisTrailPreview.displayNote(new BaseRevisionNote(nextSite));
+            this.showSite(nextSite);
             return true
         } else {
             return false
@@ -125,11 +128,15 @@ TPreview = function(){
     this.showPreviousSite = function() {
         var previousSite = currentNote.site.previousSite();
         if (previousSite) {
-            thisTrailPreview.displayNote(new BaseRevisionNote(previousSite));
+            thisTrailPreview.showSite(previousSite);
             return true
         } else {
             return false
         }
+    }
+
+    this.showSite = function(site) {
+        thisTrailPreview.displayNote(new BaseRevisionNote(site))
     }
 
     this.highlightElements = function($elements) {
@@ -143,7 +150,7 @@ TPreview = function(){
             currentNote = newNote;
             this.displayNote(currentNote, !toolbarShown);
         }
-        this.toolBar.enableOrDisablePrevAndNextButtons();
+        Toolbar.enableOrDisableButtons();
     }
 
     this.toggleOrUntoggleCommentBox = function() {
@@ -151,21 +158,22 @@ TPreview = function(){
     }
 
     this.deleteCurrentSite = function() {
-        var currentSite = currentNote.site;
-        Request.deleteSite(currentSite, function() {
-            if (currentSite.previousSite()) {
-                thisTrailPreview.showPreviousSite();
-            } else if(currentSite.nextSite()) {
-                thisTrailPreview.showNextSite();
-            } else {
-                getSiteIDoc(currentSite).remove();
-                currentNote = false;
-                debugger;
-                thisTrailPreview.toolBar.enableOrDisablePrevAndNextButtons(currentNote);
-            }
-            currentSite.delete();
-        });
-    }
+        if (editAccess() && currentNote) {
+            var currentSite = currentNote.site;
+            Request.deleteSite(currentSite, function() {
+                if (currentSite.previousSite()) {
+                    thisTrailPreview.showPreviousSite();
+                } else if(currentSite.nextSite()) {
+                    thisTrailPreview.showNextSite();
+                } else {
+                    currentSiteFrame.remove();
+                    currentNote = false;
+                    thisTrailPreview.toolBar.enableOrDisableButtons(currentNote);
+                }
+                currentSite.delete();
+            });
+        }
+    };
 
     function displayComment() {
         removeComment()
@@ -227,21 +235,16 @@ TPreview = function(){
                 Trails.decrementNoteCount();
             }
             noteToBeDeleted.delete();
-            this.toolBar.enableOrDisablePrevAndNextButtons(currentNote);
+            Toolbar.enableOrDisableButtons(currentNote);
         })
     }
 
-    function runWhenLoaded(fn, doc){
-        var doc = doc || document;
-        var loadedCheck = setInterval(function(){
-            if (doc.readyState === "complete"){
-                clearInterval(loadedCheck);
-                fn();
-            }
-        },100);
+    function editAccess() {
+        if (!editAccess) { // in case called from console or something
+            console.log("No access to editing this trail! No deleting sites!");
+            return false;
+        } else { return true}
     }
-
-    this.toolBar = new TToolBar(thisTrailPreview);
 }
 
 // the note like class which is used for displaying base revisiosn

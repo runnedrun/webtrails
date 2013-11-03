@@ -19,8 +19,7 @@ function previousSite(){
 function showAllSites(){
     if ($('iframe').hasClass('shrunk')) {
         removeShrinkFromIframes();
-        TrailPreview.dis
-//        switchToSite(getCurrentSiteID());
+        switchToSite(getCurrentSiteID());
     } else {
         if (noteViewActive){
             disableNoteViewMode();

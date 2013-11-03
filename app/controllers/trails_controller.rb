@@ -210,7 +210,8 @@ class TrailsController < ApplicationController
         :notes => {
             :order => site.note_list,
             :noteObjects => Hash[site.notes.map{ |note| [note.id, get_note_update_hash(note)] }]
-        }
+        },
+        :url => site.url
     }
   end
 
