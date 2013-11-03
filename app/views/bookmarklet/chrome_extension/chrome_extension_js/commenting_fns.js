@@ -1,6 +1,10 @@
 console.log("commenting loaded");
 
 function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
+    if (!Trails.getCurrentTrail()) {
+        butterBarNotification("Please create a trail or select an existing one.");
+        return
+    }
     if (!(((typeof xPos) == "number") && ((typeof yPos) == "number")) ){
         butterBarNotification("Note failed to save properly, please try again.");
         return
@@ -117,15 +121,13 @@ function clickAwayWithClosure(noteContent,commentOverlay, commentX, commentY) {
 function saveNoteAndRefreshAWS(content,comment, commentLocationX, commentLocationY){
     var noteOffsets = wt_$("wtHighlight.highlightMe").first().offset();
     console.log("note offsets", noteOffsets);
-    noteCount++;
-    console.log("note count incremented", noteCount);
-    var noteCountAtSave = noteCount;
+    var noteCountAtSave = Trails.incrementNoteCount();
     saveSiteToTrail(
         {content: content,
         comment: comment,
         comment_location_x: commentLocationX,
         comment_location_y: commentLocationY,
-        client_side_id: "client_side_id_"+ (noteCount - 1),
+        client_side_id: "client_side_id_"+ (Trails.getNoteCount() - 1),
         scroll_x: noteOffsets.left, scroll_y: noteOffsets.top  - (TrailPreview.shown ?  TrailPreview.height + 25 : 0)}
     );
 }
@@ -159,8 +161,8 @@ function markNodeForHighlight(node,start_offset, end_offset){
         var unhighlighted_prepend = contents.slice(0,start_offset);
         var unhighlighted_append = contents.slice(end_offset,contents.length);
         var new_marker = document.createElement("wtHighlight");
-        wt_$(new_marker).addClass("highlightMe");
-        wt_$(new_marker).addClass('client_side_id_' + String(noteCount));
+        wt_$(new_marker).addClass("highlightMe").addClass('client_side_id_' + String(Trails.getNoteCount()));
+        wt_$(new_marker).attr("data-trail-id", Trails.getCurrentTrailId());
 
         new_marker.innerHTML = highlighted_contents;
         var node_to_replace = node;

@@ -1,16 +1,18 @@
 console.log("trail preview injected");
 
 TPreview = function(){
-    var currentNote = Trails.getCurrentTrail().getLastNote();
-    var currentSite = currentNote.site;
+    var currentTrail = false;
+    var currentNote = false;
     var currentSiteFrame = false;
     var shown = false;
     var thisTrailPreview = this;
+    var commentBoxToggled = false
     this.height = 200;
 
     var nextNoteButton = wt_$(".nextNoteButton");
     var previousNoteButton = wt_$(".previousNoteButton");
     var showCommentButton = wt_$(".showCommentButton");
+    var deleteNoteButton = wt_$(".deleteNoteButton");
 
     function getIDoc($iframe) {
         return wt_$($iframe[0].contentWindow.document);
@@ -52,9 +54,15 @@ TPreview = function(){
         return siteHtmlIframe
     }
 
-    this.init = function() {
+    this.initWithTrail = function(trailToPreview) {
+        currentTrail = trailToPreview
+        currentNote = currentTrail.getLastNote();
+        console.log("current note in init with trail", currentNote);
         if (currentNote) {
-            this.displayNote(currentNote, true);
+            console.log("going to display note");
+            this.displayNote(currentNote, !toolbarShown);
+        } else if (currentSiteFrame){
+            currentSiteFrame.remove();
         }
     }
 
@@ -95,6 +103,9 @@ TPreview = function(){
         var $iDoc = thisTrailPreview.switchToNoteRevision(note, hidePreview);
         $iDoc.scrollTop(note.scrollY-100).scrollLeft(note.scrollX);
         currentNote = note;
+        if (commentBoxToggled) {
+            displayComment();
+        }
         runWhenLoaded(function() {
             var noteElements = thisTrailPreview.highlightNote(note);
             var noteLocation = noteElements.first().offset();
@@ -110,7 +121,7 @@ TPreview = function(){
 
     this.highlightNote = function(note) {
         var siteIDoc = getSiteIDoc(note.site);
-        var noteElements = wt_$("." + note.clientSideId,siteIDoc);
+        var noteElements = wt_$("." + note.clientSideId + "[data-trail-id="+Trails.getCurrentTrailId()+"]", siteIDoc);
         thisTrailPreview.highlightElements(noteElements);
         return noteElements
     }
@@ -120,6 +131,7 @@ TPreview = function(){
         if (nextNote) {
             thisTrailPreview.displayNote(nextNote);
             thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
+            return true
         } else {
             return false
         }
@@ -130,6 +142,7 @@ TPreview = function(){
         if (previousNote) {
             thisTrailPreview.displayNote(previousNote);
             thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
+            return true
         } else {
             return false
         }
@@ -155,27 +168,77 @@ TPreview = function(){
         })
     }
 
-    this.displayComment = function() {
-        wt_$(".wt-note-comment").remove();
-        var commentBox = wt_$("<div></div>").css({
+    function displayComment() {
+        removeComment()
+        var commentBox = wt_$("<div></div>")
+        applyDefaultCSS(commentBox).css({
             position: "fixed",
             height: thisTrailPreview.height,
             top: "25px",
             right: "0px",
             width: "150px",
-            background: "grey",
-            "z-index": "2147483647"
+            background: "#F0F0F0",
+            "z-index": "2147483647",
+            "font-size": "12px",
+            "padding": "0 5px 0 5px"
         }).addClass("wt-note-comment");
-        commentBox.html(currentNote.comment || "no comment");
+        var commentHeader = wt_$("<div>Comment:</div>")
+        applyDefaultCSS(commentHeader).css({
+            "border-bottom": "2px black solid",
+            "font-size": "14px",
+            "width": "100%",
+            "display": "block",
+            "margin-bottom": "5px",
+            "margin-top": "5px"
+        });
+        commentBox.append(commentHeader).append("<div>"+ (currentNote.comment || "no comment") + "</div>");
         wt_$(document.body).append(commentBox);
     }
 
+    function removeComment() {
+        wt_$(".wt-note-comment").remove();
+    }
+
+    function toggleCommentBox() {
+        displayComment();
+        commentBoxToggled = true;
+        showCommentButton.css({
+            "background": "grey"
+        });
+    }
+
+    function unToggleCommentBox() {
+        removeComment();
+        commentBoxToggled = false;
+        showCommentButton.css({
+            "background": "none"
+        });
+    }
+
+    function toggleOrUntoggleCommentBox() {
+        commentBoxToggled ? unToggleCommentBox() : toggleCommentBox();
+    }
+
+    function deleteCurrentNote(){
+        var noteToBeDeleted = currentNote;
+        deleteNote(noteToBeDeleted, function() {
+            if (!thisTrailPreview.showPreviousNote()){
+                if (!thisTrailPreview.showNextNote()){
+                    thisTrailPreview.hide();
+                }
+            };
+            if (noteToBeDeleted.site.isCurrentSite()) {
+                Trails.decrementNoteCount();
+            }
+            noteToBeDeleted.delete();
+            thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
+        })
+    }
+
     this.updateWithNewNote = function(newNote) {
-        console.log("updating preview with new note");
         if (!currentNote || (parseInt(currentNote.site.id) <= parseInt(newNote.site.id))){
-            console.log("switching to new note");
             currentNote = newNote;
-            this.displayNote(currentNote, !shown);
+            this.displayNote(currentNote, !toolbarShown);
         }
         this.enableOrDisablePrevAndNextButtons();
     }
@@ -196,8 +259,10 @@ TPreview = function(){
         this.enabled = true;
     }
 
-    showCommentButton.click(this.displayComment);
+    showCommentButton.click(toggleOrUntoggleCommentBox);
     nextNoteButton.click(this.showNextNote);
     previousNoteButton.click(this.showPreviousNote);
+    deleteNoteButton.click(deleteCurrentNote);
+
     this.enableOrDisablePrevAndNextButtons(currentNote);
 }

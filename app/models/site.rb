@@ -51,6 +51,12 @@ class Site < ActiveRecord::Base
     end
   end
 
+  def get_revision_urls()
+    get_revisions.map do |revision|
+      File.join(self.archive_location, revision.to_s)
+    end
+  end
+
   def update_note_list(note_array)
     notes = []
     all_authorized = true

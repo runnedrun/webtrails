@@ -1,0 +1,11 @@
+<CORSConfiguration>
+  <CORSRule>
+    <AllowedOrigin>http://localhost:3000</AllowedOrigin>
+    <AllowedMethod>GET</AllowedMethod>
+    <AllowedHeader>*</AllowedHeader>
+  </CORSRule>
+  <CORSRule>
+    <AllowedOrigin>http://webtrails.co</AllowedOrigin>
+    <AllowedMethod>GET</AllowedMethod>
+  </CORSRule>
+</CORSConfiguration>

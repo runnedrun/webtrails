@@ -355,7 +355,6 @@ function makeToolBar() {
 function insertTrailPreview(){
     console.log("inserting the trail preview");
     TrailPreview = new TPreview();
-    TrailPreview.init();
 }
 
 function initSignedInExperience(){
@@ -374,6 +373,7 @@ function initSignedInExperience(){
         return false
     })
     wt_$(document).mousedown(possibleHighlightStart);
+    TrailPreview.initWithTrail(Trails.getCurrentTrail());
 }
 
 function initSignedOutExperience(){

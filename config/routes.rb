@@ -81,8 +81,8 @@ Webtrails::Application.routes.draw do
   match '/site/exists', :controller => 'sites', :action => 'exists'
   match '/sites/delete', :controller => "sites", :action => 'delete', :constraints => {:method => 'POST'}
   match '/sites/new_note_from_view_page', :controller => "sites", :action => "new_note_from_view_page", :constraints => {:method => 'POST'}
-  match 'sites/update_note_list', :controller => 'sites', :action => 'update_note_list'
-  match '/sites/get_new_site_id', :controller => 'sites', :action => 'generate_site_id'
+  match 'sites/update_note_list', :controller => 'sites', :action => 'update_note_list', :constraints => {:method => 'POST'}
+  match '/sites/get_new_site_id', :controller => 'sites', :action => 'generate_site_id', :constraints => {:method => 'POST'}
 
   resources :notes, :only=>[:create]
   match '/notes', :controller => 'notes', :action => 'options', :constraints => {:method => 'OPTIONS'}

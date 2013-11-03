@@ -64,7 +64,7 @@ function parsePageBeforeSavingSite(resp){
             revision: resp.revision_number,
             is_base_revision: resp.isBaseRevision || false,
             character_encoding: document.characterSet,
-            note_id: resp.note_id
+            note_id: resp.note_id || undefined
         }
     }, function(response){
         console.log("page_preprocessing. parseAndResolve came back!");

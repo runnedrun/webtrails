@@ -25,42 +25,47 @@ $(function(){
         console.log("No SiteIDs, returning");
         return;
     }
-    if (window.location.hash) {
-        var hash = window.location.hash.substring(1);
-        currentSiteIndex = parseInt(hash) || 0;
-        if (currentSiteIndex >= siteIDs.length || hash == "end") {
-            currentSiteIndex = siteIDs.length - 1;
-        } else if (currentSiteIndex < 0) {
-            currentSiteIndex = 0;
-        }
-    }
-    var currentSiteID = String(siteIDs[currentSiteIndex]);
+
+    fetchSiteHtml();
+
+
+    //check for hash to set correct site
+//    if (window.location.hash) {
+//        var hash = window.location.hash.substring(1);
+//        currentSiteIndex = parseInt(hash) || 0;
+//        if (currentSiteIndex >= siteIDs.length || hash == "end") {
+//            currentSiteIndex = siteIDs.length - 1;
+//        } else if (currentSiteIndex < 0) {
+//            currentSiteIndex = 0;
+//        }
+//    }
+//    var currentSiteID = String(siteIDs[currentSiteIndex]);
 
     rangy.init();
     initializeAutoResize();
 
-    currentSite = $("#"+currentSiteID);
-    setTimeout(makeIframes, 1);
-    $("#nextSite").click(nextSite);
-    $("#previousSite").click(previousSite);
-    $("#nextNote").click(nextNote);
-    $("#previousNote").click(previousNote);
-    if (editAccess) {
-        $("#removeSite").click(removeSite);
-    } else {
-        $("#removeSite").remove();
-    }
+//    currentSite = $("#"+currentSiteID);
+//    setTimeout(makeIframes, 1);
+//    $("#nextSite").click(nextSite);
+//    $("#previousSite").click(previousSite);
+//    $("#nextNote").click(nextNote);
+//    $("#previousNote").click(previousNote);
+//    if (editAccess) {
+//        $("#removeSite").click(removeSite);
+//    } else {
+//        $("#removeSite").remove();
+//    }
     $('#showAllSitesButton').click(showAllSites);
-//    $("#showNoteList").click(expandOrCloseNoteList);
-    $("#showNoteList").click(initOrDisableNoteView);
-    $(".noteInfo").click(clickJumpToNote);
-    $(".noteComment").click(makeNoteCommentEditable);
-
-    $(".click-to-change-site").click(clickJumpToSite);
+////    $("#showNoteList").click(expandOrCloseNoteList);
+//    $("#showNoteList").click(initOrDisableNoteView);
+//    $(".noteInfo").click(clickJumpToNote);
+//    $(".noteComment").click(makeNoteCommentEditable);
+//
+//    $(".click-to-change-site").click(clickJumpToSite);
 
     makeFaviconsDragable();
     makeNotesDragable();
-    switchToSite(currentSiteID);
+//    switchToSite(currentSiteID);
 });
 
 function initializeNoteTaking(siteID){
@@ -81,56 +86,91 @@ function removeLoadingFromSite(siteID) {
     $('iframe#' + siteID).css('background-image', 'none');
 }
 
-function loadIframes(siteID){
-    $('iframe#' + siteID).load(function() {
-        removeLoadingFromSite(siteID);
-        initializeNoteTaking(siteID);
+function fetchSiteHtml() {
+    var deferreds = $.map(trailDisplayHash.sites.siteObjects, function(site,id){
+        return $.map(site.revisionUrls, function(url, revisionNumber) {
+            return $.ajax({
+                url: url,
+                type: "get",
+                dataType: "html",
+                crossDomain: true,
+                success: function(resp){
+                    console.log("succceded in fetch");
+                    trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] =  resp;
+                } ,
+                error: function(resp){
+                    console.log("failed to fetch");
+                    trailDisplayHash.siteObjects[id]["html"][revisionNumber] =  "Failed to retrieve site data.";
+                }
+            })
+        })
     });
-    $('iframe#' + siteID).attr("src", requestUrl + "/sites/" + siteID);
-    $.ajax({
-        url: "/async_site_load",
-        type: "get",
-        data: {
-            "site_id" : siteID
-        },
-        success: readySite
-    });
-}
 
-function makeIframes(){
-    console.log("making iframes")
-    var currentSiteID = siteIDs[currentSiteIndex];
-    loadIframes(currentSiteID);
-    //site IDS defined in the html
-    $.each(siteIDs,function (i,siteID){
-        if (siteID != currentSiteID) {
-            loadIframes(siteID);
-        }
-    });
-}
+    $.when.apply($, deferreds).always(function(){
+      console.log("html retrieval complete");
+      var trailsHash = {};
+      trailsHash[trailDisplayHash.id] = trailDisplayHash;
 
-function insertHTMLInIframe(html,$iframe){
-    var siteDoc = $iframe[0].contentWindow.document;
-    var siteBody = $('body', siteDoc);
-    siteBody.append(html);
-}
-
-function readySite(data){
-    console.log("readying site:", data.site_id);
-    var noteIDs=[];
-    $.each(data.notes, function(i,note){
-        noteIDs.push(String(note.id));
-        Notes[note.id] = note;
+      Trails = new TrailsObject(trailsHash, trailDisplayHash.id);
+      Trails.initTrails();
+      Trail = Trails.getCurrentTrail();
+      TrailPreview = new TPreview();
+      Trails.switchToTrail(Trail.id);
     })
-    var siteAttributes = {"noteIDs": noteIDs, "title" : data.title, "url" : data.url};
-    siteHash[data.site_id] = siteAttributes;
-    if (data.site_id == getCurrentSiteID()){
-        console.log("updating note count and disabling buttons");
-        updateNoteCount();
-        deactivateOrReactivateNextNoteIfNecessary();
-        deactivateOrReactivatePreviousNoteIfNecessary();
-    }
 }
+
+
+
+//function loadIframes(siteID){
+//    $('iframe#' + siteID).load(function() {
+//        removeLoadingFromSite(siteID);
+//        initializeNoteTaking(siteID);
+//    });
+//    $('iframe#' + siteID).attr("src", requestUrl + "/sites/" + siteID);
+//    $.ajax({
+//        url: "/async_site_load",
+//        type: "get",
+//        data: {
+//            "site_id" : siteID
+//        },
+//        success: readySite
+//    });
+//}
+//
+//function makeIframes(){
+//    console.log("making iframes")
+//    var currentSiteID = siteIDs[currentSiteIndex];
+//    loadIframes(currentSiteID);
+//    //site IDS defined in the html
+//    $.each(siteIDs,function (i,siteID){
+//        if (siteID != currentSiteID) {
+//            loadIframes(siteID);
+//        }
+//    });
+//}
+//
+//function insertHTMLInIframe(html,$iframe){
+//    var siteDoc = $iframe[0].contentWindow.document;
+//    var siteBody = $('body', siteDoc);
+//    siteBody.append(html);
+//}
+//
+//function readySite(data){
+//    console.log("readying site:", data.site_id);
+//    var noteIDs=[];
+//    $.each(data.notes, function(i,note){
+//        noteIDs.push(String(note.id));
+//        Notes[note.id] = note;
+//    })
+//    var siteAttributes = {"noteIDs": noteIDs, "title" : data.title, "url" : data.url};
+//    siteHash[data.site_id] = siteAttributes;
+//    if (data.site_id == getCurrentSiteID()){
+//        console.log("updating note count and disabling buttons");
+//        updateNoteCount();
+//        deactivateOrReactivateNextNoteIfNecessary();
+//        deactivateOrReactivatePreviousNoteIfNecessary();
+//    }
+//}
 
 function switchToPresentationMode(){
 //    $(currentSite[0].contentWindow.documenon-wrapping div full screennt.body).css({"height": "100%","width": "100%","z-index":"0"});

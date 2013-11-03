@@ -151,9 +151,24 @@ function trailSelectChanged() {
         Trails.switchToTrail(parseInt(wt_$(this).val()));
         clearFaviconHolder();
         fetchFavicons();
+        if (!Trails.siteSavedDeeply()){
+            activateSiteSiteButton();
+        }
     } catch(e) {
         console.log("Uh oh. Not a number or something", wt_$(this).val())
     }
+}
+
+function activateSiteSiteButton() {
+    saveSiteToTrailButton.text("Save site").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
+    saveSiteToTrailButton.click(function(){saveSiteToTrail()});
+    saveSiteToTrailButton.css({"cursor": "arrow"});
+}
+
+function deactivateSaveSiteButton() {
+    saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
+    saveSiteToTrailButton.unbind().click();
+    saveSiteToTrailButton.css({"cursor": "pointer"});
 }
 
 function setTrailSelect(trails, adding) {
@@ -167,6 +182,9 @@ function setTrailSelect(trails, adding) {
         option.text(name);
         if (String(id) == String(Trails.getCurrentTrailId())) {
             option.attr('selected', 'selected');
+        } else if (!Trails.getCurrentTrailId()){
+            option.attr('selected', 'selected');
+            Trails.switchToTrail(id);
         }
         trailSelect.append(option);
 //            trailSelect.prepend(option);

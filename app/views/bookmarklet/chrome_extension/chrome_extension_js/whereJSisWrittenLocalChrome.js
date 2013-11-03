@@ -11,8 +11,7 @@ var trailDisplay,
     nextNoteButton,
     previousNoteID,
     siteHTML = getCurrentSiteHTML(),
-    noteCount = 0,
-    siteSavedDeeply = false,
+
     TrailPreview = false,
     changeObserver;
     loggedIn = false;
@@ -64,11 +63,7 @@ function verifyKeyPress(e){
 }
 
 function setSiteID(siteID){
-    currentSiteID = siteID;
-}
-
-function mutcallback(t){
-    console.log(t)
+    Get
 }
 
 // if error returns null

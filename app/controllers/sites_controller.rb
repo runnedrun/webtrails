@@ -55,7 +55,7 @@ class SitesController < ApplicationController
     new_site = Site.create(params[:site].merge({:user_id => @user.id}))
     params[:note] ? new_note = Note.create!(params[:note].merge({:site_id => new_site.id})) : new_note = false
 
-    render :json => {:current_trail_id => new_site.trail_id, :current_site_id => new_site.id, :note_id => new_note.id}
+    render :json => {:current_trail_id => new_site.trail_id, :current_site_id => new_site.id, :note_id => new_note ? new_note.id : false}
   end
 
   #this performs a save without doing any kind of parsing of html, which is only

@@ -7,8 +7,6 @@ TrailsObject = function(trailsObject, currentTrailId){
     this.switchToTrail = function(newTrailId){
         currentTrailId = newTrailId;
         console.log("switching to trail:", newTrailId);
-        chrome.runtime.sendMessage({setCurrentTrailID:newTrailId}, function(response) {
-        });
         TrailPreview.initWithTrail(this.getCurrentTrail());
     }
 
@@ -41,7 +39,7 @@ TrailsObject = function(trailsObject, currentTrailId){
     }
 
     this.updateTrails = function(localStorageTrailsObject){
-        wt_$.each(localStorageTrailsObject,function(trailId,trailObject){
+        $.each(localStorageTrailsObject,function(trailId,trailObject){
             if (trails[trailId]){
                 trails[trailId].updateSites(trailObject);
             } else {
@@ -52,14 +50,9 @@ TrailsObject = function(trailsObject, currentTrailId){
     };
 
     this.initTrails = function(){
-        wt_$.each(baseTrailObject,function(trailId,trailObject){
+        $.each(baseTrailObject,function(trailId,trailObject){
             trails[trailId] = new Trail(trailObject)
-        })
-        chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-            if (request.updateTrails){
-                thisTrailsObject.updateTrails(request.updateTrails);
-            }
-        })
+        });
     }
 
     // these methods manipulate the note count for the current site, for the current trail
@@ -73,14 +66,6 @@ TrailsObject = function(trailsObject, currentTrailId){
 
     this.getNoteCount = function() {
         return this.getCurrentTrail().currentSiteNoteCount
-    }
-
-    this.setSiteSavedDeeply = function() {
-        this.getCurrentTrail().currentSiteSavedDeeply = true
-    }
-
-    this.siteSavedDeeply = function() {
-        return this.getCurrentTrail().currentSiteSavedDeeply
     }
 }
 
@@ -97,7 +82,7 @@ Trail = function(trailObject){
 
     this.getSites = function(){
         var sitesInOrder = [];
-        wt_$.each(siteOrder,function(i,siteId){
+        $.each(siteOrder,function(i,siteId){
             sitesInOrder.push(sites[siteId]);
         })
         return sitesInOrder;
@@ -125,7 +110,7 @@ Trail = function(trailObject){
         }
     }
 
-    this.getLastSite = function(){
+    this.getLastSite = function() {
         var sitesInOrder = this.getSites();
         if (sitesInOrder.length){
             return sitesInOrder[sitesInOrder.length-1]
@@ -134,7 +119,7 @@ Trail = function(trailObject){
         }
     }
 
-    this.getLastNote = function(){
+    this.getLastNote = function() {
         var lastSite = this.getLastSite();
         var lastNote = false;
         while (lastSite && !(lastNote = lastSite.getLastNote())){
@@ -143,8 +128,13 @@ Trail = function(trailObject){
         return lastNote
     }
 
+    this.deleteSite = function(site) {
+        delete sites[site.id];
+        siteOrder.splice(siteOrder.indexOf(site.id),1);
+    };
+
     this.updateSites = function(newTrailObject){
-        wt_$.each(newTrailObject.sites.order, function(i,siteId){
+        $.each(newTrailObject.sites.order, function(i,siteId){
             var siteToUpdate;
             var newSiteBaseObject = newTrailObject.sites.siteObjects[siteId];
             if (!(siteToUpdate  = sites[siteId])){
@@ -179,7 +169,7 @@ Trail = function(trailObject){
     };
 
     var thisTrailObject = this;
-    wt_$.each(trailObject.sites.siteObjects,function(siteId,siteObject){
+    $.each(trailObject.sites.siteObjects,function(siteId,siteObject){
         sites[siteId] = new Site(siteObject, thisTrailObject);
     })
 }
@@ -188,9 +178,11 @@ Site = function(siteObject, parentTrail){
     var siteObject = siteObject;
     var notes = {};
     var noteOrder = [];
+    var baseRevisionNumber = siteObject.baseRevisionNumber;
     this.revisions = siteObject.html;
     this.id = siteObject.id;
     this.trail = parentTrail;
+
 
     var thisSiteObject = this;
 
@@ -241,7 +233,7 @@ Site = function(siteObject, parentTrail){
 
     this.getNotes = function(){
         var notesInOrder = [];
-        wt_$.each(noteOrder,function(i,noteId){
+        $.each(noteOrder,function(i,noteId){
             notesInOrder.push(notes[noteId]);
         })
         return notesInOrder;
@@ -260,18 +252,29 @@ Site = function(siteObject, parentTrail){
         }
     };
 
-    this.getNoteCount = function() {
-        return noteOrder.length;
-    };
+    this.nextNoteFromBase = function() {
+        if(this.getFirstNote()) return this.getFirstNote();
+        var nextSite = this.nextSite()
+        while (nextSite) {
+            if (nextSite.getFirstNote()) return nextSite.getFirstNote();
+            nextSite = nextSite.nextSite();
+        }
+        return false
+    }
 
-    this.getNotePosition = function(note) {
-        return noteOrder.indexOf(note.id) + 1;
-    };
+    this.previousNoteFromBase = function() {
+        var previousSite = this.previousSite()
+        while (previousSite) {
+            if (previousSite.getLastNote()) return previous.getLastNote();
+            previousSite = previousSite.previousSite();
+        }
+        return false
+    }
 
     this.updateSite = function(newSiteBaseObject){
         this.revisions = newSiteBaseObject.html;
         siteObject = newSiteBaseObject;
-        wt_$.each(newSiteBaseObject.notes.order, function(i, noteId){
+        $.each(newSiteBaseObject.notes.order, function(i, noteId){
             var existingNoteObject = notes[noteId];
             var newBaseNoteObject = newSiteBaseObject.notes.noteObjects[noteId];
             if (!(existingNoteObject)){
@@ -282,6 +285,14 @@ Site = function(siteObject, parentTrail){
             }
         });
         noteOrder = newSiteBaseObject.notes.order;
+    };
+
+    this.getNoteCount = function() {
+        return noteOrder.length;
+    };
+
+    this.getNotePosition = function(note) {
+        return noteOrder.indexOf(note.id) + 1;
     };
 
     this.getRevisionHtml = function(revisionNumber){
@@ -296,7 +307,15 @@ Site = function(siteObject, parentTrail){
         }
     };
 
-    wt_$.each(siteObject.notes.noteObjects, function(noteId, noteObject){
+    this.getBaseRevisionHtml = function() {
+        return this.getRevisionHtml(baseRevisionNumber);
+    };
+
+    this.delete = function() {
+        thisSiteObject.trail.deleteSite(this);
+    }
+
+    $.each(siteObject.notes.noteObjects, function(noteId, noteObject){
         thisSiteObject.addNote(noteObject);
     })
 }
@@ -357,7 +376,6 @@ Note = function(baseNoteObject, parentSite){
     this.getPositionInSite = function() {
         return this.site.getNotePosition(this)
     };
-
 
     this.update = function(baseNoteObject){
         this.id = baseNoteObject.id;

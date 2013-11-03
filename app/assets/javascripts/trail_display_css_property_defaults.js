@@ -255,5 +255,5 @@ defaultCSS = {
 }
 
 function applyDefaultCSS($element){
-    $element.css(defaultCSS);
+    return $element.css(defaultCSS);
 }

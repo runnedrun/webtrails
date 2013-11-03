@@ -7,12 +7,11 @@ function signRequestWithWtAuthToken(xhr,ajaxRequest){
 }
 
 function saveSiteToTrail(note){
-    console.log("saving site to trail:", currentSiteID);
     var currentSite = window.location.href;
-    if (siteSavedDeeply && !currentSiteID) {
+    if (Trails.siteSavedDeeply() && !Trails.getCurrentSiteId()) {
         console.log("saved already, but not returned yet");
-        setTimeout(function(){saveSiteToTrail(successFunction, note)}, 100);
-        return;
+        setTimeout(function(){saveSiteToTrail(note)}, 100);
+        return
     }
 
     var currentRevisionNumber = Trails.getAndIncrementRevision();
@@ -21,7 +20,7 @@ function saveSiteToTrail(note){
 //    }
 
     console.log("note is ", note);
-    if (!siteSavedDeeply){
+    if (!Trails.siteSavedDeeply()){
         wt_$.ajax({
             url: webTrailsUrl + "/sites/get_new_site_id",
             type: "post",
@@ -35,8 +34,8 @@ function saveSiteToTrail(note){
                 "note":  note || {}
             },
             success: function(resp){
-                Trails.switchToTrail(resp.current_trail_id);
-                setSiteID(resp.current_site_id);
+//                Trails.switchToTrail(resp.current_trail_id);
+                Trails.getTrail(resp.current_trail_id).setCurrentSiteId(resp.current_site_id);
                 parsePageBeforeSavingSite(wt_$.extend(resp, {
                     isBaseRevision: true,
                     revision_number: currentRevisionNumber
@@ -51,11 +50,11 @@ function saveSiteToTrail(note){
             crossDomain: true,
             beforeSend: signRequestWithWtAuthToken,
             data: {
-                "note": wt_$.extend(note, {site_id: currentSiteID})
+                "note": wt_$.extend(note, {site_id: Trails.getCurrentSiteId()})
             },
             success: function(resp){
                 parsePageBeforeSavingSite(wt_$.extend(resp,{
-                    current_site_id: currentSiteID,
+                    current_site_id: Trails.getCurrentSiteId(),
                     current_trail_id: Trails.getCurrentTrailId(),
                     shallow_save: true,
                     revision_number: currentRevisionNumber,
@@ -66,29 +65,29 @@ function saveSiteToTrail(note){
         })
     }
 
-    if (!siteSavedDeeply){
-        siteSavedDeeply = true;
+    if (!Trails.siteSavedDeeply()){
+        Trails.setSiteSavedDeeply();
         saveSiteToTrailButton.text("Site saving");
         saveSiteToTrailButton.unbind();
         saveSiteToTrailButton.css({"cursor": "default"});
 
         // now check to see if site is actually saved, and update the UI accordingly
         var updateSiteSavedButton = function() {
-            if (currentSiteID) {
+            var currentSiteId = Trails.getCurrentSiteId();
+
+            if (currentSiteId) {
                 wt_$.ajax({
                     url: webTrailsUrl + '/site/exists',
                     type: "get",
                     crossDomain: true,
                     beforeSend: signRequestWithWtAuthToken,
                     data: {
-                        "id": currentSiteID
+                        "id": currentSiteId
                     },
                     success: function(data) {
                             if (data.exists) {
                                 // Our page exists, and we should correct the save site button
-                                saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
-                                saveSiteToTrailButton.unbind().click(function(){window.open(webTrailsUrl + '/trails/' + Trails.getCurrentTrailId() + "#"+String(data.id), '_blank');});
-                                saveSiteToTrailButton.css({"cursor": "pointer"});
+                                deactivateSaveSiteButton();
                                 console.log("updating local storage");
                                 updateTrailDataInLocalStorage();
                             } else {
@@ -117,25 +116,24 @@ function fetchFavicons(){
         },
         beforeSend: signRequestWithWtAuthToken,
         success: function(resp){
-            Trails.switchToTrail(resp.trail_id);
             addFaviconsToDisplay(resp);
             setTrailSelect(resp.trails);
         }
     });
 }
 
-function deletePreviousNote(){
-    noteCount--;
+function deleteNote(note, callback){
     wt_$.ajax({
         url: webTrailsUrl + "/notes/delete",
         type: "post",
         crossDomain: true,
         beforeSend: signRequestWithWtAuthToken,
         data: {
-            "id": previousNoteID
+            "id": note.id
         },
-        success: updateNoteDisplay
-    })
+        success: function(resp) { callback(resp); updateTrailDataInLocalStorage();},
+        error: function(){ butterBarNotification("Failed to delete note, please try again") }
+    });
 }
 
 function updateTrailDataWhenNoteReady(noteId){
