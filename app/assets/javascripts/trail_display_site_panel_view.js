@@ -12,6 +12,17 @@ PanelView = function(trailPreview) {
 //            }
             displayPanels();
         }
+    };
+
+    this.isShown = function() {
+        return shown
+    };
+
+    this.update = function() {
+        console.log("updating panels");
+        $('.wt-site-panel').remove();
+        $('.siteClickDiv').remove();
+        displayPanels();
     }
 
     function hidePanels() {
@@ -19,22 +30,15 @@ PanelView = function(trailPreview) {
         $('.wt-site-panel').remove();
         $('.siteClickDiv').remove();
         trailPreview.show();
+        shown = false;
     }
 
     function displayPanels() {
         console.log("shrink");
         trailPreview.hide();
-//        $('iframe').css({
-//            "-moz-transform": "scale(" + percentPerIframe + ", " + percentPerIframe + ")",
-//            "-webkit-transform": "scale(" + percentPerIframe + ", " + percentPerIframe + ")",
-//            "-o-transform": "scale(" + percentPerIframe + ", " + percentPerIframe + ")",
-//            "-ms-transform": "scale(" + percentPerIframe + ", " + percentPerIframe + ")",
-//            "transform": "scale(" + percentPerIframe + ", " + percentPerIframe + ")"
-//        });
         var iframesPerRow = 4;
-
         var marginOffset = (1 - iframesPerRow * percentPerIframe)/(2 * iframesPerRow);
-        // console.log("offset:", marginOffset);
+
         $.each(Trail.getSites(),function(index, site){
             var iframe  = appendShrunkenIframe(site);
             var row = Math.floor(index/iframesPerRow);
@@ -58,7 +62,7 @@ PanelView = function(trailPreview) {
             });
             $('#siteClickDivs').append($clickdiv);
         });
-//        $('iframe').removeClass('notCurrent');
+        shown = true;
     }
 
     function appendShrunkenIframe(site) {

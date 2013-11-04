@@ -78,6 +78,7 @@
     position:relative;
     left:0;
     top:0;
+    margin-left: 5px;
 }
 
 .faviconImage {
@@ -88,7 +89,7 @@
     right: 0;
 }
 
-.activeFavicon {
+.active-favicon {
     width:20px;
     height:20px;
 }

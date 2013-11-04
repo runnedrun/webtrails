@@ -57,7 +57,7 @@ CSS = {
             "vertical-align": "bottom",
             "font-size": "16px"
         },
-        commentContainerWithText: {
+        commentContainerWithNoText: {
             "-webkit-border-top-left-radius": "5px",
             "-webkit-border-bottom-left-radius": "5px",
             "-moz-border-radius-topleft": "5px",
@@ -66,7 +66,7 @@ CSS = {
             "border-bottom-left-radius": "5px",
             "border-left":"2px solid black"
         },
-        editCommentContainer: {
+        editButton: {
             "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
             "border-top": "2px solid black",
             "border-bottom": "2px solid black",
@@ -90,7 +90,7 @@ CSS = {
             "vertical-align": "bottom",
             "font-size": "16px"
         },
-        deleteCommentContainer: {
+        deleteButton: {
             "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
             "border-top": "2px solid black",
             "border-bottom": "2px solid black",

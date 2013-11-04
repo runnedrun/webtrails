@@ -1,7 +1,17 @@
 //callbackTracker = {}
 AWSBase = "https://s3.amazonaws.com/TrailsSitesProto";
-
 function parse_page_and_resolve_urls(siteInfo){
+    var oldAbsoluteTo = URI.prototype.absoluteTo;
+    URI.prototype.absoluteTo = function(url) {
+        try {
+            return URI(oldAbsoluteTo.call(this,url));
+        } catch(e) {
+            console.log("caught error with absoluteTo while parsing this uri: ", url);
+            console.log("error is", e);
+            return URI(url);
+        }
+    };
+
     var stylesheetHrefs = siteInfo.stylesheet_hrefs;
     var stylesheetContents = siteInfo.stylesheet_contents;
     var currentSiteID = siteInfo.current_site_id;
@@ -81,12 +91,13 @@ function parseHtmlAndResolveUrls(html,htmlAttributes,cb) {
             aref.setAttribute("target","_blank");
             aref.setAttribute("href", URI(href).absoluteTo(cb.baseURI).href());
         }
-    })
+    });
 
     $html.find("link[href]").each(function(i,link){
         var href = link.getAttribute("href");
         if (!href.match(/^\s*javascript:/)){
-            link.setAttribute("href",generateAwsUrl(href,cb.siteID,cb.trailID)[0]);
+            var absoluteUrl = URI(href).absoluteTo(cb.baseURI).href();
+            link.setAttribute("href", generateAwsUrl(absoluteUrl, cb.siteID, cb.trailID)[0]);
         }
     })
 
@@ -157,7 +168,7 @@ function checkIfAllResourcesAreParsed(callbackTracker){
     }
 }
 
-function parseCSSAndReplaceUrls(css,resourceLocation,cb){
+function parseCSSAndReplaceUrls(css, resourceLocation,cb){
     var importOrUrlRegex = generateImportOrUrlRegex();
     var originalToAwsUrlMap = cb.originalToAwsUrlMap
     var newCSS = css.replace(importOrUrlRegex, function(matchedGroup, capturedImportUrl, capturedUrl){
@@ -185,7 +196,10 @@ function parseCSSAndReplaceUrls(css,resourceLocation,cb){
             return "url("+newUrl+")";
         }
     });
-    return updateCallbackTracker(newCSS,generateAwsUrl(resourceLocation,cb.siteID,cb.trailID)[1],cb);
+    if (resourceLocation != "") {
+        resourceLocation = URI(resourceLocation).absoluteTo(cb.baseURI).href();
+    }
+    return updateCallbackTracker(newCSS, generateAwsUrl(resourceLocation, cb.siteID, cb.trailID)[1],cb);
 }
 
 function generateAwsUrl(url,siteID,trailID){
@@ -243,3 +257,4 @@ function generateImportOrUrlRegex(){
     var importOrUrlRegex = new RegExp("(?:" + importRegex + "|" + urlRegex + ")","g");
     return importOrUrlRegex
 }
+

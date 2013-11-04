@@ -161,7 +161,8 @@ function markNodeForHighlight(node,start_offset, end_offset){
         var unhighlighted_prepend = contents.slice(0,start_offset);
         var unhighlighted_append = contents.slice(end_offset,contents.length);
         var new_marker = document.createElement("wtHighlight");
-        wt_$(new_marker).addClass("highlightMe").addClass('client_side_id_' + String(Trails.getNoteCount()));
+//        wt_$(new_marker).addClass("highlightMe").addClass('client_side_id_' + String(Trails.getNoteCount()));
+        wt_$(new_marker).addClass("highlightMe");
         wt_$(new_marker).attr("data-trail-id", Trails.getCurrentTrailId());
 
         new_marker.innerHTML = highlighted_contents;

@@ -202,3 +202,10 @@ function runWhenLoaded(fn, doc){
         }
     },100);
 }
+
+function canEdit() {
+    if (!editAccess) { // in case called from console or something
+        console.log("No access to editing this trail!");
+        return false;
+    } else { return true}
+}

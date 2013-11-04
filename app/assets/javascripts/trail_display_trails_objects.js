@@ -168,6 +168,10 @@ Trail = function(trailObject){
         return rev;
     };
 
+    this.updateSiteOrder = function(newSiteOrder) {
+        siteOrder = newSiteOrder;
+    };
+
     var thisTrailObject = this;
     $.each(trailObject.sites.siteObjects,function(siteId,siteObject){
         sites[siteId] = new Site(siteObject, thisTrailObject);
@@ -184,7 +188,6 @@ Site = function(siteObject, parentTrail){
     this.trail = parentTrail;
     this.url = siteObject.url;
 
-
     var thisSiteObject = this;
 
     this.addNote = function(baseNoteObject){
@@ -192,7 +195,6 @@ Site = function(siteObject, parentTrail){
         noteOrder.push(baseNoteObject.id);
         return newNote
     };
-
 
     this.removeNote = function(note) {
         delete notes[note.id];
@@ -216,6 +218,7 @@ Site = function(siteObject, parentTrail){
     this.previousSite = function(){
         var sitesInOrder = this.trail.getSites();
         var currentIndex = sitesInOrder.indexOf(this);
+//        debugger;
         if (currentIndex > 0){
             return this.trail.getSite(sitesInOrder[currentIndex-1].id);
         } else {
@@ -266,7 +269,7 @@ Site = function(siteObject, parentTrail){
     this.previousNoteFromBase = function() {
         var previousSite = this.previousSite()
         while (previousSite) {
-            if (previousSite.getLastNote()) return previous.getLastNote();
+            if (previousSite.getLastNote()) return previousSite.getLastNote();
             previousSite = previousSite.previousSite();
         }
         return false
@@ -385,6 +388,10 @@ Note = function(baseNoteObject, parentSite){
         this.scrollX = baseNoteObject.scrollX;
         this.scrollY = baseNoteObject.scrollY;
     };
+
+    this.updateComment = function(newComment) {
+        this.comment = newComment;
+    }
 
     this.delete = function() {
         this.site.removeNote(this);

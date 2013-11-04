@@ -9,14 +9,6 @@ TPreview = function(){
     var commentBoxToggled = false;
     this.height = 200;
 
-    function getSiteIDoc(site) {
-       return getIDoc($(".wt-site-preview[data-site-id='" + site.id + "']"));
-    }
-
-    function getIWindow($iframe) {
-        return $($iframe[0].contentWindow);
-    }
-
     this.getCurrentNote = function() { return currentNote }
     this.hide = function() {
         currentSiteFrame && currentSiteFrame.hide();
@@ -72,6 +64,7 @@ TPreview = function(){
         currentNote = note;
         if (!note.isBase) {
             $iDoc.scrollTop(note.scrollY-300).scrollLeft(note.scrollX);
+            var comment = displayComment(note.scrollY, note.scrollX);
             runWhenLoaded(function() {
                 var noteElements = thisTrailPreview.highlightNote(note);
                 var noteLocation = noteElements.first().offset();
@@ -81,15 +74,17 @@ TPreview = function(){
                     console.log("correcting scroll", noteLocation.top, note.scrollY);
                     console.log(noteLocation.left, note.scrollX);
                     $iDoc.scrollTop(scrollTop).scrollLeft(scrollLeft);
+                    comment.remove();
+                    displayComment(scrollLeft, scrollTop);
                 }
             },$iDoc[0]);
         }
-        Toolbar.enableOrDisableButtons(currentNote)
+        Toolbar.update(currentNote)
     }
 
     this.highlightNote = function(note) {
         var siteIDoc = getSiteIDoc(note.site);
-        var noteElements = $("." + note.clientSideId + "[data-trail-id="+Trails.getCurrentTrailId()+"]", siteIDoc);
+        var noteElements = $("wtHighlight[data-trail-id="+Trails.getCurrentTrailId()+"]", siteIDoc);
         thisTrailPreview.highlightElements(noteElements);
         return noteElements
     }
@@ -118,7 +113,7 @@ TPreview = function(){
     this.showNextSite = function() {
         var nextSite = currentNote.site.nextSite();
         if (nextSite) {
-            this.showSite(nextSite);
+            thisTrailPreview.showSite(nextSite);
             return true
         } else {
             return false
@@ -150,7 +145,7 @@ TPreview = function(){
             currentNote = newNote;
             this.displayNote(currentNote, !toolbarShown);
         }
-        Toolbar.enableOrDisableButtons();
+        Toolbar.update(currentNote);
     }
 
     this.toggleOrUntoggleCommentBox = function() {
@@ -158,7 +153,7 @@ TPreview = function(){
     }
 
     this.deleteCurrentSite = function() {
-        if (editAccess() && currentNote) {
+        if (canEdit() && currentNote) {
             var currentSite = currentNote.site;
             Request.deleteSite(currentSite, function() {
                 if (currentSite.previousSite()) {
@@ -168,82 +163,36 @@ TPreview = function(){
                 } else {
                     currentSiteFrame.remove();
                     currentNote = false;
-                    thisTrailPreview.toolBar.enableOrDisableButtons(currentNote);
+                    Toolbar.update(currentNote);
                 }
                 currentSite.delete();
             });
         }
     };
 
-    function displayComment() {
-        removeComment()
-        var commentBox = $("<div></div>")
-        applyDefaultCSS(commentBox).css({
-            position: "fixed",
-            height: thisTrailPreview.height,
-            top: "25px",
-            right: "0px",
-            width: "150px",
-            background: "#F0F0F0",
-            "z-index": "2147483647",
-            "font-size": "12px",
-            "padding": "0 5px 0 5px"
-        }).addClass("wt-note-comment");
-        var commentHeader = $("<div>Comment:</div>")
-        applyDefaultCSS(commentHeader).css({
-            "border-bottom": "2px black solid",
-            "font-size": "14px",
-            "width": "100%",
-            "display": "block",
-            "margin-bottom": "5px",
-            "margin-top": "5px"
-        });
-        commentBox.append(commentHeader).append("<div>"+ (currentNote.comment || "no comment") + "</div>");
-        $(document.body).append(commentBox);
+    this.deleteNote = function(note) {
+        if (canEdit()) {
+            var noteToBeDeleted = note;
+            Request.deleteNote(noteToBeDeleted, function() {
+                this.showSite(note.site);
+                noteToBeDeleted.delete();
+                Toolbar.update(currentNote);
+            })
+        }
+    };
+
+    function displayComment(scrollY, scrollX) {
+        var comment = new Comment(currentNote, scrollY, scrollX, thisTrailPreview);
+        getSiteIDoc(currentNote.site).find("body").append(comment.commentContainer);
+        return comment;
     }
 
-    function removeComment() {
-        $(".wt-note-comment").remove();
+    function getSiteIDoc(site) {
+        return getIDoc($(".wt-site-preview[data-site-id='" + site.id + "']"));
     }
 
-    function toggleCommentBox() {
-        displayComment();
-        commentBoxToggled = true;
-        showCommentButton.css({
-            "background": "grey"
-        });
-    }
-
-    function unToggleCommentBox() {
-        removeComment();
-        commentBoxToggled = false;
-        showCommentButton.css({
-            "background": "none"
-        });
-    }
-
-
-    function deleteCurrentNote(){
-        var noteToBeDeleted = currentNote;
-        deleteNote(noteToBeDeleted, function() {
-            if (!thisTrailPreview.showPreviousNote()){
-                if (!thisTrailPreview.showNextNote()){
-                    thisTrailPreview.hide();
-                }
-            };
-            if (noteToBeDeleted.site.isCurrentSite()) {
-                Trails.decrementNoteCount();
-            }
-            noteToBeDeleted.delete();
-            Toolbar.enableOrDisableButtons(currentNote);
-        })
-    }
-
-    function editAccess() {
-        if (!editAccess) { // in case called from console or something
-            console.log("No access to editing this trail! No deleting sites!");
-            return false;
-        } else { return true}
+    function getIWindow($iframe) {
+        return $($iframe[0].contentWindow);
     }
 }
 

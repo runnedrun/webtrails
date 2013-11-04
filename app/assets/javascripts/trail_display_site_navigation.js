@@ -115,7 +115,7 @@ function switchToSite(siteID){
 }
 
 function deleteSiteFromTrail(siteIndex){
-    if (!editAccess) { // in case called from console or something
+    if (!canEdit) { // in case called from console or something
         console.log("No access to editing this trail! No deleting sites!");
         return;
     }

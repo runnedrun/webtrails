@@ -121,7 +121,7 @@ TPreview = function(){
 
     this.highlightNote = function(note) {
         var siteIDoc = getSiteIDoc(note.site);
-        var noteElements = wt_$("." + note.clientSideId + "[data-trail-id="+Trails.getCurrentTrailId()+"]", siteIDoc);
+        var noteElements = wt_$("wtHighlight[data-trail-id="+Trails.getCurrentTrailId()+"]", siteIDoc);
         thisTrailPreview.highlightElements(noteElements);
         return noteElements
     }
