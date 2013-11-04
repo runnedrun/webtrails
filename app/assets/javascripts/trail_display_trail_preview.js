@@ -166,6 +166,7 @@ TPreview = function(){
                     Toolbar.update(currentNote);
                 }
                 currentSite.delete();
+                Toolbar.removeFavicon(currentSite);
             });
         }
     };

@@ -33,11 +33,7 @@ TToolBar  = function(trailPreview, panelView){
 
         Trail.updateSiteOrder(siteArray);
         Request.updateSiteOrder(Trail, siteArray);
-
         //rearranging the iframes if show all sites is toggled
-        if (panelView.isShown()) {
-            panelView.update();
-        }
         thisToolbar.update(trailPreview.getCurrentNote());
     }
 
@@ -81,13 +77,22 @@ TToolBar  = function(trailPreview, panelView){
 
     function expandCurrentSiteFavicon(currentNote) {
         $(".faviconImage").removeClass("active-favicon");
-        $("[data-site-id=" + currentNote.site.id + "]").addClass("active-favicon");
+        if (currentNote) {
+            $("[data-site-id=" + currentNote.site.id + "]").addClass("active-favicon");
+        }
     }
+
+    this.removeFavicon = function(site) {
+        $('[data-site-id=' + site.id + ']').remove();
+    };
 
     this.update = function(currentNote) {
         enableOrDisableButtons(currentNote);
         updateNoteCount(currentNote);
         expandCurrentSiteFavicon(currentNote);
+        if (panelView.isShown()) {
+            panelView.update();
+        }
     };
 
     showAllSitesbutton.disable =

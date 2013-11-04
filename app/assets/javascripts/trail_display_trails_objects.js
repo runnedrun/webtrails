@@ -129,8 +129,9 @@ Trail = function(trailObject){
     }
 
     this.deleteSite = function(site) {
-        delete sites[site.id];
-        siteOrder.splice(siteOrder.indexOf(site.id),1);
+        if (sites[site.id] && delete sites[site.id]){
+            siteOrder.splice(siteOrder.indexOf(String(site.id)),1);
+        }
     };
 
     this.updateSites = function(newTrailObject){
@@ -218,7 +219,6 @@ Site = function(siteObject, parentTrail){
     this.previousSite = function(){
         var sitesInOrder = this.trail.getSites();
         var currentIndex = sitesInOrder.indexOf(this);
-//        debugger;
         if (currentIndex > 0){
             return this.trail.getSite(sitesInOrder[currentIndex-1].id);
         } else {
