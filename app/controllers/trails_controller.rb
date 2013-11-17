@@ -54,7 +54,7 @@ class TrailsController < ApplicationController
     @site_note_hash = {}
     @sites.each {|site| @site_note_hash[site.id] = site.notes}
 
-    @trail_display_hash = get_trail_update_hash(@trail)
+    @trail_display_hash = @trail.get_update_hash
   end
 
   def get_favicons_for_trails(trails)
@@ -189,41 +189,4 @@ class TrailsController < ApplicationController
     end
 
   end
-
-  def get_trail_update_hash(trail)
-    {
-        :id => trail.id,
-        :sites => {
-            :order => trail.site_list,
-            :siteObjects => Hash[trail.sites.map { |site|[site.id, get_site_update_hash(site)] }]
-        }
-
-    }
-  end
-
-  def get_site_update_hash(site)
-    {
-        :baseRevisionNumber => site.base_revision_number,
-        :revisionUrls => Hash[site.get_revisions.zip(site.get_revision_urls)],
-        :html => {},
-        :id => site.id,
-        :notes => {
-            :order => site.note_list,
-            :noteObjects => Hash[site.notes.map{ |note| [note.id, get_note_update_hash(note)] }]
-        },
-        :url => site.url
-    }
-  end
-
-  def get_note_update_hash(note)
-    {
-        :clientSideId => note.client_side_id,
-        :comment => note.comment,
-        :id => note.id,
-        :scrollX => note.scroll_x,
-        :scrollY => note.scroll_y,
-        :siteRevisionNumber => note.site_revision_number
-    }
-  end
-
 end

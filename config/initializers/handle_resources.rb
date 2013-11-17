@@ -14,7 +14,6 @@ class ResourceHandler
       @site = site
       @resources_to_download = resources_to_download
       @stylesheets_to_save = stylesheets_to_save
-      @archive_location = ""
       @is_iframe = is_iframe
       @resource_to_path_hash = {}
       @previously_saved_resource_set = site.retrieve_resource_set
@@ -42,20 +41,24 @@ class ResourceHandler
 
       puts is_iframe.class
 
-      if is_iframe == "false"
-        puts "not iframe, saving!"
-        site.add_revision(revision_number)
-        site.base_revision_number = revision_number.to_i if is_base_revision
-        puts revision_number
-        site.archive_location = write_to_aws(html_to_save[0], html_to_save[1], false, revision_number.to_s,
-                                             {:content_type => "text/html; charset="+character_encoding})
-        site.save!
-        if note
-          note.site_revision_number = revision_number
-          note.save!
+      if !html_to_save.empty?
+        archive_location = write_to_aws(html_to_save[0], html_to_save[1], false, revision_number.to_s,
+                                      {:content_type => "text/html; charset=UTF-8"})
+        if is_iframe == "false"
+          puts "not iframe, saving!"
+          site.add_revision(revision_number)
+          site.base_revision_number = revision_number.to_i if is_base_revision
+          puts revision_number
+          site.archive_location = archive_location
+          site.save!
+          if note
+            note.site_revision_number = revision_number
+            note.save!
+          end
+          puts "site saved to #{site.archive_location} with revision number #{revision_number}"
         end
-        puts "site saved to #{site.archive_location} with revision number #{revision_number}"
       end
+
       @site.update_resource_set(@previously_saved_resource_set)
       puts "done saving"
       puts "have recorded #{@previously_saved_resource_set.size} saved resources"
@@ -101,6 +104,7 @@ class ResourceHandler
     begin
       aws_path_with_rev = revision_number ? File.join(aws_path, revision_number.to_s) : aws_path
       newFile = @bucket.objects[aws_path_with_rev]
+      puts "options are" + options.to_s if options
       newFile.write(data,{:acl => :public_read, :cache_control => "max-age=157680000, public"}.merge(options))
       @previously_saved_resource_set.add(resource_url) if resource_url
       return "https://s3.amazonaws.com/TrailsSitesProto/" + aws_path

@@ -31,6 +31,7 @@ function saveSiteToTrail(note){
                 "site[trail_id]":Trails.getCurrentTrailId(),
                 "site[title]": document.title,
                 "site[domain]": document.domain,
+                "site[html_encoding]": document.characterSet,
                 "note":  note || {}
             },
             success: function(resp){
@@ -62,7 +63,7 @@ function saveSiteToTrail(note){
                 }));
                 updateTrailDataWhenNoteReady(resp.note_id);
             }
-        })
+        })                                                                                                          `
     }
 
     if (!Trails.siteSavedDeeply()){
@@ -88,6 +89,7 @@ function saveSiteToTrail(note){
                             if (data.exists) {
                                 // Our page exists, and we should correct the save site button
                                 deactivateSaveSiteButton();
+                                siteSaved = true;
                                 console.log("updating local storage");
                                 updateTrailDataInLocalStorage();
                             } else {

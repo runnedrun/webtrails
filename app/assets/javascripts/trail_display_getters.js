@@ -11,8 +11,9 @@ function getNumberOfNotesForCurrentSite(){
 }
 
 // will return null if error
-function getComputedStyleOfElementInIframe(element,stylename){
-    var style = $(".currentSite")[0].contentWindow.document.defaultView.getComputedStyle(element,null);
+function getComputedStyleOfElement(element, stylename, separateDocument){
+    var currentDocument = separateDocument || document
+    var style = currentDocument.defaultView.getComputedStyle(element,null);
     if (style) {
         return style[stylename];
     } else {

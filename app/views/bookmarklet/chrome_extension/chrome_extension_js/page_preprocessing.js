@@ -17,6 +17,13 @@ function getCurrentSiteHTML(){
     var htmlClone = wt_$(htmlElement).clone();
     removeToolbarFromPage(htmlClone); // edits in-place
     removeAllUnusedTags(htmlClone);
+
+    var charSetMeta = wt_$('<meta charset="UTF-8">');
+    var oldMeta = wt_$('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">');
+
+    htmlClone.find("head").prepend(charSetMeta);
+    htmlClone.find("head").prepend(oldMeta);
+
     var processedHtml = htmlClone[0]; //gets the element, not the jquery object
     return processedHtml.outerHTML;
 }
@@ -32,7 +39,7 @@ function parsePageBeforeSavingSite(resp){
 
     wt_$.each(wt_$("html")[0].attributes,function(i,attribute){
         html_attributes[attribute.name] = attribute.value;
-    })
+    });
 
 
     wt_$.each(wt_$.makeArray(document.styleSheets),function(i,stylesheet){

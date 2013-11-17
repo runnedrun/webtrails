@@ -16,6 +16,13 @@ TPreview = function(){
     this.show = function() {
         currentSiteFrame && currentSiteFrame.show();
     }
+    this.getCurrentIframe = function() {
+        return currentSiteFrame;
+    }
+
+    this.getCurrentIDoc = function() {
+        return getSiteIDoc(currentNote.site);
+    }
 
     this.setIframeContent = function($iframe,html) {
         var iDoc = getIDoc($iframe)[0];
@@ -36,6 +43,7 @@ TPreview = function(){
             height: "100%",
             "z-index": "2147483645"
         });
+
         $(document.body).find(".siteDisplayDiv").append(siteHtmlIframe);
         return siteHtmlIframe
     }
@@ -56,6 +64,7 @@ TPreview = function(){
         var siteHtmlIframe = addEmptyIframeToPreview(note.site);
         var iframeDocument = thisTrailPreview.setIframeContent(siteHtmlIframe, note.getSiteRevisionHtml() || "Uh oh");
         currentSiteFrame = siteHtmlIframe;
+        new SaveButtonCreator(note, iframeDocument, currentSiteFrame[0]);
         return $(iframeDocument);
     }
 
@@ -80,13 +89,15 @@ TPreview = function(){
             },$iDoc[0]);
         }
         Toolbar.update(currentNote)
-    }
+    };
 
     this.highlightNote = function(note) {
+        return thisTrailPreview.highlightElements(thisTrailPreview.getNoteElements(note));
+    };
+
+    this.getNoteElements = function(note) {
         var siteIDoc = getSiteIDoc(note.site);
-        var noteElements = $("wtHighlight[data-trail-id="+Trails.getCurrentTrailId()+"]", siteIDoc);
-        thisTrailPreview.highlightElements(noteElements);
-        return noteElements
+        return $("wtHighlight[data-trail-id="+Trails.getCurrentTrailId()+"].current-highlight", siteIDoc)
     }
 
     this.showNextNote = function() {
@@ -135,15 +146,21 @@ TPreview = function(){
     }
 
     this.highlightElements = function($elements) {
-        $elements.css({
+        return $elements.css({
             "background": "yellow"
+        })
+    }
+
+    this.unHighlightElements = function($elements) {
+        return $elements.css({
+            "background": "none"
         })
     }
 
     this.updateWithNewNote = function(newNote) {
         if (!currentNote || (parseInt(currentNote.site.id) <= parseInt(newNote.site.id))){
             currentNote = newNote;
-            this.displayNote(currentNote, !toolbarShown);
+            thisTrailPreview.displayNote(currentNote);
         }
         Toolbar.update(currentNote);
     }
@@ -212,5 +229,7 @@ BaseRevisionNote = function(site){
     this.getPositionInSite = function() {
         return 0;
     }
+
+    this.id = "base";
     this.isBase = true;
 }

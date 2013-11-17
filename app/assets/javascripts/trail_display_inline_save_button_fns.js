@@ -146,7 +146,7 @@ function clickAndRemoveSaveButton(e,overlayLeft,overlayTop,overLaySpacing,highli
 }
 
 function getNodeLineHeight(element) {
-    var fontsize = getComputedStyleOfElementInIframe(element, "font-size");
+    var fontsize = getComputedStyleOfElement(element, "font-size");
     if (fontsize) {
         return parseInt(fontsize.replace("px",""))*1.5 || 20; //default to 20
     } else {

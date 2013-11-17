@@ -11,9 +11,8 @@ var trailDisplay,
     nextNoteButton,
     previousNoteID,
     siteHTML = getCurrentSiteHTML(),
-
+    siteSaved=false,
     TrailPreview = false,
-    changeObserver;
     loggedIn = false;
     faviconsFetched = false;
 //    webTrailsUrl = "http://www.webtrails.co";

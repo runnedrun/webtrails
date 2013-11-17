@@ -64,4 +64,15 @@ class Trail < ActiveRecord::Base
     self.sites.map { |site| site.id.to_s }
   end
 
+  def get_update_hash()
+    {
+        :id => self.id,
+        :sites => {
+            :order => self.site_list,
+            :siteObjects => Hash[self.sites.map { |site|[site.id, site.get_update_hash] }]
+        }
+
+    }
+  end
+
 end

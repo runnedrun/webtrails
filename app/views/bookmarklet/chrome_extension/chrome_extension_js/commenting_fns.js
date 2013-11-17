@@ -67,6 +67,8 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     });
 
     var reachedFirstTextNode = false;
+
+    $("wtHighlight").removeClass("current-highlight");
     wt_$.each(nodes,function(i,node){
         if (i == 0 || !reachedFirstTextNode){
             reachedFirstTextNode = markNodeForHighlight(node,highlightedRange.startOffset,node.length);
@@ -161,8 +163,10 @@ function markNodeForHighlight(node,start_offset, end_offset){
         var unhighlighted_prepend = contents.slice(0,start_offset);
         var unhighlighted_append = contents.slice(end_offset,contents.length);
         var new_marker = document.createElement("wtHighlight");
-//        wt_$(new_marker).addClass("highlightMe").addClass('client_side_id_' + String(Trails.getNoteCount()));
-        wt_$(new_marker).addClass("highlightMe");
+
+        // need the currentHighlight class to distinguish between this note, and previous notes that are still
+        // in the html, but should not be highlighted
+        wt_$(new_marker).addClass("highlightMe current-highlight");
         wt_$(new_marker).attr("data-trail-id", Trails.getCurrentTrailId());
 
         new_marker.innerHTML = highlighted_contents;

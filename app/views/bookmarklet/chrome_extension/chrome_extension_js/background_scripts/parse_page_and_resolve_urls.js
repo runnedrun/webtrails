@@ -153,6 +153,7 @@ function checkIfAllResourcesAreParsed(callbackTracker){
     if ((callbackTracker.styleSheetsLeft == 0) && callbackTracker.html){
         console.log("everything is parsed!");
         console.log(callbackTracker);
+
         wt_$.ajax({
             url: domain + "/sites",
             type: "post",

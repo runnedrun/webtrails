@@ -27,7 +27,7 @@ class SitesController < ApplicationController
       params[:noteId] ? note = Note.find(params[:noteId]) : note = false
       resources_to_download = params[:originalToAwsUrlMap] || {}
       style_sheets_to_save = params[:styleSheets] || {}
-      html_to_save = params[:html]
+      html_to_save = params[:html] || []
       is_iframe = params[:isIframe]
       revision_number = params[:revision]
       is_base_revision = params[:isBaseRevision]
@@ -42,7 +42,7 @@ class SitesController < ApplicationController
         end
       end.resume
 
-      render :json => {"message" => "success!"}
+      render :json => {:message => "success!"}
     rescue
       puts "site create failed"
       puts $!.message
@@ -68,16 +68,27 @@ class SitesController < ApplicationController
       if !trail
         render_not_authorized
       end
+
       site_id = params[:site][:id]
       site = trail.sites.find(site_id)
+
       if !site
         render_not_authorized
       end
 
-      site.update_html(html)
-      params[:note][:site_id] = site_id
+      revision_number = params[:note][:site_revision_number]
+      site.update_html(html, revision_number)
+
+      #params[:note][:site_id] = site_id
       @note = Note.create!(params[:note])
-      render :json => {:trail_id => trail_id,:site_id => site_id,:note => @note,:new_note_row => render_to_string(partial: 'trails/note_row', locals: { :note => @note, :site_id => site_id })}, :status => 200
+      render(:json => {
+            :trail_id => trail_id,
+            :site_id => site_id,
+            :note => @note,
+            :new_note_row => render_to_string(partial: 'trails/note_row', locals: { :note => @note, :site_id => site_id }),
+            :trail_update_hash => trail.get_update_hash
+          },
+          :status => 200)
     rescue
       puts $!.message
       render_server_error_ajax

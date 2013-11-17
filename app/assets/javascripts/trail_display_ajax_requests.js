@@ -46,4 +46,17 @@ Request = new function(){
             success: function(e){ console.log("note deleted"), callback(e)}
         })
     };
+    this.addNote = function(newNote, currentNote, currentHtml, callback) {
+        $.ajax({
+            url: "/sites/new_note_from_view_page",
+            type: "post",
+            data: {
+                "site[id]": currentNote.site.id, //this is probably unnecesary
+                "site[trail_id]": currentNote.site.trail.id,
+                "note": newNote,
+                "html": currentHtml
+            },
+            success: callback
+        });
+    }
 }();

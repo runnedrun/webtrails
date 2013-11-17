@@ -6,14 +6,28 @@ class Site < ActiveRecord::Base
   after_create :set_position
 
 
-  def update_html(html)
+  def update_html(html, revision_number)
     uri = URI(self.archive_location)
     bucket_location = uri.path.gsub(/(\/TrailsSitesProto\/)|(\/TrailsSitesProto)/,"")
-    s3 = AWS::S3.new
-    bucket = s3.buckets["TrailsSitesProto"]
-    newFile = bucket.objects[bucket_location]
-    newFile.write(html)
-    newFile.acl = :public_read
+    Fiber.new do
+      EM.synchrony do
+        begin
+          puts "updating site html now"
+          s3 = AWS::S3.new
+          bucket = s3.buckets["TrailsSitesProto"]
+          newFile = bucket.objects[File.join(bucket_location, revision_number.to_s).to_s]
+          puts File.join(bucket_location, revision_number.to_s).to_s
+          newFile.write(html)
+          puts "done updating setting to public read"
+          newFile.acl = :public_read
+          puts "set to public read"
+        rescue
+          puts "had a problem updating the html for site: " + self.id
+        end
+      end
+    end.resume
+    self.add_revision(revision_number)
+    self.save
   end
 
   def set_position
@@ -44,7 +58,8 @@ class Site < ActiveRecord::Base
   end
 
   def get_revisions()
-    if rev_nums = self.revision_numbers
+    rev_nums = self.revision_numbers
+    if rev_nums
       rev_nums.split(",")
     else
       []
@@ -81,6 +96,20 @@ class Site < ActiveRecord::Base
 
   def base_archive_location
     File.join([self.archive_location, self.base_revision_number.to_s])
+  end
+
+  def get_update_hash()
+    {
+        :baseRevisionNumber => self.base_revision_number,
+        :revisionUrls => Hash[self.get_revisions.zip(self.get_revision_urls)],
+        :html => {},
+        :id => self.id,
+        :notes => {
+            :order => self.note_list,
+            :noteObjects => Hash[self.notes.map{ |note| [note.id, note.get_update_hash] }]
+        },
+        :url => self.url
+    }
   end
 
 end

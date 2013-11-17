@@ -59,14 +59,6 @@ TrailsObject = function(trailsObject, currentTrailId){
     this.incrementNoteCount = function() {
         return this.getCurrentTrail().currentSiteNoteCount ++
     }
-
-    this.decrementNoteCount = function() {
-        return this.getCurrentTrail().currentSiteNoteCount --
-    }
-
-    this.getNoteCount = function() {
-        return this.getCurrentTrail().currentSiteNoteCount
-    }
 }
 
 Trail = function(trailObject){
@@ -151,22 +143,6 @@ Trail = function(trailObject){
 
     this.isCurrentTrail = function(){
         return Trails.getCurrentTrail() == this && TrailPreview;
-    };
-
-    this.getCurrentRevision = function() {
-        return currentSiteRevision;
-    };
-
-    this.incrementRevision = function() {
-        return currentSiteRevision += 1;
-    };
-
-    // gets the current revision and increments the revision
-    // not the best way to do this. should have mutex, but better than doing not at the same time
-    this.getAndIncrementRevision = function() {
-        var rev = this.getCurrentRevision();
-        this.incrementRevision();
-        return rev;
     };
 
     this.updateSiteOrder = function(newSiteOrder) {
@@ -318,6 +294,13 @@ Site = function(siteObject, parentTrail){
     this.delete = function() {
         thisSiteObject.trail.deleteSite(this);
     }
+
+    this.getNextRevisionNumber = function() {
+        var revisionNumbers = $.map(Object.keys(thisSiteObject.revisions), function (revisionNumber, i) {
+          return parseInt(revisionNumber);
+        });
+        return Math.max(revisionNumbers) + 1;
+    };
 
     $.each(siteObject.notes.noteObjects, function(noteId, noteObject){
         thisSiteObject.addNote(noteObject);

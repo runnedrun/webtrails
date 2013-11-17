@@ -78,7 +78,7 @@ TToolBar  = function(trailPreview, panelView){
     function expandCurrentSiteFavicon(currentNote) {
         $(".faviconImage").removeClass("active-favicon");
         if (currentNote) {
-            $("[data-site-id=" + currentNote.site.id + "]").addClass("active-favicon");
+            $(".faviconImage[data-site-id=" + currentNote.site.id + "]").addClass("active-favicon");
         }
     }
 
