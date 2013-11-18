@@ -1,4 +1,4 @@
-Comment = function(note, top, left, trailPreview) {
+Comment = function(note, top, left, trailPreview, $siteDocument) {
     var spacing = 30;
     var editButton;
     var commentTextElement;
@@ -116,7 +116,7 @@ Comment = function(note, top, left, trailPreview) {
 //        var overlayHeightString = getComputedStyleOfElementInIframe(commentContainer[0],"height");
 //        var overlayHeightFloat = parseFloat(overlayHeightString.slice(0,overlayHeightString.length -2));
 
-        var topPosition  =  top - spacing
+        var topPosition  =  top - spacing;
     //    if (topPosition < 0) {
     //        topPosition = yPos + spacing * 2;
     //    }
@@ -291,4 +291,7 @@ Comment = function(note, top, left, trailPreview) {
 
     this.commentContainer = this.createCommentContainer();
     var thisComment = this;
+    if ($siteDocument.length > 0) {
+        $siteDocument.find("body").append(this.commentContainer);
+    }
 }

@@ -104,7 +104,6 @@ class ResourceHandler
     begin
       aws_path_with_rev = revision_number ? File.join(aws_path, revision_number.to_s) : aws_path
       newFile = @bucket.objects[aws_path_with_rev]
-      puts "options are" + options.to_s if options
       newFile.write(data,{:acl => :public_read, :cache_control => "max-age=157680000, public"}.merge(options))
       @previously_saved_resource_set.add(resource_url) if resource_url
       return "https://s3.amazonaws.com/TrailsSitesProto/" + aws_path

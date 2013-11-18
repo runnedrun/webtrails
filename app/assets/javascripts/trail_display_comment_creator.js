@@ -1,7 +1,6 @@
 var CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, siteDocument) {
 
-    function saveNoteAndRefreshAWS(comment){
-        var noteOffsets = $siteDocument.find("wtHighlight.highlightMe").first().offset();
+    function saveNoteAndRefreshAWS(comment, noteOffsets){
         var newNote = {
             site_id: currentNote.site.id,
             content: noteContent,
@@ -13,12 +12,16 @@ var CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote
             scroll_y: noteOffsets.top,
             site_revision_number: currentNote.site.getNextRevisionNumber()
         };
-        Request.addNote(newNote, currentNote, cleanHtmlForSaving(), addNewNoteToClientSideStorage)
+        var cleanHtml = cleanHtmlForSaving();
+        Request.addNote(newNote, currentNote, cleanHtml, function(resp) {
+            addNewNoteToClientSideStorage(resp, cleanHtml);
+        })
     }
 
     function closeOverlay(){
         $siteDocument.unbind("mousedown", clickAway);
         commentOverlay.remove();
+        unHighlightNewNote();
     }
 
     function clickAway(e){
@@ -26,6 +29,19 @@ var CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote
         if (clickedNode != commentOverlay && ($.inArray(e.target,commentOverlay.children())==-1)){
             closeOverlay(commentOverlay);
             saveNoteAndRefreshAWS(commentOverlay.find("textarea").val());
+        }
+    }
+
+    function postNoteAndComment(e){
+        console.log("posting note");
+        var code = (e.keyCode ? e.keyCode : e.which);
+        if (code == 13 && !e.shiftKey){
+            comment = commentOverlay.find("textarea").val();
+            var noteOffsets = $siteDocument.find("wtHighlight.highlightMe").first().offset();
+            closeOverlay();
+            saveNoteAndRefreshAWS(comment, noteOffsets);
+        } else if(code == 27){
+            closeOverlay();
         }
     }
 
@@ -67,11 +83,16 @@ var CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote
     }
 
     // this is the functionality for saving to server and updating client side storage
-    function addNewNoteToClientSideStorage(resp){
+
+    function addNewNoteToClientSideStorage(resp, cleanHtml){
         console.log("adding new note client side");
-        var trailUpdateHash = resp.trail_update_hash;
-        Trail.updateSites(resp.trail_update_hash)
-    //        addNoteToNoteList(resp.site_id, resp.new_note_row);
+        currentNote.site.addRevision(resp.note_revision_number, cleanHtml);
+        var newNote = currentNote.site.addNote(resp.note_update_hash);
+        //        addNoteToNoteList(resp.site_id, resp.new_note_row);
+    }
+
+    function unHighlightNewNote(){
+        $siteDocument.find("wtHighlight.highlightMe").removeClass("highlightMe").css("background","none");
     }
 
     function addNoteToNoteList(siteID, noteHtml){
@@ -85,8 +106,9 @@ var CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote
     }
 
     function cleanHtmlForSaving() {
-        var htmlClone = $(document.getElementsByTagName('html')[0]).clone();
+        var htmlClone = $(siteDocument.getElementsByTagName('html')[0]).clone();
         removeInsertedHtml(htmlClone); // edits in-place
+        htmlClone.find("wtHighlight").css({"background": "none"});
         return htmlClone[0].outerHTML;
     }
 
@@ -94,17 +116,6 @@ var CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote
         $htmlClone.find('.webtrails').remove();
     }
 
-    function postNoteAndComment(e){
-        console.log("posting note");
-        var code = (e.keyCode ? e.keyCode : e.which);
-        if (code == 13 && !e.shiftKey){
-            comment = commentOverlay.find("textarea").val();
-            closeOverlay();
-            saveNoteAndRefreshAWS(comment);
-        } else if(code == 27){
-            closeOverlay();
-        }
-    }
 
     var CSS = {
         commentOverlay: {
@@ -181,12 +192,13 @@ var CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote
 
     commentBox.autosize();
     commentBox.focus();
+
     var nodes = highlightedRange.getNodes();
 
     // the start offset indicates the offset from the beginning of the first text node,
     // if the range does not begin with a text node we have to walk the range until we find one.
     var reachedFirstTextNode = false;
-    $("wtHighlight").removeClass("current-highlight");
+    $siteDocument.find("wtHighlight").removeClass("current-highlight").addClass("old-highlight");
     $.each(nodes,function(i,node){
         if (i == 0 || !reachedFirstTextNode){
             reachedFirstTextNode = markNodeForHighlight(node, highlightedRange.startOffset, node.length);

@@ -86,7 +86,8 @@ class SitesController < ApplicationController
             :site_id => site_id,
             :note => @note,
             :new_note_row => render_to_string(partial: 'trails/note_row', locals: { :note => @note, :site_id => site_id }),
-            :trail_update_hash => trail.get_update_hash
+            :note_revision_number => @note.site_revision_number,
+            :note_update_hash => @note.get_update_hash
           },
           :status => 200)
     rescue

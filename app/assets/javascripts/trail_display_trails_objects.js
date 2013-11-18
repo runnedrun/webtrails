@@ -170,7 +170,12 @@ Site = function(siteObject, parentTrail){
     this.addNote = function(baseNoteObject){
         var newNote = notes[baseNoteObject.id] = new Note(baseNoteObject, thisSiteObject);
         noteOrder.push(baseNoteObject.id);
+        newNote.updateTrailPreviewWithNote();
         return newNote
+    };
+
+    this.addRevision = function(revisionNumber, html) {
+        this.revisions[revisionNumber] = html;
     };
 
     this.removeNote = function(note) {
@@ -297,9 +302,10 @@ Site = function(siteObject, parentTrail){
 
     this.getNextRevisionNumber = function() {
         var revisionNumbers = $.map(Object.keys(thisSiteObject.revisions), function (revisionNumber, i) {
-          return parseInt(revisionNumber);
+          var revInt = parseInt(revisionNumber);
+          return isNaN(revInt) ? -1 : revInt;
         });
-        return Math.max(revisionNumbers) + 1;
+        return Math.max.apply(null, revisionNumbers) + 1;
     };
 
     $.each(siteObject.notes.noteObjects, function(noteId, noteObject){
@@ -381,5 +387,7 @@ Note = function(baseNoteObject, parentSite){
     };
 
     this.update(baseNoteObject);
-    if (this.site.trail.isCurrentTrail()) { TrailPreview.updateWithNewNote(this) }
+    this.updateTrailPreviewWithNote = function() {
+        if (this.site.trail.isCurrentTrail()) { TrailPreview.updateWithNewNote(thisNoteObject) };
+    }
 }

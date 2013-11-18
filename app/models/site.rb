@@ -12,17 +12,20 @@ class Site < ActiveRecord::Base
     Fiber.new do
       EM.synchrony do
         begin
-          puts "updating site html now"
+          puts "updating site html now with revision: " + revision_number.to_s
           s3 = AWS::S3.new
           bucket = s3.buckets["TrailsSitesProto"]
           newFile = bucket.objects[File.join(bucket_location, revision_number.to_s).to_s]
           puts File.join(bucket_location, revision_number.to_s).to_s
-          newFile.write(html)
-          puts "done updating setting to public read"
-          newFile.acl = :public_read
-          puts "set to public read"
+          newFile.write(html,{
+            :acl => :public_read,
+            :cache_control => "max-age=157680000, public",
+            :content_type => "text/html; charset=UTF-8"
+          })
+          puts "done uploading, at address: " + newFile.public_url.to_s
         rescue
-          puts "had a problem updating the html for site: " + self.id
+          puts "had a problem updating the html for site: " + self.id.to_s
+          puts $!.message
         end
       end
     end.resume

@@ -7,6 +7,7 @@ TPreview = function(){
     var shown = false;
     var thisTrailPreview = this;
     var commentBoxToggled = false;
+    this.previousComment;
     this.height = 200;
 
     this.getCurrentNote = function() { return currentNote }
@@ -21,7 +22,7 @@ TPreview = function(){
     }
 
     this.getCurrentIDoc = function() {
-        return getSiteIDoc(currentNote.site);
+        return getNoteIDoc(currentNote);
     }
 
     this.setIframeContent = function($iframe,html) {
@@ -34,8 +35,8 @@ TPreview = function(){
         return $iframe[0].contentWindow.document;
     }
 
-    function addEmptyIframeToPreview(site, hideIframe) {
-        var siteHtmlIframe = $("<iframe data-trail-id='" + site.trail.id + "' data-site-id='"+site.id+"' seamless='seamless' class='wt-site-preview webtrails'>");
+    function addEmptyIframeToPreview(note, hideIframe) {
+        var siteHtmlIframe = $("<iframe data-trail-id='" + note.site.trail.id + "' data-site-id='" + note.site.id +"' data-note-id=" + note.id + " seamless='seamless' class='wt-site-preview webtrails'>");
         console.log("iframe", siteHtmlIframe);
         siteHtmlIframe.attr('src',"about:blank");
         siteHtmlIframe.css({
@@ -61,7 +62,7 @@ TPreview = function(){
 
     this.switchToNoteRevision = function(note) {
         currentSiteFrame && currentSiteFrame.remove();
-        var siteHtmlIframe = addEmptyIframeToPreview(note.site);
+        var siteHtmlIframe = addEmptyIframeToPreview(note);
         var iframeDocument = thisTrailPreview.setIframeContent(siteHtmlIframe, note.getSiteRevisionHtml() || "Uh oh");
         currentSiteFrame = siteHtmlIframe;
         new SaveButtonCreator(note, iframeDocument, currentSiteFrame[0]);
@@ -74,6 +75,7 @@ TPreview = function(){
         if (!note.isBase) {
             $iDoc.scrollTop(note.scrollY-300).scrollLeft(note.scrollX);
             var comment = displayComment(note.scrollY, note.scrollX);
+            if (!thisTrailPreview.previousComment) { thisTrailPreview.previousComment = comment};
             runWhenLoaded(function() {
                 var noteElements = thisTrailPreview.highlightNote(note);
                 var noteLocation = noteElements.first().offset();
@@ -83,7 +85,7 @@ TPreview = function(){
                     console.log("correcting scroll", noteLocation.top, note.scrollY);
                     console.log(noteLocation.left, note.scrollX);
                     $iDoc.scrollTop(scrollTop).scrollLeft(scrollLeft);
-                    comment.remove();
+//                    comment.remove();
                     displayComment(scrollLeft, scrollTop);
                 }
             },$iDoc[0]);
@@ -96,7 +98,7 @@ TPreview = function(){
     };
 
     this.getNoteElements = function(note) {
-        var siteIDoc = getSiteIDoc(note.site);
+        var siteIDoc = getNoteIDoc(note);
         return $("wtHighlight[data-trail-id="+Trails.getCurrentTrailId()+"].current-highlight", siteIDoc)
     }
 
@@ -161,8 +163,9 @@ TPreview = function(){
         if (!currentNote || (parseInt(currentNote.site.id) <= parseInt(newNote.site.id))){
             currentNote = newNote;
             thisTrailPreview.displayNote(currentNote);
+        } else {
+            Toolbar.update(currentNote);
         }
-        Toolbar.update(currentNote);
     }
 
     this.toggleOrUntoggleCommentBox = function() {
@@ -200,13 +203,12 @@ TPreview = function(){
     };
 
     function displayComment(scrollY, scrollX) {
-        var comment = new Comment(currentNote, scrollY, scrollX, thisTrailPreview);
-        getSiteIDoc(currentNote.site).find("body").append(comment.commentContainer);
-        return comment;
+//        getSiteIDoc(currentNote.site).find("body").append(comment.commentContainer);
+        return new Comment(currentNote, scrollY, scrollX, thisTrailPreview, getNoteIDoc(currentNote))
     }
 
-    function getSiteIDoc(site) {
-        return getIDoc($(".wt-site-preview[data-site-id='" + site.id + "']"));
+    function getNoteIDoc(note) {
+        return getIDoc($(".wt-site-preview[data-note-id='" + note.id + "']"));
     }
 
     function getIWindow($iframe) {
