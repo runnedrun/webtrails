@@ -7,23 +7,36 @@ TPreview = function(){
     var shown = false;
     var thisTrailPreview = this;
     var commentBoxToggled = false;
+    var halfPageViewScale = .6
+
     this.previousComment;
     this.height = 200;
+    var halfPageViewToggled = false;
 
+    this.noteViewer = new NoteViewer(this, halfPageViewScale);
     this.getCurrentNote = function() { return currentNote }
     this.hide = function() {
         currentSiteFrame && currentSiteFrame.hide();
-    }
+    };
     this.show = function() {
         currentSiteFrame && currentSiteFrame.show();
-    }
+    };
     this.getCurrentIframe = function() {
         return currentSiteFrame;
-    }
-
+    };
     this.getCurrentIDoc = function() {
         return getNoteIDoc(currentNote);
-    }
+    };
+    this.enableHalfPageView = function() {
+            halfPageFrame(currentSiteFrame);
+            disableSelectionInIframe(currentSiteFrame[0]);
+            halfPageViewToggled = true;
+    };
+    this.disableHalfPageView = function() {
+        fullPageFrame(currentSiteFrame);
+        enableSelectionInIframe(currentSiteFrame[0]);
+        halfPageViewToggled = false;
+    };
 
     this.setIframeContent = function($iframe,html) {
         var iDoc = getIDoc($iframe)[0];
@@ -45,8 +58,57 @@ TPreview = function(){
             "z-index": "2147483645"
         });
 
-        $(document.body).find(".siteDisplayDiv").append(siteHtmlIframe);
+        $(document.body).find(".siteDisplayDiv").append(halfPageViewToggled ? halfPageFrame(siteHtmlIframe) : siteHtmlIframe);
+        if (halfPageViewToggled) {
+//            halfPageFrame(siteHtmlIframe);
+            disableSelectionInIframe(siteHtmlIframe[0]);
+        }
         return siteHtmlIframe
+    }
+
+     function halfPageFrame(iframe) {
+        return scaleIframe(iframe, halfPageViewScale);
+    }
+
+    function fullPageFrame(iframe) {
+        return scaleIframe(iframe, 1)
+        .css({
+            height:"100%",
+            width:"100%"
+        });
+    }
+
+    function disableSelectionInIframe(iframe){
+        $(iframe.contentWindow.document.body).mousedown(preventClick);
+    }
+
+    function enableSelectionInIframe(iframe){
+        $(iframe.contentWindow.document.body).unbind("mousedown", preventClick);
+        $(iframe.contentWindow.document.body).css({
+            "-webkit-touch-callout": "all",
+            "-webkit-user-select": "all",
+            "-khtml-user-select": "all",
+            "-moz-user-select": "all",
+            "-ms-user-select": "all",
+            "user-select": "all"
+        })
+    }
+
+    function scaleIframe($iframe, iframeScale){
+        return $iframe.css({
+            "-moz-transform": "scale(" + iframeScale + ", " + iframeScale + ")",
+            "-webkit-transform": "scale(" + iframeScale + ", " + iframeScale + ")",
+            "-o-transform": "scale(" + iframeScale + ", " + iframeScale + ")",
+            "-ms-transform": "scale(" + iframeScale + ", " + iframeScale + ")",
+            "transform": "scale(" + iframeScale + ", " + iframeScale + ")",
+            "-moz-transform-origin": "top left",
+            "-webkit-transform-origin": "top left",
+            "-o-transform-origin": "top left",
+            "-ms-transform-origin": "top left",
+            "transform-origin": "top left",
+            "height": String($(window).height() *.93*2)+"px",
+            //        "width": String($(window).width())+"px"
+        });
     }
 
     this.initWithTrail = function(trailToPreview) {
@@ -72,6 +134,7 @@ TPreview = function(){
     this.displayNote = function(note) {
         var $iDoc = thisTrailPreview.switchToNoteRevision(note);
         currentNote = note;
+        thisTrailPreview.noteViewer.highlightNoteInList(note);
         if (!note.isBase) {
             $iDoc.scrollTop(note.scrollY-300).scrollLeft(note.scrollX);
             var comment = displayComment(note.scrollY, note.scrollX);
@@ -214,6 +277,19 @@ TPreview = function(){
     function getIWindow($iframe) {
         return $($iframe[0].contentWindow);
     }
+
+    function preventClick(e){
+        var $target = $(e.target);
+        // check if the clicked thing is the comment box, we need that clickable for editing
+        if (!($target.is(".comment-text") || $target.parents(".comment-text").length)){
+            console.log("default prevented")
+            return false
+        } else{
+            console.log("clicked comment box, allowing");
+            return true
+        }
+    }
+
 }
 
 // the note like class which is used for displaying base revisiosn

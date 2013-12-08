@@ -1,11 +1,12 @@
 PanelView = function(trailPreview) {
     var shown = false;
     var percentPerIframe = .23;
+    var thisPanelView;
 
     this.showOrHide = function() {
         console.log("showing or hiding panels");
         if (shown) {
-            hidePanels();
+            thisPanelView.hidePanels();
         } else {
 //            if (noteViewActive){
 //                disableNoteViewMode();
@@ -25,7 +26,7 @@ PanelView = function(trailPreview) {
         displayPanels();
     }
 
-    function hidePanels() {
+    this.hidePanels = function() {
         console.log("unshrink");
         $('.wt-site-panel').remove();
         $('.siteClickDiv').remove();

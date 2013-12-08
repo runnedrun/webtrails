@@ -116,7 +116,8 @@ function fetchSiteHtml() {
         Trail = Trails.getCurrentTrail();
         TrailPreview = new TPreview();
         PanelView = new PanelView(TrailPreview);
-        Toolbar = new TToolBar(TrailPreview, PanelView);
+        NoteViewer = TrailPreview.noteViewer;
+        Toolbar = new TToolBar(TrailPreview, PanelView, NoteViewer);
         Trails.switchToTrail(Trail.id);
     })
 }

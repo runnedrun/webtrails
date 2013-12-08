@@ -183,6 +183,11 @@ Site = function(siteObject, parentTrail){
         noteOrder.splice(noteOrder.indexOf(note.id),1);
     };
 
+    this.updateNoteOrder = function(newNoteOrder) {
+        console.log("updating Note order");
+        noteOrder = newNoteOrder;
+    }
+
     this.isCurrentSite = function() {
         return this.id == Trail.getCurrentSiteId();
     }
@@ -308,9 +313,9 @@ Site = function(siteObject, parentTrail){
         return Math.max.apply(null, revisionNumbers) + 1;
     };
 
-    $.each(siteObject.notes.noteObjects, function(noteId, noteObject){
-        thisSiteObject.addNote(noteObject);
-    })
+    $.each(siteObject.notes.order, function(i,noteId) {
+        thisSiteObject.addNote(siteObject.notes.noteObjects[noteId]);
+    });
 }
 
 Note = function(baseNoteObject, parentSite){

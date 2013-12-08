@@ -1,4 +1,4 @@
-TToolBar  = function(trailPreview, panelView){
+TToolBar  = function(trailPreview, panelView, noteViewer){
     var thisToolbar = this;
     var nextNoteButton = $("#nextNote").click(trailPreview.showNextNote);
     var previousNoteButton = $("#previousNote").click(trailPreview.showPreviousNote);
@@ -15,6 +15,7 @@ TToolBar  = function(trailPreview, panelView){
         containment: ".siteFaviconsHolder",
         update: changeSiteOrder
     });
+    var noteViewModeButton = $("#noteViewMode").click(noteViewer.initOrDisableNoteView);
 
     function changeSiteOrder(event, ui){
         var faviconThatWasDragged = ui.item;

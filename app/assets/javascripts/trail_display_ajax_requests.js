@@ -46,6 +46,7 @@ Request = new function(){
             success: function(e){ console.log("note deleted"), callback(e)}
         })
     };
+
     this.addNote = function(newNote, currentNote, currentHtml, callback) {
         $.ajax({
             url: "/sites/new_note_from_view_page",
@@ -58,5 +59,19 @@ Request = new function(){
             },
             success: callback
         });
-    }
+    };
+
+    this.updateNoteOrder = function(newNoteOrder, siteId){
+        $.ajax({
+            url:"/sites/update_note_list",
+            method:"post",
+            data:{
+                "note_array": newNoteOrder,
+                "id" : siteId
+            },
+            success:function(){
+                console.log("updated positions server side");
+            }
+        })
+    };
 }();
