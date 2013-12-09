@@ -39,7 +39,7 @@ TToolBar  = function(trailPreview, panelView, noteViewer){
     }
 
     function changeToSiteOnClick(e) {
-        var faviconElement = $(e.target);
+        var faviconElement = $(e.delegateTarget);
         trailPreview.showSite(Trail.getSite(faviconElement.data("site-id")));
     }
 

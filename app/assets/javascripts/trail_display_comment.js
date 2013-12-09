@@ -3,6 +3,10 @@ Comment = function(note, top, left, trailPreview, $siteDocument) {
     var editButton;
     var commentTextElement;
 
+    this.update = function() {
+        commentTextElement.html(note.comment);
+    }
+
     this.remove = function(){
         thisComment.commentContainer.remove();
     };
@@ -120,9 +124,12 @@ Comment = function(note, top, left, trailPreview, $siteDocument) {
     //    if (topPosition < 0) {
     //        topPosition = yPos + spacing * 2;
     //    }
+        var offsetFromBottom = $siteDocument.height() - top + spacing;
+
         var leftPosition = left;
-        commentContainer.css("top", topPosition+"px");
+        commentContainer.css("bottom", offsetFromBottom +"px");
         commentContainer.css("left", leftPosition+"px");
+        $siteDocument.find("html").css("position","relative");
         return commentContainer;
     };
 
@@ -248,7 +255,7 @@ Comment = function(note, top, left, trailPreview, $siteDocument) {
 
     var HTML = {
         commentContainer: function() {
-            return applyDefaultCSS($("<div>"))
+            return $("<div>")
                 .css(CSS.commentContainer)
                 .addClass("commentOverlay")
                 .addClass("webtrails");

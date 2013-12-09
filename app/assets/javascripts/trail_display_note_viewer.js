@@ -6,7 +6,13 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
         toggledButtonText: "Presentation View"
     }
     var $noteList = $(".noteViewer");
-    makeNotesDragable();
+    $(".noteInfo").click(clickJumpToNote);
+
+    if (canEdit()) {
+        makeNotesDragable();
+        $(".note-view-comment").click(editNoteIfSelected);
+    }
+
     var thisNoteViewer = this;
 
     this.initOrDisableNoteView = function() {
@@ -14,6 +20,16 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
             disableNoteViewMode();
         }else{
             initNoteViewMode()
+        }
+    };
+
+    this.addNote = function(note, noteElementString) {
+        var noteElement = $(noteElementString);
+        $(".noteWrapper[data-site-id=" + note.site.id + "]").append(noteElement);
+        noteElement.click(clickJumpToNote);
+        if (canEdit()) {
+            makeNoteElementDragable(noteElement);
+            noteElement.find(".note-view-comment").click(editNoteIfSelected);
         }
     };
 
@@ -35,37 +51,63 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
         noteViewActive = false;
     }
 
-    function makeNoteCommentEditable(e){
+    function editNoteIfSelected(e){
         console.log("editing note");
-        var noteInfo = $(e.delegateTarget);
-        if (noteInfo.parent().parent().hasClass("selected-note")){
-            editCurrentComment(noteInfo);
+        var noteComment = $(e.delegateTarget);
+        if (noteComment.parent().parent().hasClass("selected-note")){
+            editCommentText(noteComment);
             return false
         }
     }
 
-    function updateNoteOnClickAway(e,$commentText) {
-        console.log("checking for click away", e.target);
-        console.log($commentText.parent()[0]);
-        if ((e.target != $commentText[0])){
-            // if the click is anywhere but the comment then save the note and unselect
-            console.log("saving note");
-            saveCommentToServer($commentText);
-        }
+    function editCommentText($commentElement) {
+        $commentElement.unbind("click", editNoteIfSelected);
+
+        var note = Trail.getNote($commentElement.data("note-id"));
+
+        $commentElement.attr("contentEditable","true");
+
+        $(document).click(function(e) {
+            if ((e.target != $commentElement[0])){
+                Request.updateNoteComment(note, $commentElement.html(), function(resp) {
+                    noteUpdateCallback(resp, $commentElement);
+                });
+            }
+        });
+
+        $commentElement.keypress(function(e){
+            console.log("got keypress");
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13 && !e.shiftKey){
+                Request.updateNoteComment(note, $commentElement.html(), function(resp){
+                    noteUpdateCallback(resp, $commentElement);
+                });
+                return false
+            }
+        });
+
+        $commentElement.focus();
+        return false
+    }
+
+    function noteUpdateCallback(resp, $commentElement) {
+        var newComment = resp.comment || $commentElement.html();
+
+        $commentElement.attr("contentEditable","false");
+        $commentElement.click(editNoteIfSelected);
+        $commentElement.blur(); // lose focus, and blue highlight
+        var note = Trail.getNote($commentElement.data("note-id"));
+        note.updateComment(newComment);
+        trailPreview.getCurrentComment().update();
+        $commentElement.html(newComment);
     }
 
     function clickJumpToNote(e){
         var noteWrapper = $(e.delegateTarget);
-        console.log(noteWrapper.data());
-        var noteID = noteWrapper.data("note-id");
-        var siteID = noteWrapper.data("site-id");
-        // close the last note
-        console.log(getCurrentSiteID(),siteID);
-        if ( String(siteID) != getCurrentSiteID()){
-            console.log("switching sites")
-            switchToSite(siteID);
+        if (!noteWrapper.hasClass("selected-note")) {
+            var noteId = noteWrapper.data("note-id");
+            trailPreview.displayNote(Trail.getNote(noteId));
         }
-        scrollToAndHighlightNote(noteID);
     }
 
     this.highlightNoteInList = function(note){
@@ -103,27 +145,27 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
         $noteList.hide();
     }
 
-    function removeSiteFromNoteList(site){
-        var header = $(".note-list-header[data-site-id="+site.id+"]");
-        var notes =  $(".noteInfo[data-site-id="+site.id+"]");
-
-        header.remove();
-        notes.remove();
+    this.removeSiteFromNoteList = function(site) {
+        $(".note-list-header[data-site-id="+site.id+"]").remove();
+        $(".noteInfo[data-site-id="+site.id+"]").remove();
     }
 
-    function removeNoteFromNoteList(note){
-        var note =  $(".noteInfo[data-note-id="+note.id+"]");
-        note.remove();
+    this.removeNoteFromNoteList = function(note) {
+        $(".noteInfo[data-note-id="+note.id+"]").remove();
     }
 
     function makeNotesDragable(){
         $(".noteWrapper").each(function(i,wrapper){
-            $(wrapper).sortable({
-                containment: $(wrapper),
-                update: updateNoteOrder,
-                items: ".noteInfo"
-            });
+            makeNoteElementDragable($(wrapper));
         })
+    }
+
+    function makeNoteElementDragable($noteElement) {
+        $noteElement.sortable({
+            containment: $noteElement,
+            update: updateNoteOrder,
+            items: ".noteInfo"
+        });
     }
 
     function updateNoteOrder(event, ui) {

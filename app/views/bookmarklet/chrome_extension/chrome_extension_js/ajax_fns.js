@@ -63,7 +63,7 @@ function saveSiteToTrail(note){
                 }));
                 updateTrailDataWhenNoteReady(resp.note_id);
             }
-        })                                                                                                          `
+        })
     }
 
     if (!Trails.siteSavedDeeply()){

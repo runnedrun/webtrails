@@ -296,9 +296,9 @@ Site = function(siteObject, parentTrail){
         }
     };
 
-    wt_$.each(siteObject.notes.noteObjects, function(noteId, noteObject){
-        thisSiteObject.addNote(noteObject);
-    })
+    wt_$.each(siteObject.notes.order, function(i,noteId) {
+        thisSiteObject.addNote(siteObject.notes.noteObjects[noteId]);
+    });
 }
 
 Note = function(baseNoteObject, parentSite){

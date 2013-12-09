@@ -80,6 +80,7 @@ function injectScripts(tabId){
 
 function createContentScript(index_of_script, contentScriptString,tabId){
     if (index_of_script >= scriptsToBeInjected.length){
+        console.log(contentScriptString);
         chrome.tabs.executeScript(tabId,{code:contentScriptString});
         return false;
     }

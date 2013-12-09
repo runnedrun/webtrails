@@ -1,4 +1,4 @@
-var CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, siteDocument) {
+CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, siteDocument) {
 
     function saveNoteAndRefreshAWS(comment, noteOffsets){
         var newNote = {
@@ -88,7 +88,7 @@ var CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote
         console.log("adding new note client side");
         currentNote.site.addRevision(resp.note_revision_number, cleanHtml);
         var newNote = currentNote.site.addNote(resp.note_update_hash);
-        //        addNoteToNoteList(resp.site_id, resp.new_note_row);
+        TrailPreview.updateWithNewNote(newNote, resp.new_note_row)
     }
 
     function unHighlightNewNote(){

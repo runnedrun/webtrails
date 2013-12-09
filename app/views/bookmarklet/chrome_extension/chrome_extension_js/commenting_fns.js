@@ -1,6 +1,6 @@
 console.log("commenting loaded");
 
-function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
+function makeCommentOverlay(xPos, yPos, spacing, highlightedRange){
     if (!Trails.getCurrentTrail()) {
         butterBarNotification("Please create a trail or select an existing one.");
         return
@@ -66,9 +66,10 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
         "background-color": "white"
     });
 
+    var noteContent = String(highlightedRange);
     var reachedFirstTextNode = false;
 
-    $("wtHighlight").removeClass("current-highlight");
+    wt_$("wtHighlight").removeClass("current-highlight");
     wt_$.each(nodes,function(i,node){
         if (i == 0 || !reachedFirstTextNode){
             reachedFirstTextNode = markNodeForHighlight(node,highlightedRange.startOffset,node.length);
@@ -91,7 +92,7 @@ function makeCommentOverlay(xPos, yPos, spacing,highlightedRange){
     wt_$(commentOverlay).append(commentDescription);
     wt_$(commentOverlay).append(commentBox);
     commentOverlay.offset({top: topPosition, left: leftPosition});
-    var noteContent = String(highlightedRange);
+
     commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
     wt_$(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
     commentBox.autosize();

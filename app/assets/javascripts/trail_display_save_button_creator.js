@@ -6,7 +6,7 @@ var SaveButtonCreator = function(note, siteDocument, siteFrame) {
     function possibleHighlightStart(e){
         console.log("possible highlight start")
         mouseDown = 1;
-        if (!$(e.target).hasClass("webtrails") && !noteViewActive){
+        if (($(e.target).closest(".webtrails").length == 0) && !noteViewActive){
             $siteDocument.mouseup(function(){mouseDown = 0; highlightedTextDetect()});
         }
     }

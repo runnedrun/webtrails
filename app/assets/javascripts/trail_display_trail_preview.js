@@ -8,8 +8,8 @@ TPreview = function(){
     var thisTrailPreview = this;
     var commentBoxToggled = false;
     var halfPageViewScale = .6
+    var currentComment;
 
-    this.previousComment;
     this.height = 200;
     var halfPageViewToggled = false;
 
@@ -27,6 +27,9 @@ TPreview = function(){
     this.getCurrentIDoc = function() {
         return getNoteIDoc(currentNote);
     };
+    this.getCurrentComment = function() {
+        return currentComment;
+    }
     this.enableHalfPageView = function() {
             halfPageFrame(currentSiteFrame);
             disableSelectionInIframe(currentSiteFrame[0]);
@@ -137,19 +140,18 @@ TPreview = function(){
         thisTrailPreview.noteViewer.highlightNoteInList(note);
         if (!note.isBase) {
             $iDoc.scrollTop(note.scrollY-300).scrollLeft(note.scrollX);
-            var comment = displayComment(note.scrollY, note.scrollX);
-            if (!thisTrailPreview.previousComment) { thisTrailPreview.previousComment = comment};
+            currentComment = displayComment(note.scrollY, note.scrollX);
             runWhenLoaded(function() {
                 var noteElements = thisTrailPreview.highlightNote(note);
                 var noteLocation = noteElements.first().offset();
                 var scrollTop = noteLocation.top-300;
                 var scrollLeft = noteLocation.left;
-                if ((Math.abs(noteLocation.top - note.scrollY) > 10) || (Math.abs(noteLocation.left - note.scrollX) > 10)){
+                if ((Math.abs(noteLocation.top - note.scrollY) > 50) || (Math.abs(noteLocation.left - note.scrollX) > 50)){
                     console.log("correcting scroll", noteLocation.top, note.scrollY);
                     console.log(noteLocation.left, note.scrollX);
                     $iDoc.scrollTop(scrollTop).scrollLeft(scrollLeft);
-//                    comment.remove();
-                    displayComment(scrollLeft, scrollTop);
+                    currentComment.remove();
+                    currentComment = displayComment(noteLocation.top, noteLocation.left);
                 }
             },$iDoc[0]);
         }
@@ -222,7 +224,8 @@ TPreview = function(){
         })
     }
 
-    this.updateWithNewNote = function(newNote) {
+    this.updateWithNewNote = function(newNote, noteRowForViewer) {
+        this.noteViewer.addNote(newNote, noteRowForViewer);
         if (!currentNote || (parseInt(currentNote.site.id) <= parseInt(newNote.site.id))){
             currentNote = newNote;
             thisTrailPreview.displayNote(currentNote);
@@ -250,6 +253,7 @@ TPreview = function(){
                 }
                 currentSite.delete();
                 Toolbar.removeFavicon(currentSite);
+                thisTrailPreview.noteViewer.removeSiteFromNoteList(currentSite);
             });
         }
     };
@@ -258,7 +262,8 @@ TPreview = function(){
         if (canEdit()) {
             var noteToBeDeleted = note;
             Request.deleteNote(noteToBeDeleted, function() {
-                this.showSite(note.site);
+                thisTrailPreview.showSite(note.site);
+                thisTrailPreview.noteViewer.removeNoteFromNoteList(noteToBeDeleted);
                 noteToBeDeleted.delete();
                 Toolbar.update(currentNote);
             })
@@ -266,7 +271,6 @@ TPreview = function(){
     };
 
     function displayComment(scrollY, scrollX) {
-//        getSiteIDoc(currentNote.site).find("body").append(comment.commentContainer);
         return new Comment(currentNote, scrollY, scrollX, thisTrailPreview, getNoteIDoc(currentNote))
     }
 

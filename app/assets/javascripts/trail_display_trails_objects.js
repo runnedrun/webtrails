@@ -67,6 +67,7 @@ Trail = function(trailObject){
     var siteOrder = trailObject.sites.order;
     var currentSiteRevision = 0;
     var currentSiteId = false
+    var notes = {};
 
     this.id = trailObject.id;
     this.currentSiteSavedDeeply = false;
@@ -78,20 +79,24 @@ Trail = function(trailObject){
             sitesInOrder.push(sites[siteId]);
         })
         return sitesInOrder;
-    }
+    };
 
     this.getSite = function(siteId) {
         return sites[siteId];
-    }
+    };
+
+    this.getNote = function(noteId) {
+        return notes[noteId];
+    };
 
     this.getCurrentSiteId = function() {
        return currentSiteId
-    }
+    };
 
     this.setCurrentSiteId = function(id) {
         console.log("setting site id");
         currentSiteId = id
-    }
+    };
 
     this.getFirstSite = function(){
         var firstSite = this.getSites()[0];
@@ -100,7 +105,7 @@ Trail = function(trailObject){
         } else {
             return false
         }
-    }
+    };
 
     this.getLastSite = function() {
         var sitesInOrder = this.getSites();
@@ -149,6 +154,10 @@ Trail = function(trailObject){
         siteOrder = newSiteOrder;
     };
 
+    this.registerNote = function(note) {
+        notes[note.id] = note;
+    };
+
     var thisTrailObject = this;
     $.each(trailObject.sites.siteObjects,function(siteId,siteObject){
         sites[siteId] = new Site(siteObject, thisTrailObject);
@@ -170,7 +179,6 @@ Site = function(siteObject, parentTrail){
     this.addNote = function(baseNoteObject){
         var newNote = notes[baseNoteObject.id] = new Note(baseNoteObject, thisSiteObject);
         noteOrder.push(baseNoteObject.id);
-        newNote.updateTrailPreviewWithNote();
         return newNote
     };
 
@@ -392,7 +400,6 @@ Note = function(baseNoteObject, parentSite){
     };
 
     this.update(baseNoteObject);
-    this.updateTrailPreviewWithNote = function() {
-        if (this.site.trail.isCurrentTrail()) { TrailPreview.updateWithNewNote(thisNoteObject) };
-    }
+
+    parentSite.trail.registerNote(thisNoteObject);
 }
