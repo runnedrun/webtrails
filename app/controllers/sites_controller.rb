@@ -33,7 +33,6 @@ class SitesController < ApplicationController
       is_base_revision = params[:isBaseRevision]
       character_encoding = params[:characterEncoding]
 
-
       Fiber.new do
         EM.synchrony do
           puts "into snychrony we go"

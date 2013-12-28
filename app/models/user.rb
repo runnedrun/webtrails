@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  def self.find_or_create_from_omniauth_hash(omniauth_hash,whitelisted="boothedog")
+  def self.find_or_create_from_omniauth_hash(omniauth_hash, whitelisted="boothedog")
     user = nil
     if omniauth_hash
       user = User.where(:uid => omniauth_hash["uid"]).first

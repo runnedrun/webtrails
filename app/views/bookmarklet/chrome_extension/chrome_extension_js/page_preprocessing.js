@@ -31,7 +31,6 @@ function getCurrentSiteHTML(){
 function parsePageBeforeSavingSite(resp){
     console.log("sending message");
     console.log("resp.revision_number = " + resp.revision_number);
-    console.log(resp);
     var stylesheetHrefs = [];
     var stylesheetContents = [];
     var currentHTML = getCurrentSiteHTML();
@@ -56,6 +55,8 @@ function parsePageBeforeSavingSite(resp){
 //    } else {
 //        console.log("summaries", changeObserver.takeSummaries());
 //    }
+
+    console.log("is this a freakin iframe? " + resp.iframe);
     chrome.runtime.sendMessage({
         parseAndResolve:{
             html: currentHTML,

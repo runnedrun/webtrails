@@ -321,6 +321,10 @@ function makeToolBar() {
     initializeAutoResize();
     if (Trails.getCurrentTrail()) {
         insertTrailPreview();
+    } else {
+//        butterBarNotification("please create a trail from the webtrails homepage before trailing!");
+        console.log("no trails, not initializing the rest of the toolbar");
+        return
     }
 //    setTimeout(insertTrailPreview,5000);
 //    runWhenLoaded(function(){

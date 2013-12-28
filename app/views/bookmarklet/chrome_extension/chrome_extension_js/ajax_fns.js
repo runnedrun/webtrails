@@ -15,9 +15,9 @@ function saveSiteToTrail(note){
     }
 
     var currentRevisionNumber = Trails.getAndIncrementRevision();
-//    if (note) {
-//        note = wt_$.extend(note, {site_revision_number: currentRevisionNumber});
-//    }
+    if (note) {
+        note = wt_$.extend(note, {site_revision_number: currentRevisionNumber});
+    }
 
     console.log("note is ", note);
     if (!Trails.siteSavedDeeply()){
@@ -44,7 +44,6 @@ function saveSiteToTrail(note){
             }
         })
     }  else {
-        // get and increment so that the next note does not have the same revision number
         wt_$.ajax({
             url: webTrailsUrl + "/notes",
             type: "post",

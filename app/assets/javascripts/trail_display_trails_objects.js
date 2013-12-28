@@ -332,16 +332,17 @@ Note = function(baseNoteObject, parentSite){
     this.site = parentSite;
 
     this.getSiteRevisionHtml = function() {
-        return this.site.getRevisionHtml(siteRevisionNumber)
+        console.log("revision number is: ", thisNoteObject.site.getRevisionHtml(siteRevisionNumber));
+        return thisNoteObject.site.getRevisionHtml(siteRevisionNumber)
     }
 
     this.nextNote = function(){
-        var notesInOrder = this.site.getNotes();
+        var notesInOrder = thisNoteObject.site.getNotes();
         var currentIndex = notesInOrder.indexOf(this);
         if (currentIndex < (notesInOrder.length - 1)){
-            return this.site.getNote(notesInOrder[currentIndex+1].id);
+            return thisNoteObject.site.getNote(notesInOrder[currentIndex+1].id);
         } else {
-            var newSite = this.site.nextSite();
+            var newSite = thisNoteObject.site.nextSite();
 
             if (!newSite){
                 return false
@@ -360,12 +361,12 @@ Note = function(baseNoteObject, parentSite){
     };
 
     this.previousNote = function(){
-        var notesInOrder = this.site.getNotes();
-        var currentIndex = notesInOrder.indexOf(this);
+        var notesInOrder = thisNoteObject.site.getNotes();
+        var currentIndex = notesInOrder.indexOf(thisNoteObject);
         if (currentIndex > 0){
-            return this.site.getNote(notesInOrder[currentIndex-1].id);
+            return thisNoteObject.site.getNote(notesInOrder[currentIndex-1].id);
         } else {
-            var newSite = this.site.previousSite();
+            var newSite = thisNoteObject.site.previousSite();
 
             if (!newSite){
                 return false;
@@ -380,7 +381,7 @@ Note = function(baseNoteObject, parentSite){
     };
 
     this.getPositionInSite = function() {
-        return this.site.getNotePosition(this)
+        return this.site.getNotePosition(thisNoteObject)
     };
 
     this.update = function(baseNoteObject){

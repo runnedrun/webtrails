@@ -22,28 +22,28 @@ class ResourceHandler
       @stylesheets_saved = false
       @resources_mirrored = false
 
-
-      EM::Synchrony::Iterator.new(resources_to_download, resources_to_download.length).each do |url, iter|
-        resource_location = url[0]
-        aws_path = url[1]
-        mirror_resource_to_aws(resource_location,aws_path,iter)
+      if !resources_to_download.empty?
+        EM::Synchrony::Iterator.new(resources_to_download, resources_to_download.length).each do |url, iter|
+          resource_location = url[0]
+          aws_path = url[1]
+          mirror_resource_to_aws(resource_location,aws_path,iter)
+        end
       end
 
       puts "finished getting resources, now saving stylesheets"
 
-      EM::Synchrony::Iterator.new(stylesheets_to_save, stylesheets_to_save.length).each do |url, iter|
-        aws_path = url[0]
-        stylesheet = url[1]
-        async_write_to_aws(aws_path,stylesheet,iter,url)
+      if !stylesheets_to_save.empty?
+        EM::Synchrony::Iterator.new(stylesheets_to_save, stylesheets_to_save.length).each do |url, iter|
+          aws_path = url[0]
+          stylesheet = url[1]
+          async_write_to_aws(aws_path,stylesheet,iter,url)
+        end
       end
-
-      puts "finished saving stylesheets, saving html now"
-
-      puts is_iframe.class
 
       if !html_to_save.empty?
         archive_location = write_to_aws(html_to_save[0], html_to_save[1], false, revision_number.to_s,
                                       {:content_type => "text/html; charset=UTF-8"})
+
         if is_iframe == "false"
           puts "not iframe, saving!"
           site.add_revision(revision_number)

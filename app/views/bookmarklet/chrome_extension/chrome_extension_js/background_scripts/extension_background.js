@@ -1,5 +1,6 @@
 domain = "http://localhost:3000";
 domain_name = "localhost";
+resourceDownloaderAddress = "http://localhost:5000";
 //domain = "http://www.webtrails.co";
 //domain_name = "webtrails.co";
 message_sending = {}
@@ -80,7 +81,6 @@ function injectScripts(tabId){
 
 function createContentScript(index_of_script, contentScriptString,tabId){
     if (index_of_script >= scriptsToBeInjected.length){
-        console.log(contentScriptString);
         chrome.tabs.executeScript(tabId,{code:contentScriptString});
         return false;
     }

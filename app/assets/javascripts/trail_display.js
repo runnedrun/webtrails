@@ -100,7 +100,7 @@ function fetchSiteHtml() {
                 } ,
                 error: function(resp){
                     console.log("failed to fetch");
-                    trailDisplayHash.siteObjects[id]["html"][revisionNumber] =  "Failed to retrieve site data.";
+                    trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] =  "Failed to retrieve site data.";
                 }
             })
         })

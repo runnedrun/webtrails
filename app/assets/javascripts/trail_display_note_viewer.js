@@ -17,7 +17,7 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
 
     this.initOrDisableNoteView = function() {
         if (noteViewActive){
-            disableNoteViewMode();
+            thisNoteViewer.disableNoteViewMode();
         }else{
             initNoteViewMode()
         }
@@ -34,7 +34,7 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
     };
 
     function initNoteViewMode(){
-        if ($('iframe').hasClass('shrunk')) {
+        if (PanelView.isShown()) {
             PanelView.hidePanels();
         }
         trailPreview.enableHalfPageView();
@@ -44,7 +44,7 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
         noteViewActive = true;
     }
 
-    function disableNoteViewMode(){
+    this.disableNoteViewMode = function() {
         trailPreview.disableHalfPageView();
         hideNoteList();
         $toggleNoteViewButton.text(Statics.untoggledButtonText);

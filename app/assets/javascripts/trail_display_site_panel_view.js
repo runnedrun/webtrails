@@ -1,7 +1,7 @@
 PanelView = function(trailPreview) {
     var shown = false;
     var percentPerIframe = .23;
-    var thisPanelView;
+    var thisPanelView = this;
 
     this.showOrHide = function() {
         console.log("showing or hiding panels");
@@ -11,6 +11,7 @@ PanelView = function(trailPreview) {
 //            if (noteViewActive){
 //                disableNoteViewMode();
 //            }
+            trailPreview.noteViewer.disableNoteViewMode();
             displayPanels();
         }
     };
@@ -58,7 +59,7 @@ PanelView = function(trailPreview) {
             $clickdiv.click(function(e){
                 e.preventDefault();
                 console.log("iframe click div clicked");
-                hidePanels();
+                thisPanelView.hidePanels();
                 TrailPreview.showSite(site);
             });
             $('#siteClickDivs').append($clickdiv);

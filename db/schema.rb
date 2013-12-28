@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(:version => 20130918073310) do
     t.integer  "trail_id"
     t.text     "title"
     t.string   "domain"
-    t.string   "archive_location"
+    t.text     "archive_location"
     t.string   "html_encoding"
     t.integer  "position"
     t.integer  "user_id"
@@ -75,7 +75,6 @@ ActiveRecord::Schema.define(:version => 20130918073310) do
 
   create_table "users", :force => true do |t|
     t.string   "email",                   :default => "", :null => false
-    t.string   "encrypted_password",      :default => "", :null => false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"

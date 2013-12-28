@@ -1,6 +1,6 @@
 class AddArchiveLocationToSite < ActiveRecord::Migration
   def up
-    add_column :sites, :archive_location, :string
+    add_column :sites, :archive_location, :text
   end
 
   def down

@@ -35,7 +35,7 @@ class UsersController < ApplicationController
 
   def oauth2_callback
     whitelisted = request.env["omniauth.params"]["whitelisted"]
-    user = User.find_or_create_from_omniauth_hash(request.env["omniauth.auth"],whitelisted)
+    user = User.find_or_create_from_omniauth_hash(request.env["omniauth.auth"], whitelisted)
     if user
       cookies.permanent[:wt_auth_token] = user.wt_authentication_token
       redirect_to :controller => "trails", :action => "index"
