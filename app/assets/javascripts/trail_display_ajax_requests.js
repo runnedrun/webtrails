@@ -1,4 +1,8 @@
+ResourceDowloaderDomain = "http://localhost:5000";
+
 Request = new function(){
+    var thisRequest = this;
+
     this.deleteSite = function(site, callback){
         $.ajax({
             url: "/sites/delete",
@@ -55,7 +59,24 @@ Request = new function(){
                 "site[id]": currentNote.site.id, //this is probably unnecesary
                 "site[trail_id]": currentNote.site.trail.id,
                 "note": newNote,
-                "html": currentHtml
+            },
+            success: function(resp) {
+                thisRequest.mirrorHtml(newNote, currentNote, currentHtml, function() {
+                    callback(resp)
+                })
+            }
+        });
+    };
+
+    this.mirrorHtml = function(newNote, currentNote, currentHtml, callback) {
+        $.ajax({
+            url: ResourceDowloaderDomain + "/resource_downloader",
+            type: "post",
+            data: {
+                "siteID": currentNote.site.id, //this is probably unnecesary
+                "html": {html: currentHtml},
+                "revision": newNote.site_revision_number,
+                "isIframe": "false"
             },
             success: callback
         });

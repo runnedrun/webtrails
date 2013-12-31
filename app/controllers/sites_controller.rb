@@ -75,9 +75,6 @@ class SitesController < ApplicationController
         render_not_authorized
       end
 
-      revision_number = params[:note][:site_revision_number]
-      site.update_html(html, revision_number)
-
       #params[:note][:site_id] = site_id
       @note = Note.create!(params[:note])
       render(:json => {

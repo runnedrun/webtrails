@@ -69,8 +69,8 @@ function parseHtmlAndResolveUrls(html,htmlAttributes,cb) {
         var imageUrl = imageElement.getAttribute("src");
         if (imageUrl && !imageUrl.match(/^data:/)){
             var newUrlAndFilePath = generateAwsUrl(imageUrl, cb.siteID, cb.trailID);
-            var newUrl = newUrlAndFilePath[0];
-            var filePath = newUrlAndFilePath[1];
+            var newUrl = newUrlAndFilePath.fullUrl;
+            var filePath = newUrlAndFilePath.awsPath;
             var absoluteUrl = URI(imageUrl).absoluteTo(cb.baseURI).href();
 
             if (originalToAwsUrlMap[absoluteUrl]){
@@ -97,7 +97,7 @@ function parseHtmlAndResolveUrls(html,htmlAttributes,cb) {
         var href = link.getAttribute("href");
         if (href && !href.match(/^\s*javascript:/)){
             var absoluteUrl = URI(href).absoluteTo(cb.baseURI).href();
-            link.setAttribute("href", generateAwsUrl(absoluteUrl, cb.siteID, cb.trailID)[0]);
+            link.setAttribute("href", generateAwsUrl(absoluteUrl, cb.siteID, cb.trailID).fullUrl);
         }
     })
 
@@ -105,7 +105,7 @@ function parseHtmlAndResolveUrls(html,htmlAttributes,cb) {
         var src = iframe.getAttribute("src");
         if (src && !src.match(/^\s*javascript:/)){
             iframe.innerHTML = "";
-            iframe.setAttribute("src", generateAwsUrl(src, cb.siteID, cb.trailID)[0]);
+            iframe.setAttribute("src", generateAwsUrl(src, cb.siteID, cb.trailID).fullUrl);
         }
     })
 
@@ -115,9 +115,9 @@ function parseHtmlAndResolveUrls(html,htmlAttributes,cb) {
         element.setAttribute("style", parsedCSS);
     })
 
-    var escapedHtmlAwsPath = generateAwsUrl(cb.currentSite,cb.siteID,cb.trailID)[0];
+    var escapedHtmlAwsPath = generateAwsUrl(cb.currentSite, cb.siteID, cb.trailID).awsPath;
 
-    cb["html"] = [escapedHtmlAwsPath, newDoc.outerHTML];
+    cb["html"] = {awsPath: escapedHtmlAwsPath, html: newDoc.outerHTML};
     checkIfAllResourcesAreParsed(cb)
 }
 
@@ -178,7 +178,7 @@ function parseCSSAndReplaceUrls(css, resourceLocation,cb){
             var absoluteUrl = URI(capturedImportUrl).absoluteTo(resourceLocation).absoluteTo(cb.baseURI).href();
             cb.styleSheetsLeft +=1
             getCssAndParse(absoluteUrl,cb);
-            return "@import url('" + generateAwsUrl(capturedImportUrl,cb.siteID,cb.trailID)[0] + "')";
+            return "@import url('" + generateAwsUrl(capturedImportUrl,cb.siteID,cb.trailID).fullUrl + "')";
         }else{
             // get rid of spaces, just in case
             capturedUrl = capturedUrl.replace(" ","");
@@ -187,8 +187,8 @@ function parseCSSAndReplaceUrls(css, resourceLocation,cb){
                 return matchedGroup
             }
             var newUrlAndFilePath = generateAwsUrl(capturedUrl,cb.siteID,cb.trailID);
-            var newUrl = newUrlAndFilePath[0];
-            var filePath = newUrlAndFilePath[1];
+            var newUrl = newUrlAndFilePath.fullUrl;
+            var filePath = newUrlAndFilePath.awsPath;
             var absoluteUrl = URI(capturedUrl).absoluteTo(resourceLocation).absoluteTo(cb.baseURI).href();
             if (originalToAwsUrlMap[absoluteUrl]){
                 newUrl = generateAwsUrlFromAwsPath(originalToAwsUrlMap[absoluteUrl]);
@@ -201,7 +201,7 @@ function parseCSSAndReplaceUrls(css, resourceLocation,cb){
     if (resourceLocation != "") {
         resourceLocation = URI(resourceLocation).absoluteTo(cb.baseURI).href();
     }
-    return updateCallbackTracker(newCSS, generateAwsUrl(resourceLocation, cb.siteID, cb.trailID)[1],cb);
+    return updateCallbackTracker(newCSS, generateAwsUrl(resourceLocation, cb.siteID, cb.trailID).awsPath,cb);
 }
 
 function generateAwsUrl(url,siteID,trailID){
@@ -239,7 +239,7 @@ function generateAwsUrl(url,siteID,trailID){
     var filePath = String(trailID)+"/"+String(siteID)+ shortPath;
     var escapedFilePath = String(trailID)+"/"+String(siteID)+ escapedShortPath;
     var newLocation = generateAwsUrlFromAwsPath(escapedFilePath);
-    return [newLocation, filePath]
+    return {fullUrl: newLocation, awsPath: filePath};
 }
 
 function generateAwsUrlFromAwsPath(path){

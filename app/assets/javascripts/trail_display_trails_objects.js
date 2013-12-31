@@ -332,7 +332,6 @@ Note = function(baseNoteObject, parentSite){
     this.site = parentSite;
 
     this.getSiteRevisionHtml = function() {
-        console.log("revision number is: ", thisNoteObject.site.getRevisionHtml(siteRevisionNumber));
         return thisNoteObject.site.getRevisionHtml(siteRevisionNumber)
     }
 

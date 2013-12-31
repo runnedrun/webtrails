@@ -56,7 +56,6 @@ function parsePageBeforeSavingSite(resp){
 //        console.log("summaries", changeObserver.takeSummaries());
 //    }
 
-    console.log("is this a freakin iframe? " + resp.iframe);
     chrome.runtime.sendMessage({
         parseAndResolve:{
             html: currentHTML,

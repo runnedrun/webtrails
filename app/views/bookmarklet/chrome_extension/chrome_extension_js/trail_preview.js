@@ -38,7 +38,6 @@ TPreview = function(){
 
     function addEmptyIframeToPreview(site, hideIframe) {
         var siteHtmlIframe = wt_$("<iframe data-trail-id='" + site.trail.id + "' data-site-id='"+site.id+"' seamless='seamless' class='wt-site-preview webtrails'>");
-        console.log("iframe", siteHtmlIframe);
         siteHtmlIframe.attr('src',"about:blank");
         siteHtmlIframe.css({
             visibility: hideIframe ? "hidden" :"visible",
@@ -57,9 +56,7 @@ TPreview = function(){
     this.initWithTrail = function(trailToPreview) {
         currentTrail = trailToPreview
         currentNote = currentTrail.getLastNote();
-        console.log("current note in init with trail", currentNote);
         if (currentNote) {
-            console.log("going to display note");
             this.displayNote(currentNote, !toolbarShown);
         } else if (currentSiteFrame){
             currentSiteFrame.remove();
@@ -120,10 +117,12 @@ TPreview = function(){
     }
 
     this.highlightNote = function(note) {
+        return thisTrailPreview.highlightElements(thisTrailPreview.getNoteElements(note));
+    };
+
+    this.getNoteElements = function(note) {
         var siteIDoc = getSiteIDoc(note.site);
-        var noteElements = wt_$("wtHighlight[data-trail-id="+Trails.getCurrentTrailId()+"]", siteIDoc);
-        thisTrailPreview.highlightElements(noteElements);
-        return noteElements
+        return wt_$("wtHighlight[data-trail-id="+Trails.getCurrentTrailId()+"].current-highlight", siteIDoc)
     }
 
     this.showNextNote = function() {
@@ -163,7 +162,7 @@ TPreview = function(){
     }
 
     this.highlightElements = function($elements) {
-        $elements.css({
+        return $elements.css({
             "background": "yellow"
         })
     }
