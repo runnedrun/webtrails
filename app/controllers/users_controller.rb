@@ -47,23 +47,7 @@ class UsersController < ApplicationController
   def get_all_trail_data
     trail_site_hash = {}
     @user.trails.each do |trail|
-      trail_site_hash[trail.id] = {:site_list => trail.site_list, :html_hash => {}, :note_hash => {}}
-      trail.sites.each do |site|
-        trail_site_hash[trail.id][:html_hash][site.id] = {:base_location => site.archive_location,
-                                                          :revision_numbers => site.get_revisions(),
-                                                          :base_revision => site.base_revision_number}
-        note_hash = trail_site_hash[trail.id][:note_hash][site.id] = {}
-        note_hash[:note_ids_in_order] = site.note_list
-        note_hash[:note_data] = site.notes.inject({}) do |hash,note|
-          hash[note.id] = {:comment => note.comment,
-                           :client_side_id => note.client_side_id,
-                           :site_revision_number => note.site_revision_number,
-                           :scroll_x => note.scroll_x,
-                           :scroll_y => note.scroll_y,
-                           :id => note.id}
-          hash
-        end
-      end
+      trail_site_hash[trail.id] = trail.get_update_hash()
     end
     render :json => {:trail_hash => trail_site_hash, :user_id => @user.id}
   end

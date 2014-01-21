@@ -27,16 +27,18 @@ wt_$(initExtension());
 
 function initExtension(){
     console.log("init extension");
-    if (wt_auth_token) {
-        getTrailDataFromLocalStorage(function(response){
-            console.log("local storage response", response);
-            Trails = new TrailsObject(response, startingTrailID);
-            Trails.initTrails();
-            makeToolBar();
-        });
-    } else {
-        makeToolBar();
-    }
+    initializeAutoResize();
+    Toolbar = new WtToolbar();
+//    if (wt_auth_token) {
+//    wt_$(document.body).keydown(verifyKeypress);
+//        getTrailDataFromLocalStorage(function(response){
+//            console.log("local storage response", response);
+//            Trails = new TrailsObject(response, startingTrailID);
+//            TrailPreview = new TPreview();
+//
+//        });
+//}
+
 }
 
 function getTrailDataFromLocalStorage(callback){
@@ -52,17 +54,12 @@ function updateTrailDataInLocalStorage(){
     });
 }
 
-function verifyKeyPress(e){
+function verifyKeypress(e){
+    console.log("verifiing keypress");
     var code = (e.keyCode ? e.keyCode : e.which);
-    if (code == 27 && e.shiftKey){    //tilda = 192, esc is code == 27
-        showOrHidePathDisplay();
-    } else if (e.altKey){
+    if (e.altKey){
         displaySaveButtonWhileKeyIsPressed()
     }
-}
-
-function setSiteID(siteID){
-    Get
 }
 
 // if error returns null

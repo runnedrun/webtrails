@@ -57,16 +57,6 @@ class TrailsController < ApplicationController
     @trail_display_hash = @trail.get_update_hash
   end
 
-  def get_favicons_for_trails(trails)
-    trails.map do |trail|
-      trail.sites = trail.sites.sort_by(&:created_at)
-      trail.sites.map do |site|
-        search_name = URI(site.url).host
-        "http://www.google.com/s2/favicons?domain=" + search_name
-      end
-    end
-  end
-
   def toolbar_preview
     begin
       @trail = Trail.find(params[:trail_id])

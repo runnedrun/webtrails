@@ -1,36 +1,5 @@
 console.log("ui_fns loaded");
 
-function showOrHidePathDisplay(){
-    if (trailDisplay.is(":hidden")){
-        showToolbar();
-//        showToolbarOnAllTabs();
-    }
-    else {
-        hideToolbar();
-//        hideToolbarOnAllTabs();
-    }
-}
-
-function showToolbar(){
-    trailDisplay.show();
-    toolbarShown = true
-    if (loggedIn) {
-        TrailPreview.show();
-        if (mouseDown == 0) { // if the mouse is not pressed (not highlighting)
-            highlightedTextDetect(); // check to see if they highlighted anything for the addnote button
-        } else { // mouse is down, must be highlighting
-            possibleHighlightStart(); // get that highlight start event so when done highlighting, addnote appears
-        }
-    }
-}
-
-function hideToolbar(){
-    trailDisplay.hide();
-    TrailPreview.hide();
-    toolbarShown = false;
-    wt_$(".inlineSaveButton").remove();
-    closeOverlay();
-}
 
 function butterBarNotification(message) {
     var butterBarContainer = wt_$("<div></div>").css({
@@ -61,7 +30,7 @@ function butterBarNotification(message) {
 }
 
 function displaySaveButtonWhileKeyIsPressed(keycode){
-    if (!toolbarShown) {
+    if (!toolbarShown && wt_auth_token) {
         keycode = typeof keycode == "undefined" ? keycode : "18";
         var saveButton = highlightedTextDetect();
         wt_$(document.body).keyup(function(e){
@@ -141,9 +110,7 @@ function shrinkFaviconHolder() {
     faviconHolder.stop().animate({"height": "20px"});
 }
 
-function clearFaviconHolder() {
-    faviconHolder.html("");
-}
+
 
 function trailSelectChanged() {
     try {

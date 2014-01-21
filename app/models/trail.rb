@@ -64,14 +64,21 @@ class Trail < ActiveRecord::Base
     self.sites.map { |site| site.id.to_s }
   end
 
+  def favicon_list
+    sites.sort_by(&:created_at).map do |site|
+      search_name = URI(site.url).host
+      "http://www.google.com/s2/favicons?domain=" + search_name
+    end
+  end
+
   def get_update_hash()
     {
         :id => self.id,
         :sites => {
             :order => self.site_list,
             :siteObjects => Hash[self.sites.map { |site|[site.id, site.get_update_hash] }]
-        }
-
+        },
+        :favicons => favicon_list()
     }
   end
 

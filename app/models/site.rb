@@ -111,7 +111,8 @@ class Site < ActiveRecord::Base
             :order => self.note_list,
             :noteObjects => Hash[self.notes.map{ |note| [note.id, note.get_update_hash] }]
         },
-        :url => self.url
+        :url => self.url,
+        :baseLocation => self.archive_location
     }
   end
 

@@ -8,19 +8,18 @@ function getNotesObject(siteId){
     return notesObject;
 }
 
-function updateNoteData(noteIdsInOrder, noteDatas, siteId){
+function updateNoteData(noteIdsInOrder, noteObjects, siteId){
 
     var oldNoteList = getNoteList(siteId);
-    wt_$.each(oldNoteList, function(i,noteId) {
-        var noteInNewList = noteIdsInOrder.indexOf(noteId) > -1;
+    wt_$.each(oldNoteList, function(i, noteId) {
+        var noteInNewList = noteObjects[noteId];
         if (!noteInNewList) {
             removeNote(noteId);
         }
     });
 
-    wt_$.each(noteIdsInOrder, function(index, noteId){
-        var noteData = noteDatas[noteId];
-        addNoteToLocalStorage(noteId, noteData)
+    wt_$.each(noteObjects, function(noteId, note){
+        addNoteToLocalStorage(noteId, note)
     });
     setNoteList(siteId, noteIdsInOrder);
 }

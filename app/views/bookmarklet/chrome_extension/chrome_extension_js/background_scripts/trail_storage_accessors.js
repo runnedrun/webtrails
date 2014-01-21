@@ -12,8 +12,7 @@ function getTrailsObject(userId){
 function updateTrailIdList(newTrailIdList,userId){
     var oldTrailIdList = getTrailIdListFromLocalStorage(userId) || [];
     wt_$.each(oldTrailIdList,function(i,item){
-        var indexInNewList = newTrailIdList.indexOf(item);
-        if (!(indexInNewList > -1)){
+        if (!(newTrailIdList.indexOf(item) > -1)){
             removeTrailDataFromLocalStorage(item);
         }
     });

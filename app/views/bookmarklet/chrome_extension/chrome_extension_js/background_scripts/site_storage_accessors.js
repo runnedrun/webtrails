@@ -24,7 +24,7 @@ function getSiteIdListFromLocalStorage(trailId){
     }
 }
 
-function updateSiteData(newSiteIdList, siteIdsToHtmlLocationAndRevisions, trailId){
+function updateSiteData(newSiteIdList, siteHashes, trailId){
     var oldSiteIdList = getSiteIdListFromLocalStorage(trailId) || [];
     wt_$.each(oldSiteIdList,function(i, siteId){
         var siteExistsInNewList = newSiteIdList.indexOf(siteId) > -1;
@@ -33,39 +33,37 @@ function updateSiteData(newSiteIdList, siteIdsToHtmlLocationAndRevisions, trailI
         }
     });
     var deferreds = wt_$.map(newSiteIdList,function(siteId,id){
-        return updatedStoredHtmlForSite(siteId, siteIdsToHtmlLocationAndRevisions[siteId]);
+        return updatedStoredHtmlForSite(siteId, siteHashes[siteId]);
     });
     setSiteListInLocalStorage(trailId, newSiteIdList)
     return deferreds
 }
 
-function updatedStoredHtmlForSite(siteId, htmlLocationAndRevisions){
-    var revisions = htmlLocationAndRevisions.revision_numbers;
-    var base_location = htmlLocationAndRevisions.base_location;
+function updatedStoredHtmlForSite(siteId, siteHash){
     var oldSiteRevisionList = getRevisionList(siteId);
 
-    wt_$.each(oldSiteRevisionList, function(i, revision){
-        var revisionExistsInNewList = revisions.indexOf(String(revision)) > -1;
-        if (!(revisionExistsInNewList)){
-            removeRevisionFromLocalStorage(siteId, revision);
+    wt_$.each(oldSiteRevisionList, function(revisionNumber){
+        var revisionExistsInNewList = siteHash.revisionUrls[revisionNumber];
+        if (!revisionExistsInNewList){
+            removeRevisionFromLocalStorage(siteId, revisionNumber);
         }
     });
-    var deferreds = wt_$.map(revisions, function(revision, i) {
-        var revisionAlreadExistsInStorage = oldSiteRevisionList.indexOf(revision) > -1
+    var deferreds = wt_$.map(siteHash.revisionUrls, function(revisionNumber, revisionUrl) {
+        var revisionAlreadExistsInStorage = oldSiteRevisionList.indexOf(revisionNumber) > -1
         if (!revisionAlreadExistsInStorage){
             console.log("getting new revision");
             var deferred = wt_$.ajax({
-                url: base_location.replace(/\/\s*$/,"")+"/"+revision,
+                url: revisionUrl,
                 type: "get",
                 success: function(html){
-                    setRevisionInLocalStorage(siteId, revision, html);
+                    setRevisionInLocalStorage(siteId, revisionNumber, html);
                 }
             })
             return deferred
         }
     });
-    setRevisionList(siteId, revisions);
-    setBaseRevision(siteId, htmlLocationAndRevisions.base_revision);
+    setRevisionList(siteId, Object.keys(siteHash.revisionUrls));
+    setBaseRevision(siteId, siteHash.baseLocation);
     return deferreds;
 }
 

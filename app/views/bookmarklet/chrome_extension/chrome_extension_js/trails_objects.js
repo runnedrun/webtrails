@@ -55,11 +55,11 @@ TrailsObject = function(trailsObject, currentTrailId){
         wt_$.each(baseTrailObject,function(trailId,trailObject){
             trails[trailId] = new Trail(trailObject)
         })
-        chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-            if (request.updateTrails){
-                thisTrailsObject.updateTrails(request.updateTrails);
-            }
-        })
+//        chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+//            if (request.updateTrails){
+//                thisTrailsObject.updateTrails(request.updateTrails);
+//            }
+//        })
     }
 
     // these methods manipulate the note count for the current site, for the current trail
@@ -185,10 +185,9 @@ Trail = function(trailObject){
 }
 
 Site = function(siteObject, parentTrail){
-    var siteObject = siteObject;
     var notes = {};
     var noteOrder = [];
-    this.revisions = siteObject.html;
+    this.html = siteObject.html;
     this.id = siteObject.id;
     this.trail = parentTrail;
 
@@ -302,7 +301,7 @@ Site = function(siteObject, parentTrail){
 }
 
 Note = function(baseNoteObject, parentSite){
-    var siteRevisionNumber = baseNoteObject.siteRevisionNumber;
+    var siteRevisionNumber = x.siteRevisionNumber;
     var thisNoteObject = this;
     this.site = parentSite;
 
