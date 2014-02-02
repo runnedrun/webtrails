@@ -6,7 +6,7 @@ resourceDownloaderAddress = "http://localhost:5000";
 message_sending = {}
 
 
-var scriptsToBeInjected = ["jquery191.js", "rangy-core.js", "page_preprocessing.js", "trails_objects.js","trail_preview.js","toolbar_ui.js",
+var scriptsToBeInjected = ["jquery191.js", "rangy-core.js", "page_preprocessing.js","iframe_manager.js", "trails_objects.js","trail_preview.js","toolbar_ui.js",
     "ajax_fns.js","smart_grab.js","autoresize.js","search_and_highlight.js","css_property_defaults.js","inline_save_button_fns.js",
     "ui_fns.js","commenting_fns.js","whereJSisWrittenLocalChrome.js", "mutation-summary.js"];
 
@@ -63,7 +63,8 @@ function injectScripts(tabId, toolbarHtml){
     var tool_bar_state_injection_string = "toolbarShown=false;\n"
     var power_button_url = 'powerButtonUrl="' + chrome.extension.getURL('/chrome_extension_images/power.png') + '";\n';
     var content_script_loaded = 'contentScriptLoaded = "loaded";\n'
-    var toolbarHtml = 'toolbarHtml = "' + toolbarHtml + '";'
+//    var toolbarHtml = 'toolbarHtml = "' + toolbarHtml + '";'
+    var toolbarUrl = "var toolbarUrl = '" + encodeURI(chrome.extension.getURL("html/toolbar.html")) + "';\n";
     if(wt_auth_token){
         auth_injection_string = "wt_auth_token='"+wt_auth_token + "';\n";
         if (current_trail_id){
@@ -73,7 +74,7 @@ function injectScripts(tabId, toolbarHtml){
     if (toolbar_display_state == "shown"){
         tool_bar_state_injection_string = "toolbarShown=true;\n"
     }
-    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string+power_button_url + content_script_loaded + toolbarHtml;
+    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string+power_button_url + content_script_loaded + toolbarUrl//+ toolbarHtml;
     createContentScript(0,starting_injection_string,tabId);
     // update the local trail data
     retrieveTrailData();

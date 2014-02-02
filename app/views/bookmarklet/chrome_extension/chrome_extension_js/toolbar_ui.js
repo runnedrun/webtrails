@@ -1,6 +1,25 @@
 console.log('toolbar ui loaded');
 
-WtToolbar = function() {
+function WtToolbar(toolbarUrl) {
+    var thisToolbar = this;
+    var toolbarFrame;
+
+    var toolbarFrame = wt_$("<iframe src='" + toolbarUrl + "' class='wt-toolbar-frame'></iframe>");
+    toolbarFrame.css({
+        position: "fixed",
+        width: "100%",
+        top: "0px",
+        left: "0px",
+        "z-index": "2147483644"
+    })
+    wt_$("body").prepend(toolbarFrame);
+
+    function i$(selector) {
+        return thisToolbar.getIDoc(toolbarFrame).find(selector)
+    }
+
+
+
     var displayHeight = "25px";
     var shown = false;
     var trailDisplay,
@@ -415,8 +434,8 @@ WtToolbar = function() {
         }
     }
 
-    createToolbarElements();
-    addToolbarElementsToDom();
+//    createToolbarElements();
+//    addToolbarElementsToDom();
     console.log("wt auth is", wt_auth_token);
     if (wt_auth_token){
         initSignedInExperience()
@@ -441,3 +460,4 @@ WtToolbar = function() {
         }
     }catch (e) {}
 }
+WtToolbar.prototype = IframeManager

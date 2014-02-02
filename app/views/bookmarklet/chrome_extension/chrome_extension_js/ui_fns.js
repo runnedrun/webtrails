@@ -170,16 +170,6 @@ function hideToolbarOnAllTabs(){
     });
 }
 
-function runWhenLoaded(fn, doc){
-    var doc = doc || document;
-    var loadedCheck = setInterval(function(){
-        if (doc.readyState === "complete"){
-            clearInterval(loadedCheck);
-            fn();
-        }
-    },100);
-}
-
 function runWhenExists($query, callback){
     console.log("checking if site exists for query:", $query);
     var siteDocExistsCheck = setInterval(function(){

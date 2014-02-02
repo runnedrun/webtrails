@@ -40,6 +40,6 @@
         "chrome_extension_js/commenting_fns.js", "chrome_extension_js/inline_save_button_fns.js","chrome_extension_js/rangy-core.js",
         "chrome_extension_js/jquery191.js","chrome_extension_js/page_preprocessing.js","chrome_extension_js/jquery_url_parser.js",
         "chrome_extension_js/css_property_defaults.js","chrome_extension_js/trail_preview.js","chrome_extension_images/power.png","oauth2/oauth2.html",
-        "chrome_extension_js/trails_objects.js", "chrome_extension_js/mutation-summary.js"
-        ]
+        "chrome_extension_js/trails_objects.js", "chrome_extension_js/mutation-summary.js", "chrome_extension_js/iframe_manager.js",
+        "html/toolbar.html"]
 }

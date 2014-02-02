@@ -1,6 +1,6 @@
 console.log("trail preview injected");
 
-TPreview = function(){
+function TPreview() {
     var currentTrail = false;
     var currentNote = false;
     var currentSiteFrame = false;
@@ -14,26 +14,8 @@ TPreview = function(){
     var showCommentButton = wt_$(".showCommentButton");
     var deleteNoteButton = wt_$(".deleteNoteButton");
 
-    function getIDoc($iframe) {
-        return wt_$($iframe[0].contentWindow.document);
-    }
-
     function getSiteIDoc(site) {
-       return getIDoc(wt_$("[data-site-id='" + site.id + "']"));
-    }
-
-    function getIWindow($iframe) {
-        return wt_$($iframe[0].contentWindow);
-    }
-
-    this.setIframeContent = function($iframe,html) {
-        var iDoc = getIDoc($iframe)[0];
-        iDoc.open();
-        iDoc.writeln(html);
-        iDoc.close();
-        var headTag  = iDoc.getElementsByTagName("head")[0];
-        headTag.className = headTag.className + " wt-site-preview";
-        return $iframe[0].contentWindow.document;
+       return thisTrailPreview.getIDoc(wt_$("[data-site-id='" + site.id + "']"));
     }
 
     function addEmptyIframeToPreview(site, hideIframe) {
@@ -103,7 +85,7 @@ TPreview = function(){
         if (commentBoxToggled) {
             displayComment();
         }
-        runWhenLoaded(function() {
+        thisTrailPreview.runWhenLoaded(function() {
             var noteElements = thisTrailPreview.highlightNote(note);
             var noteLocation = noteElements.first().offset();
             var scrollTop = noteLocation.top-100;
@@ -265,3 +247,4 @@ TPreview = function(){
 
     this.enableOrDisablePrevAndNextButtons(currentNote);
 }
+TPreview.prototype = IframeManager

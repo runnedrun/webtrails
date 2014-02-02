@@ -1,4 +1,44 @@
+<!DOCTYPE html>
+<head>
+    <script src="/third_party_scripts/jquery.js"> </script>
+    <script src="/third_party_scripts/bootstrap.min.js"> </script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+</head>
 <body>
-    <div> test! </div>
+    <div class="container-fluid">
+        <div class="row">
+            <!--<div class="col-md-2">-->
+                <div class="dropdown col-md-2">
+                    <!-- Link or button to toggle dropdown -->
+                    <button class="btn dropdown-toggle btn-primary" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                        Trail 1
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
+                    </ul>
+                </div>
+            <!--</div>-->
+            <div class="col-md-1">
+                <button class="btn btn-min go-to-trail">View Trail</button>
+            </div>
+            <!--<div class="siteFaviconsHolder">-->
+                <!--&lt;!&ndash;<div class="siteFavicons">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<div class="faviconContainer favicon<%= favicon_id_and_title[1]%>">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<img class="faviconImage click-to-change-site" src="<%= favicon_id_and_title[0] %>" id="favicon<%= favicon_id_and_title[1] %>" data-site-id="<%= favicon_id_and_title[1] %>" data-ot="<%= @sites[i].title%>" data-ot-delay="0" data-ot-tip-joint="bottom" data-ot-style="dark" data-site-url="<%= @sites[i].url%>" data-site-index="<%= i %>"/>&ndash;&gt;-->
+                        <!--&lt;!&ndash;&lt;!&ndash;<img src="/images/loading_small.gif" class="faviconLoading" id ="loading-<%= favicon_id_and_title[1]%>"/>&ndash;&gt;&ndash;&gt;-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--</div>-->
+            <!--<span class="note-count navigateButton">loading...</span>-->
+            <!--<button id="showAllSitesButton" class="btn btn-warning navigateButton showList">Show All Sites</button>-->
+            <!--<button class="btn btn-warning navigateButton showList" id="noteViewMode" href="#">Research View</button>-->
+            <!--<button class="btn btn-info navigateButton" id="previousNote">Previous</button>-->
+            <!--<button class="btn btn-success navigateButton" id="nextNote"><b>Next</b></button>-->
+            <!--<button class="btn btn-danger btn-mini" id="removeSite"><i class="icon-trash"> </i> Delete Note</button>-->
+        </div>
+    </div>
 </body>
 

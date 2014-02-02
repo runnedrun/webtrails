@@ -17,6 +17,14 @@ var trailDisplay,
     faviconsFetched = false;
 //    webTrailsUrl = "http://www.webtrails.co";
     webTrailsUrl = "http://localhost:3000";
+    wt_auth_token;
+    // defined by the background script
+    startingTrailID;
+    toolbarShown;
+    powerButtonUrl;
+    contentScriptLoaded;
+    toolbarUrl;
+//    toolbarHtml; // this is uri encoded
 
 String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
@@ -28,7 +36,7 @@ wt_$(initExtension());
 function initExtension(){
     console.log("init extension");
     initializeAutoResize();
-    Toolbar = new WtToolbar();
+    Toolbar = new WtToolbar(decodeURI(toolbarUrl));
 //    if (wt_auth_token) {
 //    wt_$(document.body).keydown(verifyKeypress);
 //        getTrailDataFromLocalStorage(function(response){
