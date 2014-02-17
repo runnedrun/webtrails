@@ -1,37 +1,38 @@
 console.log("trail preview injected");
 
-function TPreview() {
+function TPreview(previewContainer, height) {
     var currentTrail = false;
     var currentNote = false;
     var currentSiteFrame = false;
     var shown = false;
     var thisTrailPreview = this;
     var commentBoxToggled = false
-    this.height = 200;
+    height = 200;
 
-    var nextNoteButton = wt_$(".nextNoteButton");
-    var previousNoteButton = wt_$(".previousNoteButton");
-    var showCommentButton = wt_$(".showCommentButton");
-    var deleteNoteButton = wt_$(".deleteNoteButton");
+    var nextNoteButton = $(".nextNoteButton");
+    var previousNoteButton = $(".previousNoteButton");
+    var showCommentButton = $(".showCommentButton");
+    var deleteNoteButton = $(".deleteNoteButton");
 
     function getSiteIDoc(site) {
-       return thisTrailPreview.getIDoc(wt_$("[data-site-id='" + site.id + "']"));
+       return thisTrailPreview.getIDoc($("[data-site-id='" + site.id + "']"));
     }
 
     function addEmptyIframeToPreview(site, hideIframe) {
-        var siteHtmlIframe = wt_$("<iframe data-trail-id='" + site.trail.id + "' data-site-id='"+site.id+"' seamless='seamless' class='wt-site-preview webtrails'>");
+        var siteHtmlIframe = $("<iframe data-trail-id='" + site.trail.id + "' data-site-id='"+site.id+"' seamless='seamless' class='wt-site-preview webtrails'>");
         siteHtmlIframe.attr('src',"about:blank");
         siteHtmlIframe.css({
-            visibility: hideIframe ? "hidden" :"visible",
+//            visibility: hideIframe ? "hidden" :"visible",
+            visibility: false ? "hidden" :"visible",
             width:"100%",
             "border-top": "2px gray solid",
-            position: "fixed",
-            height: thisTrailPreview.height + "px",
-            top: "25px",
+//            position: "fixed",
+            height: height + "px",
+//            top: "25px",
             "border-bottom": "2px solid grey",
-            "z-index": "2147483645"
+//            "z-index": "2147483645"
         });
-        trailDisplay.after(siteHtmlIframe);
+        previewContainer.append(siteHtmlIframe);
         return siteHtmlIframe
     }
 
@@ -47,26 +48,26 @@ function TPreview() {
 
     this.show = function() {
         if (currentSiteFrame){
-            var pageOffset = thisTrailPreview.height + 25
+            var pageOffset = height + 25
             currentSiteFrame.css({visibility: "visible"});
-            wt_$(document.body).css({
+            $(document.body).css({
                 top: pageOffset + "px",
                 position: "relative"
             });
-            wt_$(document.body).scrollTop(wt_$(document.body).scrollTop() + pageOffset);
+            $(document.body).scrollTop($(document.body).scrollTop() + pageOffset);
             shown = true
         }
     }
 
     this.hide = function() {
         if (currentSiteFrame){
-            var pageOffset = thisTrailPreview.height + 25
+            var pageOffset = height + 25
             currentSiteFrame.css({visibility: "hidden"});
             shown = false;
-            wt_$(document.body).css({
+            $(document.body).css({
                 top:"0px"
             });
-            wt_$(document.body).scrollTop(wt_$(document.body).scrollTop() - pageOffset);
+            $(document.body).scrollTop($(document.body).scrollTop() - pageOffset);
         }
     }
 
@@ -75,7 +76,7 @@ function TPreview() {
         var siteHtmlIframe = addEmptyIframeToPreview(note.site, hidePreview);
         var iframeDocument = thisTrailPreview.setIframeContent(siteHtmlIframe, note.getSiteRevisionHtml() || "Uh oh");
         currentSiteFrame = siteHtmlIframe;
-        return wt_$(iframeDocument);
+        return $(iframeDocument);
     }
 
     this.displayNote = function(note, hidePreview) {
@@ -104,7 +105,7 @@ function TPreview() {
 
     this.getNoteElements = function(note) {
         var siteIDoc = getSiteIDoc(note.site);
-        return wt_$("wtHighlight[data-trail-id="+Trails.getCurrentTrailId()+"].current-highlight", siteIDoc)
+        return $("wtHighlight[data-trail-id="+Trails.getCurrentTrailId()+"].current-highlight", siteIDoc)
     }
 
     this.showNextNote = function() {
@@ -151,10 +152,10 @@ function TPreview() {
 
     function displayComment() {
         removeComment()
-        var commentBox = wt_$("<div></div>")
+        var commentBox = $("<div></div>")
         applyDefaultCSS(commentBox).css({
             position: "fixed",
-            height: thisTrailPreview.height,
+            height: height,
             top: "25px",
             right: "0px",
             width: "150px",
@@ -163,7 +164,7 @@ function TPreview() {
             "font-size": "12px",
             "padding": "0 5px 0 5px"
         }).addClass("wt-note-comment");
-        var commentHeader = wt_$("<div>Comment:</div>")
+        var commentHeader = $("<div>Comment:</div>")
         applyDefaultCSS(commentHeader).css({
             "border-bottom": "2px black solid",
             "font-size": "14px",
@@ -173,11 +174,11 @@ function TPreview() {
             "margin-top": "5px"
         });
         commentBox.append(commentHeader).append("<div>"+ (currentNote.comment || "no comment") + "</div>");
-        wt_$(document.body).append(commentBox);
+        $(document.body).append(commentBox);
     }
 
     function removeComment() {
-        wt_$(".wt-note-comment").remove();
+        $(".wt-note-comment").remove();
     }
 
     function toggleCommentBox() {

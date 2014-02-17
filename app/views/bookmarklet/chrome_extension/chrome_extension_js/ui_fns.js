@@ -2,14 +2,14 @@ console.log("ui_fns loaded");
 
 
 function butterBarNotification(message) {
-    var butterBarContainer = wt_$("<div></div>").css({
+    var butterBarContainer = $("<div></div>").css({
         position: "fixed",
         top: "0px",
         "z-index": "2147483647",
         width: "100%",
         "text-align": "center"
     })
-    var butterBar = wt_$("<div>" + message + "</div>").css({
+    var butterBar = $("<div>" + message + "</div>").css({
         "background-color": "#666666",
         color: "white",
         display: "inline",
@@ -17,7 +17,7 @@ function butterBarNotification(message) {
         padding: "5px"
     });
     butterBarContainer.append(butterBar);
-    wt_$(document.body).prepend(butterBarContainer);
+    $(document.body).prepend(butterBarContainer);
     butterBar.hide();
     butterBar.fadeIn(400, function(){
         setTimeout(function(){
@@ -33,19 +33,19 @@ function displaySaveButtonWhileKeyIsPressed(keycode){
     if (!toolbarShown && wt_auth_token) {
         keycode = typeof keycode == "undefined" ? keycode : "18";
         var saveButton = highlightedTextDetect();
-        wt_$(document.body).keyup(function(e){
+        $(document.body).keyup(function(e){
             if (e.keycode == keycode && saveButton){
                 saveButton.remove()
-                wt_$(document).unbind("keyup",arguments.callee)
+                $(document).unbind("keyup",arguments.callee)
             }
         })
     }
 }
 
 function addSiteFaviconToDisplay(domain,url) {
-    var faviconLink = wt_$("<a href=\""+ url+ "\" class=\"webtrails\"></a>");
+    var faviconLink = $("<a href=\""+ url+ "\" class=\"webtrails\"></a>");
     applyDefaultCSS(faviconLink);
-    var faviconImg  = wt_$("<img src='"+ domain + "' class=\"webtrails\">");
+    var faviconImg  = $("<img src='"+ domain + "' class=\"webtrails\">");
     applyDefaultCSS(faviconImg);
     faviconLink.css({
         "vertical-align":"top",
@@ -69,7 +69,7 @@ function addSiteFaviconToDisplay(domain,url) {
 }
 
 function addFaviconsToDisplay(data){
-    wt_$.each(data.favicons_and_urls, function(i,favicon_and_url){
+    $.each(data.favicons_and_urls, function(i,favicon_and_url){
             addSiteFaviconToDisplay(favicon_and_url[0],favicon_and_url[1]);
         }
     )
@@ -114,15 +114,15 @@ function shrinkFaviconHolder() {
 
 function trailSelectChanged() {
     try {
-        // console.log(Trails.getCurrentTrailId(), typeof currentTrailID, wt_$(this).val());
-        Trails.switchToTrail(parseInt(wt_$(this).val()));
+        // console.log(Trails.getCurrentTrailId(), typeof currentTrailID, $(this).val());
+        Trails.switchToTrail(parseInt($(this).val()));
         clearFaviconHolder();
         fetchFavicons();
         if (!Trails.siteSavedDeeply()){
             activateSiteSiteButton();
         }
     } catch(e) {
-        console.log("Uh oh. Not a number or something", wt_$(this).val())
+        console.log("Uh oh. Not a number or something", $(this).val())
     }
 }
 
@@ -143,8 +143,8 @@ function setTrailSelect(trails, adding) {
     if (!adding){
         trailSelect.empty();
     }
-    wt_$.each(trails, function(id, name) {
-        var option = wt_$(document.createElement('option'));
+    $.each(trails, function(id, name) {
+        var option = $(document.createElement('option'));
         option.attr('value', id);
         option.text(name);
         if (String(id) == String(Trails.getCurrentTrailId())) {
@@ -174,7 +174,7 @@ function runWhenExists($query, callback){
     console.log("checking if site exists for query:", $query);
     var siteDocExistsCheck = setInterval(function(){
         console.log("checking for site doc");
-        if(currentSiteFrame = wt_$($query).length){
+        if(currentSiteFrame = $($query).length){
             clearInterval(siteDocExistsCheck);
             callback()
         }

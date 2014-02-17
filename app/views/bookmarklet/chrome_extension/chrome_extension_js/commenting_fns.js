@@ -23,7 +23,7 @@ function makeCommentOverlay(xPos, yPos, spacing, highlightedRange){
     var topPosition  =  yPos + spacing;
     var leftPosition = xPos > overlayWidth ? (xPos - overlayWidth) : xPos;
 
-    var commentOverlay = wt_$(document.createElement("div"));
+    var commentOverlay = $(document.createElement("div"));
     applyDefaultCSS(commentOverlay);
     commentOverlay.css({
         "background": "#f0f0f0",
@@ -38,7 +38,7 @@ function makeCommentOverlay(xPos, yPos, spacing, highlightedRange){
 //    commentOverlay.css("left", leftPosition+"px");
     commentOverlay.addClass("commentOverlay").addClass("webtrails");
 
-    var commentDescription = wt_$(document.createElement("div"))
+    var commentDescription = $(document.createElement("div"))
 //    applyDefaultCSS(commentDescription);
     commentDescription.html("Hit enter, click away or type a comment here")
     commentDescription.css({
@@ -48,7 +48,7 @@ function makeCommentOverlay(xPos, yPos, spacing, highlightedRange){
         "display": "block"
     });
 
-    var commentBox = wt_$(document.createElement("textarea"));
+    var commentBox = $(document.createElement("textarea"));
     applyDefaultCSS(commentBox);
     commentBox.css({
         "font-size":"12px",
@@ -69,8 +69,8 @@ function makeCommentOverlay(xPos, yPos, spacing, highlightedRange){
     var noteContent = String(highlightedRange);
     var reachedFirstTextNode = false;
 
-    wt_$("wtHighlight").removeClass("current-highlight");
-    wt_$.each(nodes,function(i,node){
+    $("wtHighlight").removeClass("current-highlight");
+    $.each(nodes,function(i,node){
         if (i == 0 || !reachedFirstTextNode){
             reachedFirstTextNode = markNodeForHighlight(node,highlightedRange.startOffset,node.length);
         }
@@ -86,15 +86,15 @@ function makeCommentOverlay(xPos, yPos, spacing, highlightedRange){
     console.log("first hightlight is", first);
     var firstElementOffsets = first.offset();
     console.log("offsets are:", firstElementOffsets);
-    wt_$(".trailHighlight").css("background-color","yellow");
+    $(".trailHighlight").css("background-color","yellow");
 
-    wt_$(document.body).append(commentOverlay);
-    wt_$(commentOverlay).append(commentDescription);
-    wt_$(commentOverlay).append(commentBox);
+    $(document.body).append(commentOverlay);
+    $(commentOverlay).append(commentDescription);
+    $(commentOverlay).append(commentBox);
     commentOverlay.offset({top: topPosition, left: leftPosition});
 
     commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
-    wt_$(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
+    $(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
     commentBox.autosize();
     commentBox.focus();
     // the start offset indicates the offset from the beginning of the first text node,
@@ -122,7 +122,7 @@ function clickAwayWithClosure(noteContent,commentOverlay, commentX, commentY) {
 }
 
 function saveNoteAndRefreshAWS(content,comment, commentLocationX, commentLocationY){
-    var noteOffsets = wt_$("wtHighlight.highlightMe").first().offset();
+    var noteOffsets = $("wtHighlight.highlightMe").first().offset();
     console.log("note offsets", noteOffsets);
     var noteCountAtSave = Trails.incrementNoteCount();
     saveSiteToTrail(
@@ -136,17 +136,17 @@ function saveNoteAndRefreshAWS(content,comment, commentLocationX, commentLocatio
 }
 
 function closeOverlay(){
-    var overlay = wt_$(".commentOverlay")
-    wt_$(document).unbind("mousedown");
-    wt_$(document).mousedown(function(){mouseDown=1});
-    wt_$(document).mousedown(possibleHighlightStart);
+    var overlay = $(".commentOverlay")
+    $(document).unbind("mousedown");
+    $(document).mousedown(function(){mouseDown=1});
+    $(document).mousedown(possibleHighlightStart);
     overlay.remove();
     unhighlight_wtHighlights();
 }
 
 function clickAway(e,content,commentOverlay,commentX, commentY){
-    var clickedNode = wt_$(e.target);
-    if (clickedNode != commentOverlay && (wt_$.inArray(e.target,commentOverlay.children())==-1)){
+    var clickedNode = $(e.target);
+    if (clickedNode != commentOverlay && ($.inArray(e.target,commentOverlay.children())==-1)){
         saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(), commentX, commentY);
         closeOverlay(commentOverlay);
     }
@@ -167,32 +167,32 @@ function markNodeForHighlight(node,start_offset, end_offset){
 
         // need the currentHighlight class to distinguish between this note, and previous notes that are still
         // in the html, but should not be highlighted
-        wt_$(new_marker).addClass("highlightMe current-highlight");
-        wt_$(new_marker).attr("data-trail-id", Trails.getCurrentTrailId());
+        $(new_marker).addClass("highlightMe current-highlight");
+        $(new_marker).attr("data-trail-id", Trails.getCurrentTrailId());
 
         new_marker.innerHTML = highlighted_contents;
         var node_to_replace = node;
         node_to_replace.parentNode.replaceChild(new_marker,node_to_replace);
 
         if (unhighlighted_prepend.length !== 0 ){
-            var text_before_marker = wt_$(document.createTextNode(unhighlighted_prepend));
+            var text_before_marker = $(document.createTextNode(unhighlighted_prepend));
             text_before_marker.insertBefore(new_marker);
         }
         if (unhighlighted_append.length !== 0){
-            var text_after_marker = wt_$(document.createTextNode(unhighlighted_append));
+            var text_after_marker = $(document.createTextNode(unhighlighted_append));
             text_after_marker.insertAfter(new_marker);
         }
         return true;
     } else {
-//        wt_$(node).wrap("wtHighlight");
+//        $(node).wrap("wtHighlight");
         return false;
     }
 }
 
 function highlight_wtHighlights(){
-    return wt_$("wtHighlight.highlightMe").css("background","yellow");
+    return $("wtHighlight.highlightMe").css("background","yellow");
 }
 
 function unhighlight_wtHighlights(){
-    wt_$("wtHighlight.highlightMe").removeClass("highlightMe").css("background","");
+    $("wtHighlight.highlightMe").removeClass("highlightMe").css("background","");
 }

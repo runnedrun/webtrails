@@ -1,24 +1,46 @@
 console.log('toolbar ui loaded');
-
-function WtToolbar(toolbarUrl) {
+function WtToolbar(toolbarHtml, noTrailsHelpUrl) {
     var thisToolbar = this;
     var toolbarFrame;
+    var trailPreview;
+    var previewContainer;
+    var previewHeight = 200;
 
-    var toolbarFrame = wt_$("<iframe src='" + toolbarUrl + "' class='wt-toolbar-frame'></iframe>");
+    var toolbarFrame = $("<iframe class='wt-toolbar-frame'></iframe>");
+
+    toolbarFrame.attr({
+        'src': "about:blank",
+        'frameborder': 0
+    });
     toolbarFrame.css({
         position: "fixed",
         width: "100%",
         top: "0px",
         left: "0px",
-        "z-index": "2147483644"
-    })
-    wt_$("body").prepend(toolbarFrame);
+        "z-index": "2147483644",
+        "border-bottom": "2px solid grey"
+    });
+    $("body").prepend(toolbarFrame);
+//    $("body").prepend(toolbarFrame1);
+    thisToolbar.setIframeContent(toolbarFrame, toolbarHtml);
+    var previewContainer = i$(".trail-preview-container");
+    trailPreview = new TPreview(previewContainer, previewHeight);
+
+    thisToolbar.runWhenLoaded(function(doc) {
+        var $doc = $(doc);
+        var toolbarHeight = $doc.find(".wt-toolbar-buttons").height();
+        console.log("loaded with height" + toolbarHeight + "px");
+        toolbarFrame.css({height: toolbarHeight + 200 + "px"});
+        $doc.find("body").css({height: toolbarHeight + 200 + "px"});
+        var dropdown = $doc.find(".dropdown-toggle");
+        dropdown.dropdown();
+    }, thisToolbar.getIDoc(toolbarFrame)[0]);
+
+
 
     function i$(selector) {
         return thisToolbar.getIDoc(toolbarFrame).find(selector)
     }
-
-
 
     var displayHeight = "25px";
     var shown = false;
@@ -38,7 +60,7 @@ function WtToolbar(toolbarUrl) {
         loggedOutMessage;
 
     function createToolbarElements() {
-        trailDisplay = wt_$(document.createElement("div"));
+        trailDisplay = $(document.createElement("div"));
         applyDefaultCSS(trailDisplay);
         trailDisplay.addClass("webtrails");
         trailDisplay.css({
@@ -64,7 +86,7 @@ function WtToolbar(toolbarUrl) {
 
         trailDisplay.disableSelection();
 
-        settingsButton = wt_$(document.createElement("img"));
+        settingsButton = $(document.createElement("img"));
         applyDefaultCSS(settingsButton);
         settingsButton.attr('src', powerButtonUrl);
         settingsButton.addClass("webtrails");
@@ -76,7 +98,7 @@ function WtToolbar(toolbarUrl) {
 
         });
 
-        settingsButtonWrapper = wt_$("<div>")
+        settingsButtonWrapper = $("<div>")
         applyDefaultCSS(settingsButtonWrapper);
         settingsButtonWrapper.append(settingsButton)
         settingsButtonWrapper.css({
@@ -92,7 +114,7 @@ function WtToolbar(toolbarUrl) {
         settingsButtonWrapper.addClass("webtrails");
         settingsButtonWrapper.addClass("wt_settingsButton");
 
-        previousNoteButton = wt_$(document.createElement("button"));
+        previousNoteButton = $(document.createElement("button"));
         applyDefaultCSS(previousNoteButton);
         previousNoteButton.css({
             "font-size": "12px",
@@ -113,7 +135,7 @@ function WtToolbar(toolbarUrl) {
         previousNoteButton.html("Previous Note");
         previousNoteButton.addClass("previousNoteButton").addClass("webtrails");;
 
-        nextNoteButton = wt_$(document.createElement("button"));
+        nextNoteButton = $(document.createElement("button"));
         applyDefaultCSS(nextNoteButton);
         nextNoteButton.css({
             "font-size": "12px",
@@ -135,7 +157,7 @@ function WtToolbar(toolbarUrl) {
         nextNoteButton.addClass("nextNoteButton").addClass("webtrails");
         nextNoteButton.html("Next Note");
 
-        deleteNoteButton = wt_$(document.createElement("img"));
+        deleteNoteButton = $(document.createElement("img"));
         applyDefaultCSS(deleteNoteButton);
         deleteNoteButton.css({
             "font-size": "12px",
@@ -155,7 +177,7 @@ function WtToolbar(toolbarUrl) {
         deleteNoteButton.attr("src","data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAQCAQAAABnqj2yAAAACXBIWXMAAAsTAAALEwEAmpwYAAADGGlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjaY2BgnuDo4uTKJMDAUFBUUuQe5BgZERmlwH6egY2BmYGBgYGBITG5uMAxIMCHgYGBIS8/L5UBFTAyMHy7xsDIwMDAcFnX0cXJlYE0wJpcUFTCwMBwgIGBwSgltTiZgYHhCwMDQ3p5SUEJAwNjDAMDg0hSdkEJAwNjAQMDg0h2SJAzAwNjCwMDE09JakUJAwMDg3N+QWVRZnpGiYKhpaWlgmNKflKqQnBlcUlqbrGCZ15yflFBflFiSWoKAwMD1A4GBgYGXpf8EgX3xMw8BSMDVQYqg4jIKAUICxE+CDEESC4tKoMHJQODAIMCgwGDA0MAQyJDPcMChqMMbxjFGV0YSxlXMN5jEmMKYprAdIFZmDmSeSHzGxZLlg6WW6x6rK2s99gs2aaxfWMPZ9/NocTRxfGFM5HzApcj1xZuTe4FPFI8U3mFeCfxCfNN45fhXyygI7BD0FXwilCq0A/hXhEVkb2i4aJfxCaJG4lfkaiQlJM8JpUvLS19QqZMVl32llyfvIv8H4WtioVKekpvldeqFKiaqP5UO6jepRGqqaT5QeuA9iSdVF0rPUG9V/pHDBYY1hrFGNuayJsym740u2C+02KJ5QSrOutcmzjbQDtXe2sHY0cdJzVnJRcFV3k3BXdlD3VPXS8Tbxsfd99gvwT//ID6wIlBS4N3hVwMfRnOFCEXaRUVEV0RMzN2T9yDBLZE3aSw5IaUNak30zkyLDIzs+ZmX8xlz7PPryjYVPiuWLskq3RV2ZsK/cqSql01jLVedVPrHzbqNdU0n22VaytsP9op3VXUfbpXta+x/+5Em0mzJ/+dGj/t8AyNmf2zvs9JmHt6vvmCpYtEFrcu+bYsc/m9lSGrTq9xWbtvveWGbZtMNm/ZarJt+w6rnft3u+45uy9s/4ODOYd+Hmk/Jn58xUnrU+fOJJ/9dX7SRe1LR68kXv13fc5Nm1t379TfU75/4mHeY7En+59lvhB5efB1/lv5dxc+NH0y/fzq64Lv4T8Ffp360/rP8f9/AA0ADzT6lvFdAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAACDSURBVHjavI4xCsJQEETfBltlO8Nv9AqpPICl5/CwniJo8dFCCNo7Fn8DxnxbB4aBfczumvilRYlk9GwAOOdtMCHEwTrJ5fJOipmJJGhoyaUfmc0EXj01mIA0+yUbNGXJ/jg1BILLfeoPVNM/kQnYXYf1kiej/XZqA7H6ar94jKiq9wBVaTFDLLMAdgAAAABJRU5ErkJggg==");
         deleteNoteButton.addClass("deleteNoteButton").addClass("webtrails");
 
-        showCommentButton = wt_$(document.createElement("img"));
+        showCommentButton = $(document.createElement("img"));
         applyDefaultCSS(showCommentButton);
         showCommentButton.css({
             "font-size": "12px",
@@ -176,7 +198,7 @@ function WtToolbar(toolbarUrl) {
         showCommentButton.attr("src","data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAACXBIWXMAAAsTAAALEwEAmpwYAAADGGlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjaY2BgnuDo4uTKJMDAUFBUUuQe5BgZERmlwH6egY2BmYGBgYGBITG5uMAxIMCHgYGBIS8/L5UBFTAyMHy7xsDIwMDAcFnX0cXJlYE0wJpcUFTCwMBwgIGBwSgltTiZgYHhCwMDQ3p5SUEJAwNjDAMDg0hSdkEJAwNjAQMDg0h2SJAzAwNjCwMDE09JakUJAwMDg3N+QWVRZnpGiYKhpaWlgmNKflKqQnBlcUlqbrGCZ15yflFBflFiSWoKAwMD1A4GBgYGXpf8EgX3xMw8BSMDVQYqg4jIKAUICxE+CDEESC4tKoMHJQODAIMCgwGDA0MAQyJDPcMChqMMbxjFGV0YSxlXMN5jEmMKYprAdIFZmDmSeSHzGxZLlg6WW6x6rK2s99gs2aaxfWMPZ9/NocTRxfGFM5HzApcj1xZuTe4FPFI8U3mFeCfxCfNN45fhXyygI7BD0FXwilCq0A/hXhEVkb2i4aJfxCaJG4lfkaiQlJM8JpUvLS19QqZMVl32llyfvIv8H4WtioVKekpvldeqFKiaqP5UO6jepRGqqaT5QeuA9iSdVF0rPUG9V/pHDBYY1hrFGNuayJsym740u2C+02KJ5QSrOutcmzjbQDtXe2sHY0cdJzVnJRcFV3k3BXdlD3VPXS8Tbxsfd99gvwT//ID6wIlBS4N3hVwMfRnOFCEXaRUVEV0RMzN2T9yDBLZE3aSw5IaUNak30zkyLDIzs+ZmX8xlz7PPryjYVPiuWLskq3RV2ZsK/cqSql01jLVedVPrHzbqNdU0n22VaytsP9op3VXUfbpXta+x/+5Em0mzJ/+dGj/t8AyNmf2zvs9JmHt6vvmCpYtEFrcu+bYsc/m9lSGrTq9xWbtvveWGbZtMNm/ZarJt+w6rnft3u+45uy9s/4ODOYd+Hmk/Jn58xUnrU+fOJJ/9dX7SRe1LR68kXv13fc5Nm1t379TfU75/4mHeY7En+59lvhB5efB1/lv5dxc+NH0y/fzq64Lv4T8Ffp360/rP8f9/AA0ADzT6lvFdAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAABdSURBVHjaYpR8zyDAgAk+MBr+Z8Ii/o+BCZswAwMTA3ZxBgaqSjB/wSbM/IXxvw0Di8l+BgbuOzMKNL/CZf4wMDAwMBj/t7t9zuE/C5o2SX6swgwM/1n+m2AKAwYAj4MXXMHl+7EAAAAASUVORK5CYII=");
         showCommentButton.addClass("showCommentButton").addClass("webtrails");
 
-        linkToTrailWrapper = wt_$(document.createElement("div"));
+        linkToTrailWrapper = $(document.createElement("div"));
         applyDefaultCSS(linkToTrailWrapper);
         linkToTrailWrapper.css({
             "height":"100%",
@@ -189,7 +211,7 @@ function WtToolbar(toolbarUrl) {
         });
         linkToTrailWrapper.addClass("webtrails");
 
-        linkToTrail = wt_$(document.createElement("a"));
+        linkToTrail = $(document.createElement("a"));
         applyDefaultCSS(linkToTrail);
         linkToTrail.css({
             "margin-left": "1%",
@@ -205,7 +227,7 @@ function WtToolbar(toolbarUrl) {
         linkToTrail.addClass("webtrails needs-trail");
 //    linkToTrail.attr("target", "_blank");
 
-        trailSelect = wt_$(document.createElement("select"));
+        trailSelect = $(document.createElement("select"));
 //    applyDefaultCSS(trailSelect);
         trailSelect.css({
             "float": "left",
@@ -221,12 +243,12 @@ function WtToolbar(toolbarUrl) {
         trailSelect.addClass("webtrails");
         trailSelect.change(trailSelectChanged);
 
-        wt_$(linkToTrail).html("View Trail");
-        wt_$(linkToTrail).click(function(event){
+        $(linkToTrail).html("View Trail");
+        $(linkToTrail).click(function(event){
             window.open(webTrailsUrl + "/trails/"+Trails.getCurrentTrailId(), "_blank")
         })
 
-        saveSiteToTrailButton = wt_$(document.createElement("button"));
+        saveSiteToTrailButton = $(document.createElement("button"));
         applyDefaultCSS(saveSiteToTrailButton);
         saveSiteToTrailButton.css({
             "font-size": "12px",
@@ -247,7 +269,7 @@ function WtToolbar(toolbarUrl) {
         saveSiteToTrailButton.html("Save site");
         saveSiteToTrailButton.click(function(){saveSiteToTrail()});
 
-        var shareTrailField = wt_$(document.createElement("input"));
+        var shareTrailField = $(document.createElement("input"));
         applyDefaultCSS(shareTrailField)
         .css({
             "font-size": "12px",
@@ -281,7 +303,7 @@ function WtToolbar(toolbarUrl) {
             shareTrailField.css({"cursor": "text"});
         });
 
-        faviconHolder = wt_$(document.createElement("div"));
+        faviconHolder = $(document.createElement("div"));
         applyDefaultCSS(faviconHolder);
         faviconHolder.css({
             "font-size": "12px",
@@ -302,7 +324,7 @@ function WtToolbar(toolbarUrl) {
         faviconHolder.attr("id", "faviconHolder");
         faviconHolder.mouseenter(growFaviconHolder).mouseleave(shrinkFaviconHolder)
 
-        loggedOutMessage = wt_$("<div>");
+        loggedOutMessage = $("<div>");
         applyDefaultCSS(loggedOutMessage);
         loggedOutMessage.html("Hit the power button on the right to sign in using Google")
         loggedOutMessage.css({
@@ -317,7 +339,7 @@ function WtToolbar(toolbarUrl) {
     }
 
     function addToolbarElementsToDom() {
-        wt_$(document.body).prepend(trailDisplay);
+        $(document.body).prepend(trailDisplay);
         trailDisplay.append(settingsButtonWrapper);
         trailDisplay.append(showCommentButton);
         trailDisplay.append(deleteNoteButton);
@@ -332,11 +354,28 @@ function WtToolbar(toolbarUrl) {
         trailDisplay.append(loggedOutMessage);
     }
 
-    this.updateToolbarWithTrails = function(Trails){
-        shareTrailField.css({visibility: "shown"});
-        linkToTrailWrapper.css({visibility: "shown"});
-        TrailPreview = new TPreview();
-        TrailPreview.initWithTrail(Trails.getCurrentTrail());
+    this.showTrailInPreview = function(trail) {
+        trailPreview.initWithTrail(trail);
+    };
+
+    this.updateToolbarWithTrails = function(trails) {
+//        shareTrailField.css({visibility: "shown"});
+//        linkToTrailWrapper.css({visibility: "shown"});
+        if (Trails.getCurrentTrail()){
+            thisToolbar.showTrailInPreview(trails.getCurrentTrail());
+        } else {
+            showNoTrailsHelp();
+        }
+    };
+
+    function showNoTrailsHelp() {
+        var helpIframe = $("<iframe class='help-frame'></iframe>").attr({
+            src:noTrailsHelpUrl,
+            frameborder: "0"
+        }).css({
+            height: previewHeight + "px"
+        });
+        previewContainer.append(helpIframe);
     }
 
     function initSignedInExperience(){
@@ -354,7 +393,7 @@ function WtToolbar(toolbarUrl) {
             signOut();
             return false
         });
-        wt_$(document).mousedown(possibleHighlightStart);
+        $(document).mousedown(possibleHighlightStart);
     }
 
     function initSignedOutExperience(){
@@ -363,8 +402,8 @@ function WtToolbar(toolbarUrl) {
         trailDisplay.children().not(".wt_settingsButton").hide();
         settingsButtonWrapper.css("background-color","#FF8080")
         loggedOutMessage.show();
-        wt_$(document).unbind("mousedown");
-        wt_$(".inlineSaveButton").remove();
+        $(document).unbind("mousedown");
+        $(".inlineSaveButton").remove();
         settingsButtonWrapper.unbind("click");
         debugger;
         settingsButtonWrapper.click(function(){
@@ -417,7 +456,7 @@ function WtToolbar(toolbarUrl) {
         trailDisplay.hide();
 //        TrailPreview.hide();
         shown = false;
-        wt_$(".inlineSaveButton").remove();
+        $(".inlineSaveButton").remove();
         closeOverlay();
     }
 
@@ -436,28 +475,28 @@ function WtToolbar(toolbarUrl) {
 
 //    createToolbarElements();
 //    addToolbarElementsToDom();
-    console.log("wt auth is", wt_auth_token);
-    if (wt_auth_token){
-        initSignedInExperience()
-    }else{
-        initSignedOutExperience()
-    }
-
-    wt_$(document.body).keydown(checkForShowToolbarKeypress);
-
-    wt_$(document.body).mousedown(function() {
-        mouseDown=1;
-    });
-    wt_$(document.body).mouseup(function(){
-        mouseDown=0;
-    });
-
-    //weird fix for some sites
-    try {
-        var bodymargin = wt_$('body').css('margin-left')
-        if (bodymargin) {
-            trailDisplay.css("margin-left", "-" + bodymargin);
-        }
-    }catch (e) {}
+//    console.log("wt auth is", wt_auth_token);
+//    if (wt_auth_token){
+//        initSignedInExperience()
+//    }else{
+//        initSignedOutExperience()
+//    }
+//
+//    $(document.body).keydown(checkForShowToolbarKeypress);
+//
+//    $(document.body).mousedown(function() {
+//        mouseDown=1;
+//    });
+//    $(document.body).mouseup(function(){
+//        mouseDown=0;
+//    });
+//
+//    //weird fix for some sites
+//    try {
+//        var bodymargin = $('body').css('margin-left')
+//        if (bodymargin) {
+//            trailDisplay.css("margin-left", "-" + bodymargin);
+//        }
+//    }catch (e) {}
 }
 WtToolbar.prototype = IframeManager

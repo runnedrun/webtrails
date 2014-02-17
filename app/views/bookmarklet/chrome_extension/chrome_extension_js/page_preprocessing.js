@@ -14,12 +14,12 @@ function removeAllUnusedTags($htmlClone){
 
 function getCurrentSiteHTML(){
     var htmlElement = document.getElementsByTagName('html')[0];
-    var htmlClone = wt_$(htmlElement).clone();
+    var htmlClone = $(htmlElement).clone();
     removeToolbarFromPage(htmlClone); // edits in-place
     removeAllUnusedTags(htmlClone);
 
-    var charSetMeta = wt_$('<meta charset="UTF-8">');
-    var oldMeta = wt_$('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">');
+    var charSetMeta = $('<meta charset="UTF-8">');
+    var oldMeta = $('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">');
 
     htmlClone.find("head").prepend(charSetMeta);
     htmlClone.find("head").prepend(oldMeta);
@@ -36,12 +36,12 @@ function parsePageBeforeSavingSite(resp){
     var currentHTML = getCurrentSiteHTML();
     var html_attributes = {};
 
-    wt_$.each(wt_$("html")[0].attributes,function(i,attribute){
+    $.each($("html")[0].attributes,function(i,attribute){
         html_attributes[attribute.name] = attribute.value;
     });
 
 
-    wt_$.each(wt_$.makeArray(document.styleSheets),function(i,stylesheet){
+    $.each($.makeArray(document.styleSheets),function(i,stylesheet){
         var owner = stylesheet.ownerNode
         if (owner.nodeName == "LINK"){
             stylesheetHrefs.push(owner.href);

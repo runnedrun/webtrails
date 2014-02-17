@@ -3,26 +3,42 @@
     <script src="/third_party_scripts/jquery.js"> </script>
     <script src="/third_party_scripts/bootstrap.min.js"> </script>
     <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="/css/toolbar.css" rel="stylesheet" media="screen">
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!--<div class="col-md-2">-->
-                <div class="dropdown col-md-2">
-                    <!-- Link or button to toggle dropdown -->
-                    <button class="btn dropdown-toggle btn-primary" type="button" id="dropdownMenu1" data-toggle="dropdown">
-                        Trail 1
+    <div class="container-fluid wt-toolbar">
+        <div class="row wt-toolbar-buttons">
+                <div class="dropdown col-md-1">
+                    <button class="toolbar-element btn btn-sm dropdown-toggle btn-primary" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                        Trails
                         <span class="caret"></span>
                     </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                    <ul class="dropdown-menu trail-list-dropdown" role="menu" aria-labelledby="dLabel">
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
                     </ul>
                 </div>
-            <!--</div>-->
+            <div class="col-md-2 trail-name well-sm toolbar-element">
+                    Choose a Trail
+            </div>
             <div class="col-md-1">
-                <button class="btn btn-min go-to-trail">View Trail</button>
+                <button class="btn btn-sm btn-default go-trail toolbar-element">View Trail</button>
+            </div>
+            <div class="col-md-2 favicons">
+                favicons
+            </div>
+            <div class="col-md-4 col-md-offset-2">
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-default toolbar-element">Prev Note</button>
+                    <button type="button" class="btn btn-default toolbar-element">Next Note</button>
+                </div>
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-default toolbar-element">Show Comment</button>
+                    <button type="button" class="btn btn-danger btn-md toolbar-element">
+                        <span class="glyphicon glyphicon-star"></span> Delete Note
+                    </button>
+                </div>
             </div>
             <!--<div class="siteFaviconsHolder">-->
                 <!--&lt;!&ndash;<div class="siteFavicons">&ndash;&gt;-->
@@ -38,6 +54,9 @@
             <!--<button class="btn btn-info navigateButton" id="previousNote">Previous</button>-->
             <!--<button class="btn btn-success navigateButton" id="nextNote"><b>Next</b></button>-->
             <!--<button class="btn btn-danger btn-mini" id="removeSite"><i class="icon-trash"> </i> Delete Note</button>-->
+        </div>
+        <div class="row trail-preview-container">
+
         </div>
     </div>
 </body>

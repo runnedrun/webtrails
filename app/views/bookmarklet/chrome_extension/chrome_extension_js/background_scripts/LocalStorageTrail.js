@@ -6,7 +6,7 @@ LocalStorageTrailAccess = new function(){
     }
 
     this.addOrUpdateTrails = function(trailsObject) {
-        var deffereds = wt_$.map(trailsObject, function(trailObject, trailId) {
+        var deffereds = $.map(trailsObject, function(trailObject, trailId) {
             return saveSiteHtmlForTrail(trailObject)
         });
         setTrailsToLocalStorage(trailsObject);
@@ -14,19 +14,19 @@ LocalStorageTrailAccess = new function(){
     }
 
     function saveSiteHtmlForTrail(trailObject) {
-        var oldTrailObject = getUnhydratedTrail(trailObject.trailId);
-        return wt_$.map(trailObject.sites.siteObjects, function(siteId, siteObject) {
+        var oldTrailObject = getUnhydratedTrails()[trailObject.trailId];
+        return $.map(trailObject.sites.siteObjects || [], function(siteObject, siteId) {
             var oldSiteRevisionMap;
-            if (oldTrailObject && oldTrailObject.site.siteObjects[siteId]) {
+            if (oldTrailObject && oldTrailObject.sites.siteObjects[siteId]) {
                 oldSiteRevisionMap = oldTrailObject.sites.siteObjects[siteId].revisionUrls;
             } else {
                 oldSiteRevisionMap = {};
             }
-            return wt_$.map(siteObject.revisionUrls, function(revisionNumber, revisionUrl) {
+            return $.map(siteObject.revisionUrls, function(revisionUrl, revisionNumber) {
                 var revisionAlreadExistsInStorage = oldSiteRevisionMap[revisionNumber];
                 if (!revisionAlreadExistsInStorage){
                     console.log("getting new revision");
-                    var deferred = wt_$.ajax({
+                    var deferred = $.ajax({
                         url: revisionUrl,
                         type: "get",
                         success: function(html){
@@ -40,11 +40,11 @@ LocalStorageTrailAccess = new function(){
     }
 
     function hydrateSiteHtml(unhydratedTrailsObject) {
-        wt_$.each(unhydratedTrailsObject, function(id, trailObject) {
-            wt_$.each(trailObject.sites.siteObjects, function(siteId, siteObject) {
-                siteObject.html = {}
-                wt_$.each(siteObject.revisionUrls, function(revisionNumber, revisionUrl) {
-                    siteObject.html[revisionNumber] = getSiteRevisionHtml(siteId, revisionUrl)
+        $.each(unhydratedTrailsObject, function(id, trailObject) {
+            $.each(trailObject.sites.siteObjects, function(siteId, siteObject) {
+                siteObject.html = {};
+                $.each(siteObject.revisionUrls, function(revisionNumber) {
+                    siteObject.html[revisionNumber] = getSiteRevisionHtml(siteId, revisionNumber)
                 });
             });
         })
@@ -55,14 +55,27 @@ LocalStorageTrailAccess = new function(){
     }
 
     function getUnhydratedTrails() {
-        return JSON.parse(localstorage["trails"]) || {};
+        var trails = localStorage["trails"] || "{}";
+        return JSON.parse(trails);
     }
 
     function setSiteRevisionHtml(siteId, revisionNumber, html) {
-        localStorage["revisionHtml" + siteId + ":" + revisionNumber] = html
+        localStorage["revisionHtml:" + siteId + ":" + revisionNumber] = html
     }
 
     function getSiteRevisionHtml(siteId, revisionNumber) {
-        return localStorage["revisionHtml:"+ siteId + ":" + revisionNumber] || "Site failed to load."
+        return localStorage["revisionHtml:" + siteId + ":" + revisionNumber] || "Site failed to load."
+    }
+
+    this.setCurrentTrailId = function(currentTrailId) {
+        localStorage["currentTrailId"] = currentTrailId;
+    };
+
+    this.getCurrentTrailId = function() {
+        return localStorage["currentTrailId"];
+    }
+
+    this.clearCurrentTrailId = function() {
+        localStorage.removeItem("currentTrailId");
     }
 }()

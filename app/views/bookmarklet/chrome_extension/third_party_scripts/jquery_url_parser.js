@@ -8,20 +8,20 @@
 ;(function(factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD available; use anonymous module
-        if ( typeof wt_$ !== 'undefined' ) {
-            define(['wt_$'], factory);
+        if ( typeof $ !== 'undefined' ) {
+            define(['$'], factory);
         } else {
             define([], factory);
         }
     } else {
         // No AMD available; mutate global vars
-        if ( typeof wt_$ !== 'undefined' ) {
-            factory(wt_$);
+        if ( typeof $ !== 'undefined' ) {
+            factory($);
         } else {
             factory();
         }
     }
-})(function(wt_$, undefined) {
+})(function($, undefined) {
 
     var tag2attr = {
             a       : 'href',
@@ -251,17 +251,17 @@
 
     };
 
-    if ( typeof wt_$ !== 'undefined' ) {
+    if ( typeof $ !== 'undefined' ) {
 
-        wt_$.fn.url = function( strictMode ) {
+        $.fn.url = function( strictMode ) {
             var url = '';
             if ( this.length ) {
-                url = wt_$(this).attr( getAttrName(this[0]) ) || '';
+                url = $(this).attr( getAttrName(this[0]) ) || '';
             }
             return purl( url, strictMode );
         };
 
-        wt_$.url = purl;
+        $.url = purl;
 
     } else {
         window.purl = purl;

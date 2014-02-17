@@ -3,14 +3,14 @@ console.log("inline save loaded");
 function possibleHighlightStart(){
     if(!trailDisplay.is(":hidden")){
         mouseDown = 1;
-        wt_$(document).mouseup(function(){mouseDown = 0; highlightedTextDetect()});
+        $(document).mouseup(function(){mouseDown = 0; highlightedTextDetect()});
     }
 }
 
 function highlightedTextDetect(){
 //    if(!trailDisplay.is(":hidden")){
         //this probably breaks a lot of pages
-        wt_$(document).unbind("mouseup");
+        $(document).unbind("mouseup");
         if (!rangy.getSelection().isCollapsed){
             return addSaveButtonNextToNote(rangy.getSelection().getRangeAt(0));
         }
@@ -48,7 +48,7 @@ function addSaveButtonNextToNote(highlightedTextRange){
     //clean this up foo
     saveSpan.click(function(saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedRange){return function(e){clickAndRemoveSaveButton(e,saveButtonLeft,saveButtonTop,nodeLineHeight,highlightedRange)} }(saveButtonLeft,saveButtonTop,nodeLineHeight,rangy.getSelection().getRangeAt(0)));
     //make sure this gets handled, so no existing callback gets the event and captures it.
-    wt_$(document).mousedown(removeInlineSaveButton);
+    $(document).mousedown(removeInlineSaveButton);
     return saveSpan
 }
 
@@ -57,8 +57,8 @@ function getHighlightedTextRange(){
 }
 
 function getLastNode(node){
-    var wt_$node = wt_$(node);
-    var contents = wt_$node.contents();
+    var $node = $(node);
+    var contents = $node.contents();
     if (contents.length===0){
         if (isTextNode(node)){
             return node
@@ -77,7 +77,7 @@ function insertSaveButtonIntoNodeContent(highlightedTextRange){
     var startOffset = highlightedTextRange.startOffset
     var endOffset = highlightedTextRange.endOffset
     var insertionNode;
-    if (wt_$(endContainer).contents().length === 0){
+    if ($(endContainer).contents().length === 0){
         insertionNode = endContainer;
     } else {
         insertionNode = getLastNode(endContainer);
@@ -85,7 +85,7 @@ function insertSaveButtonIntoNodeContent(highlightedTextRange){
     var textNodeContent = insertionNode.textContent;
     var firstHalfOfNode =  textNodeContent.slice(0,endOffset);
     var secondHalfOfNode =  textNodeContent.slice(endOffset);
-    var saveSpan = wt_$("<span class='inlineSaveButton webtrails'></span>");
+    var saveSpan = $("<span class='inlineSaveButton webtrails'></span>");
     saveSpan.html("Save note");
     saveSpan.css("width", "0");
 
@@ -94,19 +94,19 @@ function insertSaveButtonIntoNodeContent(highlightedTextRange){
         var nodeToHighlightPrefix = document.createTextNode(firstHalfOfNode.slice(0,startOffset));
         nodeToHighlight = document.createTextNode(firstHalfOfNode.slice(startOffset));
         insertionNode.parentNode.replaceChild(nodeToHighlightPrefix,insertionNode)
-        wt_$(nodeToHighlight).insertAfter(nodeToHighlightPrefix);
+        $(nodeToHighlight).insertAfter(nodeToHighlightPrefix);
     }else{
         nodeToHighlight = document.createTextNode(firstHalfOfNode);
         insertionNode.parentNode.replaceChild(nodeToHighlight,insertionNode)
     }
     saveSpan.insertAfter(nodeToHighlight);
-    wt_$(document.createTextNode(secondHalfOfNode)).insertAfter(saveSpan);
+    $(document.createTextNode(secondHalfOfNode)).insertAfter(saveSpan);
     //make this do all the save button creation maybe?
     return [saveSpan,nodeToHighlight,insertionNode];
 }
 
 function insertAbsolutelyPositionedSaveButton(left,top){
-    var saveSpan = wt_$("<span class='inlineSaveButton webtrails'></span>");
+    var saveSpan = $("<span class='inlineSaveButton webtrails'></span>");
     applyDefaultCSS(saveSpan);
     saveSpan.html("+Save note");
     saveSpan.addClass("inlineSaveButton");
@@ -123,19 +123,19 @@ function insertAbsolutelyPositionedSaveButton(left,top){
         "border": "1px solid #ccc",
         "padding": "2px"
     });
-    wt_$(document.body).append(saveSpan)
+    $(document.body).append(saveSpan)
     saveSpan.offset({top: top - 2, left: left + 5});
     return saveSpan
 }
 
 function removeInlineSaveButton(e){
-    if (!wt_$(e.target).is(".inlineSaveButton")){
-        wt_$(".inlineSaveButton").remove();
+    if (!$(e.target).is(".inlineSaveButton")){
+        $(".inlineSaveButton").remove();
     }
 }
 
 function clickAndRemoveSaveButton(e,overlayLeft,overlayTop,overLaySpacing,highlightedRange){
     makeCommentOverlay(overlayLeft, overlayTop,overLaySpacing,highlightedRange);
-    wt_$(".inlineSaveButton").remove();
+    $(".inlineSaveButton").remove();
 }
 

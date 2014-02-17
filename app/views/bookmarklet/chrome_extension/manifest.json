@@ -12,12 +12,12 @@
     },
     "update_url": "http://webtrails.co/chrome_extension_update.xml",
     "background": {
-        "scripts": ["chrome_extension_js/jquery191.js","oauth2/oauth2.js","chrome_extension_js/background_scripts/extension_background.js",
+        "scripts": ["chrome_extension_js/jquery.js","oauth2/oauth2.js","chrome_extension_js/background_scripts/extension_background.js",
             "third_party_scripts/jquery_url_parser.js", "third_party_scripts/URI.js", "chrome_extension_js/background_scripts/parse_page_and_resolve_urls.js",
             "chrome_extension_js/background_scripts/site_storage_accessors.js",
             "chrome_extension_js/background_scripts/misc_storage_accessors.js","chrome_extension_js/background_scripts/auth_storage_accessors.js",
             "chrome_extension_js/background_scripts/note_storage_accessors.js","chrome_extension_js/background_scripts/trail_storage_accessors.js",
-            "third_party_scripts/aws_SDK.js"]
+            "third_party_scripts/aws_SDK.js", "chrome_extension_js/background_scripts/LocalStorageTrail.js"]
     },
     "content_scripts": [
         {
@@ -41,5 +41,5 @@
         "chrome_extension_js/jquery191.js","chrome_extension_js/page_preprocessing.js","chrome_extension_js/jquery_url_parser.js",
         "chrome_extension_js/css_property_defaults.js","chrome_extension_js/trail_preview.js","chrome_extension_images/power.png","oauth2/oauth2.html",
         "chrome_extension_js/trails_objects.js", "chrome_extension_js/mutation-summary.js", "chrome_extension_js/iframe_manager.js",
-        "html/toolbar.html"]
+        "html/*", "css/*", "third_party_scripts/*"]
 }

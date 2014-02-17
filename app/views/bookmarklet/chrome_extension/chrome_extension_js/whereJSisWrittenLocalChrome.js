@@ -23,30 +23,30 @@ var trailDisplay,
     toolbarShown;
     powerButtonUrl;
     contentScriptLoaded;
-    toolbarUrl;
-//    toolbarHtml; // this is uri encoded
+    toolbarHtml; // this is uri encoded
+    noTrailsHelpUrl;
 
 String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
 };
 
-wt_$(initExtension());
+$(initExtension());
 //initExtension();
 
 function initExtension(){
     console.log("init extension");
     initializeAutoResize();
-    Toolbar = new WtToolbar(decodeURI(toolbarUrl));
-//    if (wt_auth_token) {
-//    wt_$(document.body).keydown(verifyKeypress);
-//        getTrailDataFromLocalStorage(function(response){
-//            console.log("local storage response", response);
-//            Trails = new TrailsObject(response, startingTrailID);
-//            TrailPreview = new TPreview();
-//
-//        });
-//}
-
+//    debugger;
+//    Toolbar = new WtToolbar(decodeURI(toolbarUrl));
+    Toolbar = new WtToolbar(decodeURI(toolbarHtml), noTrailsHelpUrl);
+    $(document.body).keydown(verifyKeypress);
+    if (wt_auth_token) {
+        getTrailDataFromLocalStorage(function(response){
+            console.log("local storage response", response);
+            Trails = new TrailsObject(response, startingTrailID);
+            Toolbar.updateToolbarWithTrails(Trails);
+        });
+    }
 }
 
 function getTrailDataFromLocalStorage(callback){

@@ -43,7 +43,7 @@ function parse_page_and_resolve_urls(siteInfo){
         noteId: siteInfo.note_id
     };
 
-    wt_$.each(stylesheetHrefs,function(i,href){
+    $.each(stylesheetHrefs,function(i,href){
         getCssAndParse(href, callbackTracker)
     })
 
@@ -53,9 +53,9 @@ function parse_page_and_resolve_urls(siteInfo){
 function parseHtmlAndResolveUrls(html,htmlAttributes,cb) {
     var newDoc = document.implementation.createHTMLDocument().documentElement;
     newDoc.innerHTML = html;
-    var $html = wt_$(newDoc);
+    var $html = $(newDoc);
 
-    wt_$.each(htmlAttributes,function(attributeName,attributeValue){
+    $.each(htmlAttributes,function(attributeName,attributeValue){
         $html.attr(attributeName, attributeValue);
     })
 
@@ -122,7 +122,7 @@ function parseHtmlAndResolveUrls(html,htmlAttributes,cb) {
 }
 
 function getCssAndParse(cssLocation,cb){
-    wt_$.ajax({
+    $.ajax({
         url: cssLocation,
         type: "get",
         crossDomain: true,
@@ -155,7 +155,7 @@ function checkIfAllResourcesAreParsed(callbackTracker){
         console.log("everything is parsed!");
         console.log(callbackTracker);
 
-        wt_$.ajax({
+        $.ajax({
             url: resourceDownloaderAddress  + "/resource_downloader",
             type: "post",
             crossDomain: true,
@@ -234,7 +234,7 @@ function generateAwsUrl(url,siteID,trailID){
     }
 
     var shortPath = short_path_wo_extension + "." + extension;
-    var escapedShortPath = wt_$.map(shortPath.split("/"),function(sect,i){ return encodeURIComponent(sect) }).join("/");
+    var escapedShortPath = $.map(shortPath.split("/"),function(sect,i){ return encodeURIComponent(sect) }).join("/");
 
     var filePath = String(trailID)+"/"+String(siteID)+ shortPath;
     var escapedFilePath = String(trailID)+"/"+String(siteID)+ escapedShortPath;

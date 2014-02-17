@@ -9576,7 +9576,7 @@
 
 // })();
 // Expose jQuery to the global object
-    window.wt_$ = jQuery;
+    window.$ = jQuery;
 
 // Expose jQuery as an AMD module, but only for AMD loaders that
 // understand the issues with loading multiple versions of jQuery
@@ -9596,11 +9596,3 @@
 
 })( window );
 
-(function($){
-    $.fn.disableSelection = function() {
-        return this
-                 .attr('unselectable', 'on')
-                 .css('user-select', 'none')
-                 .on('selectstart', false);
-    };
-})(wt_$);

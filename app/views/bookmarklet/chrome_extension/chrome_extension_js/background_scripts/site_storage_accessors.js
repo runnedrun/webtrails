@@ -1,10 +1,10 @@
 function getSitesObject(trailId){
     var sitesObject = {siteObjects:{},order:[]};
     var idList = getSiteIdListFromLocalStorage(trailId);
-    wt_$.each(idList,function(i,siteId){
+    $.each(idList,function(i,siteId){
         var siteObject = sitesObject["siteObjects"][siteId] = {};
         var htmlHash = {};
-        wt_$.each(getRevisionList(siteId), function(i, revisionNumber) {
+        $.each(getRevisionList(siteId), function(i, revisionNumber) {
             htmlHash[revisionNumber] = getRevisionFromLocalStorage(siteId, revisionNumber);
         });
         siteObject["html"] = htmlHash;
@@ -26,13 +26,13 @@ function getSiteIdListFromLocalStorage(trailId){
 
 function updateSiteData(newSiteIdList, siteHashes, trailId){
     var oldSiteIdList = getSiteIdListFromLocalStorage(trailId) || [];
-    wt_$.each(oldSiteIdList,function(i, siteId){
+    $.each(oldSiteIdList,function(i, siteId){
         var siteExistsInNewList = newSiteIdList.indexOf(siteId) > -1;
         if (!(siteExistsInNewList)){
             removeSiteDataFromLocalStorage(siteId);
         }
     });
-    var deferreds = wt_$.map(newSiteIdList,function(siteId,id){
+    var deferreds = $.map(newSiteIdList,function(siteId,id){
         return updatedStoredHtmlForSite(siteId, siteHashes[siteId]);
     });
     setSiteListInLocalStorage(trailId, newSiteIdList)
@@ -42,17 +42,17 @@ function updateSiteData(newSiteIdList, siteHashes, trailId){
 function updatedStoredHtmlForSite(siteId, siteHash){
     var oldSiteRevisionList = getRevisionList(siteId);
 
-    wt_$.each(oldSiteRevisionList, function(revisionNumber){
+    $.each(oldSiteRevisionList, function(revisionNumber){
         var revisionExistsInNewList = siteHash.revisionUrls[revisionNumber];
         if (!revisionExistsInNewList){
             removeRevisionFromLocalStorage(siteId, revisionNumber);
         }
     });
-    var deferreds = wt_$.map(siteHash.revisionUrls, function(revisionNumber, revisionUrl) {
+    var deferreds = $.map(siteHash.revisionUrls, function(revisionNumber, revisionUrl) {
         var revisionAlreadExistsInStorage = oldSiteRevisionList.indexOf(revisionNumber) > -1
         if (!revisionAlreadExistsInStorage){
             console.log("getting new revision");
-            var deferred = wt_$.ajax({
+            var deferred = $.ajax({
                 url: revisionUrl,
                 type: "get",
                 success: function(html){
@@ -68,7 +68,7 @@ function updatedStoredHtmlForSite(siteId, siteHash){
 }
 
 function removeSiteHtmlFromLocalStorage(siteId) {
-    wt_$.each(getRevisionList(siteId), function(i, revisionNumber) {
+    $.each(getRevisionList(siteId), function(i, revisionNumber) {
         removeRevisionFromLocalStorage(siteId, revisionNumber)
     })
 }

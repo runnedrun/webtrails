@@ -1,7 +1,7 @@
 function getNotesObject(siteId){
     var notesObject = {noteObjects:{},order:[]};
     var noteIdList = getNoteList(siteId);
-    wt_$.each(noteIdList,function(i,noteId){
+    $.each(noteIdList,function(i,noteId){
         notesObject["noteObjects"][noteId] = getNoteCommentObject(noteId);
     })
     notesObject["order"] = noteIdList;
@@ -11,14 +11,14 @@ function getNotesObject(siteId){
 function updateNoteData(noteIdsInOrder, noteObjects, siteId){
 
     var oldNoteList = getNoteList(siteId);
-    wt_$.each(oldNoteList, function(i, noteId) {
+    $.each(oldNoteList, function(i, noteId) {
         var noteInNewList = noteObjects[noteId];
         if (!noteInNewList) {
             removeNote(noteId);
         }
     });
 
-    wt_$.each(noteObjects, function(noteId, note){
+    $.each(noteObjects, function(noteId, note){
         addNoteToLocalStorage(noteId, note)
     });
     setNoteList(siteId, noteIdsInOrder);
@@ -34,7 +34,7 @@ function removeNote(noteId){
 
 function removeAllNotesForSite(siteId){
     var noteIdList = getNoteList(siteId);
-    wt_$.each(noteIdList,function(i,noteId){
+    $.each(noteIdList,function(i,noteId){
         removeNote(noteId);
     });
     removeNoteList(siteId);

@@ -1,6 +1,11 @@
 TrailsObject = function(trailsObject, currentTrailId){
     var baseTrailObject = trailsObject
-    var currentTrailId = currentTrailId;
+    if (!trailsObject[currentTrailId]) {
+        if(Object.keys(trailsObject).length) {
+            currentTrailId = Object.keys(trailsObject)[0]
+        }
+    }
+
     var trails = {}
     var thisTrailsObject = this;
 
@@ -9,7 +14,7 @@ TrailsObject = function(trailsObject, currentTrailId){
         console.log("switching to trail:", newTrailId);
         chrome.runtime.sendMessage({setCurrentTrailID:newTrailId}, function(response) {
         });
-        TrailPreview.initWithTrail(this.getCurrentTrail());
+//        TrailPreview.initWithTrail(this.getCurrentTrail());
     }
 
     this.getTrail = function(trailId) {
@@ -41,7 +46,7 @@ TrailsObject = function(trailsObject, currentTrailId){
     }
 
     this.updateTrails = function(localStorageTrailsObject){
-        wt_$.each(localStorageTrailsObject,function(trailId,trailObject){
+        $.each(localStorageTrailsObject,function(trailId,trailObject){
             if (trails[trailId]){
                 trails[trailId].updateSites(trailObject);
             } else {
@@ -52,7 +57,7 @@ TrailsObject = function(trailsObject, currentTrailId){
     };
 
     this.initTrails = function(){
-        wt_$.each(baseTrailObject,function(trailId,trailObject){
+        $.each(baseTrailObject,function(trailId,trailObject){
             trails[trailId] = new Trail(trailObject)
         })
 //        chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
@@ -97,7 +102,7 @@ Trail = function(trailObject){
 
     this.getSites = function(){
         var sitesInOrder = [];
-        wt_$.each(siteOrder,function(i,siteId){
+        $.each(siteOrder,function(i,siteId){
             sitesInOrder.push(sites[siteId]);
         })
         return sitesInOrder;
@@ -144,7 +149,7 @@ Trail = function(trailObject){
     }
 
     this.updateSites = function(newTrailObject){
-        wt_$.each(newTrailObject.sites.order, function(i,siteId){
+        $.each(newTrailObject.sites.order, function(i,siteId){
             var siteToUpdate;
             var newSiteBaseObject = newTrailObject.sites.siteObjects[siteId];
             if (!(siteToUpdate  = sites[siteId])){
@@ -179,7 +184,7 @@ Trail = function(trailObject){
     };
 
     var thisTrailObject = this;
-    wt_$.each(trailObject.sites.siteObjects,function(siteId,siteObject){
+    $.each(trailObject.sites.siteObjects,function(siteId,siteObject){
         sites[siteId] = new Site(siteObject, thisTrailObject);
     })
 }
@@ -240,7 +245,7 @@ Site = function(siteObject, parentTrail){
 
     this.getNotes = function(){
         var notesInOrder = [];
-        wt_$.each(noteOrder,function(i,noteId){
+        $.each(noteOrder,function(i,noteId){
             notesInOrder.push(notes[noteId]);
         })
         return notesInOrder;
@@ -270,7 +275,7 @@ Site = function(siteObject, parentTrail){
     this.updateSite = function(newSiteBaseObject){
         this.revisions = newSiteBaseObject.html;
         siteObject = newSiteBaseObject;
-        wt_$.each(newSiteBaseObject.notes.order, function(i, noteId){
+        $.each(newSiteBaseObject.notes.order, function(i, noteId){
             var existingNoteObject = notes[noteId];
             var newBaseNoteObject = newSiteBaseObject.notes.noteObjects[noteId];
             if (!(existingNoteObject)){
@@ -295,7 +300,7 @@ Site = function(siteObject, parentTrail){
         }
     };
 
-    wt_$.each(siteObject.notes.order, function(i,noteId) {
+    $.each(siteObject.notes.order, function(i,noteId) {
         thisSiteObject.addNote(siteObject.notes.noteObjects[noteId]);
     });
 }

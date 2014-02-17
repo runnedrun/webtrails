@@ -2,11 +2,11 @@ IframeManager = new function FrameManager() {
     var thisFrameManager = this;
 
     this.getIDoc = function($iframe) {
-        return wt_$($iframe[0].contentWindow.document);
+        return $($iframe[0].contentWindow.document);
     }
 
     function getIWindow($iframe) {
-        return wt_$($iframe[0].contentWindow);
+        return $($iframe[0].contentWindow);
     }
 
     this.setIframeContent = function($iframe,html) {
@@ -24,7 +24,7 @@ IframeManager = new function FrameManager() {
         var loadedCheck = setInterval(function(){
             if (doc.readyState === "complete"){
                 clearInterval(loadedCheck);
-                fn();
+                fn(doc);
             }
         },100);
     }

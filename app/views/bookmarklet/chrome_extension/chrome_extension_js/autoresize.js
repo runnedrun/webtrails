@@ -6,7 +6,7 @@ console.log("autoresize loaded");
 
 
 function initializeAutoResize(){
-    (function (wt_$) {
+    (function ($) {
         var
             hidden = 'hidden',
             borderBox = 'border-box',
@@ -24,38 +24,38 @@ function initializeAutoResize(){
             ],
             oninput = 'oninput',
             onpropertychange = 'onpropertychange',
-            test = wt_$(copy)[0];
+            test = $(copy)[0];
 
         test.setAttribute(oninput, "return");
 
-        if (wt_$.isFunction(test[oninput]) || onpropertychange in test) {
-            wt_$.fn.autosize = function (className) {
+        if ($.isFunction(test[oninput]) || onpropertychange in test) {
+            $.fn.autosize = function (className) {
                 return this.each(function () {
                     var
                         ta = this,
-                        wt_$ta = wt_$(ta),
+                        $ta = $(ta),
                         mirror,
-                        minHeight = wt_$ta.height(),
-                        maxHeight = parseInt(wt_$ta.css('maxHeight'), 10),
+                        minHeight = $ta.height(),
+                        maxHeight = parseInt($ta.css('maxHeight'), 10),
                         active,
                         i = copyStyle.length,
                         resize,
                         boxOffset = 0;
 
-                    if (wt_$ta.css('box-sizing') === borderBox || wt_$ta.css('-moz-box-sizing') === borderBox || wt_$ta.css('-webkit-box-sizing') === borderBox){
-                        boxOffset = wt_$ta.outerHeight() - wt_$ta.height();
+                    if ($ta.css('box-sizing') === borderBox || $ta.css('-moz-box-sizing') === borderBox || $ta.css('-webkit-box-sizing') === borderBox){
+                        boxOffset = $ta.outerHeight() - $ta.height();
                     }
 
-                    if (wt_$ta.data('mirror') || wt_$ta.data('ismirror')) {
+                    if ($ta.data('mirror') || $ta.data('ismirror')) {
                         // if autosize has already been applied, exit.
                         // if autosize is being applied to a mirror element, exit.
                         return;
                     } else {
-                        mirror = wt_$(copy).data('ismirror', true).addClass(className || 'autosizejs')[0];
+                        mirror = $(copy).data('ismirror', true).addClass(className || 'autosizejs')[0];
 
-                        resize = wt_$ta.css('resize') === 'none' ? 'none' : 'horizontal';
+                        resize = $ta.css('resize') === 'none' ? 'none' : 'horizontal';
 
-                        wt_$ta.data('mirror', wt_$(mirror)).css({
+                        $ta.data('mirror', $(mirror)).css({
                             overflow: hidden,
                             overflowY: hidden,
                             wordWrap: 'break-word',
@@ -80,7 +80,7 @@ function initializeAutoResize(){
                             mirror.style.overflowY = ta.style.overflowY;
 
                             // Update the width in case the original textarea width has changed
-                            mirror.style.width = wt_$ta.css('width');
+                            mirror.style.width = $ta.css('width');
 
                             // Needed for IE to reliably return the correct scrollHeight
                             mirror.scrollTop = 0;
@@ -115,10 +115,10 @@ function initializeAutoResize(){
                     // This gives a cross-browser supported way getting the actual
                     // height of the text, through the scrollTop property.
                     while (i--) {
-                        mirror.style[copyStyle[i]] = wt_$ta.css(copyStyle[i]);
+                        mirror.style[copyStyle[i]] = $ta.css(copyStyle[i]);
                     }
 
-                    wt_$('body').append(mirror);
+                    $('body').append(mirror);
 
                     if (onpropertychange in ta) {
                         if (oninput in ta) {
@@ -135,10 +135,10 @@ function initializeAutoResize(){
                         ta[oninput] = adjust;
                     }
 
-                    wt_$(window).resize(adjust);
+                    $(window).resize(adjust);
 
                     // Allow for manual triggering if needed.
-                    wt_$ta.bind('autosize', adjust);
+                    $ta.bind('autosize', adjust);
 
                     // Call adjust in case the textarea already contains text.
                     adjust();
@@ -146,10 +146,10 @@ function initializeAutoResize(){
             };
         } else {
             // Makes no changes for older browsers (FireFox3- and Safari4-)
-            wt_$.fn.autosize = function () {
+            $.fn.autosize = function () {
                 return this;
                 color:"white";   };
         }
 
-    }(wt_$));
+    }($));
 }

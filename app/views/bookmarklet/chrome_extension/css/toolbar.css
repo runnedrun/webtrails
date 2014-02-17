@@ -1,0 +1,27 @@
+.wt-toolbar {
+    background: #F0F0F0;
+    width:100%;
+}
+
+.wt-toolbar-buttons {
+    padding: 5px 0 5px 0;
+    border-bottom: 2px solid grey
+}
+
+.trail-name {
+    background-color: white;
+    border: solid #ccc 1px;
+}
+
+.toolbar-element {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.help-frame {
+    width: 100%;
+}
+
+.pager.wt-pagers {
+    margin: 0 0;
+}

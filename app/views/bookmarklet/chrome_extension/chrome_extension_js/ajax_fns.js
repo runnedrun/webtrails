@@ -16,12 +16,12 @@ function saveSiteToTrail(note){
 
     var currentRevisionNumber = Trails.getAndIncrementRevision();
     if (note) {
-        note = wt_$.extend(note, {site_revision_number: currentRevisionNumber});
+        note = $.extend(note, {site_revision_number: currentRevisionNumber});
     }
 
     console.log("note is ", note);
     if (!Trails.siteSavedDeeply()){
-        wt_$.ajax({
+        $.ajax({
             url: webTrailsUrl + "/sites/get_new_site_id",
             type: "post",
             crossDomain: true,
@@ -37,23 +37,23 @@ function saveSiteToTrail(note){
             success: function(resp){
 //                Trails.switchToTrail(resp.current_trail_id);
                 Trails.getTrail(resp.current_trail_id).setCurrentSiteId(resp.current_site_id);
-                parsePageBeforeSavingSite(wt_$.extend(resp, {
+                parsePageBeforeSavingSite($.extend(resp, {
                     isBaseRevision: true,
                     revision_number: currentRevisionNumber
                 }));
             }
         })
     }  else {
-        wt_$.ajax({
+        $.ajax({
             url: webTrailsUrl + "/notes",
             type: "post",
             crossDomain: true,
             beforeSend: signRequestWithWtAuthToken,
             data: {
-                "note": wt_$.extend(note, {site_id: Trails.getCurrentSiteId()})
+                "note": $.extend(note, {site_id: Trails.getCurrentSiteId()})
             },
             success: function(resp){
-                parsePageBeforeSavingSite(wt_$.extend(resp,{
+                parsePageBeforeSavingSite($.extend(resp,{
                     current_site_id: Trails.getCurrentSiteId(),
                     current_trail_id: Trails.getCurrentTrailId(),
                     shallow_save: true,
@@ -76,7 +76,7 @@ function saveSiteToTrail(note){
             var currentSiteId = Trails.getCurrentSiteId();
 
             if (currentSiteId) {
-                wt_$.ajax({
+                $.ajax({
                     url: webTrailsUrl + '/site/exists',
                     type: "get",
                     crossDomain: true,
@@ -107,7 +107,7 @@ function saveSiteToTrail(note){
 function fetchFavicons(){
     //also gets the users latest trail id, if none is saved in localstorage
     var currentSite = window.location.href;
-    wt_$.ajax({
+    $.ajax({
         url: webTrailsUrl + "/trail/site_list",
         type: "get",
         crossDomain: true,
@@ -124,7 +124,7 @@ function fetchFavicons(){
 }
 
 function deleteNote(note, callback){
-    wt_$.ajax({
+    $.ajax({
         url: webTrailsUrl + "/notes/delete",
         type: "post",
         crossDomain: true,
@@ -139,7 +139,7 @@ function deleteNote(note, callback){
 
 function updateTrailDataWhenNoteReady(noteId){
     var existsRequest = setInterval(function(){
-        wt_$.ajax({
+        $.ajax({
             url: webTrailsUrl + "/note/ready",
             type: "get",
             crossDomain: true,

@@ -6,7 +6,7 @@ resourceDownloaderAddress = "http://localhost:5000";
 message_sending = {}
 
 
-var scriptsToBeInjected = ["jquery191.js", "rangy-core.js", "page_preprocessing.js","iframe_manager.js", "trails_objects.js","trail_preview.js","toolbar_ui.js",
+var scriptsToBeInjected = ["jquery.js", "bootstrap.min.js", "disable_selection.js", "rangy-core.js", "page_preprocessing.js","iframe_manager.js", "trails_objects.js","trail_preview.js","TrailToolbar.js",
     "ajax_fns.js","smart_grab.js","autoresize.js","search_and_highlight.js","css_property_defaults.js","inline_save_button_fns.js",
     "ui_fns.js","commenting_fns.js","whereJSisWrittenLocalChrome.js", "mutation-summary.js"];
 
@@ -32,7 +32,7 @@ function injectToolbarAndCheckForSignInOrOutEvents(tab){
     var domain_re = RegExp("(.|^)"+domain_name+"$")
     var beginningOfQuery = tab.url.indexOf("?")
     var justUrl = tab.url.slice(0,beginningOfQuery);
-    if (domain_re.exec(wt_$.url(tab.url).attr("host"))){
+    if (domain_re.exec($.url(tab.url).attr("host"))){
         //stuff that only happens on our own domain goes here
         if (getWtAuthToken()){
             getWtAuthTokenCookie(signOutIfSignedOutOfWebpage);
@@ -56,15 +56,15 @@ function askTabForLoaded(tab) {
 
 function injectScripts(tabId, toolbarHtml){
     var wt_auth_token = getWtAuthToken();
-    var current_trail_id = getCurrentTrailID();
+    var current_trail_id = LocalStorageTrailAccess.getCurrentTrailId();
     var toolbar_display_state = getToolBarDisplayState();
     var auth_injection_string = "wt_auth_token=undefined;\n";
     var trail_id_injection_string = "startingTrailID='';\n";
     var tool_bar_state_injection_string = "toolbarShown=false;\n"
     var power_button_url = 'powerButtonUrl="' + chrome.extension.getURL('/chrome_extension_images/power.png') + '";\n';
     var content_script_loaded = 'contentScriptLoaded = "loaded";\n'
-//    var toolbarHtml = 'toolbarHtml = "' + toolbarHtml + '";'
-    var toolbarUrl = "var toolbarUrl = '" + encodeURI(chrome.extension.getURL("html/toolbar.html")) + "';\n";
+    var toolbarHtml = 'toolbarHtml = "' + toolbarHtml + '";'
+    var noTrailsHelpUrl = 'noTrailsHelpUrl = "' + chrome.extension.getURL('/html/no_trails.html') + '";\n'
     if(wt_auth_token){
         auth_injection_string = "wt_auth_token='"+wt_auth_token + "';\n";
         if (current_trail_id){
@@ -74,7 +74,7 @@ function injectScripts(tabId, toolbarHtml){
     if (toolbar_display_state == "shown"){
         tool_bar_state_injection_string = "toolbarShown=true;\n"
     }
-    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string+power_button_url + content_script_loaded + toolbarUrl//+ toolbarHtml;
+    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string+power_button_url + content_script_loaded + toolbarHtml + noTrailsHelpUrl;
     createContentScript(0,starting_injection_string,tabId);
     // update the local trail data
     retrieveTrailData();
@@ -86,7 +86,7 @@ function createContentScript(index_of_script, contentScriptString,tabId){
         return false;
     }
     scriptURL = chrome.extension.getURL('chrome_extension_js/'+scriptsToBeInjected[index_of_script]);
-    wt_$.ajax({
+    $.ajax({
         url: scriptURL,
         type: "get",
         success: function(data) {
@@ -97,14 +97,24 @@ function createContentScript(index_of_script, contentScriptString,tabId){
 }
 
 function getToolbarIframeHtml(callback) {
-    var bootstrapHead = "<head>" +
-        "<link href='"+ chrome.extension.getURL("css/bootstrap.min.css") +"' type='text/css' rel='stylesheet'></link>" +
-    "</head>"
-    wt_$.ajax({
+    var newDoc = document.implementation.createHTMLDocument().documentElement;
+
+    $.ajax({
         url: "/html/toolbar.html",
         type: "get",
         success: function(html) {
-            var fullHtml = encodeURI(bootstrapHead + html)
+            newDoc.innerHTML = html;
+            var $html = $(newDoc);
+
+            var bootstrapCss = $("<link rel='stylesheet'></link>");
+            var toolbarCss = $("<link rel='stylesheet'></link>");
+            bootstrapCss.attr("href", chrome.extension.getURL("css/bootstrap.min.css"));
+            toolbarCss.attr("href", chrome.extension.getURL("css/toolbar.css"));
+            var head = $html.find('head');
+
+            head[0].innerHTML = bootstrapCss[0].outerHTML + toolbarCss[0].outerHTML
+
+            var fullHtml = encodeURI(newDoc.outerHTML);
             callback(fullHtml);
         }
     })
@@ -128,7 +138,7 @@ chrome.runtime.onMessage.addListener(
            return true;
         };
         if (request.setCurrentTrailID){
-            addTrailIdToLocalStorage(request.setCurrentTrailID);
+            LocalStorageTrailAccess.setCurrentTrailId(request.setCurrentTrailID);
             sendResponse("set in local storage");
         }
         if (request.logout){
@@ -163,7 +173,7 @@ chrome.runtime.onMessage.addListener(
             }
         }
         if (request.getTrailsObject){
-            sendResponse(getTrailsObject(getUserId()));
+            sendResponse(LocalStorageTrailAccess.getTrails());
         }
         if (request.updateTrailsObject){
             console.log("received update trails message");
@@ -174,7 +184,7 @@ chrome.runtime.onMessage.addListener(
 
 function retrieveTrailData(){
     console.log("fethcing trail data now!");
-    wt_$.ajax({
+    $.ajax({
         url: domain + "/users/get_all_trail_data",
         type: "get",
         beforeSend: signRequestWithWtAuthToken,
@@ -188,21 +198,21 @@ function updateStoredTrailData(trailsObject, userId){
     setUserId(userId);
     console.log("trails object from server", trailsObject);
     var deferreds = LocalStorageTrailAccess.addOrUpdateTrails(trailsObject);
-    wt_$.when.apply(wt_$, deferreds).always(function(responses){
+    $.when.apply($, deferreds).always(function(responses){
         console.log("trail data updated, pushing message to all tabs");
         sendTrailToAllTabs();
     });
 }
 
 function sendTrailToAllTabs(){
-    var trailsObject = LocalStorageTrailAccess.getTrailsObject();
+    var trailsObject = LocalStorageTrailAccess.getTrails();
     console.log(trailsObject)
     sendMessageToAllTabs({updateTrails: trailsObject});
 }
 
 function logInOrCreateUser(callback){
     var authToken =  googleAuth.getAccessToken();
-    wt_$.ajax({
+    $.ajax({
         url: domain + "/users/login_or_create_gmail_user",
         type: "post",
         data: {
@@ -222,7 +232,7 @@ function logInOrCreateUser(callback){
 
 function cleanUpMessageSendingObject(){
     var currentTime = Date.now();
-    wt_$.each(message_sending,function(tabId,time){
+    $.each(message_sending,function(tabId,time){
         if ((currentTime - time) > (10 * 1000)){
             delete message_sending[tabId];
         }
@@ -267,8 +277,8 @@ function hideToolbarOnAllTabs(){
 
 function sendMessageToAllTabs(message){
     chrome.windows.getAll({populate: true}, function(windows){
-        wt_$.each(windows,function(index,window){
-            wt_$.each(window.tabs, function() {
+        $.each(windows,function(index,window){
+            $.each(window.tabs, function() {
                 chrome.tabs.sendRequest(this.id, message);
             });
         })
