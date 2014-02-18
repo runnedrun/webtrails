@@ -6,6 +6,7 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     var previewContainer;
     var previewHeight = 200;
     var loggedIn = false
+    var bodyMarginTop = $("body").css("margin-top");
 
     var CSS = {
         toolbarFrame: {
@@ -196,6 +197,7 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     function show(){
         toolbarFrame.show();
         shown = true
+        $("body").css({"margin-top": toolbarFrame.height() + "px"});
         if (loggedIn) {
             if (mouseDown == 0) { // if the mouse is not pressed (not highlighting)
                 highlightedTextDetect(); // check to see if they highlighted anything for the addnote button
@@ -206,8 +208,8 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     }
 
     function hide(){
+        $("body").css({"margin-top": bodyMarginTop});
         toolbarFrame.hide();
-//        TrailPreview.hide();
         shown = false;
         $(".inlineSaveButton").remove();
         closeOverlay();
