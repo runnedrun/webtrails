@@ -25,6 +25,7 @@ var trailDisplay,
     contentScriptLoaded;
     toolbarHtml; // this is uri encoded
     noTrailsHelpUrl;
+    noNotesHelpUrl;
 
 String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
@@ -38,7 +39,7 @@ function initExtension(){
     initializeAutoResize();
 //    debugger;
 //    Toolbar = new WtToolbar(decodeURI(toolbarUrl));
-    Toolbar = new WtToolbar(decodeURI(toolbarHtml), noTrailsHelpUrl);
+    Toolbar = new WtToolbar(decodeURI(toolbarHtml), noTrailsHelpUrl, noNotesHelpUrl);
     $(document.body).keydown(verifyKeypress);
     if (wt_auth_token) {
         getTrailDataFromLocalStorage(function(response){

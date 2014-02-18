@@ -1,21 +1,30 @@
-.wt-toolbar {
+.toolbar {
     background: #F0F0F0;
     width:100%;
 }
 
-.wt-toolbar-buttons {
+.toolbar-buttons {
     padding: 5px 0 5px 0;
     border-bottom: 2px solid grey
 }
 
-.trail-name {
+.well-sm.trail-name {
     background-color: white;
     border: solid #ccc 1px;
+    padding-bottom: 3px
 }
 
 .toolbar-element {
     padding-top: 5px;
     padding-bottom: 5px;
+}
+
+.trail-dropdown.toolbar-element {
+    padding-right: 25px;
+}
+
+.favicons {
+    padding-top: 8px;
 }
 
 .help-frame {

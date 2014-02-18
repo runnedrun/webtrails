@@ -49,14 +49,16 @@ TrailsObject = function(trailsObject, currentTrailId){
         })
     };
 
+    this.initTrails = function(){
+        $.each(baseTrailObject,function(trailId,trailObject){
+            trails[trailId] = new Trail(trailObject)
+        });
+    }
+
     // these methods manipulate the note count for the current site, for the current trail
     this.incrementNoteCount = function() {
         return this.getCurrentTrail().currentSiteNoteCount ++
     }
-
-    $.each(baseTrailObject,function(trailId,trailObject){
-        trails[trailId] = new Trail(trailObject)
-    });
 }
 
 Trail = function(trailObject){

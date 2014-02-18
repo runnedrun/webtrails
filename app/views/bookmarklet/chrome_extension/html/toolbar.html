@@ -6,54 +6,47 @@
     <link href="/css/toolbar.css" rel="stylesheet" media="screen">
 </head>
 <body>
-    <div class="container-fluid wt-toolbar">
-        <div class="row wt-toolbar-buttons">
+    <div class="container-fluid toolbar">
+        <div class="row toolbar-buttons">
                 <div class="dropdown col-md-1">
-                    <button class="toolbar-element btn btn-sm dropdown-toggle btn-primary" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                    <button class="toolbar-element trail-dropdown-button btn btn-sm dropdown-toggle btn-primary" type="button" id="dropdownMenu1" data-toggle="dropdown">
                         Trails
                         <span class="caret"></span>
                     </button>
-                    <ul class="dropdown-menu trail-list-dropdown" role="menu" aria-labelledby="dLabel">
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
+                    <ul class="dropdown-menu trail-dropdown-list" role="menu" aria-labelledby="dLabel">
                     </ul>
                 </div>
-            <div class="col-md-2 trail-name well-sm toolbar-element">
+            <div class="col-md-2 trail-name well-sm toolbar-element trail-name">
                     Choose a Trail
             </div>
             <div class="col-md-1">
-                <button class="btn btn-sm btn-default go-trail toolbar-element">View Trail</button>
+                <button class="btn btn-sm btn-default go-trail toolbar-element view-trail-button">View Trail</button>
             </div>
             <div class="col-md-2 favicons">
                 favicons
             </div>
-            <div class="col-md-4 col-md-offset-2">
+            <div class="col-md-5">
                 <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-default toolbar-element">Prev Note</button>
-                    <button type="button" class="btn btn-default toolbar-element">Next Note</button>
+                    <button type="button" class="btn btn-default toolbar-element prev-note-button">Prev Note</button>
+                    <button type="button" class="btn btn-default toolbar-element next-note-button">Next Note</button>
                 </div>
                 <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-default toolbar-element">Show Comment</button>
-                    <button type="button" class="btn btn-danger btn-md toolbar-element">
-                        <span class="glyphicon glyphicon-star"></span> Delete Note
+                    <button type="button" class="btn btn-default toolbar-element show-comment-button">Show Comment</button>
+                    <button type="button" class="btn btn-default toolbar-element visit-site-button">Visit Site</button>
+                    <button type="button" class="btn btn-danger btn-md toolbar-element delete-note-button">
+                        <span class="glyphicon glyphicon-trash"></span> Delete Note
                     </button>
                 </div>
             </div>
-            <!--<div class="siteFaviconsHolder">-->
-                <!--&lt;!&ndash;<div class="siteFavicons">&ndash;&gt;-->
-                    <!--&lt;!&ndash;<div class="faviconContainer favicon<%= favicon_id_and_title[1]%>">&ndash;&gt;-->
-                        <!--&lt;!&ndash;<img class="faviconImage click-to-change-site" src="<%= favicon_id_and_title[0] %>" id="favicon<%= favicon_id_and_title[1] %>" data-site-id="<%= favicon_id_and_title[1] %>" data-ot="<%= @sites[i].title%>" data-ot-delay="0" data-ot-tip-joint="bottom" data-ot-style="dark" data-site-url="<%= @sites[i].url%>" data-site-index="<%= i %>"/>&ndash;&gt;-->
-                        <!--&lt;!&ndash;&lt;!&ndash;<img src="/images/loading_small.gif" class="faviconLoading" id ="loading-<%= favicon_id_and_title[1]%>"/>&ndash;&gt;&ndash;&gt;-->
-                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                <!--&lt;!&ndash;</div>&ndash;&gt;-->
-            <!--</div>-->
-            <!--<span class="note-count navigateButton">loading...</span>-->
-            <!--<button id="showAllSitesButton" class="btn btn-warning navigateButton showList">Show All Sites</button>-->
-            <!--<button class="btn btn-warning navigateButton showList" id="noteViewMode" href="#">Research View</button>-->
-            <!--<button class="btn btn-info navigateButton" id="previousNote">Previous</button>-->
-            <!--<button class="btn btn-success navigateButton" id="nextNote"><b>Next</b></button>-->
-            <!--<button class="btn btn-danger btn-mini" id="removeSite"><i class="icon-trash"> </i> Delete Note</button>-->
+            <div class="col-md-1 dropdown">
+                <button class="toolbar-element settings-dropdown-button btn btn-sm dropdown-toggle btn-default pull-right" type="button" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-list"></span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu settings-dropdown-list" role="menu" aria-labelledby="dLabel">
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Log Out</a></li>
+                </ul>
+            </div>
         </div>
         <div class="row trail-preview-container">
 

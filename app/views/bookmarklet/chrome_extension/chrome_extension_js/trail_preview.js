@@ -1,6 +1,6 @@
 console.log("trail preview injected");
 
-function TPreview(previewContainer, height) {
+function TPreview(previewContainer, height, nextNoteButton, previousNoteButton, showCommentButton, deleteNoteButton) {
     var currentTrail = false;
     var currentNote = false;
     var currentSiteFrame = false;
@@ -9,13 +9,8 @@ function TPreview(previewContainer, height) {
     var commentBoxToggled = false
     height = 200;
 
-    var nextNoteButton = $(".nextNoteButton");
-    var previousNoteButton = $(".previousNoteButton");
-    var showCommentButton = $(".showCommentButton");
-    var deleteNoteButton = $(".deleteNoteButton");
-
     function getSiteIDoc(site) {
-       return thisTrailPreview.getIDoc($("[data-site-id='" + site.id + "']"));
+       return thisTrailPreview.getIDoc(previewContainer.find("[data-site-id='" + site.id + "']"));
     }
 
     function addEmptyIframeToPreview(site, hideIframe) {
@@ -32,18 +27,23 @@ function TPreview(previewContainer, height) {
             "border-bottom": "2px solid grey",
 //            "z-index": "2147483645"
         });
-        previewContainer.append(siteHtmlIframe);
+        previewContainer.html(siteHtmlIframe);
         return siteHtmlIframe
+    }
+
+    this.getCurrentNote = function() {
+        return currentNote
     }
 
     this.initWithTrail = function(trailToPreview) {
         currentTrail = trailToPreview
         currentNote = currentTrail.getLastNote();
         if (currentNote) {
-            this.displayNote(currentNote, !toolbarShown);
+            this.displayNote(currentNote, false);
         } else if (currentSiteFrame){
             currentSiteFrame.remove();
         }
+        thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
     }
 
     this.show = function() {
@@ -80,9 +80,11 @@ function TPreview(previewContainer, height) {
     }
 
     this.displayNote = function(note, hidePreview) {
-        var $iDoc = thisTrailPreview.switchToNoteRevision(note, hidePreview);
-        $iDoc.scrollTop(note.scrollY-100).scrollLeft(note.scrollX);
         currentNote = note;
+        if (note.id == -1) { return }; // if it's a special display note
+        var $iDoc = thisTrailPreview.switchToNoteRevision(note, hidePreview);
+        var body = $iDoc.find("body");
+        body.scrollTop(note.scrollY-100).scrollLeft(note.scrollX);
         if (commentBoxToggled) {
             displayComment();
         }
@@ -94,7 +96,7 @@ function TPreview(previewContainer, height) {
             if ((Math.abs(noteLocation.top - note.scrollY) > 10) || (Math.abs(noteLocation.left - note.scrollX) > 10)){
                 console.log("correcting scroll", noteLocation.top, note.scrollY);
                 console.log(noteLocation.left, note.scrollX);
-                $iDoc.scrollTop(scrollTop).scrollLeft(scrollLeft);
+                body.scrollTop(scrollTop).scrollLeft(scrollLeft);
             }
         },$iDoc[0]);
     }
@@ -217,13 +219,15 @@ function TPreview(previewContainer, height) {
         })
     }
 
-    this.updateWithNewNote = function(newNote) {
+    function updateWithNewNote(newNote) {
         if (!currentNote || (parseInt(currentNote.site.id) <= parseInt(newNote.site.id))){
             currentNote = newNote;
-            this.displayNote(currentNote, !toolbarShown);
+            thisTrailPreview.displayNote(currentNote, !toolbarShown);
         }
-        this.enableOrDisablePrevAndNextButtons();
+        thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
     }
+
+    $("document").bind("newNote", updateWithNewNote);
 
     nextNoteButton.disable = previousNoteButton.disable = function() {
         this.prop('disabled', true);
@@ -245,7 +249,25 @@ function TPreview(previewContainer, height) {
     nextNoteButton.click(this.showNextNote);
     previousNoteButton.click(this.showPreviousNote);
     deleteNoteButton.click(deleteCurrentNote);
-
     this.enableOrDisablePrevAndNextButtons(currentNote);
 }
 TPreview.prototype = IframeManager
+
+// A note like class which returns to a note when prev is hit, for when there is no note.
+NoNoteNote = function(site, noteToReturnTo){
+    this.site = site;
+    this.nextNote = function() {
+        return false
+    };
+    this.previousNote = function() {
+        return noteToReturnTo;
+    };
+    this.getSiteRevisionHtml = function() {
+        return "no notes for this site";
+    };
+    this.getPositionInSite = function() {
+        return 0;
+    }
+
+    this.id = "-1";
+}

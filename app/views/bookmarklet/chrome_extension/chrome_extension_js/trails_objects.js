@@ -1,12 +1,6 @@
 TrailsObject = function(trailsObject, currentTrailId){
-    var baseTrailObject = trailsObject
-    if (!trailsObject[currentTrailId]) {
-        if(Object.keys(trailsObject).length) {
-            currentTrailId = Object.keys(trailsObject)[0]
-        }
-    }
-
-    var trails = {}
+    var baseTrailObject = trailsObject;
+    var trails = {};
     var thisTrailsObject = this;
 
     this.switchToTrail = function(newTrailId){
@@ -14,11 +8,14 @@ TrailsObject = function(trailsObject, currentTrailId){
         console.log("switching to trail:", newTrailId);
         chrome.runtime.sendMessage({setCurrentTrailID:newTrailId}, function(response) {
         });
-//        TrailPreview.initWithTrail(this.getCurrentTrail());
     }
 
     this.getTrail = function(trailId) {
         return trails[trailId];
+    }
+
+    this.getTrailHash = function() {
+        return trails
     }
 
     this.getCurrentSiteId = function() {
@@ -50,46 +47,51 @@ TrailsObject = function(trailsObject, currentTrailId){
             if (trails[trailId]){
                 trails[trailId].updateSites(trailObject);
             } else {
-                trails[trailId] = new Trail(trailObject);
+                trails[trailId] = new Trail(trailObject, thisTrailsObject);
             }
-
         })
     };
-
-    this.initTrails = function(){
-        $.each(baseTrailObject,function(trailId,trailObject){
-            trails[trailId] = new Trail(trailObject)
-        })
-//        chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-//            if (request.updateTrails){
-//                thisTrailsObject.updateTrails(request.updateTrails);
-//            }
-//        })
-    }
 
     // these methods manipulate the note count for the current site, for the current trail
     this.incrementNoteCount = function() {
         return this.getCurrentTrail().currentSiteNoteCount ++
-    }
+    };
 
     this.decrementNoteCount = function() {
         return this.getCurrentTrail().currentSiteNoteCount --
-    }
+    };
 
     this.getNoteCount = function() {
         return this.getCurrentTrail().currentSiteNoteCount
-    }
+    };
 
     this.setSiteSavedDeeply = function() {
         this.getCurrentTrail().currentSiteSavedDeeply = true
-    }
+    };
 
     this.siteSavedDeeply = function() {
         return this.getCurrentTrail().currentSiteSavedDeeply
+    };
+
+    function initTrails(){
+        $.each(baseTrailObject,function(trailId,trailObject){
+            trails[trailId] = new Trail(trailObject, thisTrailsObject)
+        });
+        if (!trails[currentTrailId]) {
+            if(Object.keys(trails).length) {
+                thisTrailsObject.switchToTrail(Object.keys(trails)[0]);
+            }
+        }
+        chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+            if (request.updateTrails){
+                thisTrailsObject.updateTrails(request.updateTrails);
+            }
+        })
     }
+    initTrails();
 }
 
-Trail = function(trailObject){
+Trail = function(trailObject, trailsCollection){
     var baseTrailObject = trailObject;
     var sites = {};
     var siteOrder = trailObject.sites.order;
@@ -99,6 +101,8 @@ Trail = function(trailObject){
     this.id = trailObject.id;
     this.currentSiteSavedDeeply = false;
     this.currentSiteNoteCount = 0;
+    this.favicons = trailObject.favicons;
+    this.name = trailObject.name;
 
     this.getSites = function(){
         var sitesInOrder = [];
@@ -164,7 +168,7 @@ Trail = function(trailObject){
     }
 
     this.isCurrentTrail = function(){
-        return Trails.getCurrentTrail() == this && TrailPreview;
+        return trailsCollection.getCurrentTrail() == thisTrailObject && TrailPreview;
     };
 
     this.getCurrentRevision = function() {
@@ -195,6 +199,8 @@ Site = function(siteObject, parentTrail){
     this.html = siteObject.html;
     this.id = siteObject.id;
     this.trail = parentTrail;
+    this.faviconUrl = siteObject.faviconUrl;
+    this.url = siteObject.url;
 
     var thisSiteObject = this;
 
@@ -204,38 +210,37 @@ Site = function(siteObject, parentTrail){
         return newNote
     };
 
-
     this.removeNote = function(note) {
         delete notes[note.id];
         noteOrder.splice(noteOrder.indexOf(note.id),1);
     };
 
     this.isCurrentSite = function() {
-        return this.id == Trail.getCurrentSiteId();
+        return thisSiteObject.id == Trail.getCurrentSiteId();
     }
 
     this.nextSite = function(){
-        var sitesInOrder = this.trail.getSites();
-        var currentIndex = sitesInOrder.indexOf(this);
+        var sitesInOrder = thisSiteObject.trail.getSites();
+        var currentIndex = sitesInOrder.indexOf(thisSiteObject);
         if (currentIndex < (sitesInOrder.length - 1)){
-            return this.trail.getSite(sitesInOrder[currentIndex+1].id);
+            return thisSiteObject.trail.getSite(sitesInOrder[currentIndex+1].id);
         } else {
             return false;
         }
     };
 
     this.previousSite = function(){
-        var sitesInOrder = this.trail.getSites();
-        var currentIndex = sitesInOrder.indexOf(this);
+        var sitesInOrder = thisSiteObject.trail.getSites();
+        var currentIndex = sitesInOrder.indexOf(thisSiteObject);
         if (currentIndex > 0){
-            return this.trail.getSite(sitesInOrder[currentIndex-1].id);
+            return thisSiteObject.trail.getSite(sitesInOrder[currentIndex-1].id);
         } else {
             return false;
         }
     };
 
     this.getFirstNote = function(){
-        var firstNote = this.getNotes()[0];
+        var firstNote = thisSiteObject.getNotes()[0];
         if (firstNote){
             return firstNote;
         } else {
@@ -256,7 +261,7 @@ Site = function(siteObject, parentTrail){
     };
 
     this.getLastNote = function(){
-        var notesInOrder = this.getNotes();
+        var notesInOrder = thisSiteObject.getNotes();
         if (notesInOrder.length){
             return notesInOrder[notesInOrder.length - 1];
         } else {
@@ -273,7 +278,7 @@ Site = function(siteObject, parentTrail){
     };
 
     this.updateSite = function(newSiteBaseObject){
-        this.revisions = newSiteBaseObject.html;
+        thisSiteObject.html = newSiteBaseObject.html;
         siteObject = newSiteBaseObject;
         $.each(newSiteBaseObject.notes.order, function(i, noteId){
             var existingNoteObject = notes[noteId];
@@ -289,12 +294,12 @@ Site = function(siteObject, parentTrail){
     };
 
     this.getRevisionHtml = function(revisionNumber){
-        return this.revisions[revisionNumber]
+        return thisSiteObject.html[revisionNumber]
     };
 
     this.getFirstRevisionHtml = function(){
-        if (this.getFirstNote()) {
-            return this.getFirstNote().getSiteRevisionHtml();
+        if (thisSiteObject.getFirstNote()) {
+            return thisSiteObject.getFirstNote().getSiteRevisionHtml();
         } else {
             return false
         }
@@ -306,7 +311,7 @@ Site = function(siteObject, parentTrail){
 }
 
 Note = function(baseNoteObject, parentSite){
-    var siteRevisionNumber = x.siteRevisionNumber;
+    var siteRevisionNumber = baseNoteObject.siteRevisionNumber;
     var thisNoteObject = this;
     this.site = parentSite;
 
@@ -362,7 +367,6 @@ Note = function(baseNoteObject, parentSite){
         return this.site.getNotePosition(this)
     };
 
-
     this.update = function(baseNoteObject){
         this.id = baseNoteObject.id;
         this.comment = baseNoteObject.comment;
@@ -376,5 +380,5 @@ Note = function(baseNoteObject, parentSite){
     };
 
     this.update(baseNoteObject);
-    if (this.site.trail.isCurrentTrail()) { TrailPreview.updateWithNewNote(this) }
+    if (this.site.trail.isCurrentTrail()) { jQuery.event.trigger('newNote', [thisNoteObject]); }
 }

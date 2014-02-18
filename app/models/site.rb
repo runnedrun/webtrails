@@ -101,6 +101,11 @@ class Site < ActiveRecord::Base
     File.join([self.archive_location, self.base_revision_number.to_s])
   end
 
+  def favicon_url
+    search_name = URI(self.url).host
+    "http://www.google.com/s2/favicons?domain=" + search_name
+  end
+
   def get_update_hash()
     {
         :baseRevisionNumber => self.base_revision_number,
@@ -112,7 +117,8 @@ class Site < ActiveRecord::Base
             :noteObjects => Hash[self.notes.map{ |note| [note.id, note.get_update_hash] }]
         },
         :url => self.url,
-        :baseLocation => self.archive_location
+        :baseLocation => self.archive_location,
+        :faviconUrl => favicon_url()
     }
   end
 

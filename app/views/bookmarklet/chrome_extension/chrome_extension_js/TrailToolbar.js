@@ -1,30 +1,54 @@
 console.log('toolbar ui loaded');
-function WtToolbar(toolbarHtml, noTrailsHelpUrl) {
+function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     var thisToolbar = this;
     var toolbarFrame;
     var trailPreview;
     var previewContainer;
     var previewHeight = 200;
+    var loggedIn = false
 
-    var toolbarFrame = $("<iframe class='wt-toolbar-frame'></iframe>");
+    var CSS = {
+        toolbarFrame: {
+            position: "fixed",
+            width: "100%",
+            top: "0px",
+            left: "0px",
+            "z-index": "2147483644",
+            "border-bottom": "2px solid grey"
+        },
+        faviconImg: {
+            "height":"16px",
+            "vertical-align":"top",
+            "margin": "0px 2px",
+            "display": "block",
+            "border": "none",
+            "float": "left"
+        },
+        helpFrame: {
+            height: previewHeight + "px"
+        }
+    };
+    var HTML = {
+        toolbarFrame: $("<iframe class='wt-toolbar-frame'></iframe>").
+            attr({'src': "about:blank", 'frameborder': 0}).
+            css(CSS.toolbarFrame),
+        faviconImg: function(faviconUrl) {
+            return $("<img src='"+ faviconUrl + "' class=\"webtrails\">").css(CSS.faviconImg)
+        },
+        trailDropdownItem: function(trailName, trailId) {
+            return $('<li role="presentation"><a role="menuitem" data-trail-id="' + trailId + '" tabindex="-1" href="#">' + trailName + '</a></li>')
+        },
+        helpFrame: function(srcUrl) {
+            return $("<iframe class='help-frame'></iframe>").attr({
+                src: srcUrl,
+                frameborder: "0"
+            }).css(CSS.helpFrame)
+        }
+    };
 
-    toolbarFrame.attr({
-        'src': "about:blank",
-        'frameborder': 0
-    });
-    toolbarFrame.css({
-        position: "fixed",
-        width: "100%",
-        top: "0px",
-        left: "0px",
-        "z-index": "2147483644",
-        "border-bottom": "2px solid grey"
-    });
+    var toolbarFrame = HTML.toolbarFrame
     $("body").prepend(toolbarFrame);
-//    $("body").prepend(toolbarFrame1);
     thisToolbar.setIframeContent(toolbarFrame, toolbarHtml);
-    var previewContainer = i$(".trail-preview-container");
-    trailPreview = new TPreview(previewContainer, previewHeight);
 
     thisToolbar.runWhenLoaded(function(doc) {
         var $doc = $(doc);
@@ -32,371 +56,103 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl) {
         console.log("loaded with height" + toolbarHeight + "px");
         toolbarFrame.css({height: toolbarHeight + 200 + "px"});
         $doc.find("body").css({height: toolbarHeight + 200 + "px"});
-        var dropdown = $doc.find(".dropdown-toggle");
-        dropdown.dropdown();
+        var dropdowns = $doc.find(".dropdown-toggle");
+        dropdowns.dropdown();
     }, thisToolbar.getIDoc(toolbarFrame)[0]);
-
-
 
     function i$(selector) {
         return thisToolbar.getIDoc(toolbarFrame).find(selector)
     }
 
+    var trailsDropdownButton = i$(".trail-dropdown-button");
+    var trailsDropdownList = i$(".trail-dropdown-list");
+    var trailNameContainer = i$(".trail-name");
+    var viewTrailButton = i$(".view-trail-button");
+    var faviconContainer = i$(".favicons");
+    var nextNoteButton = i$(".next-note-button")
+    var previousNoteButton = i$(".prev-note-button")
+    var showCommentButton = i$(".show-comment-button");
+    var visitSiteButton = i$(".visit-site-button");
+    var deleteNoteButton = i$(".delete-note-button");
+    var settingsDropdownButton = i$(".settings-dropdown-button");
+    var settingsDropdownList = i$(".settings-dropdown-list");
+
+    var previewContainer = i$(".trail-preview-container");
+    trailPreview = new TPreview(previewContainer, previewHeight, nextNoteButton, previousNoteButton, showCommentButton, deleteNoteButton);
+
+    visitSiteButton.click(function() {
+        open(trailPreview.getCurrentNote().site.url, "_blank");
+    });
+
+    trailsDropdownButton.click(function() {
+        trailsDropdownList.toggle();
+    });
+
+    settingsDropdownButton.click(function() {
+        settingsDropdownList.toggle();
+    });
+
     var displayHeight = "25px";
-    var shown = false;
-    var trailDisplay,
-        settingsButton,
-        settingsButtonWrapper,
-        previousNoteButton,
-        nextNoteButton,
-        deleteNoteButton,
-        showCommentButton,
-        linkToTrailWrapper,
-        linkToTrail,
-        trailSelect,
-        saveSiteToTrailButton,
-        shareTrailField,
-        faviconHolder,
-        loggedOutMessage;
+    var shown = true;
 
-    function createToolbarElements() {
-        trailDisplay = $(document.createElement("div"));
-        applyDefaultCSS(trailDisplay);
-        trailDisplay.addClass("webtrails");
-        trailDisplay.css({
-            "height":displayHeight,
-            "width": "100%",
-            "position":"fixed",
-            "top":"0px",
-            "text-align":"left",
-            "z-index": "2147483644",
-            "opacity": "1",
-            "background": "#F0F0F0",
-            "color": "#333",
-            "line-height": "18px",
-            "border-bottom" : "1px solid #aaa",
-            "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif',
-            "left" : "0",
-            "text-align":"center"
+    this.switchToTrail = function(trail) {
+        clearFaviconHolder();
+        $.each(trail.getSites(), function(i, site) {
+            addFavicon(site);
         });
-
-//    if(!toolbarShown){
-        trailDisplay.css("display","none");
-//    }
-
-        trailDisplay.disableSelection();
-
-        settingsButton = $(document.createElement("img"));
-        applyDefaultCSS(settingsButton);
-        settingsButton.attr('src', powerButtonUrl);
-        settingsButton.addClass("webtrails");
-        settingsButton.css({
-            margin: "0",
-            padding: "0",
-            "margin-top": "6px",
-            "cursor": "pointer"
-
-        });
-
-        settingsButtonWrapper = $("<div>")
-        applyDefaultCSS(settingsButtonWrapper);
-        settingsButtonWrapper.append(settingsButton)
-        settingsButtonWrapper.css({
-            margin: "0",
-            padding: "0",
-            height: "100%",
-            "float": "right",
-            "padding-right": "5px",
-            "padding-left": "5px",
-            "border-bottom-right-radius": "7px",
-            "cursor": "pointer"
+        trailNameContainer.html(trail.name)
+        viewTrailButton.click(function() {
+            open(webTrailsUrl + "/trails/" + trail.id, "_blank");
         })
-        settingsButtonWrapper.addClass("webtrails");
-        settingsButtonWrapper.addClass("wt_settingsButton");
-
-        previousNoteButton = $(document.createElement("button"));
-        applyDefaultCSS(previousNoteButton);
-        previousNoteButton.css({
-            "font-size": "12px",
-//        "color": "#aaa",
-            "font-weight": "bold",
-            "height": "18px",
-            "margin-top" : "2px",
-            "margin-left": "3%",
-            "width": "7%",
-            "float": "right",
-            "border": "1px solid #aaa",
-            "border-top-left-radius": "5px",
-            "border-bottom-left-radius": "5px",
-            "background-color": "#dedede",
-            "cursor": "default",
-            "text-align": "center"
-        });
-        previousNoteButton.html("Previous Note");
-        previousNoteButton.addClass("previousNoteButton").addClass("webtrails");;
-
-        nextNoteButton = $(document.createElement("button"));
-        applyDefaultCSS(nextNoteButton);
-        nextNoteButton.css({
-            "font-size": "12px",
-//        "color": "#aaa",
-            "background-color": "#f0f0f0",
-            "font-weight": "bold",
-            "height":"18px",
-            "margin-top" : "2px",
-            "margin-right": "5px",
-            "width": "7%",
-            "float": "right",
-            "border": "1px solid #aaa",
-            "border-top-right-radius": "5px",
-            "border-bottom-right-radius": "5px",
-            "background-color": "#dedede",
-            "cursor": "default",
-            "text-align": "center"
-        });
-        nextNoteButton.addClass("nextNoteButton").addClass("webtrails");
-        nextNoteButton.html("Next Note");
-
-        deleteNoteButton = $(document.createElement("img"));
-        applyDefaultCSS(deleteNoteButton);
-        deleteNoteButton.css({
-            "font-size": "12px",
-//        "color": "#aaa",
-//        "background-color": "#FF8080",
-            "font-weight": "bold",
-            "height":"18px",
-            "margin-top" : "2px",
-            "margin-right": "5px",
-            "width": "18px",
-            "float": "right",
-            "border": "1px solid #aaa",
-            "border-radius": "5px",
-            "cursor": "default",
-            "text-align": "center"
-        });
-        deleteNoteButton.attr("src","data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAQCAQAAABnqj2yAAAACXBIWXMAAAsTAAALEwEAmpwYAAADGGlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjaY2BgnuDo4uTKJMDAUFBUUuQe5BgZERmlwH6egY2BmYGBgYGBITG5uMAxIMCHgYGBIS8/L5UBFTAyMHy7xsDIwMDAcFnX0cXJlYE0wJpcUFTCwMBwgIGBwSgltTiZgYHhCwMDQ3p5SUEJAwNjDAMDg0hSdkEJAwNjAQMDg0h2SJAzAwNjCwMDE09JakUJAwMDg3N+QWVRZnpGiYKhpaWlgmNKflKqQnBlcUlqbrGCZ15yflFBflFiSWoKAwMD1A4GBgYGXpf8EgX3xMw8BSMDVQYqg4jIKAUICxE+CDEESC4tKoMHJQODAIMCgwGDA0MAQyJDPcMChqMMbxjFGV0YSxlXMN5jEmMKYprAdIFZmDmSeSHzGxZLlg6WW6x6rK2s99gs2aaxfWMPZ9/NocTRxfGFM5HzApcj1xZuTe4FPFI8U3mFeCfxCfNN45fhXyygI7BD0FXwilCq0A/hXhEVkb2i4aJfxCaJG4lfkaiQlJM8JpUvLS19QqZMVl32llyfvIv8H4WtioVKekpvldeqFKiaqP5UO6jepRGqqaT5QeuA9iSdVF0rPUG9V/pHDBYY1hrFGNuayJsym740u2C+02KJ5QSrOutcmzjbQDtXe2sHY0cdJzVnJRcFV3k3BXdlD3VPXS8Tbxsfd99gvwT//ID6wIlBS4N3hVwMfRnOFCEXaRUVEV0RMzN2T9yDBLZE3aSw5IaUNak30zkyLDIzs+ZmX8xlz7PPryjYVPiuWLskq3RV2ZsK/cqSql01jLVedVPrHzbqNdU0n22VaytsP9op3VXUfbpXta+x/+5Em0mzJ/+dGj/t8AyNmf2zvs9JmHt6vvmCpYtEFrcu+bYsc/m9lSGrTq9xWbtvveWGbZtMNm/ZarJt+w6rnft3u+45uy9s/4ODOYd+Hmk/Jn58xUnrU+fOJJ/9dX7SRe1LR68kXv13fc5Nm1t379TfU75/4mHeY7En+59lvhB5efB1/lv5dxc+NH0y/fzq64Lv4T8Ffp360/rP8f9/AA0ADzT6lvFdAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAACDSURBVHjavI4xCsJQEETfBltlO8Nv9AqpPICl5/CwniJo8dFCCNo7Fn8DxnxbB4aBfczumvilRYlk9GwAOOdtMCHEwTrJ5fJOipmJJGhoyaUfmc0EXj01mIA0+yUbNGXJ/jg1BILLfeoPVNM/kQnYXYf1kiej/XZqA7H6ar94jKiq9wBVaTFDLLMAdgAAAABJRU5ErkJggg==");
-        deleteNoteButton.addClass("deleteNoteButton").addClass("webtrails");
-
-        showCommentButton = $(document.createElement("img"));
-        applyDefaultCSS(showCommentButton);
-        showCommentButton.css({
-            "font-size": "12px",
-//        "color": "#aaa",
-//        "background-color": "#FF8080",
-            "font-weight": "bold",
-            "height":"14px",
-            "margin-top" : "2px",
-            "margin-right": "50px",
-            "width": "14px",
-            "float": "right",
-            "padding": "2px",
-            "border": "1px solid #aaa",
-            "border-radius": "5px",
-            "cursor": "default",
-            "text-align": "center"
-        });
-        showCommentButton.attr("src","data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAACXBIWXMAAAsTAAALEwEAmpwYAAADGGlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjaY2BgnuDo4uTKJMDAUFBUUuQe5BgZERmlwH6egY2BmYGBgYGBITG5uMAxIMCHgYGBIS8/L5UBFTAyMHy7xsDIwMDAcFnX0cXJlYE0wJpcUFTCwMBwgIGBwSgltTiZgYHhCwMDQ3p5SUEJAwNjDAMDg0hSdkEJAwNjAQMDg0h2SJAzAwNjCwMDE09JakUJAwMDg3N+QWVRZnpGiYKhpaWlgmNKflKqQnBlcUlqbrGCZ15yflFBflFiSWoKAwMD1A4GBgYGXpf8EgX3xMw8BSMDVQYqg4jIKAUICxE+CDEESC4tKoMHJQODAIMCgwGDA0MAQyJDPcMChqMMbxjFGV0YSxlXMN5jEmMKYprAdIFZmDmSeSHzGxZLlg6WW6x6rK2s99gs2aaxfWMPZ9/NocTRxfGFM5HzApcj1xZuTe4FPFI8U3mFeCfxCfNN45fhXyygI7BD0FXwilCq0A/hXhEVkb2i4aJfxCaJG4lfkaiQlJM8JpUvLS19QqZMVl32llyfvIv8H4WtioVKekpvldeqFKiaqP5UO6jepRGqqaT5QeuA9iSdVF0rPUG9V/pHDBYY1hrFGNuayJsym740u2C+02KJ5QSrOutcmzjbQDtXe2sHY0cdJzVnJRcFV3k3BXdlD3VPXS8Tbxsfd99gvwT//ID6wIlBS4N3hVwMfRnOFCEXaRUVEV0RMzN2T9yDBLZE3aSw5IaUNak30zkyLDIzs+ZmX8xlz7PPryjYVPiuWLskq3RV2ZsK/cqSql01jLVedVPrHzbqNdU0n22VaytsP9op3VXUfbpXta+x/+5Em0mzJ/+dGj/t8AyNmf2zvs9JmHt6vvmCpYtEFrcu+bYsc/m9lSGrTq9xWbtvveWGbZtMNm/ZarJt+w6rnft3u+45uy9s/4ODOYd+Hmk/Jn58xUnrU+fOJJ/9dX7SRe1LR68kXv13fc5Nm1t379TfU75/4mHeY7En+59lvhB5efB1/lv5dxc+NH0y/fzq64Lv4T8Ffp360/rP8f9/AA0ADzT6lvFdAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAABdSURBVHjaYpR8zyDAgAk+MBr+Z8Ii/o+BCZswAwMTA3ZxBgaqSjB/wSbM/IXxvw0Di8l+BgbuOzMKNL/CZf4wMDAwMBj/t7t9zuE/C5o2SX6swgwM/1n+m2AKAwYAj4MXXMHl+7EAAAAASUVORK5CYII=");
-        showCommentButton.addClass("showCommentButton").addClass("webtrails");
-
-        linkToTrailWrapper = $(document.createElement("div"));
-        applyDefaultCSS(linkToTrailWrapper);
-        linkToTrailWrapper.css({
-            "height":"100%",
-            "display": "inline-block",
-            "float": "left",
-            "margin-top": "3px",
-            "width": "7%",
-            "overflow": "hidden",
-            "margin-left": "1%",
-        });
-        linkToTrailWrapper.addClass("webtrails");
-
-        linkToTrail = $(document.createElement("a"));
-        applyDefaultCSS(linkToTrail);
-        linkToTrail.css({
-            "margin-left": "1%",
-            "margin-right": "1%",
-            "font-size": "12px",
-            "color": "#333",
-            "font-weight": "bold",
-            "text-shadow": "1px 1px #F0f0f0",
-            "text-decoration": "underline",
-            "cursor":"pointer",
-            visibility: "hidden"
-        });
-        linkToTrail.addClass("webtrails needs-trail");
-//    linkToTrail.attr("target", "_blank");
-
-        trailSelect = $(document.createElement("select"));
-//    applyDefaultCSS(trailSelect);
-        trailSelect.css({
-            "float": "left",
-            "margin-left": "1%",
-            "margin-right": "0px",
-            "margin-top": "3px",
-            "margin-bottom": "0",
-            "width": "10%",
-            "height": "18px",
-            "font-size": "13px",
-            "font-family": '"Helvetica Neue", Helvetica, Arial, sans-serif'
-        });
-        trailSelect.addClass("webtrails");
-        trailSelect.change(trailSelectChanged);
-
-        $(linkToTrail).html("View Trail");
-        $(linkToTrail).click(function(event){
-            window.open(webTrailsUrl + "/trails/"+Trails.getCurrentTrailId(), "_blank")
-        })
-
-        saveSiteToTrailButton = $(document.createElement("button"));
-        applyDefaultCSS(saveSiteToTrailButton);
-        saveSiteToTrailButton.css({
-            "font-size": "12px",
-            "color": "#333",
-            "background-color": "transparent",
-            "font-weight": "bold",
-            "height":"20px",
-            "width": "7%",
-            "float": "right",
-            "border-radius": "5px",
-            "border": "1px solid #333",
-            "margin-top": "2px",
-            "line-height": "normal",
-            "cursor": "pointer",
-            "text-align":"center"
-        });
-        saveSiteToTrailButton.addClass("webtrails");
-        saveSiteToTrailButton.html("Save site");
-        saveSiteToTrailButton.click(function(){saveSiteToTrail()});
-
-        var shareTrailField = $(document.createElement("input"));
-        applyDefaultCSS(shareTrailField)
-        .css({
-            "font-size": "12px",
-            "color": "#333",
-            "background-color": "transparent",
-            "font-weight": "bold",
-            "height":"20px",
-            "width":"7%",
-            "float": "right",
-            "margin-left": "2%",
-            "line-height": "normal",
-            "text-align": "center",
-            "padding": "0",
-            "margin-top": "2px",
-            "outline": "none",
-            "border-radius": "5px",
-            "border": "1px solid #333",
-            "cursor": "pointer",
-            "visibility": "hidden"
-        })
-        .addClass("webtrails needs-trail");
-        shareTrailField.attr({
-            "type": "text",
-            "id": "shareTrail",
-            "value": "Share Trail"
-        });
-        shareTrailField.click(function() {
-            shareTrailField.attr("value", webTrailsUrl + '/trails/'+Trails.getCurrentTrailId());
-            shareTrailField.focus();
-            shareTrailField.select();
-            shareTrailField.css({"cursor": "text"});
-        });
-
-        faviconHolder = $(document.createElement("div"));
-        applyDefaultCSS(faviconHolder);
-        faviconHolder.css({
-            "font-size": "12px",
-            "color": "#333",
-            "background-color": "#f0f0f0",
-            "height":"19px",
-            "line-height": "25px",
-            "text-align": "center",
-            "padding": "0",
-            "margin-top": "2px",
-            "border-radius": "7px",
-            "border": "1px solid #ccc",
-            "width": "15%",
-            "display": "inline-block",
-            "overflow":"auto"
-        });
-        faviconHolder.addClass("webtrails");
-        faviconHolder.attr("id", "faviconHolder");
-        faviconHolder.mouseenter(growFaviconHolder).mouseleave(shrinkFaviconHolder)
-
-        loggedOutMessage = $("<div>");
-        applyDefaultCSS(loggedOutMessage);
-        loggedOutMessage.html("Hit the power button on the right to sign in using Google")
-        loggedOutMessage.css({
-            "margin-right": "auto",
-            "margin-left": "auto",
-            "height": "100%",
-            "width": "30%",
-            "padding-top": "5px",
-            "font-size": "16px"
-        });
-        loggedOutMessage.addClass("loggedOutMessage");
-    }
-
-    function addToolbarElementsToDom() {
-        $(document.body).prepend(trailDisplay);
-        trailDisplay.append(settingsButtonWrapper);
-        trailDisplay.append(showCommentButton);
-        trailDisplay.append(deleteNoteButton);
-        trailDisplay.append(nextNoteButton);
-        trailDisplay.append(previousNoteButton);
-        trailDisplay.append(shareTrailField);
-        trailDisplay.append(saveSiteToTrailButton);
-        trailDisplay.append(trailSelect);
-        trailDisplay.append(linkToTrailWrapper);
-        linkToTrailWrapper.append(linkToTrail);
-        trailDisplay.append(faviconHolder);
-        trailDisplay.append(loggedOutMessage);
-    }
-
-    this.showTrailInPreview = function(trail) {
         trailPreview.initWithTrail(trail);
     };
 
-    this.updateToolbarWithTrails = function(trails) {
-//        shareTrailField.css({visibility: "shown"});
-//        linkToTrailWrapper.css({visibility: "shown"});
+    this.updateToolbarWithTrails = function(trailsObject) {
         if (Trails.getCurrentTrail()){
-            thisToolbar.showTrailInPreview(trails.getCurrentTrail());
+            thisToolbar.switchToTrail(trailsObject.getCurrentTrail());
+            $.each(trailsObject.getTrailHash(), function(id, trail) {
+                var dropDownItem = HTML.trailDropdownItem(trail.name, trail.id);
+                dropDownItem.click(function(){
+                    thisToolbar.switchToTrail(trail)
+                });
+                trailsDropdownList.append(dropDownItem);
+            });
         } else {
             showNoTrailsHelp();
         }
     };
 
-    function showNoTrailsHelp() {
-        var helpIframe = $("<iframe class='help-frame'></iframe>").attr({
-            src:noTrailsHelpUrl,
-            frameborder: "0"
-        }).css({
-            height: previewHeight + "px"
+    function addFavicon(site) {
+        var faviconImg = HTML.faviconImg(site.faviconUrl);
+        faviconImg.click(function() {
+            if (site.getLastNote()) {
+                trailPreview.displayNote(site.getLastNote());
+            } else {
+                var noNoteFakeNote = new NoNoteNote(site, trailPreview.getCurrentNote());
+                trailPreview.displayNote(noNoteFakeNote);
+                trailPreview.enableOrDisablePrevAndNextButtons(noNoteFakeNote);
+                showNoNotesHelp();
+            }
         });
-        previewContainer.append(helpIframe);
+        faviconContainer.append(faviconImg);
     }
 
-    function initSignedInExperience(){
+    function showNoNotesHelp() {
+        var helpIframe = HTML.helpFrame(noNotesHelpUrl);
+        previewContainer.html(helpIframe);
+    }
+
+    function showNoTrailsHelp() {
+        var helpIframe = HTML.helpFrame(noTrailsHelpUrl);
+        previewContainer.html(helpIframe);
+    }
+
+    function initSignedInExperience() {
         loggedIn = true;
-        if (!faviconsFetched){
-            clearFaviconHolder();
-//        fetchFavicons();
-            faviconsFetched = true;
-        }
-        trailDisplay.children().not(".wt-site-preview needs-trail").show();
-        loggedOutMessage.hide();
-        settingsButtonWrapper.css("background-color","#94FF70")
-        settingsButtonWrapper.unbind("click");
-        settingsButtonWrapper.click(function(){
-            signOut();
-            return false
-        });
         $(document).mousedown(possibleHighlightStart);
     }
 
-    function initSignedOutExperience(){
+    function initSignedOutExperience() {
         console.log("signing out");
         loggedIn = false;
         trailDisplay.children().not(".wt_settingsButton").hide();
@@ -413,13 +169,13 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl) {
         })
     }
 
-    function signOut(){
+    this.signOut = function(){
         chrome.runtime.sendMessage({logout:"now!"}, function(response) {
             initSignedOutExperience();
         });
     }
 
-    function signIn(){
+    this.signIn = function() {
         chrome.runtime.sendMessage({login:"login"}, function(response) {
             wt_auth_token = response.wt_auth_token;
             initSignedInExperience();
@@ -430,20 +186,17 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl) {
         console.log("showing or hiding toolbar");
         if (!shown){
             show();
-//        showToolbarOnAllTabs();
         }
         else {
             console.log("hiding toolbar");
             hide();
-//        hideToolbarOnAllTabs();
         }
     }
 
     function show(){
-        trailDisplay.show();
+        toolbarFrame.show();
         shown = true
         if (loggedIn) {
-            TrailPreview.show();
             if (mouseDown == 0) { // if the mouse is not pressed (not highlighting)
                 highlightedTextDetect(); // check to see if they highlighted anything for the addnote button
             } else { // mouse is down, must be highlighting
@@ -453,16 +206,15 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl) {
     }
 
     function hide(){
-        trailDisplay.hide();
+        toolbarFrame.hide();
 //        TrailPreview.hide();
         shown = false;
         $(".inlineSaveButton").remove();
         closeOverlay();
     }
 
-
     function clearFaviconHolder() {
-        faviconHolder.html("");
+        faviconContainer.html("");
     }
 
     function checkForShowToolbarKeypress(e){
@@ -473,16 +225,13 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl) {
         }
     }
 
-//    createToolbarElements();
-//    addToolbarElementsToDom();
-//    console.log("wt auth is", wt_auth_token);
-//    if (wt_auth_token){
-//        initSignedInExperience()
-//    }else{
-//        initSignedOutExperience()
-//    }
+    if (wt_auth_token){
+        initSignedInExperience()
+    } else {
+        initSignedOutExperience()
+    }
 //
-//    $(document.body).keydown(checkForShowToolbarKeypress);
+    $(document.body).keydown(checkForShowToolbarKeypress);
 //
 //    $(document.body).mousedown(function() {
 //        mouseDown=1;
@@ -491,12 +240,12 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl) {
 //        mouseDown=0;
 //    });
 //
-//    //weird fix for some sites
-//    try {
-//        var bodymargin = $('body').css('margin-left')
-//        if (bodymargin) {
-//            trailDisplay.css("margin-left", "-" + bodymargin);
-//        }
-//    }catch (e) {}
+    //weird fix for some sites
+    try {
+        var bodymargin = $('body').css('margin-left')
+        if (bodymargin) {
+            trailDisplay.css("margin-left", "-" + bodymargin);
+        }
+    }catch (e) {}
 }
 WtToolbar.prototype = IframeManager

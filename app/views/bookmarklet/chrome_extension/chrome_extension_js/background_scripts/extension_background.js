@@ -65,6 +65,7 @@ function injectScripts(tabId, toolbarHtml){
     var content_script_loaded = 'contentScriptLoaded = "loaded";\n'
     var toolbarHtml = 'toolbarHtml = "' + toolbarHtml + '";'
     var noTrailsHelpUrl = 'noTrailsHelpUrl = "' + chrome.extension.getURL('/html/no_trails.html') + '";\n'
+    var noNotesHelpUrl = 'noNotesHelpUrl = "' + chrome.extension.getURL('/html/no_notes.html') + '";\n'
     if(wt_auth_token){
         auth_injection_string = "wt_auth_token='"+wt_auth_token + "';\n";
         if (current_trail_id){
@@ -74,7 +75,7 @@ function injectScripts(tabId, toolbarHtml){
     if (toolbar_display_state == "shown"){
         tool_bar_state_injection_string = "toolbarShown=true;\n"
     }
-    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string+power_button_url + content_script_loaded + toolbarHtml + noTrailsHelpUrl;
+    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string+power_button_url + content_script_loaded + toolbarHtml + noTrailsHelpUrl + noNotesHelpUrl;
     createContentScript(0,starting_injection_string,tabId);
     // update the local trail data
     retrieveTrailData();
