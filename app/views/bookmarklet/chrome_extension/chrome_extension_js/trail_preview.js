@@ -1,6 +1,9 @@
 console.log("trail preview injected");
 
-function TPreview(previewContainer, height, nextNoteButton, previousNoteButton, showCommentButton, deleteNoteButton) {
+function TPreview(
+    previewContainer, height, nextNoteButton, previousNoteButton, showCommentButton, deleteNoteButton,
+    iframeKeypressHandler, iframeClickHandler
+    ) {
     var currentTrail = false;
     var currentNote = false;
     var currentSiteFrame = false;
@@ -74,9 +77,11 @@ function TPreview(previewContainer, height, nextNoteButton, previousNoteButton, 
     this.switchToNoteRevision = function(note, hidePreview) {
         currentSiteFrame && currentSiteFrame.remove();
         var siteHtmlIframe = addEmptyIframeToPreview(note.site, hidePreview);
-        var iframeDocument = thisTrailPreview.setIframeContent(siteHtmlIframe, note.getSiteRevisionHtml() || "Uh oh");
+        var iframeDocument = $(thisTrailPreview.setIframeContent(siteHtmlIframe, note.getSiteRevisionHtml() || "Uh oh"));
+        iframeDocument.keydown(iframeKeypressHandler);
+        iframeDocument.click(iframeClickHandler);
         currentSiteFrame = siteHtmlIframe;
-        return $(iframeDocument);
+        return iframeDocument;
     }
 
     this.displayNote = function(note, hidePreview) {

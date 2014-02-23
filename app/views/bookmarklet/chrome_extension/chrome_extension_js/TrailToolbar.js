@@ -7,6 +7,8 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     var previewHeight = 200;
     var loggedIn = false
     var bodyMarginTop = $("body").css("margin-top");
+    var shown = false;
+    var siteBody = $(document.body);
 
     var CSS = {
         toolbarFrame: {
@@ -15,10 +17,11 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
             top: "0px",
             left: "0px",
             "z-index": "2147483644",
-            "border-bottom": "2px solid grey"
+            "border-bottom": "2px solid grey",
+            "display": "none"
         },
         faviconImg: {
-            "height":"16px",
+            "height":"18px",
             "vertical-align":"top",
             "margin": "0px 2px",
             "display": "block",
@@ -48,7 +51,7 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     };
 
     var toolbarFrame = HTML.toolbarFrame
-    $("body").prepend(toolbarFrame);
+    siteBody.prepend(toolbarFrame);
     thisToolbar.setIframeContent(toolbarFrame, toolbarHtml);
 
     thisToolbar.runWhenLoaded(function(doc) {
@@ -57,8 +60,8 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
         console.log("loaded with height" + toolbarHeight + "px");
         toolbarFrame.css({height: toolbarHeight + 200 + "px"});
         $doc.find("body").css({height: toolbarHeight + 200 + "px"});
-        var dropdowns = $doc.find(".dropdown-toggle");
-        dropdowns.dropdown();
+//        var dropdowns = $doc.find(".dropdown-toggle");
+//        dropdowns.dropdown();
     }, thisToolbar.getIDoc(toolbarFrame)[0]);
 
     function i$(selector) {
@@ -79,7 +82,10 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     var settingsDropdownList = i$(".settings-dropdown-list");
 
     var previewContainer = i$(".trail-preview-container");
-    trailPreview = new TPreview(previewContainer, previewHeight, nextNoteButton, previousNoteButton, showCommentButton, deleteNoteButton);
+    trailPreview = new TPreview(
+        previewContainer, previewHeight, nextNoteButton, previousNoteButton, showCommentButton, deleteNoteButton,
+        checkForShowToolbarKeypress, closeDropdowns
+    );
 
     visitSiteButton.click(function() {
         open(trailPreview.getCurrentNote().site.url, "_blank");
@@ -93,15 +99,22 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
         settingsDropdownList.toggle();
     });
 
-    var displayHeight = "25px";
-    var shown = true;
+    function closeDropdowns(e) {
+        if(!$(e.target).hasClass("dropdown-toggle")){
+            trailsDropdownList.hide();
+            settingsDropdownList.hide();
+        }
+    }
+
+    siteBody.click(closeDropdowns);
+    thisToolbar.getIDoc(toolbarFrame).click(closeDropdowns);
 
     this.switchToTrail = function(trail) {
         clearFaviconHolder();
         $.each(trail.getSites(), function(i, site) {
             addFavicon(site);
         });
-        trailNameContainer.html(trail.name)
+        trailNameContainer.val(trail.name);
         viewTrailButton.click(function() {
             open(webTrailsUrl + "/trails/" + trail.id, "_blank");
         })
@@ -122,6 +135,11 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
             showNoTrailsHelp();
         }
     };
+
+    this.isShown = function() {
+        return shown;
+    };
+
 
     function addFavicon(site) {
         var faviconImg = HTML.faviconImg(site.faviconUrl);
@@ -156,18 +174,6 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     function initSignedOutExperience() {
         console.log("signing out");
         loggedIn = false;
-        trailDisplay.children().not(".wt_settingsButton").hide();
-        settingsButtonWrapper.css("background-color","#FF8080")
-        loggedOutMessage.show();
-        $(document).unbind("mousedown");
-        $(".inlineSaveButton").remove();
-        settingsButtonWrapper.unbind("click");
-        debugger;
-        settingsButtonWrapper.click(function(){
-            console.log("signing in");
-            signIn()
-            return false
-        })
     }
 
     this.signOut = function(){
@@ -197,7 +203,11 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     function show(){
         toolbarFrame.show();
         shown = true
-        $("body").css({"margin-top": toolbarFrame.height() + "px"});
+        siteBody.css({
+            position: "relative",
+            "margin-top": toolbarFrame.height() + parseInt(bodyMarginTop) + "px"
+        });
+        toolbarFrame.focus();
         if (loggedIn) {
             if (mouseDown == 0) { // if the mouse is not pressed (not highlighting)
                 highlightedTextDetect(); // check to see if they highlighted anything for the addnote button
@@ -208,10 +218,14 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     }
 
     function hide(){
-        $("body").css({"margin-top": bodyMarginTop});
+        siteBody.css({
+            position: "relative",
+            "margin-top": bodyMarginTop
+        });
         toolbarFrame.hide();
         shown = false;
         $(".inlineSaveButton").remove();
+        siteBody.focus()
         closeOverlay();
     }
 
@@ -234,6 +248,8 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     }
 //
     $(document.body).keydown(checkForShowToolbarKeypress);
+    thisToolbar.getIDoc(toolbarFrame).keydown(checkForShowToolbarKeypress);
+
 //
 //    $(document.body).mousedown(function() {
 //        mouseDown=1;

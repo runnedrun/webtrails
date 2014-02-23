@@ -8,34 +8,45 @@
 <body>
     <div class="container-fluid toolbar">
         <div class="row toolbar-buttons">
-                <div class="dropdown col-md-1">
-                    <button class="toolbar-element trail-dropdown-button btn btn-sm dropdown-toggle btn-primary" type="button" id="dropdownMenu1" data-toggle="dropdown">
-                        Trails
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu trail-dropdown-list" role="menu" aria-labelledby="dLabel">
-                    </ul>
+            <div class="col-md-4 trail-actions">
+                <div class="col-md-4">
+                    <button class="btn btn-sm btn-primary toolbar-element save-site-button">Save Site</button>
+                    <i class="fa fa-lg fa-spinner fa-spin site-saving-spinner"></i>
                 </div>
-            <div class="col-md-2 trail-name well-sm toolbar-element trail-name">
-                    Choose a Trail
-            </div>
-            <div class="col-md-1">
-                <button class="btn btn-sm btn-default go-trail toolbar-element view-trail-button">View Trail</button>
+                <div class="dropdown col-md-6 trail-dropdown">
+                    <div class="input-group">
+                        <div class="input-group-btn">
+                            <button class="toolbar-element trail-dropdown-button btn btn-sm dropdown-toggle btn-primary click-to-close click-to-open" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                                Trails
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu trail-dropdown-list" role="menu" aria-labelledby="dLabel">
+                            </ul>
+                        </div>
+                        <input type="text" class="trail-name form-control input-sm" value="Choose a trail" readonly>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn btn-sm btn-default toolbar-element view-trail-button">View Trail</button>
+                </div>
             </div>
             <div class="col-md-2 favicons">
                 favicons
             </div>
             <div class="col-md-5">
-                <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-default toolbar-element prev-note-button">Prev Note</button>
-                    <button type="button" class="btn btn-default toolbar-element next-note-button">Next Note</button>
-                </div>
-                <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-default toolbar-element show-comment-button">Show Comment</button>
-                    <button type="button" class="btn btn-default toolbar-element visit-site-button">Visit Site</button>
-                    <button type="button" class="btn btn-danger btn-md toolbar-element delete-note-button">
-                        <span class="glyphicon glyphicon-trash"></span> Delete Note
-                    </button>
+                <div class="col-md-10 col-md-offset-2">
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-default toolbar-element prev-note-button">Prev Note</button>
+                        <button type="button" class="btn btn-default toolbar-element next-note-button">Next Note</button>
+                    </div>
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-default toolbar-element show-comment-button">Show Comment</button>
+                        <button type="button" class="btn btn-default toolbar-element visit-site-button">Visit Site</button>
+                        <button type="button" class="btn btn-danger btn-md toolbar-element delete-note-button">
+                            <span class="glyphicon glyphicon-trash"></span> Delete Note
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="col-md-1 dropdown">

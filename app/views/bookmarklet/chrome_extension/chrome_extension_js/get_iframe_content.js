@@ -8,7 +8,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         console.log("head of iframe",$("head"), $("head").hasClass("wt-site-preview"));
         if ((window !== top) && !(siteInfo.current_location == frameLocation) && !isWtSitePreview){
             console.log("parsing this frame");
-            parsePageBeforeSavingSite($.extend(siteInfo,{iframe:true}));
+            parsePageBeforeSavingSite($.extend(siteInfo, {iframe:true}));
         }else{
             console.log("top window, not sending message");
         }

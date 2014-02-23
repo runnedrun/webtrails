@@ -1,6 +1,7 @@
 .toolbar {
     background: #F0F0F0;
     width:100%;
+    -webkit-user-select: none;
 }
 
 .toolbar-buttons {
@@ -19,8 +20,12 @@
     padding-bottom: 5px;
 }
 
-.trail-dropdown.toolbar-element {
-    padding-right: 25px;
+.site-saving-spinner {
+    margin-left: 10px;
+}
+
+.trail-actions {
+    padding-left: 0px;
 }
 
 .favicons {

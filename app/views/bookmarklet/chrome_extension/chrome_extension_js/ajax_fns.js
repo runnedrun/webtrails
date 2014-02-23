@@ -67,7 +67,7 @@ function saveSiteToTrail(note){
 
     if (!Trails.siteSavedDeeply()){
         Trails.setSiteSavedDeeply();
-        saveSiteToTrailButton.text("Site saving");
+//        .text("Site saving");
         saveSiteToTrailButton.unbind();
         saveSiteToTrailButton.css({"cursor": "default"});
 

@@ -27,7 +27,7 @@
         },
         {
             "matches": ["<all_urls>"],
-            "js": ["chrome_extension_js/get_iframe_content.js","chrome_extension_js/page_preprocessing.js"],
+            "js": ["chrome_extension_js/get_iframe_content.js","chrome_extension_js/page_preprocessing.js", "third_party_scripts/jquery.js"],
             "all_frames":true
         }
     ],

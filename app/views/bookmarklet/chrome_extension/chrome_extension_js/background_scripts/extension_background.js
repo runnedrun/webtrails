@@ -109,11 +109,13 @@ function getToolbarIframeHtml(callback) {
 
             var bootstrapCss = $("<link rel='stylesheet'></link>");
             var toolbarCss = $("<link rel='stylesheet'></link>");
+            var fontAwesomeCss = $("<link rel='stylesheet'></link>");
             bootstrapCss.attr("href", chrome.extension.getURL("css/bootstrap.min.css"));
             toolbarCss.attr("href", chrome.extension.getURL("css/toolbar.css"));
+            fontAwesomeCss.attr("href", chrome.extension.getURL("css/font-awesome.min.css"));
             var head = $html.find('head');
 
-            head[0].innerHTML = bootstrapCss[0].outerHTML + toolbarCss[0].outerHTML
+            head[0].innerHTML = bootstrapCss[0].outerHTML + toolbarCss[0].outerHTML + fontAwesomeCss[0].outerHTML
 
             var fullHtml = encodeURI(newDoc.outerHTML);
             callback(fullHtml);

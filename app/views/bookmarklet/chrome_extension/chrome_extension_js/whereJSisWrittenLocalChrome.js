@@ -1,7 +1,6 @@
 console.log("initializing the toolbar");
 
-var trailDisplay,
-    faviconHolder,
+var faviconHolder,
     mouseDown = 0,
     previousNoteDisplay,
     previousNoteButton,

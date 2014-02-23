@@ -1,20 +1,16 @@
 console.log("inline save loaded");
 
 function possibleHighlightStart(){
-    if(!trailDisplay.is(":hidden")){
-        mouseDown = 1;
-        $(document).mouseup(function(){mouseDown = 0; highlightedTextDetect()});
+    if(Toolbar.isShown()){
+        $(document).mouseup(highlightedTextDetect);
     }
 }
 
 function highlightedTextDetect(){
-//    if(!trailDisplay.is(":hidden")){
-        //this probably breaks a lot of pages
-        $(document).unbind("mouseup");
-        if (!rangy.getSelection().isCollapsed){
-            return addSaveButtonNextToNote(rangy.getSelection().getRangeAt(0));
-        }
-//    }
+    $(document).unbind("mouseup", highlightedTextDetect);
+    if (!rangy.getSelection().isCollapsed){
+        return addSaveButtonNextToNote(rangy.getSelection().getRangeAt(0));
+    }
     return false
 }
 
