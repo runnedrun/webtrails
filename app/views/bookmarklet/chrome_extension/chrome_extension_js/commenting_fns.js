@@ -34,12 +34,9 @@ function makeCommentOverlay(xPos, yPos, spacing, highlightedRange){
         "font-family": "'Helvetica Neue', Helvetica, Arial, sans-serif",
         "z-index": "2147483647"
     });
-//    commentOverlay.css("top", topPosition+"px");
-//    commentOverlay.css("left", leftPosition+"px");
     commentOverlay.addClass("commentOverlay").addClass("webtrails");
 
     var commentDescription = $(document.createElement("div"))
-//    applyDefaultCSS(commentDescription);
     commentDescription.html("Hit enter, click away or type a comment here")
     commentDescription.css({
         "padding": "2px",

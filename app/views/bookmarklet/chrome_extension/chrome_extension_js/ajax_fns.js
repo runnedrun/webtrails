@@ -67,9 +67,7 @@ function saveSiteToTrail(note){
 
     if (!Trails.siteSavedDeeply()){
         Trails.setSiteSavedDeeply();
-//        .text("Site saving");
-        saveSiteToTrailButton.unbind();
-        saveSiteToTrailButton.css({"cursor": "default"});
+        Toolbar.setSaveButtonToSaving();
 
         // now check to see if site is actually saved, and update the UI accordingly
         var updateSiteSavedButton = function() {
@@ -87,7 +85,7 @@ function saveSiteToTrail(note){
                     success: function(data) {
                             if (data.exists) {
                                 // Our page exists, and we should correct the save site button
-                                deactivateSaveSiteButton();
+                                Toolbar.setSaveButtonToSaved(data.siteId, data.trailId);
                                 siteSaved = true;
                                 console.log("updating local storage");
                                 updateTrailDataInLocalStorage();

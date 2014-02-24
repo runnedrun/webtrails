@@ -15,7 +15,7 @@ IframeManager = new function FrameManager() {
         iDoc.writeln(html);
         iDoc.close();
         var headTag  = iDoc.getElementsByTagName("head")[0];
-        headTag.className = headTag.className + " wt-site-preview";
+        headTag.className = headTag.className + " wt-element";
         return $iframe[0].contentWindow.document;
     }
 

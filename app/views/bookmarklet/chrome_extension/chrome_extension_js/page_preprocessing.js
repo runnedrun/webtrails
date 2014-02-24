@@ -3,7 +3,10 @@ console.log("loaded pre-processing");
 // Edits in-place
 function removeToolbarFromPage($htmlClone) {
     $htmlClone.find('.webtrails').remove();
-    $htmlClone.find("body").css({"top": "0px"});
+    $htmlClone.find("body").css({
+        "margin-top": Toolbar.bodyMarginTop,
+        "position": Toolbar.bodyPosition,
+    });
 }
 
 function removeAllUnusedTags($htmlClone){
@@ -15,15 +18,8 @@ function removeAllUnusedTags($htmlClone){
 function getCurrentSiteHTML(){
     var htmlElement = document.getElementsByTagName('html')[0];
     var htmlClone = $(htmlElement).clone();
-    removeToolbarFromPage(htmlClone); // edits in-place
+    if (!(typeof Toolbar === "undefined")) removeToolbarFromPage(htmlClone); // edits in-place
     removeAllUnusedTags(htmlClone);
-
-    var charSetMeta = $('<meta charset="UTF-8">');
-    var oldMeta = $('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">');
-
-    htmlClone.find("head").prepend(charSetMeta);
-    htmlClone.find("head").prepend(oldMeta);
-
     var processedHtml = htmlClone[0]; //gets the element, not the jquery object
     return processedHtml.outerHTML;
 }
@@ -40,7 +36,6 @@ function parsePageBeforeSavingSite(resp){
         html_attributes[attribute.name] = attribute.value;
     });
 
-
     $.each($.makeArray(document.styleSheets),function(i,stylesheet){
         var owner = stylesheet.ownerNode
         if (owner.nodeName == "LINK"){
@@ -49,12 +44,6 @@ function parsePageBeforeSavingSite(resp){
             stylesheetContents.push(owner.innerHTML);
         }
     });
-
-//    if (!resp.shallowSave){
-//        changeObserver = new MutationSummary({callback: function(m){ console.log("mutation")}, queries: [{all: true}]});
-//    } else {
-//        console.log("summaries", changeObserver.takeSummaries());
-//    }
 
     chrome.runtime.sendMessage({
         parseAndResolve:{

@@ -224,15 +224,15 @@ function TPreview(
         })
     }
 
-    function updateWithNewNote(newNote) {
-        if (!currentNote || (parseInt(currentNote.site.id) <= parseInt(newNote.site.id))){
-            currentNote = newNote;
-            thisTrailPreview.displayNote(currentNote, !toolbarShown);
+    function updateWithNewNote(newNoteEvent) {
+        if (!currentNote || (parseInt(currentNote.site.id) <= parseInt(newNoteEvent.note.site.id))){
+            currentNote = newNoteEvent.note;
+            thisTrailPreview.displayNote(currentNote);
         }
         thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
     }
 
-    $("document").bind("newNote", updateWithNewNote);
+    $(document).on("newNote", updateWithNewNote);
 
     nextNoteButton.disable = previousNoteButton.disable = function() {
         this.prop('disabled', true);

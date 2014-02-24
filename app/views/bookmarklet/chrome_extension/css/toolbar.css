@@ -20,8 +20,13 @@
     padding-bottom: 5px;
 }
 
-.site-saving-spinner {
+.fa-spinner.site-saving-spinner {
     margin-left: 10px;
+    visibility: hidden;
+}
+
+.save-site-button.saving {
+    cursor: not-allowed;
 }
 
 .trail-actions {

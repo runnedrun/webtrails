@@ -130,7 +130,7 @@ class SitesController < ApplicationController
 
   def exists
     site = get_site_if_owned_by_user(params[:id])
-    render :json => {:exists => !site.archive_location.nil?,:id => site.id, }, :status => 200
+    render :json => {:exists => !site.archive_location.nil?,:siteId => site.id, :trailId => site.trail.id }, :status => 200
   end
 
   def update_note_list

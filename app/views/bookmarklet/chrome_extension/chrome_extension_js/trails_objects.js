@@ -153,22 +153,26 @@ Trail = function(trailObject, trailsCollection){
     }
 
     this.updateSites = function(newTrailObject){
-        $.each(newTrailObject.sites.order, function(i,siteId){
+        var newAndUpdatedSites = $.map(newTrailObject.sites.order, function(siteId, i){
             var siteToUpdate;
             var newSiteBaseObject = newTrailObject.sites.siteObjects[siteId];
-            if (!(siteToUpdate  = sites[siteId])){
+            if (!(siteToUpdate = sites[siteId])){
                 console.log("creating new site");
-                sites[siteId] = new Site(newSiteBaseObject, thisTrailObject)
+                siteToUpdate = sites[siteId] = new Site(newSiteBaseObject, thisTrailObject)
             } else {
                 console.log("updating existing site");
                 siteToUpdate.updateSite(newSiteBaseObject);
             }
+            return siteToUpdate;
         });
         siteOrder = newTrailObject.sites.order;
+        $.each(newAndUpdatedSites, function(i, site) {
+            site.fireNewNoteEvents();
+        })
     }
 
     this.isCurrentTrail = function(){
-        return trailsCollection.getCurrentTrail() == thisTrailObject && TrailPreview;
+        return trailsCollection.getCurrentTrail() == thisTrailObject && !!Toolbar;
     };
 
     this.getCurrentRevision = function() {
@@ -188,9 +192,10 @@ Trail = function(trailObject, trailsCollection){
     };
 
     var thisTrailObject = this;
-    $.each(trailObject.sites.siteObjects,function(siteId,siteObject){
-        sites[siteId] = new Site(siteObject, thisTrailObject);
-    })
+    thisTrailObject.updateSites(trailObject);
+//    $.each(trailObject.sites.siteObjects,function(siteId,siteObject){
+//        sites[siteId] = new Site(siteObject, thisTrailObject);
+//    })
 }
 
 Site = function(siteObject, parentTrail){
@@ -207,6 +212,9 @@ Site = function(siteObject, parentTrail){
     this.addNote = function(baseNoteObject){
         var newNote = notes[baseNoteObject.id] = new Note(baseNoteObject, thisSiteObject);
         noteOrder.push(baseNoteObject.id);
+        if (thisSiteObject.trail.isCurrentTrail()) {
+            newNote.fireNewNoteEvent();
+        }
         return newNote
     };
 
@@ -252,7 +260,7 @@ Site = function(siteObject, parentTrail){
         var notesInOrder = [];
         $.each(noteOrder,function(i,noteId){
             notesInOrder.push(notes[noteId]);
-        })
+        });
         return notesInOrder;
     };
 
@@ -297,13 +305,22 @@ Site = function(siteObject, parentTrail){
         return thisSiteObject.html[revisionNumber]
     };
 
-    this.getFirstRevisionHtml = function(){
+    this.getFirstRevisionHtml = function() {
         if (thisSiteObject.getFirstNote()) {
             return thisSiteObject.getFirstNote().getSiteRevisionHtml();
         } else {
             return false
         }
     };
+
+    this.fireNewNoteEvents = function() {
+        $.each(thisSiteObject.getNotes(), function(i, note) {
+            if (note.new) {
+                note.new = false;
+                note.fireNewNoteEvent();
+            }
+        })
+    }
 
     $.each(siteObject.notes.order, function(i,noteId) {
         thisSiteObject.addNote(siteObject.notes.noteObjects[noteId]);
@@ -313,6 +330,7 @@ Site = function(siteObject, parentTrail){
 Note = function(baseNoteObject, parentSite){
     var siteRevisionNumber = baseNoteObject.siteRevisionNumber;
     var thisNoteObject = this;
+    this.new = true;  //used to know if a new note event should be fired, from site.
     this.site = parentSite;
 
     this.getSiteRevisionHtml = function() {
@@ -380,5 +398,11 @@ Note = function(baseNoteObject, parentSite){
     };
 
     this.update(baseNoteObject);
-    if (this.site.trail.isCurrentTrail()) { jQuery.event.trigger('newNote', [thisNoteObject]); }
+
+    this.fireNewNoteEvent = function() {
+        $(document).trigger({
+            type:"newNote",
+            note: thisNoteObject
+        });
+    };
 }

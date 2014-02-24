@@ -6,9 +6,10 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     var previewContainer;
     var previewHeight = 200;
     var loggedIn = false
-    var bodyMarginTop = $("body").css("margin-top");
-    var shown = false;
     var siteBody = $(document.body);
+    var shown = false;
+    this.bodyMarginTop = siteBody.css("margin-top");
+    this.bodyPosition = siteBody.css("position");
 
     var CSS = {
         toolbarFrame: {
@@ -33,7 +34,7 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
         }
     };
     var HTML = {
-        toolbarFrame: $("<iframe class='wt-toolbar-frame'></iframe>").
+        toolbarFrame: $("<iframe class='wt-toolbar-frame webtrails'></iframe>").
             attr({'src': "about:blank", 'frameborder': 0}).
             css(CSS.toolbarFrame),
         faviconImg: function(faviconUrl) {
@@ -68,6 +69,8 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
         return thisToolbar.getIDoc(toolbarFrame).find(selector)
     }
 
+    var saveSiteButton = i$(".save-site-button");
+    var siteSavingSpinner = i$(".site-saving-spinner");
     var trailsDropdownButton = i$(".trail-dropdown-button");
     var trailsDropdownList = i$(".trail-dropdown-list");
     var trailNameContainer = i$(".trail-name");
@@ -86,6 +89,8 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
         previewContainer, previewHeight, nextNoteButton, previousNoteButton, showCommentButton, deleteNoteButton,
         checkForShowToolbarKeypress, closeDropdowns
     );
+
+    saveSiteButton.click(saveSiteToTrail);
 
     visitSiteButton.click(function() {
         open(trailPreview.getCurrentNote().site.url, "_blank");
@@ -138,6 +143,25 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
 
     this.isShown = function() {
         return shown;
+    };
+
+    this.setSaveButtonToSaving = function() {
+        saveSiteButton.html("Site saving").addClass("saving");
+        siteSavingSpinner.css({
+            "visibility": "visible"
+        });
+        saveSiteButton.unbind("click", saveSiteToTrail);
+    };
+
+    this.setSaveButtonToSaved = function(siteId, trailId) {
+        saveSiteButton.html("Site saved");
+        siteSavingSpinner.css({
+            "visibility": "hidden"
+        });
+        siteSavingSpinner.hide();
+        saveSiteButton.click(function() {
+            open(webTrailsUrl + "/trails/" + trailId + "#" + siteId, "_blank");
+        });
     };
 
 
@@ -205,7 +229,7 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
         shown = true
         siteBody.css({
             position: "relative",
-            "margin-top": toolbarFrame.height() + parseInt(bodyMarginTop) + "px"
+            "margin-top": toolbarFrame.height() + parseInt(this.bodyMarginTop) + "px"
         });
         toolbarFrame.focus();
         if (loggedIn) {
@@ -219,8 +243,8 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
 
     function hide(){
         siteBody.css({
-            position: "relative",
-            "margin-top": bodyMarginTop
+            position: thisToolbar.bodyPosition,
+            "margin-top": thisToolbar.bodyMarginTop
         });
         toolbarFrame.hide();
         shown = false;
