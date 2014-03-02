@@ -61,8 +61,10 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
         console.log("loaded with height" + toolbarHeight + "px");
         toolbarFrame.css({height: toolbarHeight + 200 + "px"});
         $doc.find("body").css({height: toolbarHeight + 200 + "px"});
-//        var dropdowns = $doc.find(".dropdown-toggle");
-//        dropdowns.dropdown();
+//        i$("trail-dropdown-button").dropdown("attach", ["#trail-dropdown-div"])
+//        $(thisToolbar.getIDoc(toolbarFrame)).on('click.dropdown', '[data-dropdown]', $.dropdown.show);
+//        $(thisToolbar.getIDoc(toolbarFrame)).on('click.dropdown', $.dropdown.hide);
+//        $(thisToolbar.getIWindow(toolbarFrame)).on('resize', $.dropdown.hide.position);
     }, thisToolbar.getIDoc(toolbarFrame)[0]);
 
     function i$(selector) {
@@ -96,16 +98,27 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
         open(trailPreview.getCurrentNote().site.url, "_blank");
     });
 
-    trailsDropdownButton.click(function() {
-        trailsDropdownList.toggle();
-    });
+    trailsDropdownButton.click(openOrCloseDropdown);
 
-    settingsDropdownButton.click(function() {
-        settingsDropdownList.toggle();
-    });
+    settingsDropdownButton.click(openOrCloseDropdown);
+
+    function openOrCloseDropdown(e) {
+        var dropdown = $(e.delegateTarget).next();
+        var open = dropdown.hasClass("open");
+        if (open) {
+            dropdown.removeClass("open");
+            dropdown.hide();
+        } else {
+            dropdown.addClass("open");
+            dropdown.show()
+        }
+        return false
+    }
 
     function closeDropdowns(e) {
         if(!$(e.target).hasClass("dropdown-toggle")){
+            trailsDropdownList.removeClass("open");
+            settingsDropdownList.removeClass("open");
             trailsDropdownList.hide();
             settingsDropdownList.hide();
         }
@@ -274,14 +287,6 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     $(document.body).keydown(checkForShowToolbarKeypress);
     thisToolbar.getIDoc(toolbarFrame).keydown(checkForShowToolbarKeypress);
 
-//
-//    $(document.body).mousedown(function() {
-//        mouseDown=1;
-//    });
-//    $(document.body).mouseup(function(){
-//        mouseDown=0;
-//    });
-//
     //weird fix for some sites
     try {
         var bodymargin = $('body').css('margin-left')

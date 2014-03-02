@@ -6,7 +6,7 @@ resourceDownloaderAddress = "http://localhost:5000";
 message_sending = {}
 
 
-var scriptsToBeInjected = ["jquery.js", "bootstrap.min.js", "disable_selection.js", "rangy-core.js", "page_preprocessing.js","iframe_manager.js", "trails_objects.js","trail_preview.js","TrailToolbar.js",
+var scriptsToBeInjected = ["jquery.js", "dropdown.js", "disable_selection.js", "rangy-core.js", "page_preprocessing.js","iframe_manager.js", "trails_objects.js","trail_preview.js","TrailToolbar.js",
     "ajax_fns.js","smart_grab.js","autoresize.js","search_and_highlight.js","css_property_defaults.js","inline_save_button_fns.js",
     "ui_fns.js","commenting_fns.js","whereJSisWrittenLocalChrome.js", "mutation-summary.js"];
 

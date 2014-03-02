@@ -5,7 +5,7 @@ IframeManager = new function FrameManager() {
         return $($iframe[0].contentWindow.document);
     }
 
-    function getIWindow($iframe) {
+    this.getIWindow = function($iframe) {
         return $($iframe[0].contentWindow);
     }
 
