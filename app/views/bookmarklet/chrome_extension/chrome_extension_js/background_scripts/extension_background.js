@@ -54,7 +54,7 @@ function askTabForLoaded(tab) {
     cleanUpMessageSendingObject();
 }
 
-function injectScripts(tabId, toolbarHtml){
+function injectScripts(tabId, toolbarHtml, messageScreenHtml){
     var wt_auth_token = getWtAuthToken();
     var current_trail_id = LocalStorageTrailAccess.getCurrentTrailId();
     var toolbar_display_state = getToolBarDisplayState();
@@ -64,8 +64,8 @@ function injectScripts(tabId, toolbarHtml){
     var power_button_url = 'powerButtonUrl="' + chrome.extension.getURL('/chrome_extension_images/power.png') + '";\n';
     var content_script_loaded = 'contentScriptLoaded = "loaded";\n'
     var toolbarHtml = 'toolbarHtml = "' + toolbarHtml + '";'
+    var messageScreenHtml = 'messageScreenHtml = "' + messageScreenHtml + '";'
     var noTrailsHelpUrl = 'noTrailsHelpUrl = "' + chrome.extension.getURL('/html/no_trails.html') + '";\n'
-    var noNotesHelpUrl = 'noNotesHelpUrl = "' + chrome.extension.getURL('/html/no_notes.html') + '";\n'
     if(wt_auth_token){
         auth_injection_string = "wt_auth_token='"+wt_auth_token + "';\n";
         if (current_trail_id){
@@ -75,7 +75,7 @@ function injectScripts(tabId, toolbarHtml){
     if (toolbar_display_state == "shown"){
         tool_bar_state_injection_string = "toolbarShown=true;\n"
     }
-    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string+power_button_url + content_script_loaded + toolbarHtml + noTrailsHelpUrl + noNotesHelpUrl;
+    var starting_injection_string = auth_injection_string+trail_id_injection_string+tool_bar_state_injection_string+power_button_url + content_script_loaded + toolbarHtml + noTrailsHelpUrl + messageScreenHtml;
     createContentScript(0,starting_injection_string,tabId);
     // update the local trail data
     retrieveTrailData();
@@ -98,29 +98,51 @@ function createContentScript(index_of_script, contentScriptString,tabId){
 }
 
 function getToolbarIframeHtml(callback) {
-    var newDoc = document.implementation.createHTMLDocument().documentElement;
+    var toolbarDoc = document.implementation.createHTMLDocument().documentElement;
+    var messageScreenDoc = document.implementation.createHTMLDocument().documentElement;
+    var bootstrapCss = $("<link rel='stylesheet'></link>");
+    var toolbarCss = $("<link rel='stylesheet'></link>");
+    var fontAwesomeCss = $("<link rel='stylesheet'></link>");
+    var messageScreenCss = $("<link rel='stylesheet'></link>");
+    bootstrapCss.attr("href", chrome.extension.getURL("css/bootstrap.min.css"));
+    toolbarCss.attr("href", chrome.extension.getURL("css/toolbar.css"));
+    fontAwesomeCss.attr("href", chrome.extension.getURL("css/font-awesome.min.css"));
+    messageScreenCss.attr("href", chrome.extension.getURL("css/message_screen.css"));
 
-    $.ajax({
+    var deferredToolbarHtml = $.ajax({
         url: "/html/toolbar.html",
         type: "get",
         success: function(html) {
-            newDoc.innerHTML = html;
-            var $html = $(newDoc);
-
-            var bootstrapCss = $("<link rel='stylesheet'></link>");
-            var toolbarCss = $("<link rel='stylesheet'></link>");
-            var fontAwesomeCss = $("<link rel='stylesheet'></link>");
-            bootstrapCss.attr("href", chrome.extension.getURL("css/bootstrap.min.css"));
-            toolbarCss.attr("href", chrome.extension.getURL("css/toolbar.css"));
-            fontAwesomeCss.attr("href", chrome.extension.getURL("css/font-awesome.min.css"));
-            var head = $html.find('head');
-
-            head[0].innerHTML = bootstrapCss[0].outerHTML + toolbarCss[0].outerHTML + fontAwesomeCss[0].outerHTML
-
-            var fullHtml = encodeURI(newDoc.outerHTML);
-            callback(fullHtml);
+            toolbarDoc.innerHTML = html;
+            var $html = $(toolbarDoc);
+            addTagsToHead($html, [bootstrapCss, toolbarCss, fontAwesomeCss])
         }
-    })
+    });
+
+    var deferredMessageScreenHtml = $.ajax({
+        url: "/html/message_screen.html",
+        type: "get",
+        success: function(html) {
+            messageScreenDoc.innerHTML = html;
+            var $html = $(messageScreenDoc);
+            addTagsToHead($html, [bootstrapCss, messageScreenCss, fontAwesomeCss]);
+        }
+    });
+
+    $.when.apply($, [deferredToolbarHtml, deferredMessageScreenHtml]).always(function(){
+        var fullToolbarHtml = encodeURI(toolbarDoc.outerHTML);
+        var fullMessageScreenHtml = encodeURI(messageScreenDoc.outerHTML);
+        callback(fullToolbarHtml, fullMessageScreenHtml);
+    });
+}
+
+function addTagsToHead($html, tags) {
+    var tagString = "";
+    $.each(tags, function(i, tag) {
+        tagString += tag[0].outerHTML
+    });
+    var head = $html.find('head');
+    head[0].innerHTML = tagString;
 }
 
 client_secret = "t2iqu6oxQbkXf7wdSXhtXXm0";
@@ -162,8 +184,8 @@ chrome.runtime.onMessage.addListener(
             if (message_sending[tabId+":"+tabUrl]){
                 delete message_sending[tabId+":"+tabUrl];
             }
-            getToolbarIframeHtml(function(toolbarHtml){
-                injectScripts(tabId, toolbarHtml);
+            getToolbarIframeHtml(function(toolbarHtml, messageScreenHtml){
+                injectScripts(tabId, toolbarHtml, messageScreenHtml);
             })
         }
         if (request.parseAndResolve){

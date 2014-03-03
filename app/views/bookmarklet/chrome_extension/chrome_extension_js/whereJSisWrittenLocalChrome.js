@@ -24,7 +24,7 @@ var faviconHolder,
     contentScriptLoaded;
     toolbarHtml; // this is uri encoded
     noTrailsHelpUrl;
-    noNotesHelpUrl;
+    messageScreenHtml;
 
 String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
@@ -38,7 +38,7 @@ function initExtension(){
     initializeAutoResize();
 //    debugger;
 //    Toolbar = new WtToolbar(decodeURI(toolbarUrl));
-    Toolbar = new WtToolbar(decodeURI(toolbarHtml), noTrailsHelpUrl, noNotesHelpUrl);
+    Toolbar = new WtToolbar(decodeURI(toolbarHtml), decodeURI(messageScreenHtml), noTrailsHelpUrl);
     $(document.body).keydown(verifyKeypress);
     if (wt_auth_token) {
         getTrailDataFromLocalStorage(function(response){

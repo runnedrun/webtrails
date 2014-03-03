@@ -224,8 +224,8 @@ Site = function(siteObject, parentTrail){
     };
 
     this.isCurrentSite = function() {
-        return thisSiteObject.id == Trail.getCurrentSiteId();
-    }
+        return thisSiteObject.id == thisSiteObject.trail.getCurrentSiteId();
+    };
 
     this.nextSite = function(){
         var sitesInOrder = thisSiteObject.trail.getSites();

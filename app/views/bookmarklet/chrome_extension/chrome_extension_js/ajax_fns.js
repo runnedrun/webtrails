@@ -130,7 +130,7 @@ function deleteNote(note, callback){
         data: {
             "id": note.id
         },
-        success: function(resp) { callback(resp); updateTrailDataInLocalStorage();},
+        success: function(resp) { updateTrailDataInLocalStorage(); callback(resp); },
         error: function(){ butterBarNotification("Failed to delete note, please try again") }
     });
 }

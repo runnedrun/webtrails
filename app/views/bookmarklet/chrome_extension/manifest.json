@@ -17,7 +17,7 @@
             "chrome_extension_js/background_scripts/site_storage_accessors.js",
             "chrome_extension_js/background_scripts/misc_storage_accessors.js","chrome_extension_js/background_scripts/auth_storage_accessors.js",
             "chrome_extension_js/background_scripts/note_storage_accessors.js","chrome_extension_js/background_scripts/trail_storage_accessors.js",
-            "third_party_scripts/aws_SDK.js", "chrome_extension_js/background_scripts/LocalStorageTrail.js"]
+            "chrome_extension_js/background_scripts/LocalStorageTrail.js"]
     },
     "content_scripts": [
         {

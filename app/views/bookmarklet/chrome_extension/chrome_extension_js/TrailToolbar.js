@@ -1,5 +1,5 @@
 console.log('toolbar ui loaded');
-function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
+function WtToolbar(toolbarHtml, messageScreenHtml) {
     var thisToolbar = this;
     var toolbarFrame;
     var trailPreview;
@@ -11,6 +11,12 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     this.bodyMarginTop = siteBody.css("margin-top");
     this.bodyPosition = siteBody.css("position");
 
+    var Text = {
+        noNotesOnSiteMessage: "No saved notes on this site. Hit the visit site button to go to the live version.",
+        noNotesInTrailMessage: "No saved notes in this Trail. View this trail to see sites you've saved without notes.",
+        noTrailsMessage: '<a href="http://www.webtrails.co">Create a Trail</a> to use the toolbar',
+        noSitesInTrailMessage: 'No Sites in this trail. Take a note on this page, or hit the save site button.'
+    };
     var CSS = {
         toolbarFrame: {
             position: "fixed",
@@ -43,9 +49,9 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
         trailDropdownItem: function(trailName, trailId) {
             return $('<li role="presentation"><a role="menuitem" data-trail-id="' + trailId + '" tabindex="-1" href="#">' + trailName + '</a></li>')
         },
-        helpFrame: function(srcUrl) {
+        helpFrame: function() {
             return $("<iframe class='help-frame'></iframe>").attr({
-                src: srcUrl,
+                src: "about:blank",
                 frameborder: "0"
             }).css(CSS.helpFrame)
         }
@@ -68,7 +74,7 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     }, thisToolbar.getIDoc(toolbarFrame)[0]);
 
     function i$(selector) {
-        return thisToolbar.getIDoc(toolbarFrame).find(selector)
+        return thisToolbar.i$(toolbarFrame, selector)
     }
 
     var saveSiteButton = i$(".save-site-button");
@@ -89,10 +95,12 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
     var previewContainer = i$(".trail-preview-container");
     trailPreview = new TPreview(
         previewContainer, previewHeight, nextNoteButton, previousNoteButton, showCommentButton, deleteNoteButton,
-        checkForShowToolbarKeypress, closeDropdowns
+        checkForShowToolbarKeypress, closeDropdowns, thisToolbar
     );
 
-    saveSiteButton.click(saveSiteToTrail);
+    saveSiteButton.click(function() {
+        saveSiteToTrail(false);
+    });
 
     visitSiteButton.click(function() {
         open(trailPreview.getCurrentNote().site.url, "_blank");
@@ -187,20 +195,33 @@ function WtToolbar(toolbarHtml, noTrailsHelpUrl, noNotesHelpUrl) {
                 var noNoteFakeNote = new NoNoteNote(site, trailPreview.getCurrentNote());
                 trailPreview.displayNote(noNoteFakeNote);
                 trailPreview.enableOrDisablePrevAndNextButtons(noNoteFakeNote);
-                showNoNotesHelp();
+                showNoNotesOnSiteHelp();
             }
         });
         faviconContainer.append(faviconImg);
     }
 
-    function showNoNotesHelp() {
-        var helpIframe = HTML.helpFrame(noNotesHelpUrl);
+    function showMessageScreen(message) {
+        var helpIframe = HTML.helpFrame();
         previewContainer.html(helpIframe);
+        thisToolbar.setIframeContent(helpIframe, messageScreenHtml);
+        thisToolbar.i$(helpIframe, ".message-box").html(message);
+    }
+
+    function showNoNotesOnSiteHelp() {
+        showMessageScreen(Text.noNotesOnSiteMessage);
     }
 
     function showNoTrailsHelp() {
-        var helpIframe = HTML.helpFrame(noTrailsHelpUrl);
-        previewContainer.html(helpIframe);
+        showMessageScreen(Text.noTrailsMessage);
+    }
+
+    this.showNoNotesInTrailHelp = function() {
+        showMessageScreen(Text.noNotesInTrailMessage);
+    }
+
+    this.showNoSitesInTrailHelp = function() {
+        showMessageScreen(Text.noSitesInTrailMessage);
     }
 
     function initSignedInExperience() {

@@ -54,6 +54,8 @@ class NotesController < ApplicationController
         render :json => {"note_id" => previous_note_id, "note_content" => previous_note_content}
       end
     rescue
+      puts $!.message
+      puts $!.backtrace.to_a
       render_server_error_ajax
     end
   end

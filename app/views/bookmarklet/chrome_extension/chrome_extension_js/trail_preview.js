@@ -2,7 +2,7 @@ console.log("trail preview injected");
 
 function TPreview(
     previewContainer, height, nextNoteButton, previousNoteButton, showCommentButton, deleteNoteButton,
-    iframeKeypressHandler, iframeClickHandler
+    iframeKeypressHandler, iframeClickHandler, parentToolbar
     ) {
     var currentTrail = false;
     var currentNote = false;
@@ -20,15 +20,11 @@ function TPreview(
         var siteHtmlIframe = $("<iframe data-trail-id='" + site.trail.id + "' data-site-id='"+site.id+"' seamless='seamless' class='wt-site-preview webtrails'>");
         siteHtmlIframe.attr('src',"about:blank");
         siteHtmlIframe.css({
-//            visibility: hideIframe ? "hidden" :"visible",
             visibility: false ? "hidden" :"visible",
             width:"100%",
             "border-top": "2px gray solid",
-//            position: "fixed",
             height: height + "px",
-//            top: "25px",
-            "border-bottom": "2px solid grey",
-//            "z-index": "2147483645"
+            "border-bottom": "2px solid grey"
         });
         previewContainer.html(siteHtmlIframe);
         return siteHtmlIframe
@@ -39,12 +35,16 @@ function TPreview(
     }
 
     this.initWithTrail = function(trailToPreview) {
-        currentTrail = trailToPreview
+        currentTrail = trailToPreview;
         currentNote = currentTrail.getLastNote();
         if (currentNote) {
             this.displayNote(currentNote, false);
-        } else if (currentSiteFrame){
-            currentSiteFrame.remove();
+        } else {
+            if (!currentTrail.getFirstSite()) {
+                parentToolbar.showNoSitesInTrailHelp();
+            } else {
+                parentToolbar.showNoNotesInTrailHelp();
+            }
         }
         thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
     }
@@ -213,7 +213,7 @@ function TPreview(
         deleteNote(noteToBeDeleted, function() {
             if (!thisTrailPreview.showPreviousNote()){
                 if (!thisTrailPreview.showNextNote()){
-                    thisTrailPreview.hide();
+                    parentToolbar.showNoNotesInTrailHelp();
                 }
             };
             if (noteToBeDeleted.site.isCurrentSite()) {

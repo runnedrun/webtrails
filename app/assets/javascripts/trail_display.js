@@ -100,7 +100,7 @@ function fetchSiteHtml() {
                 } ,
                 error: function(resp){
                     console.log("failed to fetch");
-                    trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] =  "Failed to retrieve site data.";
+                    trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] =  "Sometimes things go wrong, please reload!";
                 }
             })
         })
@@ -122,64 +122,6 @@ function fetchSiteHtml() {
     })
 }
 
-
-
-//function loadIframes(siteID){
-//    $('iframe#' + siteID).load(function() {
-//        removeLoadingFromSite(siteID);
-//        initializeNoteTaking(siteID);
-//    });
-//    $('iframe#' + siteID).attr("src", requestUrl + "/sites/" + siteID);
-//    $.ajax({
-//        url: "/async_site_load",
-//        type: "get",
-//        data: {
-//            "site_id" : siteID
-//        },
-//        success: readySite
-//    });
-//}
-//
-//function makeIframes(){
-//    console.log("making iframes")
-//    var currentSiteID = siteIDs[currentSiteIndex];
-//    loadIframes(currentSiteID);
-//    //site IDS defined in the html
-//    $.each(siteIDs,function (i,siteID){
-//        if (siteID != currentSiteID) {
-//            loadIframes(siteID);
-//        }
-//    });
-//}
-//
-//function insertHTMLInIframe(html,$iframe){
-//    var siteDoc = $iframe[0].contentWindow.document;
-//    var siteBody = $('body', siteDoc);
-//    siteBody.append(html);
-//}
-//
-//function readySite(data){
-//    console.log("readying site:", data.site_id);
-//    var noteIDs=[];
-//    $.each(data.notes, function(i,note){
-//        noteIDs.push(String(note.id));
-//        Notes[note.id] = note;
-//    })
-//    var siteAttributes = {"noteIDs": noteIDs, "title" : data.title, "url" : data.url};
-//    siteHash[data.site_id] = siteAttributes;
-//    if (data.site_id == getCurrentSiteID()){
-//        console.log("updating note count and disabling buttons");
-//        updateNoteCount();
-//        deactivateOrReactivateNextNoteIfNecessary();
-//        deactivateOrReactivatePreviousNoteIfNecessary();
-//    }
-//}
-
-function switchToPresentationMode(){
-//    $(currentSite[0].contentWindow.documenon-wrapping div full screennt.body).css({"height": "100%","width": "100%","z-index":"0"});
-    insertHTMLInIframe("<div class=overlay style='background-color: #666666;z-index:99998; height: 100%; width: 100%;position: fixed; top:0; right: 0; opacity: .6;'>", currentSite);
-    presentationMode = true;
-}
 
 // this is an attempt to fix the weird highligh/scroll bug which pops up when you go into not view mode
 function lockScrollPositionOfSiteDisplayDiv(){
