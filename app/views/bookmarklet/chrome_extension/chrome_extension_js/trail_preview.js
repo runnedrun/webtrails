@@ -2,7 +2,7 @@ console.log("trail preview injected");
 
 function TPreview(
     previewContainer, height, nextNoteButton, previousNoteButton, showCommentButton, deleteNoteButton,
-    iframeKeypressHandler, iframeClickHandler, parentToolbar
+    commentBox, iframeKeypressHandler, iframeClickHandler, parentToolbar
     ) {
     var currentTrail = false;
     var currentNote = false;
@@ -20,7 +20,7 @@ function TPreview(
         var siteHtmlIframe = $("<iframe data-trail-id='" + site.trail.id + "' data-site-id='"+site.id+"' seamless='seamless' class='wt-site-preview webtrails'>");
         siteHtmlIframe.attr('src',"about:blank");
         siteHtmlIframe.css({
-            visibility: false ? "hidden" :"visible",
+            display: shown ? "block" :"none",
             width:"100%",
             "border-top": "2px gray solid",
             height: height + "px",
@@ -51,28 +51,25 @@ function TPreview(
 
     this.show = function() {
         if (currentSiteFrame){
-            var pageOffset = height + 25
-            currentSiteFrame.css({visibility: "visible"});
-            $(document.body).css({
-                top: pageOffset + "px",
-                position: "relative"
-            });
-            $(document.body).scrollTop($(document.body).scrollTop() + pageOffset);
+            currentSiteFrame.show();
+//            currentSiteFrame.css({visibility: "visible"});
+//            thisTrailPreview.i$(currentSiteFrame, 'body').css({
+//                visibility: "visible"
+//            });
             shown = true
         }
-    }
+    };
 
     this.hide = function() {
         if (currentSiteFrame){
-            var pageOffset = height + 25
-            currentSiteFrame.css({visibility: "hidden"});
+            currentSiteFrame.hide();
+//            currentSiteFrame.css({visibility: "hidden"});
+//            thisTrailPreview.i$(currentSiteFrame, 'body').css({
+//                visibility: "visible"
+//            });
             shown = false;
-            $(document.body).css({
-                top:"0px"
-            });
-            $(document.body).scrollTop($(document.body).scrollTop() - pageOffset);
         }
-    }
+    };
 
     this.switchToNoteRevision = function(note, hidePreview) {
         currentSiteFrame && currentSiteFrame.remove();
@@ -94,14 +91,16 @@ function TPreview(
             displayComment();
         }
         thisTrailPreview.runWhenLoaded(function() {
-            var noteElements = thisTrailPreview.highlightNote(note);
-            var noteLocation = noteElements.first().offset();
-            var scrollTop = noteLocation.top-100;
-            var scrollLeft = noteLocation.left;
-            if ((Math.abs(noteLocation.top - note.scrollY) > 10) || (Math.abs(noteLocation.left - note.scrollX) > 10)){
-                console.log("correcting scroll", noteLocation.top, note.scrollY);
-                console.log(noteLocation.left, note.scrollX);
-                body.scrollTop(scrollTop).scrollLeft(scrollLeft);
+            if (currentNote == note) {
+                var noteElements = thisTrailPreview.highlightNote(note);
+                var noteLocation = noteElements.first().offset();
+                var scrollTop = noteLocation.top-100;
+                var scrollLeft = noteLocation.left;
+                if ((Math.abs(noteLocation.top - note.scrollY) > 10) || (Math.abs(noteLocation.left - note.scrollX) > 10)){
+                    console.log("correcting scroll", noteLocation.top, note.scrollY);
+                    console.log(noteLocation.left, note.scrollX);
+                    body.scrollTop(scrollTop).scrollLeft(scrollLeft);
+                }
             }
         },$iDoc[0]);
     }
@@ -158,50 +157,24 @@ function TPreview(
     }
 
     function displayComment() {
-        removeComment()
-        var commentBox = $("<div></div>")
-        applyDefaultCSS(commentBox).css({
-            position: "fixed",
-            height: height,
-            top: "25px",
-            right: "0px",
-            width: "150px",
-            background: "#F0F0F0",
-            "z-index": "2147483647",
-            "font-size": "12px",
-            "padding": "0 5px 0 5px"
-        }).addClass("wt-note-comment");
-        var commentHeader = $("<div>Comment:</div>")
-        applyDefaultCSS(commentHeader).css({
-            "border-bottom": "2px black solid",
-            "font-size": "14px",
-            "width": "100%",
-            "display": "block",
-            "margin-bottom": "5px",
-            "margin-top": "5px"
-        });
-        commentBox.append(commentHeader).append("<div>"+ (currentNote.comment || "no comment") + "</div>");
-        $(document.body).append(commentBox);
+        commentBox.show();
+        commentBox.find(".comment-text").html(currentNote.comment || "no comment");
     }
 
     function removeComment() {
-        $(".wt-note-comment").remove();
+        commentBox.hide();
     }
 
     function toggleCommentBox() {
         displayComment();
         commentBoxToggled = true;
-        showCommentButton.css({
-            "background": "grey"
-        });
+        showCommentButton.addClass("active");
     }
 
     function unToggleCommentBox() {
         removeComment();
         commentBoxToggled = false;
-        showCommentButton.css({
-            "background": "none"
-        });
+        showCommentButton.removeClass("active");
     }
 
     function toggleOrUntoggleCommentBox() {

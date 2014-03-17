@@ -55,7 +55,7 @@ function setUserId(userId){
 }
 
 function clearUserId(){
-    localStorage.removeKey("userId");
+    localStorage.removeItem("userId");
 }
 
 function getUserId(){

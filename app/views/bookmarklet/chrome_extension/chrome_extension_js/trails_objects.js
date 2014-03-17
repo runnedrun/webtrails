@@ -3,8 +3,12 @@ TrailsObject = function(trailsObject, currentTrailId){
     var trails = {};
     var thisTrailsObject = this;
 
-    this.switchToTrail = function(newTrailId){
+    this.setCurrentTrail = function(newTrailId) {
         currentTrailId = newTrailId;
+    };
+
+    this.switchToTrail = function(newTrailId){
+        thisTrailsObject.setCurrentTrail(newTrailId);
         console.log("switching to trail:", newTrailId);
         chrome.runtime.sendMessage({setCurrentTrailID:newTrailId}, function(response) {
         });

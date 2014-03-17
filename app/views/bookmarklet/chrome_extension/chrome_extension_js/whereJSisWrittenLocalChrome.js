@@ -39,14 +39,35 @@ function initExtension(){
 //    debugger;
 //    Toolbar = new WtToolbar(decodeURI(toolbarUrl));
     Toolbar = new WtToolbar(decodeURI(toolbarHtml), decodeURI(messageScreenHtml), noTrailsHelpUrl);
+
+    chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+        if (request.logOutAllTabs){
+            console.log("getting log out request from another tab");
+            Toolbar.initSignedOutExperience();
+        }
+        if (request.logInAllTabs){
+            console.log("signing in");
+            wt_auth_token = request.logInAllTabs[0]
+            var startingTrailId = request.logInAllTabs[1]
+            Toolbar.initSignedInExperience();
+            getTrailDataFromLocalStorage(function(resp) {
+                initializeTrails(resp, startingTrailId);
+            })
+        }
+    });
+
     $(document.body).keydown(verifyKeypress);
     if (wt_auth_token) {
-        getTrailDataFromLocalStorage(function(response){
-            console.log("local storage response", response);
-            Trails = new TrailsObject(response, startingTrailID);
-            Toolbar.updateToolbarWithTrails(Trails);
+        getTrailDataFromLocalStorage(function(resp) {
+            initializeTrails(resp, startingTrailID);
         });
     }
+}
+
+function initializeTrails(baseTrailsObject, startingTrailId) {
+    console.log("local storage response", baseTrailsObject);
+    Trails = new TrailsObject(baseTrailsObject, startingTrailId);
+    Toolbar.updateToolbarWithTrails(Trails);
 }
 
 function getTrailDataFromLocalStorage(callback){

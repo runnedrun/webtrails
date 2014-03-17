@@ -125,12 +125,12 @@ function trailSelectChanged() {
         console.log("Uh oh. Not a number or something", $(this).val())
     }
 }
-
-function activateSiteSiteButton() {
-    saveSiteToTrailButton.text("Save site").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
-    saveSiteToTrailButton.click(function(){saveSiteToTrail()});
-    saveSiteToTrailButton.css({"cursor": "arrow"});
-}
+//
+//function activateSiteSiteButton() {
+//    saveSiteToTrailButton.text("Save site").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
+//    saveSiteToTrailButton.click(function(){saveSiteToTrail()});
+//    saveSiteToTrailButton.css({"cursor": "arrow"});
+//}
 
 function deactivateSaveSiteButton() {
     saveSiteToTrailButton.text("Site saved!").stop().css({opacity: 0}).animate({opacity: 1}, 700 );
@@ -181,38 +181,38 @@ function runWhenExists($query, callback){
     },1000)
 }
 
-chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-    if (request.logOutAllTabs){
-        initSignedOutExperience();
-    }
-    if (request.logInAllTabs){
-        wt_auth_token = request.logInAllTabs[0]
-        var newTrailID = request.logInAllTabs[1]
-        if (Trails.getCurrentTrailId() != newTrailID){
-            faviconsFetched = false;
-            Trails.switchToTrail(newTrailID);
-        }
-        initSignedInExperience();
-    }
-    if (request.showToolBarOnAllTabs){
-        showToolbar();
-    }
-    if (request.hideToolBarOnAllTabs){
-        hideToolbar();
-    }
-    if (request.addNewTrail){
-        console.log(request.addNewTrail);
-        setTrailSelect(request.addNewTrail,true);
-    }
-});
+//chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+//    if (request.logOutAllTabs){
+//        ToolbarinitSignedOutExperience();
+//    }
+//    if (request.logInAllTabs){
+//        wt_auth_token = request.logInAllTabs[0]
+//        var newTrailID = request.logInAllTabs[1]
+//        if (Trails.getCurrentTrailId() != newTrailID){
+//            faviconsFetched = false;
+//            Trails.switchToTrail(newTrailID);
+//        }
+//        initSignedInExperience();
+//    }
+//    if (request.showToolBarOnAllTabs){
+//        showToolbar();
+//    }
+//    if (request.hideToolBarOnAllTabs){
+//        hideToolbar();
+//    }
+//    if (request.addNewTrail){
+//        console.log(request.addNewTrail);
+//        setTrailSelect(request.addNewTrail,true);
+//    }
+//});
 
-function updateStoredSites(resp){
-    chrome.runtime.sendMessage({
-        updateStoredTrailData:{
-            trailObject: resp.trail_hash,
-            userId: resp.user_id
-        }
-    })
-}
+//function updateStoredSites(resp){
+//    chrome.runtime.sendMessage({
+//        updateStoredTrailData:{
+//            trailObject: resp.trail_hash,
+//            userId: resp.user_id
+//        }
+//    })
+//}
 
 

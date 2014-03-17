@@ -167,7 +167,7 @@ chrome.runtime.onMessage.addListener(
             sendResponse("set in local storage");
         }
         if (request.logout){
-            signOut()
+            signOut();
             sendResponse({response:"signed out"});
         }
         if (request.showToolBarOnAllTabs){
@@ -267,7 +267,7 @@ function cleanUpMessageSendingObject(){
 function signOut(){
     clearWtAuthToken();
     clearCurrentTrailID();
-    clearUserId()
+    clearUserId();
     removeWtAuthTokenCookie();
     sendSignOutMessageToAllTabs();
 }
@@ -276,6 +276,7 @@ function signIn(wt_auth_token){
     setWtAuthToken(wt_auth_token);
     setWtAuthTokenCookie(wt_auth_token);
     sendSignInMessageToAllTabs();
+    retrieveTrailData();
 }
 
 function signOutIfSignedOutOfWebpage(cookie){

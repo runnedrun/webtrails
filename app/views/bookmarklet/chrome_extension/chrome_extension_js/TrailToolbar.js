@@ -2,12 +2,15 @@ console.log('toolbar ui loaded');
 function WtToolbar(toolbarHtml, messageScreenHtml) {
     var thisToolbar = this;
     var toolbarFrame;
+    var toolbarBody;
+    var toolbarHeight;
     var trailPreview;
     var previewContainer;
-    var previewHeight = 200;
+    var previewHeight = 150;
     var loggedIn = false
     var siteBody = $(document.body);
     var shown = false;
+
     this.bodyMarginTop = siteBody.css("margin-top");
     this.bodyPosition = siteBody.css("position");
 
@@ -15,7 +18,10 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
         noNotesOnSiteMessage: "No saved notes on this site. Hit the visit site button to go to the live version.",
         noNotesInTrailMessage: "No saved notes in this Trail. View this trail to see sites you've saved without notes.",
         noTrailsMessage: '<a href="http://www.webtrails.co">Create a Trail</a> to use the toolbar',
-        noSitesInTrailMessage: 'No Sites in this trail. Take a note on this page, or hit the save site button.'
+        noSitesInTrailMessage: 'No Sites in this trail. Take a note on this page, or hit the save site button.',
+        loggedOutMessage: function(logInButton) {
+            return "You are now logged out. " + logInButton[0].outerHTML + " with Google, or create an account."
+        }
     };
     var CSS = {
         toolbarFrame: {
@@ -25,7 +31,7 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
             left: "0px",
             "z-index": "2147483644",
             "border-bottom": "2px solid grey",
-            "display": "none"
+            "visibility": "hidden"
         },
         faviconImg: {
             "height":"18px",
@@ -54,7 +60,8 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
                 src: "about:blank",
                 frameborder: "0"
             }).css(CSS.helpFrame)
-        }
+        },
+        logInButton: $("<a class='preview-login-button'>Log In</a>")
     };
 
     var toolbarFrame = HTML.toolbarFrame
@@ -63,15 +70,13 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
 
     thisToolbar.runWhenLoaded(function(doc) {
         var $doc = $(doc);
-        var toolbarHeight = $doc.find(".wt-toolbar-buttons").height();
+        var toolbarHeight = $doc.find(".toolbar-buttons").outerHeight();
         console.log("loaded with height" + toolbarHeight + "px");
-        toolbarFrame.css({height: toolbarHeight + 200 + "px"});
-        $doc.find("body").css({height: toolbarHeight + 200 + "px"});
-//        i$("trail-dropdown-button").dropdown("attach", ["#trail-dropdown-div"])
-//        $(thisToolbar.getIDoc(toolbarFrame)).on('click.dropdown', '[data-dropdown]', $.dropdown.show);
-//        $(thisToolbar.getIDoc(toolbarFrame)).on('click.dropdown', $.dropdown.hide);
-//        $(thisToolbar.getIWindow(toolbarFrame)).on('resize', $.dropdown.hide.position);
+        toolbarFrame.css({height: toolbarHeight + previewHeight + "px"});
+        $doc.find("body").css({height: toolbarHeight + previewHeight + "px"});
     }, thisToolbar.getIDoc(toolbarFrame)[0]);
+
+    toolbarBody = i$('body');
 
     function i$(selector) {
         return thisToolbar.i$(toolbarFrame, selector)
@@ -91,11 +96,19 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     var deleteNoteButton = i$(".delete-note-button");
     var settingsDropdownButton = i$(".settings-dropdown-button");
     var settingsDropdownList = i$(".settings-dropdown-list");
+    var commentBox = i$(".comment-box");
+    var logoutButton = i$(".logout-button");
+    var loginButton = i$(".login-button");
+
+    commentBox.css({
+        "margin-top": toolbarHeight,
+        height: previewHeight
+    });
 
     var previewContainer = i$(".trail-preview-container");
     trailPreview = new TPreview(
         previewContainer, previewHeight, nextNoteButton, previousNoteButton, showCommentButton, deleteNoteButton,
-        checkForShowToolbarKeypress, closeDropdowns, thisToolbar
+        commentBox, checkForShowToolbarKeypress, closeDropdowns, thisToolbar
     );
 
     saveSiteButton.click(function() {
@@ -109,6 +122,9 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     trailsDropdownButton.click(openOrCloseDropdown);
 
     settingsDropdownButton.click(openOrCloseDropdown);
+
+    logoutButton.click(signOut);
+    loginButton.click(signIn);
 
     function openOrCloseDropdown(e) {
         var dropdown = $(e.delegateTarget).next();
@@ -141,9 +157,9 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
             addFavicon(site);
         });
         trailNameContainer.val(trail.name);
-        viewTrailButton.click(function() {
+        viewTrailButton.off('click').click(function() {
             open(webTrailsUrl + "/trails/" + trail.id, "_blank");
-        })
+        });
         trailPreview.initWithTrail(trail);
     };
 
@@ -152,7 +168,7 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
             thisToolbar.switchToTrail(trailsObject.getCurrentTrail());
             $.each(trailsObject.getTrailHash(), function(id, trail) {
                 var dropDownItem = HTML.trailDropdownItem(trail.name, trail.id);
-                dropDownItem.click(function(){
+                dropDownItem.off('click').click(function(){
                     thisToolbar.switchToTrail(trail)
                 });
                 trailsDropdownList.append(dropDownItem);
@@ -204,46 +220,68 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     function showMessageScreen(message) {
         var helpIframe = HTML.helpFrame();
         previewContainer.html(helpIframe);
-        thisToolbar.setIframeContent(helpIframe, messageScreenHtml);
+        var messageScreenDoc = thisToolbar.setIframeContent(helpIframe, messageScreenHtml);
         thisToolbar.i$(helpIframe, ".message-box").html(message);
+        return messageScreenDoc;
     }
 
     function showNoNotesOnSiteHelp() {
         showMessageScreen(Text.noNotesOnSiteMessage);
-    }
+    };
 
     function showNoTrailsHelp() {
         showMessageScreen(Text.noTrailsMessage);
-    }
+    };
 
     this.showNoNotesInTrailHelp = function() {
         showMessageScreen(Text.noNotesInTrailMessage);
-    }
+    };
 
     this.showNoSitesInTrailHelp = function() {
         showMessageScreen(Text.noSitesInTrailMessage);
-    }
+    };
 
-    function initSignedInExperience() {
+    this.initSignedInExperience = function() {
         loggedIn = true;
+        console.log("signed in");
+        loginButton.hide();
+        logoutButton.show();
+
+        i$(".fade-on-logout").prop('disabled', false);
+
         $(document).mousedown(possibleHighlightStart);
     }
 
-    function initSignedOutExperience() {
-        console.log("signing out");
+    this.initSignedOutExperience = function () {
+        console.log("initing signed out experience");
+        var previewLoginButton = HTML.logInButton;
+        var messageScreenDoc = showMessageScreen(Text.loggedOutMessage(previewLoginButton));
+        $(messageScreenDoc).find(".preview-login-button").click(signIn);
+
+        trailNameContainer.val("choose a trail");
+        clearFaviconHolder();
+
+        loginButton.show();
+        logoutButton.hide();
+
+        i$(".fade-on-logout, .only-fade-on-logout").prop('disabled', true);
+
         loggedIn = false;
     }
 
-    this.signOut = function(){
+    function signOut() {
+        console.log("signing out");
         chrome.runtime.sendMessage({logout:"now!"}, function(response) {
-            initSignedOutExperience();
+            // no response handling needed, the background will send a message
+            // to all tabs.
         });
     }
 
-    this.signIn = function() {
+    function signIn() {
+        console.log("signing in!");
         chrome.runtime.sendMessage({login:"login"}, function(response) {
-            wt_auth_token = response.wt_auth_token;
-            initSignedInExperience();
+            // no response handling needed, the background will send a message
+            // to all tabs.
         });
     }
 
@@ -259,13 +297,15 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     }
 
     function show(){
-        toolbarFrame.show();
         shown = true
-        siteBody.css({
-            position: "relative",
-            "margin-top": toolbarFrame.height() + parseInt(this.bodyMarginTop) + "px"
-        });
         toolbarFrame.focus();
+        toolbarFrame.css({
+            visibility: "visibile"
+        })
+        toolbarBody.css({
+            visibility: "visible"
+        });
+        trailPreview.show();
         if (loggedIn) {
             if (mouseDown == 0) { // if the mouse is not pressed (not highlighting)
                 highlightedTextDetect(); // check to see if they highlighted anything for the addnote button
@@ -276,14 +316,20 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     }
 
     function hide(){
-        siteBody.css({
-            position: thisToolbar.bodyPosition,
-            "margin-top": thisToolbar.bodyMarginTop
+//        siteBody.css({
+//            position: thisToolbar.bodyPosition,
+//            "margin-top": thisToolbar.bodyMarginTop
+//        });
+        toolbarFrame.css({
+            visibility: "hidden"
         });
-        toolbarFrame.hide();
+        toolbarBody.css({
+            visibility: "hidden"
+        });
+        trailPreview.hide();
         shown = false;
         $(".inlineSaveButton").remove();
-        siteBody.focus()
+        siteBody.focus();
         closeOverlay();
     }
 
@@ -292,7 +338,7 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     }
 
     function checkForShowToolbarKeypress(e){
-        console.log("verifiing keypress");
+        console.log("verifying keypress");
         var code = (e.keyCode ? e.keyCode : e.which);
         if (code == 27 && e.shiftKey){    //tilda = 192, esc is code == 27
             showOrHide();
@@ -300,9 +346,9 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     }
 
     if (wt_auth_token){
-        initSignedInExperience()
+        thisToolbar.initSignedInExperience()
     } else {
-        initSignedOutExperience()
+        thisToolbar.initSignedOutExperience()
     }
 //
     $(document.body).keydown(checkForShowToolbarKeypress);
@@ -316,4 +362,5 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
         }
     }catch (e) {}
 }
+
 WtToolbar.prototype = IframeManager

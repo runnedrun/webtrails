@@ -1,3 +1,8 @@
+body {
+    visibility: hidden;
+    background: transparent;
+}
+
 .toolbar {
     background: #F0F0F0;
     width:100%;
@@ -43,4 +48,20 @@
 
 .pager.wt-pagers {
     margin: 0 0;
+}
+
+.comment-box {
+    position: absolute;
+    right: 0px;
+    width: 150px;
+    background: #F0F0F0;
+    display:none;
+}
+
+.comment-text {
+    padding: 5px;
+}
+
+.login-button .logout-button {
+    display: none;
 }
