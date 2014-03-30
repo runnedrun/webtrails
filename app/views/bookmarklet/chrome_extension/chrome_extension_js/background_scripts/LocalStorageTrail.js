@@ -1,70 +1,141 @@
 LocalStorageTrailAccess = new function(){
     this.getTrails = function() {
-        var trailsObject = getUnhydratedTrails();
-        hydrateSiteHtml(trailsObject);
-        return trailsObject;
-    }
+        var deferredTrailsObject = getUnhydratedTrails();
+        return deferredTrailsObject;
+    };
 
-    this.addOrUpdateTrails = function(trailsObject) {
-        var deffereds = $.map(trailsObject, function(trailObject, trailId) {
-            return saveSiteHtmlForTrail(trailObject)
+    this.addOrUpdateTrails = function(trailsObject, prefetchedHtml) {
+        prefetchedHtml = prefetchedHtml || {};
+        var htmlDeferreds = $.map(trailsObject, function(trailObject, trailId) {
+            return saveSiteHtmlForTrail(trailObject, prefetchedHtml)
         });
-        setTrailsToLocalStorage(trailsObject);
-        return deffereds
-    }
+        setTrailsToLocalStorage(trailsObject, prefetchedHtml);
 
-    function saveSiteHtmlForTrail(trailObject) {
-        var oldTrailObject = getUnhydratedTrails()[trailObject.trailId];
-        return $.map(trailObject.sites.siteObjects || [], function(siteObject, siteId) {
-            var oldSiteRevisionMap;
-            if (oldTrailObject && oldTrailObject.sites.siteObjects[siteId]) {
-                oldSiteRevisionMap = oldTrailObject.sites.siteObjects[siteId].revisionUrls;
-            } else {
-                oldSiteRevisionMap = {};
-            }
-            return $.map(siteObject.revisionUrls, function(revisionUrl, revisionNumber) {
-                var revisionAlreadExistsInStorage = oldSiteRevisionMap[revisionNumber];
-                if (!revisionAlreadExistsInStorage){
-                    console.log("getting new revision");
-                    var deferred = $.ajax({
-                        url: revisionUrl,
-                        type: "get",
-                        success: function(html){
-                            setSiteRevisionHtml(siteId, revisionNumber, html);
-                        }
-                    });
-                    return deferred
+        return htmlDeferreds;
+    };
+
+    function saveSiteHtmlForTrail(trailObject, prefetchedHtml) {
+        return getUnhydratedTrails().then(function(oldTrailObjects) {
+            var oldTrailObject = oldTrailObjects[trailObject.id];
+            return $.map(trailObject.sites.siteObjects || [], function(siteObject, siteId) {
+                var oldSiteRevisionMap;
+
+                if (oldTrailObject && oldTrailObject.sites.siteObjects[siteId]) {
+                    oldSiteRevisionMap = oldTrailObject.sites.siteObjects[siteId].revisionUrls;
+                } else {
+                    oldSiteRevisionMap = {};
                 }
-            })
+
+                return $.map(siteObject.revisionUrls, function(revisionUrl, revisionNumber) {
+                    var revisionAlreadyExistsInStorage = oldSiteRevisionMap[revisionNumber];
+                    if (!revisionAlreadyExistsInStorage && !prefetchedHtml[siteObject.id + revisionNumber]){
+                        console.log("getting new revision");
+                        var deferred = $.ajax({
+                            url: revisionUrl,
+                            type: "get",
+                            success: function(html){
+                                setSiteRevisionHtml(siteId, revisionNumber, html);
+                            }
+                        });
+                        return deferred
+                    }
+                })
+            });
         });
     }
 
-    function hydrateSiteHtml(unhydratedTrailsObject) {
+    function prepareHtmlObject(unhydratedTrailsObject) {
         $.each(unhydratedTrailsObject, function(id, trailObject) {
             $.each(trailObject.sites.siteObjects, function(siteId, siteObject) {
                 siteObject.html = {};
                 $.each(siteObject.revisionUrls, function(revisionNumber) {
-                    siteObject.html[revisionNumber] = getSiteRevisionHtml(siteId, revisionNumber)
+                    siteObject.html[revisionNumber] = ""; // the actual html will be hydrated on demand
                 });
             });
         })
     }
 
-    function setTrailsToLocalStorage(trailsObject) {
-        localStorage["trails"] = JSON.stringify(trailsObject);
+    function setTrailsToLocalStorage(trailsObject, prefetchedHtml) {
+        chrome.storage.local.set({"trails": trailsObject}, function(){
+            console.log("trails saved to storage");
+            $.each(prefetchedHtml, function(k, prefetchObject) {
+                setSiteRevisionHtml(prefetchObject.siteId, prefetchObject.revisionNumber, prefetchObject.html);
+            });
+        });
     }
 
     function getUnhydratedTrails() {
-        var trails = localStorage["trails"] || "{}";
-        return JSON.parse(trails);
+        var deferred = $.Deferred()
+        chrome.storage.local.get("trails", function(items) {
+            deferred.resolve(items["trails"] || {});
+        });
+        return deferred.promise()
     }
 
     function setSiteRevisionHtml(siteId, revisionNumber, html) {
-        localStorage["revisionHtml:" + siteId + ":" + revisionNumber] = html
+        var htmlObject = {}
+        htmlObject["revisionHtml:" + siteId + ":" + revisionNumber] = html
+        chrome.storage.local.set(htmlObject, function() {
+            console.log("set revisions in local storage");
+        });
     }
 
-    function getSiteRevisionHtml(siteId, revisionNumber) {
-        return localStorage["revisionHtml:" + siteId + ":" + revisionNumber] || "Site failed to load."
+    this.onTrailDataChange = function(callback) {
+        chrome.storage.onChanged.addListener(function(changes, namespace) {
+            for (key in changes) {
+
+                // only fire callback for trail object changes if there are not
+                // new notes or sites. Otherwise, wait for the revision html change
+                // to fire
+                if (key == "trails") {
+                    var fireCallback = true
+
+                    var storageChange = changes[key];
+                    if (storageChange) {
+                        var newTrails = storageChange.newValue;
+                        var oldTrails = storageChange.oldValue;
+
+                        // check for new sites
+                        $.each(newTrails, function(trailId, trailObject) {
+                            if (oldTrails[trailId]){
+                                var oldSites = oldTrails[trailId].sites;
+                                var newSites = trailObject.sites;
+                                if (newSites.order > oldSites.order) {
+                                    fireCallback = false;
+                                    return false
+                                }
+
+                                // check for new notes
+                                $.each(newSites.siteObjects, function(siteId, siteObject) {
+                                    if (oldSites.siteObjects[siteId]) {
+                                        var oldNotes = oldSites[siteId].notes;
+                                        var newNotes = siteObject.notes
+                                        if (newNotes.order > oldNotes.order) {
+                                            fireCallback = false;
+                                            return false
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                        if (fireCallback) {
+                            callback(storageChange.newValue);
+                        }
+                    }
+                } else {
+                    LocalStorageTrailAccess.getTrails().done(callback);
+                }
+            }
+        })
+    };
+
+    this.getSiteRevisionHtml = function(siteId, revisionNumber) {
+        var key = "revisionHtml:" + siteId + ":" + revisionNumber;
+        var deferred = $.Deferred();
+        chrome.storage.local.get(key, function(htmlObject) {
+            deferred.resolve(htmlObject[key] || "site failed to load");
+        });
+        return deferred.promise();
     }
 
     this.setCurrentTrailId = function(currentTrailId) {

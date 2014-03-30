@@ -1,6 +1,6 @@
 //callbackTracker = {}
 AWSBase = "https://s3.amazonaws.com/TrailsSitesProto";
-function parse_page_and_resolve_urls(siteInfo){
+function parse_page_and_resolve_urls(siteInfo, tabId){
     var oldAbsoluteTo = URI.prototype.absoluteTo;
     URI.prototype.absoluteTo = function(url) {
         try {
@@ -40,7 +40,8 @@ function parse_page_and_resolve_urls(siteInfo){
         revision: revision,
         isBaseRevision: isBaseRevision,
         characterEncoding: characterEncoding,
-        noteId: siteInfo.note_id
+        noteId: siteInfo.note_id,
+        tabId: tabId,
     };
 
     $.each(stylesheetHrefs,function(i,href){
@@ -160,8 +161,15 @@ function checkIfAllResourcesAreParsed(callbackTracker){
             type: "post",
             crossDomain: true,
             data: callbackTracker,
+            beforeSend: signRequestWithWtAuthToken,
             success:function(resp){
-                console.log("successful posting to server!")
+                if (!callbackTracker.isIframe && resp.archive_location) {
+                   new DownloadStatusChecker(
+                       resp.archive_location,
+                       callbackTracker.tabId,
+                       callbackTracker.siteID,
+                       callbackTracker.revision);
+                }
             },
             error: function(){
                 console.log("server broke!");

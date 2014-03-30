@@ -50,16 +50,17 @@ function initExtension(){
             wt_auth_token = request.logInAllTabs[0]
             var startingTrailId = request.logInAllTabs[1]
             Toolbar.initSignedInExperience();
-            getTrailDataFromLocalStorage(function(resp) {
-                initializeTrails(resp, startingTrailId);
+            debugger;
+            getTrailDataFromLocalStorage(function(trails) {
+                initializeTrails(trails, startingTrailId);
             })
         }
     });
 
     $(document.body).keydown(verifyKeypress);
     if (wt_auth_token) {
-        getTrailDataFromLocalStorage(function(resp) {
-            initializeTrails(resp, startingTrailID);
+        getTrailDataFromLocalStorage(function(trails) {
+            initializeTrails(trails, startingTrailID);
         });
     }
 }
@@ -71,9 +72,9 @@ function initializeTrails(baseTrailsObject, startingTrailId) {
 }
 
 function getTrailDataFromLocalStorage(callback){
-    chrome.runtime.sendMessage({getTrailsObject:"get it!"}, function(response) {
-        callback && callback(response);
-    });
+    LocalStorageTrailAccess.getTrails().done(function(trails) {
+        callback && callback(trails)
+    })
 }
 
 function updateTrailDataInLocalStorage(){

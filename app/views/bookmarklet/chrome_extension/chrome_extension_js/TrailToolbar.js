@@ -17,7 +17,8 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     var Text = {
         noNotesOnSiteMessage: "No saved notes on this site. Hit the visit site button to go to the live version.",
         noNotesInTrailMessage: "No saved notes in this Trail. View this trail to see sites you've saved without notes.",
-        noTrailsMessage: '<a href="http://www.webtrails.co">Create a Trail</a> to use the toolbar',
+        noTrailsMessage: '<a target="_blank" href="http://www.webtrails.co">Create a Trail</a> to use the toolbar </br>',
+        toolbarExplanation: "shift + esc: open/close toolbar </br> highlight text + alt: show save note button",
         noSitesInTrailMessage: 'No Sites in this trail. Take a note on this page, or hit the save site button.',
         loggedOutMessage: function(logInButton) {
             return "You are now logged out. " + logInButton[0].outerHTML + " with Google, or create an account."
@@ -154,12 +155,13 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     this.switchToTrail = function(trail) {
         clearFaviconHolder();
         $.each(trail.getSites(), function(i, site) {
-            addFavicon(site);
+            thisToolbar.addFavicon(site);
         });
         trailNameContainer.val(trail.name);
         viewTrailButton.off('click').click(function() {
             open(webTrailsUrl + "/trails/" + trail.id, "_blank");
         });
+        Trails.switchToTrail(trail.id);
         trailPreview.initWithTrail(trail);
     };
 
@@ -182,7 +184,7 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
         return shown;
     };
 
-    this.setSaveButtonToSaving = function() {
+    function setSaveButtonToSaving() {
         saveSiteButton.html("Site saving").addClass("saving");
         siteSavingSpinner.css({
             "visibility": "visible"
@@ -190,7 +192,7 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
         saveSiteButton.unbind("click", saveSiteToTrail);
     };
 
-    this.setSaveButtonToSaved = function(siteId, trailId) {
+    function setSaveButtonToSaved(siteId, trailId) {
         saveSiteButton.html("Site saved");
         siteSavingSpinner.css({
             "visibility": "hidden"
@@ -202,11 +204,12 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     };
 
 
-    function addFavicon(site) {
+    this.addFavicon = function(site) {
         var faviconImg = HTML.faviconImg(site.faviconUrl);
         faviconImg.click(function() {
             if (site.getLastNote()) {
                 trailPreview.displayNote(site.getLastNote());
+                trailPreview.enableOrDisablePrevAndNextButtons(site.getLastNote());
             } else {
                 var noNoteFakeNote = new NoNoteNote(site, trailPreview.getCurrentNote());
                 trailPreview.displayNote(noNoteFakeNote);
@@ -217,11 +220,12 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
         faviconContainer.append(faviconImg);
     }
 
-    function showMessageScreen(message) {
+    function showMessageScreen(message, explanation) {
         var helpIframe = HTML.helpFrame();
         previewContainer.html(helpIframe);
         var messageScreenDoc = thisToolbar.setIframeContent(helpIframe, messageScreenHtml);
         thisToolbar.i$(helpIframe, ".message-box").html(message);
+        thisToolbar.i$(helpIframe, ".explanation").html(explanation);
         return messageScreenDoc;
     }
 
@@ -230,7 +234,7 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     };
 
     function showNoTrailsHelp() {
-        showMessageScreen(Text.noTrailsMessage);
+        showMessageScreen(Text.noTrailsMessage, Text.toolbarExplanation);
     };
 
     this.showNoNotesInTrailHelp = function() {
@@ -249,7 +253,14 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
 
         i$(".fade-on-logout").prop('disabled', false);
 
-        $(document).mousedown(possibleHighlightStart);
+        $(document).mousedown(function() {
+            mouseDown = true
+            possibleHighlightStart()
+        });
+
+        $(document).mouseup(function() {
+            mouseDown = false
+        });
     }
 
     this.initSignedOutExperience = function () {
@@ -307,7 +318,7 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
         });
         trailPreview.show();
         if (loggedIn) {
-            if (mouseDown == 0) { // if the mouse is not pressed (not highlighting)
+            if (!mouseDown) { // if the mouse is not pressed (not highlighting)
                 highlightedTextDetect(); // check to see if they highlighted anything for the addnote button
             } else { // mouse is down, must be highlighting
                 possibleHighlightStart(); // get that highlight start event so when done highlighting, addnote appears
@@ -353,6 +364,19 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
 //
     $(document.body).keydown(checkForShowToolbarKeypress);
     thisToolbar.getIDoc(toolbarFrame).keydown(checkForShowToolbarKeypress);
+
+    chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+        if (request.checkingDownloadStatus){
+            setSaveButtonToSaving();
+        }
+        if (request.downloadComplete) {
+            setSaveButtonToSaved();
+        }
+        if (request.downloadTimedOut) {
+            butterBarNotification("Problem saving site, may not have saved correctly.");
+            setSaveButtonToSaved();
+        }
+    })
 
     //weird fix for some sites
     try {

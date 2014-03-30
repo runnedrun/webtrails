@@ -17,7 +17,7 @@
             "chrome_extension_js/background_scripts/site_storage_accessors.js",
             "chrome_extension_js/background_scripts/misc_storage_accessors.js","chrome_extension_js/background_scripts/auth_storage_accessors.js",
             "chrome_extension_js/background_scripts/note_storage_accessors.js","chrome_extension_js/background_scripts/trail_storage_accessors.js",
-            "chrome_extension_js/background_scripts/LocalStorageTrail.js"]
+            "chrome_extension_js/background_scripts/LocalStorageTrail.js", "chrome_extension_js/background_scripts/DownloadStatusChecker.js"]
     },
     "content_scripts": [
         {
@@ -32,7 +32,7 @@
         }
     ],
     "permissions": [
-        "tabs", "*://*/*", "cookies"
+        "*://*/*", "tabs", "storage", "unlimitedStorage", "cookies"
     ],
     "web_accessible_resources" : ["chrome_extension_js/whereJSisWrittenLocalChrome.js","chrome_extension_js/toolbar_ui.js"
         ,"chrome_extension_js/ajax_fns.js","chrome_extension_js/smart_grab.js",

@@ -1,3 +1,7 @@
 .preview-login-button {
     cursor: pointer;
 }
+
+.explanation, .message-box {
+    text-align: center;
+}

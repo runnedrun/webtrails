@@ -64,42 +64,6 @@ function saveSiteToTrail(note){
             }
         })
     }
-
-    if (!Trails.siteSavedDeeply()){
-        Trails.setSiteSavedDeeply();
-        Toolbar.setSaveButtonToSaving();
-
-        // now check to see if site is actually saved, and update the UI accordingly
-        var updateSiteSavedButton = function() {
-            var currentSiteId = Trails.getCurrentSiteId();
-
-            if (currentSiteId) {
-                $.ajax({
-                    url: webTrailsUrl + '/site/exists',
-                    type: "get",
-                    crossDomain: true,
-                    beforeSend: signRequestWithWtAuthToken,
-                    data: {
-                        "id": currentSiteId
-                    },
-                    success: function(data) {
-                            if (data.exists) {
-                                // Our page exists, and we should correct the save site button
-                                Toolbar.setSaveButtonToSaved(data.siteId, data.trailId);
-                                siteSaved = true;
-                                console.log("updating local storage");
-                                updateTrailDataInLocalStorage();
-                            } else {
-                                setTimeout(updateSiteSavedButton, 1000); // check again
-                            }
-                        }
-                });
-            } else {
-                setTimeout(updateSiteSavedButton, 1000); // check again
-            }
-        }
-        setTimeout(updateSiteSavedButton, 1000);
-    }
 }
 
 function fetchFavicons(){

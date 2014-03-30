@@ -49,7 +49,7 @@ TrailsObject = function(trailsObject, currentTrailId){
         })
     };
 
-    this.initTrails = function(){
+    this.initTrails = function() {
         $.each(baseTrailObject,function(trailId,trailObject){
             trails[trailId] = new Trail(trailObject)
         });

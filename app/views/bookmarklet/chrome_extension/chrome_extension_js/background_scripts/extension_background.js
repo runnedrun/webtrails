@@ -6,9 +6,10 @@ resourceDownloaderAddress = "http://localhost:5000";
 message_sending = {}
 
 
-var scriptsToBeInjected = ["jquery.js", "dropdown.js", "disable_selection.js", "rangy-core.js", "page_preprocessing.js","iframe_manager.js", "trails_objects.js","trail_preview.js","TrailToolbar.js",
-    "ajax_fns.js","smart_grab.js","autoresize.js","search_and_highlight.js","css_property_defaults.js","inline_save_button_fns.js",
-    "ui_fns.js","commenting_fns.js","whereJSisWrittenLocalChrome.js", "mutation-summary.js"];
+var scriptsToBeInjected = ["jquery.js", "dropdown.js", "disable_selection.js", "rangy-core.js", "page_preprocessing.js",
+    "background_scripts/LocalStorageTrail.js", "iframe_manager.js", "trails_objects.js","trail_preview.js",
+    "TrailToolbar.js","ajax_fns.js","smart_grab.js", "autoresize.js","search_and_highlight.js","css_property_defaults.js",
+    "inline_save_button_fns.js", "ui_fns.js","commenting_fns.js","whereJSisWrittenLocalChrome.js", "mutation-summary.js"];
 
 chrome.browserAction.onClicked.addListener(function(tab) {
   chrome.tabs.executeScript(tab.id, {code:"showOrHidePathDisplay()"});
@@ -182,23 +183,20 @@ chrome.runtime.onMessage.addListener(
             var tabId = request.loaded[1];
             var tabUrl = request.loaded[2];
             if (message_sending[tabId+":"+tabUrl]){
-                delete message_sending[tabId+":"+tabUrl];
+                delete message_sending[tabId+":" + tabUrl];
             }
             getToolbarIframeHtml(function(toolbarHtml, messageScreenHtml){
                 injectScripts(tabId, toolbarHtml, messageScreenHtml);
             })
         }
         if (request.parseAndResolve){
-            parse_page_and_resolve_urls(request.parseAndResolve);
+            parse_page_and_resolve_urls(request.parseAndResolve, sender.tab.id);
             if (!request.parseAndResolve.iframe){
                 console.log("sending message to iframes")
                 chrome.tabs.sendRequest(sender.tab.id, {parse_and_resolve_iframe_urls:request.parseAndResolve});
             }else{
                 console.log("message sent to iframes, now getting parse requests from all iframe");
             }
-        }
-        if (request.getTrailsObject){
-            sendResponse(LocalStorageTrailAccess.getTrails());
         }
         if (request.updateTrailsObject){
             console.log("received update trails message");
@@ -207,32 +205,25 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-function retrieveTrailData(){
-    console.log("fethcing trail data now!");
+function retrieveTrailData(prefetchedHtml){
+    console.log("fetching trail data now!");
     $.ajax({
         url: domain + "/users/get_all_trail_data",
         type: "get",
         beforeSend: signRequestWithWtAuthToken,
         success: function(resp){
-            updateStoredTrailData(resp.trail_hash, resp.user_id);
+            updateStoredTrailData(resp.trail_hash, resp.user_id, prefetchedHtml);
         }
     })
 }
 
-function updateStoredTrailData(trailsObject, userId){
+function updateStoredTrailData(trailsObject, userId, prefetchedHtml){
     setUserId(userId);
     console.log("trails object from server", trailsObject);
-    var deferreds = LocalStorageTrailAccess.addOrUpdateTrails(trailsObject);
+    var deferreds = LocalStorageTrailAccess.addOrUpdateTrails(trailsObject, prefetchedHtml);
     $.when.apply($, deferreds).always(function(responses){
         console.log("trail data updated, pushing message to all tabs");
-        sendTrailToAllTabs();
     });
-}
-
-function sendTrailToAllTabs(){
-    var trailsObject = LocalStorageTrailAccess.getTrails();
-    console.log(trailsObject)
-    sendMessageToAllTabs({updateTrails: trailsObject});
 }
 
 function logInOrCreateUser(callback){
@@ -311,9 +302,9 @@ function sendMessageToAllTabs(message){
     } )
 }
 
-function signRequestWithWtAuthToken(xhr,ajaxRequest){
-    xhr.setRequestHeader("WT_AUTH_TOKEN",getWtAuthToken());
-    xhr.setRequestHeader("Accept","application/json");
+function signRequestWithWtAuthToken(xhr, ajaxRequest){
+    xhr.setRequestHeader("WT_AUTH_TOKEN", getWtAuthToken());
+    xhr.setRequestHeader("Accept", "application/json");
 }
 
 

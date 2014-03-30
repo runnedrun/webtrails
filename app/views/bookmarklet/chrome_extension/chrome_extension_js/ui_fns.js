@@ -1,6 +1,5 @@
 console.log("ui_fns loaded");
 
-
 function butterBarNotification(message) {
     var butterBarContainer = $("<div></div>").css({
         position: "fixed",

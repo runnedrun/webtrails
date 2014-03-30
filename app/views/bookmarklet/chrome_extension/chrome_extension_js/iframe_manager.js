@@ -2,6 +2,7 @@ IframeManager = new function FrameManager() {
     var thisFrameManager = this;
 
     this.getIDoc = function($iframe) {
+        $($iframe[0].contentWindow.document);
         return $($iframe[0].contentWindow.document);
     };
 

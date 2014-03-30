@@ -40,20 +40,18 @@ class ApplicationController < ActionController::Base
     @user = nil
     puts "looking in header for token"
     wt_auth_token = request.headers["WT_AUTH_TOKEN"]
+
     if wt_auth_token
+      puts "looking with auth token: " + wt_auth_token
       @user = User.find_by_wt_auth_token(wt_auth_token)
-    else
-      #render :status => 401, :json => ["please authenticate your request with a valid token"]
     end
 
     if request.host == ENV["SAME_DOMAIN"] and !@user
       puts "looking in cookie for token"
       wt_auth_token = request.cookies["wt_auth_token"]
-      puts wt_auth_token
       if wt_auth_token
+        puts "looking with auth token: " + wt_auth_token
         @user = User.find_by_wt_auth_token(wt_auth_token)
-      else
-
       end
     end
   end

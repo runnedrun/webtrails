@@ -86,11 +86,9 @@ TrailsObject = function(trailsObject, currentTrailId){
                 thisTrailsObject.switchToTrail(Object.keys(trails)[0]);
             }
         }
-        chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-            if (request.updateTrails){
-                thisTrailsObject.updateTrails(request.updateTrails);
-            }
-        })
+        LocalStorageTrailAccess.onTrailDataChange(function(trailsObject) {
+            thisTrailsObject.updateTrails(trailsObject);
+        });
     }
     initTrails();
 }
@@ -163,6 +161,7 @@ Trail = function(trailObject, trailsCollection){
             if (!(siteToUpdate = sites[siteId])){
                 console.log("creating new site");
                 siteToUpdate = sites[siteId] = new Site(newSiteBaseObject, thisTrailObject)
+                Toolbar.addFavicon(sites[siteId]);
             } else {
                 console.log("updating existing site");
                 siteToUpdate.updateSite(newSiteBaseObject);
@@ -306,7 +305,7 @@ Site = function(siteObject, parentTrail){
     };
 
     this.getRevisionHtml = function(revisionNumber){
-        return thisSiteObject.html[revisionNumber]
+        return LocalStorageTrailAccess.getSiteRevisionHtml(thisSiteObject.id, revisionNumber);
     };
 
     this.getFirstRevisionHtml = function() {
@@ -319,10 +318,7 @@ Site = function(siteObject, parentTrail){
 
     this.fireNewNoteEvents = function() {
         $.each(thisSiteObject.getNotes(), function(i, note) {
-            if (note.new) {
-                note.new = false;
-                note.fireNewNoteEvent();
-            }
+            note.fireNewNoteEvent();
         })
     }
 
@@ -334,9 +330,8 @@ Site = function(siteObject, parentTrail){
 Note = function(baseNoteObject, parentSite){
     var siteRevisionNumber = baseNoteObject.siteRevisionNumber;
     var thisNoteObject = this;
-    this.new = true;  //used to know if a new note event should be fired, from site.
+    var newNote = true;  //used to know if a new note event should be fired, from site.
     this.site = parentSite;
-
     this.getSiteRevisionHtml = function() {
         return this.site.getRevisionHtml(siteRevisionNumber)
     }
@@ -404,9 +399,12 @@ Note = function(baseNoteObject, parentSite){
     this.update(baseNoteObject);
 
     this.fireNewNoteEvent = function() {
-        $(document).trigger({
-            type:"newNote",
-            note: thisNoteObject
-        });
+        if (newNote) {
+            newNote = false;
+            $(document).trigger({
+                type:"newNote",
+                note: thisNoteObject
+            });
+        }
     };
 }

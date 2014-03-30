@@ -12,11 +12,21 @@ function TPreview(
     var commentBoxToggled = false
     height = 200;
 
+    var initialized = false;
+
+    function initialize() {
+        showCommentButton.click(toggleOrUntoggleCommentBox);
+        nextNoteButton.click(thisTrailPreview.showNextNote);
+        previousNoteButton.click(thisTrailPreview.showPreviousNote);
+        deleteNoteButton.click(deleteCurrentNote);
+        initialized = true;
+    }
+
     function getSiteIDoc(site) {
        return thisTrailPreview.getIDoc(previewContainer.find("[data-site-id='" + site.id + "']"));
     }
 
-    function addEmptyIframeToPreview(site, hideIframe) {
+    function addEmptyIframeToPreview(site) {
         var siteHtmlIframe = $("<iframe data-trail-id='" + site.trail.id + "' data-site-id='"+site.id+"' seamless='seamless' class='wt-site-preview webtrails'>");
         siteHtmlIframe.attr('src',"about:blank");
         siteHtmlIframe.css({
@@ -37,8 +47,8 @@ function TPreview(
     this.initWithTrail = function(trailToPreview) {
         currentTrail = trailToPreview;
         currentNote = currentTrail.getLastNote();
-        if (currentNote) {
-            this.displayNote(currentNote, false);
+        if (currentNote && initialized) {
+            this.displayNote(currentNote);
         } else {
             if (!currentTrail.getFirstSite()) {
                 parentToolbar.showNoSitesInTrailHelp();
@@ -50,59 +60,62 @@ function TPreview(
     }
 
     this.show = function() {
+        shown = true;
+        if (!initialized) {
+            initialize();
+            this.displayNote(currentNote);
+        }
+
         if (currentSiteFrame){
             currentSiteFrame.show();
-//            currentSiteFrame.css({visibility: "visible"});
-//            thisTrailPreview.i$(currentSiteFrame, 'body').css({
-//                visibility: "visible"
-//            });
-            shown = true
         }
     };
 
     this.hide = function() {
+        shown = false;
         if (currentSiteFrame){
             currentSiteFrame.hide();
-//            currentSiteFrame.css({visibility: "hidden"});
-//            thisTrailPreview.i$(currentSiteFrame, 'body').css({
-//                visibility: "visible"
-//            });
-            shown = false;
         }
     };
 
     this.switchToNoteRevision = function(note, hidePreview) {
         currentSiteFrame && currentSiteFrame.remove();
-        var siteHtmlIframe = addEmptyIframeToPreview(note.site, hidePreview);
-        var iframeDocument = $(thisTrailPreview.setIframeContent(siteHtmlIframe, note.getSiteRevisionHtml() || "Uh oh"));
-        iframeDocument.keydown(iframeKeypressHandler);
-        iframeDocument.click(iframeClickHandler);
-        currentSiteFrame = siteHtmlIframe;
-        return iframeDocument;
+        var siteHtmlIframe = addEmptyIframeToPreview(note.site);
+        var deferredIDoc = note.getSiteRevisionHtml().then(function(html) {
+            var iframeDocument = $(thisTrailPreview.setIframeContent(siteHtmlIframe, html || "Uh oh"));
+            iframeDocument.keydown(iframeKeypressHandler);
+            iframeDocument.click(iframeClickHandler);
+            currentSiteFrame = siteHtmlIframe;
+            return iframeDocument
+        });
+
+        return deferredIDoc;
     }
 
     this.displayNote = function(note, hidePreview) {
         currentNote = note;
         if (note.id == -1) { return }; // if it's a special display note
-        var $iDoc = thisTrailPreview.switchToNoteRevision(note, hidePreview);
-        var body = $iDoc.find("body");
-        body.scrollTop(note.scrollY-100).scrollLeft(note.scrollX);
-        if (commentBoxToggled) {
-            displayComment();
-        }
-        thisTrailPreview.runWhenLoaded(function() {
-            if (currentNote == note) {
-                var noteElements = thisTrailPreview.highlightNote(note);
-                var noteLocation = noteElements.first().offset();
-                var scrollTop = noteLocation.top-100;
-                var scrollLeft = noteLocation.left;
-                if ((Math.abs(noteLocation.top - note.scrollY) > 10) || (Math.abs(noteLocation.left - note.scrollX) > 10)){
-                    console.log("correcting scroll", noteLocation.top, note.scrollY);
-                    console.log(noteLocation.left, note.scrollX);
-                    body.scrollTop(scrollTop).scrollLeft(scrollLeft);
-                }
+        var deferredIdoc = thisTrailPreview.switchToNoteRevision(note, hidePreview);
+        deferredIdoc.done(function($iDoc) {
+            var body = $iDoc.find("body");
+            body.scrollTop(note.scrollY-100).scrollLeft(note.scrollX);
+            if (commentBoxToggled) {
+                displayComment();
             }
-        },$iDoc[0]);
+            thisTrailPreview.runWhenLoaded(function() {
+                if (currentNote == note) {
+                    var noteElements = thisTrailPreview.highlightNote(note);
+                    var noteLocation = noteElements.first().offset();
+                    var scrollTop = noteLocation.top-100;
+                    var scrollLeft = noteLocation.left;
+                    if ((Math.abs(noteLocation.top - note.scrollY) > 10) || (Math.abs(noteLocation.left - note.scrollX) > 10)){
+                        console.log("correcting scroll", noteLocation.top, note.scrollY);
+                        console.log(noteLocation.left, note.scrollX);
+                        body.scrollTop(scrollTop).scrollLeft(scrollLeft);
+                    }
+                }
+            },$iDoc[0]);
+        })
     }
 
     this.highlightNote = function(note) {
@@ -200,7 +213,9 @@ function TPreview(
     function updateWithNewNote(newNoteEvent) {
         if (!currentNote || (parseInt(currentNote.site.id) <= parseInt(newNoteEvent.note.site.id))){
             currentNote = newNoteEvent.note;
-            thisTrailPreview.displayNote(currentNote);
+            if (initialized) {
+                thisTrailPreview.displayNote(currentNote);
+            }
         }
         thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
     }
@@ -222,12 +237,6 @@ function TPreview(
         })
         this.enabled = true;
     }
-
-    showCommentButton.click(toggleOrUntoggleCommentBox);
-    nextNoteButton.click(this.showNextNote);
-    previousNoteButton.click(this.showPreviousNote);
-    deleteNoteButton.click(deleteCurrentNote);
-    this.enableOrDisablePrevAndNextButtons(currentNote);
 }
 TPreview.prototype = IframeManager
 
