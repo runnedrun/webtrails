@@ -20,7 +20,7 @@ function saveSiteToTrail(note){
     }
 
     console.log("note is ", note);
-    if (!Trails.siteSavedDeeply()){
+    if (!Trails.getCurrentSiteId()){
         $.ajax({
             url: webTrailsUrl + "/sites/get_new_site_id",
             type: "post",

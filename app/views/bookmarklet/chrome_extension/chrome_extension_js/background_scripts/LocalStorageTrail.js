@@ -100,7 +100,7 @@ LocalStorageTrailAccess = new function(){
                             if (oldTrails[trailId]){
                                 var oldSites = oldTrails[trailId].sites;
                                 var newSites = trailObject.sites;
-                                if (newSites.order > oldSites.order) {
+                                if (newSites.order !== oldSites.order) {
                                     fireCallback = false;
                                     return false
                                 }
@@ -110,7 +110,7 @@ LocalStorageTrailAccess = new function(){
                                     if (oldSites.siteObjects[siteId]) {
                                         var oldNotes = oldSites[siteId].notes;
                                         var newNotes = siteObject.notes
-                                        if (newNotes.order > oldNotes.order) {
+                                        if (newNotes.order !== oldNotes.order) {
                                             fireCallback = false;
                                             return false
                                         }
@@ -139,14 +139,28 @@ LocalStorageTrailAccess = new function(){
     }
 
     this.setCurrentTrailId = function(currentTrailId) {
-        localStorage["currentTrailId"] = currentTrailId;
+        chrome.storage.local.set({"currentTrailId": currentTrailId});
     };
 
-    this.getCurrentTrailId = function() {
-        return localStorage["currentTrailId"];
-    }
+//    this.getCurrentTrailId = function() {
+//        chrome.storage.local.get("currentTrailId", function(items) {
+//            deferred.resolve(items["currentTrailId"] || {});
+//        });
+//    }
 
     this.clearCurrentTrailId = function() {
-        localStorage.removeItem("currentTrailId");
+        chrome.storage.local.remove("currentTrailId");
+    };
+
+    this.setAuthToken = function(authToken) {
+        chrome.storage.local.set({"authToken": authToken});
+    }
+
+    this.getExtensionInitializationData = function() {
+        var deferred = $.Deferred();
+        chrome.storage.local.get(["trails", "currentTrailId", "authToken"], function(initializationObject) {
+            deferred.resolve(initializationObject);
+        });
+        return deferred.promise()
     }
 }()

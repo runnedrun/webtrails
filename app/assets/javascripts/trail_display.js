@@ -32,40 +32,16 @@ $(function(){
     //check for hash to set correct site
 //    if (window.location.hash) {
 //        var hash = window.location.hash.substring(1);
-//        currentSiteIndex = parseInt(hash) || 0;
-//        if (currentSiteIndex >= siteIDs.length || hash == "end") {
-//            currentSiteIndex = siteIDs.length - 1;
-//        } else if (currentSiteIndex < 0) {
-//            currentSiteIndex = 0;
-//        }
+//        var currentSiteIndex = parseInt(hash) || 0;
+//
 //    }
 //    var currentSiteID = String(siteIDs[currentSiteIndex]);
 
     rangy.init();
     initializeAutoResize();
 
-//    currentSite = $("#"+currentSiteID);
-//    setTimeout(makeIframes, 1);
-//    $("#nextSite").click(nextSite);
-//    $("#previousSite").click(previousSite);
-//    $("#nextNote").click(nextNote);
-//    $("#previousNote").click(previousNote);
-//    if (editAccess) {
-//        $("#removeSite").click(removeSite);
-//    } else {
-//        $("#removeSite").remove();
-//    }
-//    $('#showAllSitesButton').click(showAllSites);
-////    $("#showNoteList").click(expandOrCloseNoteList);
-//    $("#showNoteList").click(initOrDisableNoteView);
-//    $(".noteInfo").click(clickJumpToNote);
-//    $(".noteComment").click(makeNoteCommentEditable);
-//
-//    $(".click-to-change-site").click(clickJumpToSite);
-
     makeFaviconsDragable();
     makeNotesDragable();
-//    switchToSite(currentSiteID);
 });
 
 function initializeNoteTaking(siteID){
@@ -89,20 +65,36 @@ function removeLoadingFromSite(siteID) {
 function fetchSiteHtml() {
     var deferreds = $.map(trailDisplayHash.sites.siteObjects, function(site,id){
         return $.map(site.revisionUrls, function(url, revisionNumber) {
-            return $.ajax({
-                url: url,
-                type: "get",
-                dataType: "html",
-                crossDomain: true,
-                success: function(resp){
-                    console.log("succceded in fetch");
-                    trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] =  resp;
-                } ,
-                error: function(resp){
-                    console.log("failed to fetch");
-                    trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] =  "Sometimes things go wrong, please reload!";
-                }
-            })
+            var deferred = $.Deferred();
+            var callCount = 0;
+            console.log("making ajax request for " + url);
+            function retrieveHtml() {
+                $.ajax({
+                    url: url,
+                    type: "get",
+                    dataType: "html",
+                    crossDomain: true,
+                    success: function(resp){
+                        console.log("succceded in fetch");
+                        trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] =  resp;
+                        deferred.resolve()
+                    },
+                    error: function(resp){
+                        callCount += 1;
+                        console.log("failed to fetch");
+                        if (callCount > 2) {
+                            console.log("more than two retries for each html, failing");
+                            trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] =  "Sometimes things go wrong, please reload!";
+                            deferred.resolve();
+                        } else {
+                            retrieveHtml();
+                        }
+                    }
+                })
+            }
+
+            retrieveHtml();
+            return deferred.promise()
         })
     });
 

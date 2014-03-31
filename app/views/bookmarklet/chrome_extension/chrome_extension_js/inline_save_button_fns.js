@@ -17,7 +17,7 @@ function highlightedTextDetect(){
 function addSaveButtonNextToNote(highlightedTextRange){
     var currentSelection = rangy.getSelection();
     var nodeLineHeight = getNodeLineHeight(currentSelection.getRangeAt(0).endContainer.parentNode);
-    var highlightedContent = smartGrabHighlightedText();
+//    var highlightedContent = smartGrabHighlightedText();
     var newNodeReadyForInsertandSaveButton = insertSaveButtonIntoNodeContent(highlightedTextRange);
     var saveButton = newNodeReadyForInsertandSaveButton[0];
     var nodeToHighlight = newNodeReadyForInsertandSaveButton[1];

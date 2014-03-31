@@ -2,43 +2,37 @@ console.log("initializing the toolbar");
 
 var faviconHolder,
     mouseDown = 0,
-    previousNoteDisplay,
-    previousNoteButton,
-    currentSiteID="",
-    trailSelect,
-    saveSiteToTrailButton,
-    nextNoteButton,
-    previousNoteID,
-    siteHTML = getCurrentSiteHTML(),
-    siteSaved=false,
     TrailPreview = false,
-    loggedIn = false;
-    faviconsFetched = false;
 //    webTrailsUrl = "http://www.webtrails.co";
     webTrailsUrl = "http://localhost:3000";
-    wt_auth_token;
-    // defined by the background script
-    startingTrailID;
-    toolbarShown;
-    powerButtonUrl;
-    contentScriptLoaded;
-    toolbarHtml; // this is uri encoded
-    noTrailsHelpUrl;
-    messageScreenHtml;
+    wt_auth_token = undefined;
 
 String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
 };
 
-$(initExtension());
-//initExtension();
+$(function() {
+    console.log("initializing the extension");
+    var deferredData = LocalStorageTrailAccess.getExtensionInitializationData();
+    chrome.runtime.sendMessage({getToolbarHtml: true});
 
-function initExtension(){
+    var messageReceived = false;
+    chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+        if (!messageReceived && request.htmlObject) {
+            messageReceived = true;
+            deferredData.done(function(initializationObject) {
+                initToolbar(initializationObject, request.htmlObject)
+            });
+        }
+    })
+});
+
+function initToolbar(initializationObject, htmlObject){
+    wt_auth_token = initializationObject.authToken;
     console.log("init extension");
     initializeAutoResize();
-//    debugger;
-//    Toolbar = new WtToolbar(decodeURI(toolbarUrl));
-    Toolbar = new WtToolbar(decodeURI(toolbarHtml), decodeURI(messageScreenHtml), noTrailsHelpUrl);
+
+    Toolbar = new WtToolbar(decodeURI(htmlObject.toolbarHtml), decodeURI(htmlObject.messageScreenHtml));
 
     chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         if (request.logOutAllTabs){
@@ -50,7 +44,6 @@ function initExtension(){
             wt_auth_token = request.logInAllTabs[0]
             var startingTrailId = request.logInAllTabs[1]
             Toolbar.initSignedInExperience();
-            debugger;
             getTrailDataFromLocalStorage(function(trails) {
                 initializeTrails(trails, startingTrailId);
             })
@@ -59,9 +52,7 @@ function initExtension(){
 
     $(document.body).keydown(verifyKeypress);
     if (wt_auth_token) {
-        getTrailDataFromLocalStorage(function(trails) {
-            initializeTrails(trails, startingTrailID);
-        });
+        initializeTrails(initializationObject.trails, initializationObject.currentTrailId);
     }
 }
 
@@ -115,4 +106,3 @@ function getNodeLineHeight(element) {
 function isTextNode(node) {
     return node.nodeType == 3;
 }
-

@@ -12,20 +12,21 @@ var scriptsToBeInjected = ["jquery.js", "dropdown.js", "disable_selection.js", "
     "inline_save_button_fns.js", "ui_fns.js","commenting_fns.js","whereJSisWrittenLocalChrome.js", "mutation-summary.js"];
 
 chrome.browserAction.onClicked.addListener(function(tab) {
-  chrome.tabs.executeScript(tab.id, {code:"showOrHidePathDisplay()"});
+//  chrome.tabs.executeScript(tab.id, {code:"()"});
+    retrieveTrailData();
 });
 
-chrome.tabs.onReplaced.addListener(function(addedTabId, removedTabId) {
-    chrome.tabs.get(addedTabId,function(tab){
-        injectToolbarAndCheckForSignInOrOutEvents(tab);
-    })
-});
-
-chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
-    if (changeInfo.status == 'loading') {
-        injectToolbarAndCheckForSignInOrOutEvents(tab);
-    }
-})
+//chrome.tabs.onReplaced.addListener(function(addedTabId, removedTabId) {
+//    chrome.tabs.get(addedTabId,function(tab){
+//        injectToolbarAndCheckForSignInOrOutEvents(tab);
+//    })
+//});
+////
+//chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
+//    if (changeInfo.status == 'loading') {
+//        injectToolbarAndCheckForSignInOrOutEvents(tab);
+//    }
+//})
 
 function injectToolbarAndCheckForSignInOrOutEvents(tab){
     setAuthTokenFromCookieIfNecessary();
@@ -171,14 +172,6 @@ chrome.runtime.onMessage.addListener(
             signOut();
             sendResponse({response:"signed out"});
         }
-        if (request.showToolBarOnAllTabs){
-            addToolbarDisplayStateToLocalStorage("shown")
-            showToolbarOnAllTabs();
-        }
-        if (request.hideToolBarOnAllTabs){
-            addToolbarDisplayStateToLocalStorage("hidden")
-            hideToolbarOnAllTabs();
-        }
         if (request.loaded && (request.loaded[0] == "undefined")){
             var tabId = request.loaded[1];
             var tabUrl = request.loaded[2];
@@ -201,6 +194,16 @@ chrome.runtime.onMessage.addListener(
         if (request.updateTrailsObject){
             console.log("received update trails message");
             retrieveTrailData();
+        }
+        if (request.getToolbarHtml) {
+            console.log("getting toolbar html");
+            getToolbarIframeHtml(function(fullToolbarHtml, fullMessageScreenHtml){
+                console.log("sending html response");
+                chrome.tabs.sendRequest(sender.tab.id, {htmlObject: {
+                    toolbarHtml: fullToolbarHtml,
+                    messageScreenHtml: fullMessageScreenHtml
+                }});
+            })
         }
     }
 );
@@ -227,7 +230,7 @@ function updateStoredTrailData(trailsObject, userId, prefetchedHtml){
 }
 
 function logInOrCreateUser(callback){
-    var authToken =  googleAuth.getAccessToken();
+    var authToken = googleAuth.getAccessToken();
     $.ajax({
         url: domain + "/users/login_or_create_gmail_user",
         type: "post",
@@ -264,10 +267,9 @@ function signOut(){
 }
 
 function signIn(wt_auth_token){
-    setWtAuthToken(wt_auth_token);
+    LocalStorageTrailAccess.setAuthToken (wt_auth_token);
     setWtAuthTokenCookie(wt_auth_token);
     sendSignInMessageToAllTabs();
-    retrieveTrailData();
 }
 
 function signOutIfSignedOutOfWebpage(cookie){
@@ -282,14 +284,6 @@ function sendSignOutMessageToAllTabs(){
 
 function sendSignInMessageToAllTabs(){
     sendMessageToAllTabs({"logInAllTabs":[getWtAuthToken(),getCurrentTrailID()]})
-}
-
-function showToolbarOnAllTabs(){
-    sendMessageToAllTabs({"showToolBarOnAllTabs":"do it!"})
-}
-
-function hideToolbarOnAllTabs(){
-    sendMessageToAllTabs({"hideToolBarOnAllTabs":"do it!"})
 }
 
 function sendMessageToAllTabs(message){

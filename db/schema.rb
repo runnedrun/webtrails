@@ -57,7 +57,7 @@ ActiveRecord::Schema.define(:version => 20130918073310) do
     t.integer  "user_id"
     t.text     "saved_resources",      :default => ""
     t.text     "saved_stylesheets",    :default => ""
-    t.text     "revision_numbers"
+    t.text     "revision_numbers",     :default => ""
     t.integer  "base_revision_number"
   end
 

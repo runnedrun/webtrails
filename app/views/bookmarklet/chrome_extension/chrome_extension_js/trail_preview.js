@@ -63,7 +63,9 @@ function TPreview(
         shown = true;
         if (!initialized) {
             initialize();
-            this.displayNote(currentNote);
+            if (currentNote) {
+                this.displayNote(currentNote);
+            }
         }
 
         if (currentSiteFrame){

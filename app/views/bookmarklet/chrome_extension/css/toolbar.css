@@ -1,6 +1,7 @@
 body {
     visibility: hidden;
     background: transparent;
+    overflow: hidden;
 }
 
 .toolbar {
