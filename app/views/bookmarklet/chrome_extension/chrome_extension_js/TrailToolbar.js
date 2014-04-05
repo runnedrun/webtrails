@@ -109,7 +109,7 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     var previewContainer = i$(".trail-preview-container");
     trailPreview = new TPreview(
         previewContainer, previewHeight, nextNoteButton, previousNoteButton, showCommentButton, deleteNoteButton,
-        commentBox, checkForShowToolbarKeypress, closeDropdowns, thisToolbar
+        commentBox, checkForToolbarRelatedKeypress, checkForToolbarRelatedKeyup, closeDropdowns, thisToolbar
     );
 
     saveSiteButton.click(function() {
@@ -218,6 +218,14 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
             }
         });
         faviconContainer.append(faviconImg);
+    }
+
+    function showNoteSelector() {
+        i$(".note-selector, .note-selector-background").show();
+    }
+
+    function hideNoteSelector() {
+        i$(".note-selector, .note-selector-background").hide();
     }
 
     function showMessageScreen(message, explanation) {
@@ -348,11 +356,27 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
         faviconContainer.html("");
     }
 
-    function checkForShowToolbarKeypress(e){
+    var noteSelectorShown = false
+
+    function checkForToolbarRelatedKeypress(e){
         console.log("verifying keypress");
         var code = (e.keyCode ? e.keyCode : e.which);
-        if (code == 27 && e.shiftKey){    //tilda = 192, esc is code == 27
+        if (code == 27 && e.shiftKey) {    //tilda = 192, esc is code == 27
             showOrHide();
+        }
+
+        if (code == 18 && e.shiftKey && shown) {
+            noteSelectorShown = true
+            showNoteSelector();
+        }
+    }
+
+    function checkForToolbarRelatedKeyup(e) {
+        console.log("verifying keyup");
+        var code = (e.keyCode ? e.keyCode : e.which);
+        if (code == 18 && noteSelectorShown) {
+            noteSelectorShown = false;
+            hideNoteSelector();
         }
     }
 
@@ -362,8 +386,10 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
         thisToolbar.initSignedOutExperience()
     }
 //
-    $(document.body).keydown(checkForShowToolbarKeypress);
-    thisToolbar.getIDoc(toolbarFrame).keydown(checkForShowToolbarKeypress);
+    $(document.body).keydown(checkForToolbarRelatedKeypress);
+    $(document.body).keyup(checkForToolbarRelatedKeyup);
+    thisToolbar.getIDoc(toolbarFrame).keydown(checkForToolbarRelatedKeypress);
+    thisToolbar.getIDoc(toolbarFrame).keyup(checkForToolbarRelatedKeyup);
 
     chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         if (request.checkingDownloadStatus){

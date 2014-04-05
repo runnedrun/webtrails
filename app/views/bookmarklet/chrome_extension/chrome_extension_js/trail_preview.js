@@ -2,7 +2,7 @@ console.log("trail preview injected");
 
 function TPreview(
     previewContainer, height, nextNoteButton, previousNoteButton, showCommentButton, deleteNoteButton,
-    commentBox, iframeKeypressHandler, iframeClickHandler, parentToolbar
+    commentBox, iframeKeypressHandler, iframeKeyupHandler, iframeClickHandler, parentToolbar
     ) {
     var currentTrail = false;
     var currentNote = false;
@@ -86,6 +86,7 @@ function TPreview(
         var deferredIDoc = note.getSiteRevisionHtml().then(function(html) {
             var iframeDocument = $(thisTrailPreview.setIframeContent(siteHtmlIframe, html || "Uh oh"));
             iframeDocument.keydown(iframeKeypressHandler);
+            iframeDocument.keyup(iframeKeyupHandler);
             iframeDocument.click(iframeClickHandler);
             currentSiteFrame = siteHtmlIframe;
             return iframeDocument

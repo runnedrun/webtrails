@@ -51,6 +51,20 @@ body {
     margin: 0 0;
 }
 
+.info-display {
+    position: relative;
+    height: 150px; /* make sure to sync this value with the one in TrailToolbar.js */
+}
+
+.trail-preview-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+}
+
 .comment-box {
     position: absolute;
     right: 0px;
@@ -65,4 +79,41 @@ body {
 
 .login-button .logout-button {
     display: none;
+}
+
+/* note selector styles */
+
+.snap, .buffer {
+    position: relative;
+    border: 1px solid;
+    height:66.6px;
+    text-align: center;
+    padding-top: 15px;
+}
+
+.note-selector {
+    overflow: scroll;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    -webkit-mask-image: linear-gradient(rgba(0,0,0,0) -30%, rgba(0,0,0,1), rgba(0,0,0,0) 130%);
+    display: none;
+}
+
+.note-selector-background {
+    position: absolute;
+    background: white;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
+    display: none;
+}
+
+.selected {
+    font-size: 20px;
 }

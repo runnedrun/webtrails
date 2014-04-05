@@ -29,7 +29,7 @@ function butterBarNotification(message) {
 }
 
 function displaySaveButtonWhileKeyIsPressed(keycode){
-    if (!toolbarShown && wt_auth_token) {
+    if (!Toolbar.isShown() && wt_auth_token) {
         keycode = typeof keycode == "undefined" ? keycode : "18";
         var saveButton = highlightedTextDetect();
         $(document.body).keyup(function(e){

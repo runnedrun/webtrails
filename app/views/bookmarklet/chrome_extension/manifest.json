@@ -28,7 +28,7 @@
         {
             "matches": ["<all_urls>"],
             "exclude_globs": ["http://localhost:3000/*", "http://*.webtrails.co/*"],
-            "js": ["third_party_scripts/jquery.js","chrome_extension_js/page_preprocessing.js",
+            "js": ["third_party_scripts/jquery.js", "third_party_scripts/scrollsnap.js", "chrome_extension_js/page_preprocessing.js",
                 "chrome_extension_js/jquery.js", "chrome_extension_js/dropdown.js", "chrome_extension_js/rangy-core.js",
                 "chrome_extension_js/page_preprocessing.js","chrome_extension_js/background_scripts/LocalStorageTrail.js",
                 "chrome_extension_js/iframe_manager.js", "chrome_extension_js/trails_objects.js","chrome_extension_js/trail_preview.js",
