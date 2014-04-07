@@ -1,8 +1,9 @@
-domain = "http://localhost:3000";
-domain_name = "localhost";
-resourceDownloaderAddress = "http://localhost:5000";
-//domain = "http://www.webtrails.co";
-//domain_name = "webtrails.co";
+//domain = "http://localhost:3000";
+//domain_name = "localhost";
+//resourceDownloaderAddress = "http://localhost:5000";
+resourceDownloaderAddress = "http://gentle-atoll-5058.herokuapp.com";
+domain = "http://www.webtrails.co";
+domain_name = "webtrails.co";
 message_sending = {}
 
 
@@ -210,13 +211,15 @@ chrome.runtime.onMessage.addListener(
 
 function retrieveTrailData(prefetchedHtml){
     console.log("fetching trail data now!");
-    $.ajax({
-        url: domain + "/users/get_all_trail_data",
-        type: "get",
-        beforeSend: signRequestWithWtAuthToken,
-        success: function(resp){
-            updateStoredTrailData(resp.trail_hash, resp.user_id, prefetchedHtml);
-        }
+    LocalStorageTrailAccess.getAuthToken().done(function(authToken){
+        $.ajax({
+            url: domain + "/users/get_all_trail_data",
+            type: "get",
+            beforeSend: function(xhr){ signRequestWithWtAuthToken(xhr, authToken) },
+            success: function(resp){
+                updateStoredTrailData(resp.trail_hash, resp.user_id, prefetchedHtml);
+            }
+        })
     })
 }
 
@@ -259,15 +262,15 @@ function cleanUpMessageSendingObject(){
 }
 
 function signOut(){
-    clearWtAuthToken();
-    clearCurrentTrailID();
+    LocalStorageTrailAccess.clearAuthToken();
+    LocalStorageTrailAccess.clearCurrentTrailId()
     clearUserId();
     removeWtAuthTokenCookie();
     sendSignOutMessageToAllTabs();
 }
 
 function signIn(wt_auth_token){
-    LocalStorageTrailAccess.setAuthToken (wt_auth_token);
+    LocalStorageTrailAccess.setAuthToken(wt_auth_token);
     setWtAuthTokenCookie(wt_auth_token);
     sendSignInMessageToAllTabs();
 }
@@ -283,7 +286,9 @@ function sendSignOutMessageToAllTabs(){
 }
 
 function sendSignInMessageToAllTabs(){
-    sendMessageToAllTabs({"logInAllTabs":[getWtAuthToken(),getCurrentTrailID()]})
+    LocalStorageTrailAccess.getExtensionInitializationData().done(function(initObject) {
+        sendMessageToAllTabs({"logInAllTabs":[initObject.authToken, initObject.currentTrailId]})
+    })
 }
 
 function sendMessageToAllTabs(message){
@@ -296,8 +301,8 @@ function sendMessageToAllTabs(message){
     } )
 }
 
-function signRequestWithWtAuthToken(xhr, ajaxRequest){
-    xhr.setRequestHeader("WT_AUTH_TOKEN", getWtAuthToken());
+function signRequestWithWtAuthToken(xhr, authToken){
+    xhr.setRequestHeader("WT_AUTH_TOKEN", authToken);
     xhr.setRequestHeader("Accept", "application/json");
 }
 

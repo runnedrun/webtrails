@@ -156,24 +156,26 @@ function checkIfAllResourcesAreParsed(callbackTracker){
         console.log("everything is parsed!");
         console.log(callbackTracker);
 
-        $.ajax({
-            url: resourceDownloaderAddress  + "/resource_downloader",
-            type: "post",
-            crossDomain: true,
-            data: callbackTracker,
-            beforeSend: signRequestWithWtAuthToken,
-            success:function(resp){
-                if (!callbackTracker.isIframe && resp.archive_location) {
-                   new DownloadStatusChecker(
-                       resp.archive_location,
-                       callbackTracker.tabId,
-                       callbackTracker.siteID,
-                       callbackTracker.revision);
+        LocalStorageTrailAccess.getAuthToken().done(function(authToken) {
+            $.ajax({
+                url: resourceDownloaderAddress  + "/resource_downloader",
+                type: "post",
+                crossDomain: true,
+                data: callbackTracker,
+                beforeSend: function(xhr) { signRequestWithWtAuthToken(xhr, authToken) },
+                success:function(resp){
+                    if (!callbackTracker.isIframe && resp.archive_location) {
+                        new DownloadStatusChecker(
+                            resp.archive_location,
+                            callbackTracker.tabId,
+                            callbackTracker.siteID,
+                            callbackTracker.revision);
+                    }
+                },
+                error: function(){
+                    console.log("server broke!");
                 }
-            },
-            error: function(){
-                console.log("server broke!");
-            }
+            })
         })
     }
 }

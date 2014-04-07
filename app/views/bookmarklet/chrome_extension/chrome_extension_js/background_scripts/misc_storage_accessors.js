@@ -55,6 +55,6 @@ function getNewTrailIDFromCookie(cookie,trailName){
         console.log("got trail ID cookie");
         var trailId = decodeURIComponent(cookie.value);
         removeNewTrailIDCookie();
-        addNewTrailOnAllTabs(trailId,trailName);
+        retrieveTrailData();
     }
 }

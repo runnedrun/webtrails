@@ -5,3 +5,7 @@
 .explanation, .message-box {
     text-align: center;
 }
+
+.message-box {
+    margin-top: 10px;
+}

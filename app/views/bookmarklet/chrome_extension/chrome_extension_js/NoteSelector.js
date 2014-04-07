@@ -65,6 +65,7 @@ var NoteSelector = function(selectorContainer, background, trailPreview, viewpor
         var noteElement = HTML.noteElement(note);
         if (noNotesDisplay) {
             noNotesDisplay.remove();
+            noNotesDisplay = undefined;
         }
         containerFooter.before(noteElement);
         noteElements.push(noteElement);
@@ -137,20 +138,18 @@ var NoteSelector = function(selectorContainer, background, trailPreview, viewpor
     });
 
     selectorContainer.scroll(function(e) {
-        var currentScroll = selectorContainer.scrollTop();
-        var newNotePosition = getNotePosition(currentScroll);
+        if (!noNotesDisplay) {
+            var currentScroll = selectorContainer.scrollTop();
+            var newNotePosition = getNotePosition(currentScroll);
 
-        if (newNotePosition === noteElements.length + 1) {
-            newNotePosition =  noteElements.length
+            if (newNotePosition === noteElements.length + 1) {
+                newNotePosition =  noteElements.length
+            }
+
+            console.log("new note position is: " + newNotePosition);
+
+            switchToPosition(newNotePosition);
         }
-
-        console.log("new note position is: " + newNotePosition);
-
-
-        switchToPosition(newNotePosition);
-
-
-        console.log(currentScroll, bottomLimit);
         if (snapped.snapped) {
             if ((currentScroll > 10) && currentScroll < bottomLimit) {
                 console.log("snapped set to false");

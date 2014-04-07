@@ -2,7 +2,7 @@ console.log("ajax_fns loaded");
 
 
 function signRequestWithWtAuthToken(xhr,ajaxRequest){
-    xhr.setRequestHeader("WT_AUTH_TOKEN",wt_auth_token);
+    xhr.setRequestHeader("WT_AUTH_TOKEN", wt_auth_token);
     xhr.setRequestHeader("Accept","application/json");
 }
 

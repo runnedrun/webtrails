@@ -22,10 +22,11 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
         toolbarExplanation:
             "shift + esc: open/close toolbar</br>" +
             "highlight text + alt: show save note button</br>" +
-            "hold shift then alt: scroll through notes",
+            "hold shift then alt: scroll through notes</br>" +
+            "<b>If anything goes wrong, press the webtrails icon on your toolbar to sync data (you also might need to refresh).</b>",
         noSitesInTrailMessage: 'No Sites in this trail. Take a note on this page, or hit the save site button.',
         loggedOutMessage: function(logInButton) {
-            return "You are now logged out. " + logInButton[0].outerHTML + " with Google, or create an account."
+            return "You are now logged out. " + logInButton[0].outerHTML + " with Google."
         }
     };
     var CSS = {
@@ -66,7 +67,7 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
                 frameborder: "0"
             }).css(CSS.helpFrame)
         },
-        logInButton: $("<a class='preview-login-button'>Log In</a>")
+        logInButton: $("<a class='preview-login-button'>Log in or create an account</a>")
     };
 
     var toolbarFrame = HTML.toolbarFrame
@@ -244,7 +245,7 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     }
 
     function showNoNotesOnSiteHelp() {
-        showMessageScreen(Text.noNotesOnSiteMessage);
+        showMessageScreen(Text.noNotesOnSiteMessage, Text.toolbarExplanation);
     };
 
     function showNoTrailsHelp() {
@@ -252,11 +253,11 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     };
 
     this.showNoNotesInTrailHelp = function() {
-        showMessageScreen(Text.noNotesInTrailMessage);
+        showMessageScreen(Text.noNotesInTrailMessage, Text.toolbarExplanation);
     };
 
     this.showNoSitesInTrailHelp = function() {
-        showMessageScreen(Text.noSitesInTrailMessage);
+        showMessageScreen(Text.noSitesInTrailMessage, Text.toolbarExplanation);
     };
 
     this.initSignedInExperience = function() {
@@ -377,10 +378,11 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     function checkForToolbarRelatedKeyup(e) {
         console.log("verifying keyup");
         var code = (e.keyCode ? e.keyCode : e.which);
-        if (code == 18 && noteSelector.shown && noteSelector) {
+        if (code == 18 && noteSelector && noteSelector.shown) {
             var selectedNote = noteSelector.getSelectedNote();
             if (selectedNote && (selectedNote !== trailPreview.getCurrentNote())){
                 trailPreview.displayNote(noteSelector.getSelectedNote());
+                trailPreview.enableOrDisablePrevAndNextButtons(trailPreview.getCurrentNote());
             }
             noteSelector.hide();
         }

@@ -142,18 +142,24 @@ LocalStorageTrailAccess = new function(){
         chrome.storage.local.set({"currentTrailId": currentTrailId});
     };
 
-//    this.getCurrentTrailId = function() {
-//        chrome.storage.local.get("currentTrailId", function(items) {
-//            deferred.resolve(items["currentTrailId"] || {});
-//        });
-//    }
-
     this.clearCurrentTrailId = function() {
         chrome.storage.local.remove("currentTrailId");
     };
 
     this.setAuthToken = function(authToken) {
         chrome.storage.local.set({"authToken": authToken});
+    }
+
+    this.clearAuthToken = function() {
+        chrome.storage.local.remove("authToken");
+    }
+
+    this.getAuthToken = function() {
+        var deferred = $.Deferred();
+        chrome.storage.local.get("authToken", function(authTokenObject) {
+            deferred.resolve(authTokenObject["authToken"]);
+        });
+        return deferred.promise()
     }
 
     this.getExtensionInitializationData = function() {

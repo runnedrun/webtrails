@@ -9,9 +9,11 @@ function clearWtAuthToken(){
 }
 
 function setAuthTokenFromCookieIfNecessary(){
-    if (!getWtAuthToken()){
-        getWtAuthTokenCookie(setAuthTokenFromCookie)
-    }
+    LocalStorageTrailAccess.getAuthToken().done(function(authToken) {
+        if (!authToken){
+            getWtAuthTokenCookie(setAuthTokenFromCookie)
+        }
+    });
 }
 
 function setAuthTokenFromCookie(cookie){
