@@ -10,6 +10,7 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     var loggedIn = false
     var siteBody = $(document.body);
     var shown = false;
+    var noteSelector;
 
     this.bodyMarginTop = siteBody.css("margin-top");
     this.bodyPosition = siteBody.css("position");
@@ -18,7 +19,10 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
         noNotesOnSiteMessage: "No saved notes on this site. Hit the visit site button to go to the live version.",
         noNotesInTrailMessage: "No saved notes in this Trail. View this trail to see sites you've saved without notes.",
         noTrailsMessage: '<a target="_blank" href="http://www.webtrails.co">Create a Trail</a> to use the toolbar </br>',
-        toolbarExplanation: "shift + esc: open/close toolbar </br> highlight text + alt: show save note button",
+        toolbarExplanation:
+            "shift + esc: open/close toolbar</br>" +
+            "highlight text + alt: show save note button</br>" +
+            "hold shift then alt: scroll through notes",
         noSitesInTrailMessage: 'No Sites in this trail. Take a note on this page, or hit the save site button.',
         loggedOutMessage: function(logInButton) {
             return "You are now logged out. " + logInButton[0].outerHTML + " with Google, or create an account."
@@ -101,6 +105,9 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     var logoutButton = i$(".logout-button");
     var loginButton = i$(".login-button");
 
+    var noteSelectorContainer = i$(".note-selector");
+    var noteSelectorBackground = i$(".note-selector-background");
+
     commentBox.css({
         "margin-top": toolbarHeight,
         height: previewHeight
@@ -175,6 +182,13 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
                 });
                 trailsDropdownList.append(dropDownItem);
             });
+
+            noteSelector = new NoteSelector(
+                noteSelectorContainer,
+                noteSelectorBackground,
+                trailPreview,
+                previewHeight,
+                Trails.getCurrentTrail());
         } else {
             showNoTrailsHelp();
         }
@@ -218,14 +232,6 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
             }
         });
         faviconContainer.append(faviconImg);
-    }
-
-    function showNoteSelector() {
-        i$(".note-selector, .note-selector-background").show();
-    }
-
-    function hideNoteSelector() {
-        i$(".note-selector, .note-selector-background").hide();
     }
 
     function showMessageScreen(message, explanation) {
@@ -316,7 +322,7 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     }
 
     function show(){
-        shown = true
+        shown = true;
         toolbarFrame.focus();
         toolbarFrame.css({
             visibility: "visibile"
@@ -356,8 +362,6 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
         faviconContainer.html("");
     }
 
-    var noteSelectorShown = false
-
     function checkForToolbarRelatedKeypress(e){
         console.log("verifying keypress");
         var code = (e.keyCode ? e.keyCode : e.which);
@@ -365,18 +369,20 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
             showOrHide();
         }
 
-        if (code == 18 && e.shiftKey && shown) {
-            noteSelectorShown = true
-            showNoteSelector();
+        if (code == 18 && e.shiftKey && shown && noteSelector) {
+            noteSelector.show();
         }
     }
 
     function checkForToolbarRelatedKeyup(e) {
         console.log("verifying keyup");
         var code = (e.keyCode ? e.keyCode : e.which);
-        if (code == 18 && noteSelectorShown) {
-            noteSelectorShown = false;
-            hideNoteSelector();
+        if (code == 18 && noteSelector.shown && noteSelector) {
+            var selectedNote = noteSelector.getSelectedNote();
+            if (selectedNote && (selectedNote !== trailPreview.getCurrentNote())){
+                trailPreview.displayNote(noteSelector.getSelectedNote());
+            }
+            noteSelector.hide();
         }
     }
 

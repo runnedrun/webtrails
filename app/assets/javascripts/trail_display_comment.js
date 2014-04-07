@@ -134,7 +134,7 @@ Comment = function(note, top, left, trailPreview, $siteDocument) {
     };
 
     var Statics = {
-        overlayMaxWidth: "200px",
+        overlayMaxWidth: "200px"
     }
 
     var CSS = {

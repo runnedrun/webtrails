@@ -1,4 +1,6 @@
 TToolBar  = function(trailPreview, panelView, noteViewer){
+    var allNotesShown = false;
+
     var thisToolbar = this;
     var nextNoteButton = $("#nextNote").click(trailPreview.showNextNote);
     var previousNoteButton = $("#previousNote").click(trailPreview.showPreviousNote);
@@ -9,6 +11,14 @@ TToolBar  = function(trailPreview, panelView, noteViewer){
     var visitSiteButton = $("#goToSite").click(function() {
         open(trailPreview.getCurrentNote().site.url)
     });
+    var showAllNotesButton = $("#show-all-notes-button");
+    showAllNotesButton.click(function() {
+        if (!allNotesShown) {
+            trailPreview.displayAllNotes();
+        } else {
+            trailPreview.turnOffAllNotesDisplay();
+        }
+    });
     var showAllSitesbutton = $("#showAllSitesButton").click(panelView.showOrHide);
     var siteFavicons = $(".click-to-change-site").click(changeToSiteOnClick);
     var faviconContainer = $(".siteFavicons").sortable({
@@ -16,6 +26,15 @@ TToolBar  = function(trailPreview, panelView, noteViewer){
         update: changeSiteOrder
     });
     var noteViewModeButton = $("#noteViewMode").click(noteViewer.initOrDisableNoteView);
+
+    $(document).on("showAllNotesOn", function() {
+        allNotesShown = true;
+        showAllNotesButton.removeClass("inactive");
+    });
+    $(document).on("showAllNotesOff", function() {
+        allNotesShown = false;
+        showAllNotesButton.addClass("inactive");
+    });
 
     function changeSiteOrder(event, ui){
         var faviconThatWasDragged = ui.item;
@@ -95,6 +114,19 @@ TToolBar  = function(trailPreview, panelView, noteViewer){
             panelView.update();
         }
     };
+
+    function toggle(onFunction, offFunction) {
+        var toggled = false;
+        return function() {
+            if (toggled) {
+                toggled = false;
+                offFunction();
+            } else {
+                toggled = true;
+                onFunction();
+            }
+        }
+    }
 
     showAllSitesbutton.disable =
         visitSiteButton.disable =

@@ -11,10 +11,7 @@
 <script src="/bootstrap/js/bootstrap.min.js"> </script>
 <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-    <div class="siteDisplayDiv">
-      <!--<%- @sites.each_with_index do |site,i| %>-->
-        <!--<iframe id=<%= site.id %> data-site-id="<%= site.id %>" class="siteDisplay notCurrent"></iframe>-->
-      <!--<%- end %>-->
+    <div class="siteDisplayDiv" class="loading">
       <% if @sites.empty?%>
         <h2 class="no-trails-placeholder"> No sites added to this trail. Get to trailing some websites with the Chrome Extension before you can come here to view them!</h2>
        <% end %>
@@ -38,7 +35,6 @@
           <%- end %>
       </table>
     </div>
-<!--</div>-->
 <div class="viewTrailToolbar">
 
 <a class="btn btn-mini navigateButton" id="goToAll" href="<%= Webtrails::Application::AJAX_REQUEST_URL %>" target="_blank">All Trails</a>
@@ -48,7 +44,6 @@
       <%- @favicon_urls_with_ids_and_titles.each_with_index do |favicon_id_and_title,i| %>
           <div class="faviconContainer favicon<%= favicon_id_and_title[1]%>">
             <img class="faviconImage click-to-change-site" src="<%= favicon_id_and_title[0] %>" id="favicon<%= favicon_id_and_title[1] %>" data-site-id="<%= favicon_id_and_title[1] %>" data-ot="<%= @sites[i].title%>" data-ot-delay="0" data-ot-tip-joint="bottom" data-ot-style="dark" data-site-url="<%= @sites[i].url%>" data-site-index="<%= i %>"/>
-            <!--<img src="/images/loading_small.gif" class="faviconLoading" id ="loading-<%= favicon_id_and_title[1]%>"/>-->
           </div>
       <%- end %>
   </div>
@@ -61,6 +56,7 @@
 <button class="btn btn-info navigateButton" id="previousNote">Previous</button>
 <button class="btn btn-success navigateButton" id="nextNote"><b>Next</b></button>
 <span class="note-count navigateButton">loading...</span>
+<button id="show-all-notes-button" class="btn btn-info toggle inactive"> Show All Notes </button>
 <button id="showAllSitesButton" class="btn btn-warning navigateButton showList">Show All Sites</button>
 <button class="btn btn-warning navigateButton showList" id="noteViewMode" href="#">Research View</button>
 

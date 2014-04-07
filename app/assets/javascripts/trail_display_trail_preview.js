@@ -9,6 +9,7 @@ TPreview = function(){
     var commentBoxToggled = false;
     var halfPageViewScale = .6
     var currentComment;
+    var allNotesDisplayComments = {};
 
     this.height = 200;
     var halfPageViewToggled = false;
@@ -134,37 +135,88 @@ TPreview = function(){
         return $(iframeDocument);
     }
 
-    this.displayNote = function(note) {
+    this.displayNote = function(note, overrideScroll) {
+        removeCommentsForAllNotesDisplay();
         var $iDoc = thisTrailPreview.switchToNoteRevision(note);
         currentNote = note;
         thisTrailPreview.noteViewer.highlightNoteInList(note);
         if (!note.isBase) {
-            $iDoc.scrollTop(note.scrollY-300).scrollLeft(note.scrollX);
+            !overrideScroll && $iDoc.scrollTop(note.scrollY - 300).scrollLeft(note.scrollX);
             currentComment = displayComment(note.scrollY, note.scrollX);
             runWhenLoaded(function() {
-                var noteElements = thisTrailPreview.highlightNote(note);
+                var noteElements = thisTrailPreview.highlightSingleNote(note);
                 var noteLocation = noteElements.first().offset();
-                var scrollTop = noteLocation.top-300;
+                var scrollTop = noteLocation.top;
                 var scrollLeft = noteLocation.left;
-                if ((Math.abs(noteLocation.top - note.scrollY) > 50) || (Math.abs(noteLocation.left - note.scrollX) > 50)){
+                if ((Math.abs(noteLocation.top - note.scrollY) > 10) || (Math.abs(noteLocation.left - note.scrollX) > 10)){
                     console.log("correcting scroll", noteLocation.top, note.scrollY);
                     console.log(noteLocation.left, note.scrollX);
-                    $iDoc.scrollTop(scrollTop).scrollLeft(scrollLeft);
+                    !overrideScroll && $iDoc.scrollTop(scrollTop - 300).scrollLeft(scrollLeft);
                     currentComment.remove();
                     currentComment = displayComment(noteLocation.top, noteLocation.left);
                 }
-            },$iDoc[0]);
+            }, $iDoc[0]);
         }
         Toolbar.update(currentNote)
     };
 
-    this.highlightNote = function(note) {
-        return thisTrailPreview.highlightElements(thisTrailPreview.getNoteElements(note));
+    this.displayAllNotes = function() {
+        var site = thisTrailPreview.getCurrentNote().site;
+        allNotesDisplayComments[site.id] = {};
+        var lastNote = site.getLastNote();
+
+        if (!lastNote) {
+            // there are no notes for this site
+            return
+        } else {
+            $(document).trigger({type:"showAllNotesOn"});
+        }
+        var currentScroll = thisTrailPreview.getCurrentIDoc().scrollTop();
+        var $iDoc = thisTrailPreview.switchToNoteRevision(lastNote);
+        $iDoc.scrollTop(currentScroll);
+
+        currentComment && currentComment.remove() ;
+        $.each(site.getNotes(), function(i, note) {
+            if (!note.isBase) {
+                var noteElements = thisTrailPreview.getNoteElements(note, $iDoc);
+                if (noteElements.length > 0) {
+                    thisTrailPreview.highlightElements(noteElements);
+                    runWhenLoaded(function() {
+                        // the user may have switched to another site while waiting for this one to load
+                        if (allNotesDisplayComments[site.id]) {
+                            var noteLocation = noteElements.first().offset();
+                            var scrollTop = noteLocation.top;
+                            var scrollLeft = noteLocation.left;
+                            var comment = new Comment(note, scrollTop, scrollLeft, thisTrailPreview, $iDoc);
+                            allNotesDisplayComments[site.id][note.id] = comment;
+                        }
+                    }, $iDoc[0])
+                }
+            }
+        });
     };
 
-    this.getNoteElements = function(note) {
-        var siteIDoc = getNoteIDoc(note);
-        return $("wtHighlight[data-trail-id="+Trails.getCurrentTrailId()+"].current-highlight", siteIDoc)
+    this.turnOffAllNotesDisplay = function() {
+        var currentScroll = getIDoc(currentSiteFrame).scrollTop();
+        thisTrailPreview.displayNote(currentNote, true); // override scroll, so the page stays in the same position
+        getIDoc(currentSiteFrame).scrollTop(currentScroll);
+    }
+
+    function removeCommentsForAllNotesDisplay() {
+        $.each(allNotesDisplayComments, function(siteId, notesAndComments) {
+            $.each(notesAndComments, function(noteId, comment) {
+                comment.remove();
+            });
+        });
+        $(document).trigger({type:"showAllNotesOff"});
+    }
+
+    this.highlightSingleNote = function(note) {
+        return thisTrailPreview.highlightElements(thisTrailPreview.getNoteElements(note, getNoteIDoc(note)));
+    };
+
+    this.getNoteElements = function(note, siteIDoc) {
+        return $("wtHighlight[data-trail-id="+Trails.getCurrentTrailId()+"]." + note.clientSideId, siteIDoc)
     }
 
     this.showNextNote = function() {

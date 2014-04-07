@@ -1,3 +1,4 @@
+console.log("loaded scroll snap");
 /*!
  * jQuery Scrollstop Plugin v1.1.0
  * https://github.com/ssorallen/jquery-scrollstop
@@ -220,4 +221,3 @@ jQuery.easing.jswing=jQuery.easing.swing;jQuery.extend(jQuery.easing,{def:"easeO
        });
     };
 })( jQuery );
-

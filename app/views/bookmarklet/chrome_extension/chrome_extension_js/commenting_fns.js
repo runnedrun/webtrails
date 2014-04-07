@@ -67,9 +67,12 @@ function makeCommentOverlay(xPos, yPos, spacing, highlightedRange){
     var reachedFirstTextNode = false;
 
     $("wtHighlight").removeClass("current-highlight");
+
+    var clientSideId = generateClientSideId();
+
     $.each(nodes,function(i,node){
         if (i == 0 || !reachedFirstTextNode){
-            reachedFirstTextNode = markNodeForHighlight(node,highlightedRange.startOffset,node.length);
+            reachedFirstTextNode = markNodeForHighlight(node,highlightedRange.startOffset,node.length, clientSideId);
         }
         else if (i == (nodes.length-1)){
             markNodeForHighlight(node,0,highlightedRange.endOffset);
@@ -90,8 +93,8 @@ function makeCommentOverlay(xPos, yPos, spacing, highlightedRange){
     $(commentOverlay).append(commentBox);
     commentOverlay.offset({top: topPosition, left: leftPosition});
 
-    commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
-    $(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,leftPosition,topPosition));
+    commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,leftPosition,topPosition, clientSideId));
+    $(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,leftPosition,topPosition, clientSideId));
     commentBox.autosize();
     commentBox.focus();
     // the start offset indicates the offset from the beginning of the first text node,
@@ -100,34 +103,34 @@ function makeCommentOverlay(xPos, yPos, spacing, highlightedRange){
     return commentBox;
 }
 
-function postNoteAndComment(e,content,commentOverlay,xPos,yPos){
+function postNoteAndComment(e,content,commentOverlay,xPos,yPos, clientSideId){
     var code = (e.keyCode ? e.keyCode : e.which);
     if (code == 13 && !e.shiftKey){
-        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(), xPos, yPos);
+        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(), xPos, yPos, clientSideId);
         closeOverlay();
     }  else if (code == 27){
         closeOverlay();
     }
 }
 
-function postNoteAndCommentWithClosure(noteContent,commentOverlay, commentX, commentY) {
-    return function (e){postNoteAndComment(e,noteContent,commentOverlay,commentX,commentY)}
+function postNoteAndCommentWithClosure(noteContent,commentOverlay, commentX, commentY, clientSideId) {
+    return function (e){postNoteAndComment(e,noteContent,commentOverlay,commentX,commentY, clientSideId)}
 }
 
-function clickAwayWithClosure(noteContent,commentOverlay, commentX, commentY) {
-    return function (e){clickAway(e,noteContent,commentOverlay, commentX, commentY)}
+function clickAwayWithClosure(noteContent,commentOverlay, commentX, commentY, clientSideId) {
+    return function (e){clickAway(e,noteContent,commentOverlay, commentX, commentY, clientSideId)}
 }
 
-function saveNoteAndRefreshAWS(content,comment, commentLocationX, commentLocationY){
+function saveNoteAndRefreshAWS(content,comment, commentLocationX, commentLocationY, clientSideId){
     var noteOffsets = $("wtHighlight.highlightMe").first().offset();
     console.log("note offsets", noteOffsets);
-    var noteCountAtSave = Trails.incrementNoteCount();
+    Trails.incrementNoteCount();
     saveSiteToTrail(
         {content: content,
         comment: comment,
         comment_location_x: commentLocationX,
         comment_location_y: commentLocationY,
-        client_side_id: "client_side_id_"+ (Trails.getNoteCount() - 1),
+        client_side_id: clientSideId,
         scroll_x: noteOffsets.left, scroll_y: noteOffsets.top  - (TrailPreview.shown ?  TrailPreview.height + 25 : 0)}
     );
 }
@@ -141,15 +144,19 @@ function closeOverlay(){
     unhighlight_wtHighlights();
 }
 
-function clickAway(e,content,commentOverlay,commentX, commentY){
+function clickAway(e,content,commentOverlay,commentX, commentY, clientSideId){
     var clickedNode = $(e.target);
     if (clickedNode != commentOverlay && ($.inArray(e.target,commentOverlay.children())==-1)){
-        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(), commentX, commentY);
+        saveNoteAndRefreshAWS(content,commentOverlay.find("textarea").val(), commentX, commentY, clientSideId);
         closeOverlay(commentOverlay);
     }
 }
 
-function markNodeForHighlight(node,start_offset, end_offset){
+function generateClientSideId() {
+    return "client-side-id-"+ Trails.getNoteCount();
+}
+
+function markNodeForHighlight(node,start_offset, end_offset, clientSideId){
     if (isTextNode(node)){
         var contents = node.nodeValue;
         var highlighted_contents = contents.slice(start_offset,end_offset);
@@ -164,7 +171,7 @@ function markNodeForHighlight(node,start_offset, end_offset){
 
         // need the currentHighlight class to distinguish between this note, and previous notes that are still
         // in the html, but should not be highlighted
-        $(new_marker).addClass("highlightMe current-highlight");
+        $(new_marker).addClass("highlightMe current-highlight " + clientSideId);
         $(new_marker).attr("data-trail-id", Trails.getCurrentTrailId());
 
         new_marker.innerHTML = highlighted_contents;

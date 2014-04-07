@@ -71,6 +71,7 @@ body {
     width: 150px;
     background: #F0F0F0;
     display:none;
+    z-index: 4;
 }
 
 .comment-text {
@@ -83,12 +84,31 @@ body {
 
 /* note selector styles */
 
-.snap, .buffer {
-    position: relative;
-    border: 1px solid;
-    height:66.6px;
+.snap {
+    height:50px;
+    padding: 10px;
+}
+
+.note-content-cell {
+    width: 50%;
+}
+
+.note-content {
+    max-height: 1.2em;
+    line-height: 1.2em;
+    overflow: hidden;
+}
+
+.note-comment {
+    font-size: 12px;
+    overflow: hidden;
+    height: 34px; /* bootstrap adds 8px padding top and and bottom to the td, we need the total height to by 50px */
+}
+
+tr.buffer th {
+    height:50px;
     text-align: center;
-    padding-top: 15px;
+    paadding-top:15px;
 }
 
 .note-selector {
@@ -100,7 +120,8 @@ body {
     left: 0;
     z-index: 3;
     -webkit-mask-image: linear-gradient(rgba(0,0,0,0) -30%, rgba(0,0,0,1), rgba(0,0,0,0) 130%);
-    display: none;
+    visibility: hidden;
+    /*display: none;*/
 }
 
 .note-selector-background {
@@ -114,6 +135,11 @@ body {
     display: none;
 }
 
-.selected {
+.selected .note-content {
     font-size: 20px;
+}
+
+.note-selector-favicon {
+    padding-right: 8px;
+    height: 20px;
 }

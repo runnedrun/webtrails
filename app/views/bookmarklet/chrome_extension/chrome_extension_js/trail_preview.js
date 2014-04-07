@@ -107,7 +107,7 @@ function TPreview(
             }
             thisTrailPreview.runWhenLoaded(function() {
                 if (currentNote == note) {
-                    var noteElements = thisTrailPreview.highlightNote(note);
+                    var noteElements = thisTrailPreview.highlightSingleNote(note);
                     var noteLocation = noteElements.first().offset();
                     var scrollTop = noteLocation.top-100;
                     var scrollLeft = noteLocation.left;
@@ -121,7 +121,7 @@ function TPreview(
         })
     }
 
-    this.highlightNote = function(note) {
+    this.highlightSingleNote = function(note) {
         return thisTrailPreview.highlightElements(thisTrailPreview.getNoteElements(note));
     };
 

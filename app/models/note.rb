@@ -13,6 +13,7 @@ class Note < ActiveRecord::Base
     {
         :clientSideId => self.client_side_id,
         :comment => self.comment,
+        :content => self.content,
         :id => self.id,
         :scrollX => self.scroll_x,
         :scrollY => self.scroll_y,

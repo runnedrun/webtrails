@@ -387,6 +387,7 @@ Note = function(baseNoteObject, parentSite){
     this.update = function(baseNoteObject){
         this.id = baseNoteObject.id;
         this.comment = baseNoteObject.comment;
+        this.content = baseNoteObject.content;
         this.clientSideId = baseNoteObject.clientSideId
         this.scrollX = baseNoteObject.scrollX;
         this.scrollY = baseNoteObject.scrollY;

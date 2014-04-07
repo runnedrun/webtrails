@@ -47,6 +47,9 @@
     color: inherit;
     background: inherit;
     font: inherit;
+}
+
+.viewTrailToolbar .btn{
     margin: 0;
     padding: 5;
 }
@@ -158,14 +161,12 @@
 .noteWrapper {
 }
 
+siteDisplayDiv.loading {
+    background:url('/images/pacman.gif') no-repeat center;
+}
+
 iframe {
     border: 0px;
-    /*-moz-transition: all 2s;
-    -webkit-transition: all 2s;
-    -o-transition: all 2s;
-    -ms-transition: all 2s;
-    transition: all 2s;*/
-    background:url('/images/pacman.gif') no-repeat center;
 }
 
 .siteClickDiv {
@@ -235,6 +236,26 @@ iframe.shrunk {
     background-color: #E1E1E1;
     cursor: pointer;
 }
+/* overriding bootstrap default for buttons to enable toggling */
+
+.btn.toggle.inactive {
+    background: none;
+    background-position: 0;
+    color: inherit;
+}
+
+.btn.toggle.inactive:focus {
+    background: none;
+    background-position: 0;
+    color: inherit;
+}
+
+.btn.toggle.inactive:hover {
+    background: none;
+    background-position: 0;
+    color: inherit;
+}
+
 /*overriding the bootstrap default for table*/
 
 .table.noteWrapper {

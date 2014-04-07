@@ -111,6 +111,7 @@ function fetchSiteHtml() {
         NoteViewer = TrailPreview.noteViewer;
         Toolbar = new TToolBar(TrailPreview, PanelView, NoteViewer);
         Trails.switchToTrail(Trail.id);
+        $(".siteDisplayDiv").removeClass("loading");
     })
 }
 
