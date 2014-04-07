@@ -84,7 +84,7 @@ function fetchSiteHtml() {
                         console.log("failed to fetch");
                         if (callCount > 2) {
                             console.log("more than two retries for each html, failing");
-                            trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] =  "Sometimes things go wrong, please reload!";
+                            trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] = "<div class='row'> <h1 class='please-reload'> Sometimes sites don't load the first time, refresh the page to view this trial!</h1> </div>";
                             deferred.resolve();
                         } else {
                             retrieveHtml();

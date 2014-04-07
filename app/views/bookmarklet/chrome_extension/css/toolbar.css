@@ -27,7 +27,8 @@ body {
 }
 
 .fa-spinner.site-saving-spinner {
-    margin-left: 10px;
+    margin-left: 15px;
+    margin-top: 8px;
     visibility: hidden;
 }
 

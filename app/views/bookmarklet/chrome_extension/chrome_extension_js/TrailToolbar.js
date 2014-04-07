@@ -200,7 +200,7 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     };
 
     function setSaveButtonToSaving() {
-        saveSiteButton.html("Site saving").addClass("saving");
+        saveSiteButton.html("Saving").addClass("saving");
         siteSavingSpinner.css({
             "visibility": "visible"
         });
@@ -364,7 +364,6 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     }
 
     function checkForToolbarRelatedKeypress(e){
-        console.log("verifying keypress");
         var code = (e.keyCode ? e.keyCode : e.which);
         if (code == 27 && e.shiftKey) {    //tilda = 192, esc is code == 27
             showOrHide();
@@ -376,7 +375,6 @@ function WtToolbar(toolbarHtml, messageScreenHtml) {
     }
 
     function checkForToolbarRelatedKeyup(e) {
-        console.log("verifying keyup");
         var code = (e.keyCode ? e.keyCode : e.which);
         if (code == 18 && noteSelector && noteSelector.shown) {
             var selectedNote = noteSelector.getSelectedNote();

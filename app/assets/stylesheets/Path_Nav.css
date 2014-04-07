@@ -236,6 +236,11 @@ iframe.shrunk {
     background-color: #E1E1E1;
     cursor: pointer;
 }
+
+.please-reload {
+    text-align: center;
+}
+
 /* overriding bootstrap default for buttons to enable toggling */
 
 .btn.toggle.inactive {

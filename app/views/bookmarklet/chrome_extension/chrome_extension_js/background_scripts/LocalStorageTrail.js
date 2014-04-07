@@ -165,7 +165,8 @@ LocalStorageTrailAccess = new function(){
     this.getExtensionInitializationData = function() {
         var deferred = $.Deferred();
         chrome.storage.local.get(["trails", "currentTrailId", "authToken"], function(initializationObject) {
-            deferred.resolve(initializationObject);
+            var returnObject = $.extend({trails: {}}, initializationObject);
+            deferred.resolve(returnObject);
         });
         return deferred.promise()
     }
