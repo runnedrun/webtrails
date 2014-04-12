@@ -45,6 +45,7 @@ function TPreview(
     }
 
     this.initWithTrail = function(trailToPreview) {
+        console.log("initing with trail");
         currentTrail = trailToPreview;
         currentNote = currentTrail.getLastNote();
         if (currentNote && initialized) {
@@ -99,6 +100,9 @@ function TPreview(
         currentNote = note;
         if (note.id == -1) { return }; // if it's a special display note
         var deferredIdoc = thisTrailPreview.switchToNoteRevision(note, hidePreview);
+
+        $(document).trigger({type:"noteDisplayed", note: note});
+
         deferredIdoc.done(function($iDoc) {
             var body = $iDoc.find("body");
             body.scrollTop(note.scrollY-100).scrollLeft(note.scrollX);
@@ -109,12 +113,14 @@ function TPreview(
                 if (currentNote == note) {
                     var noteElements = thisTrailPreview.highlightSingleNote(note);
                     var noteLocation = noteElements.first().offset();
-                    var scrollTop = noteLocation.top-100;
-                    var scrollLeft = noteLocation.left;
-                    if ((Math.abs(noteLocation.top - note.scrollY) > 10) || (Math.abs(noteLocation.left - note.scrollX) > 10)){
-                        console.log("correcting scroll", noteLocation.top, note.scrollY);
-                        console.log(noteLocation.left, note.scrollX);
-                        body.scrollTop(scrollTop).scrollLeft(scrollLeft);
+                    if (noteLocation) {
+                        var scrollTop = noteLocation.top-100;
+                        var scrollLeft = noteLocation.left;
+                        if ((Math.abs(noteLocation.top - note.scrollY) > 10) || (Math.abs(noteLocation.left - note.scrollX) > 10)){
+                            console.log("correcting scroll", noteLocation.top, note.scrollY);
+                            console.log(noteLocation.left, note.scrollX);
+                            body.scrollTop(scrollTop).scrollLeft(scrollLeft);
+                        }
                     }
                 }
             },$iDoc[0]);
@@ -127,7 +133,7 @@ function TPreview(
 
     this.getNoteElements = function(note) {
         var siteIDoc = getSiteIDoc(note.site);
-        return $("wtHighlight[data-trail-id="+Trails.getCurrentTrailId()+"].current-highlight", siteIDoc)
+        return $("wtHighlight[data-trail-id="+note.site.trail.id+"].current-highlight", siteIDoc)
     }
 
     this.showNextNote = function() {
@@ -170,6 +176,13 @@ function TPreview(
         return $elements.css({
             "background": "yellow"
         })
+    }
+
+    this.clear = function() {
+        currentNote = false;
+        if (currentSiteFrame) {
+            currentSiteFrame.remove();
+        }
     }
 
     function displayComment() {
@@ -222,7 +235,6 @@ function TPreview(
         }
         thisTrailPreview.enableOrDisablePrevAndNextButtons(currentNote);
     }
-
     $(document).on("newNote", updateWithNewNote);
 
     nextNoteButton.disable = previousNoteButton.disable = function() {

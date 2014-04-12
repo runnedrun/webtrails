@@ -47,13 +47,24 @@ TrailsObject = function(trailsObject, currentTrailId){
     }
 
     this.updateTrails = function(localStorageTrailsObject){
-        $.each(localStorageTrailsObject,function(trailId,trailObject){
+        $.each(localStorageTrailsObject, function(trailId,trailObject){
             if (trails[trailId]){
                 trails[trailId].updateSites(trailObject);
             } else {
                 trails[trailId] = new Trail(trailObject, thisTrailsObject);
+                $(document).trigger({type:"trailAdded", trail: trails[trailId]});
             }
         })
+        $.each(trails, function(trailId, trail) {
+            if (!localStorageTrailsObject[trailId]) {
+                $(document).trigger({type:"trailDeleted", trail: trail});
+                delete trails[trailId];
+            }
+        })
+    };
+
+    this.requestTrailsUpdate = function() {
+        chrome.runtime.sendMessage({updateTrailsObject: true});
     };
 
     // these methods manipulate the note count for the current site, for the current trail

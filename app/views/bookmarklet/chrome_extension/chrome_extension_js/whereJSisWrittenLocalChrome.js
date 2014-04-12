@@ -3,8 +3,8 @@ console.log("initializing the toolbar");
 var faviconHolder,
     mouseDown = 0,
     TrailPreview = false,
-    webTrailsUrl = "http://www.webtrails.co";
-//    webTrailsUrl = "http://localhost:3000";
+//    webTrailsUrl = "http://www.webtrails.co";
+    webTrailsUrl = "http://localhost:3000";
     wt_auth_token = undefined;
 
 String.prototype.splice = function( idx, rem, s ) {
@@ -32,7 +32,7 @@ function initToolbar(initializationObject, htmlObject){
     console.log("init extension");
     initializeAutoResize();
 
-    Toolbar = new WtToolbar(decodeURI(htmlObject.toolbarHtml), decodeURI(htmlObject.messageScreenHtml));
+    Toolbar = new WtToolbar(decodeURI(htmlObject.toolbarHtml));
 
     chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         if (request.logOutAllTabs){
@@ -59,7 +59,7 @@ function initToolbar(initializationObject, htmlObject){
 function initializeTrails(baseTrailsObject, startingTrailId) {
     console.log("local storage response", baseTrailsObject);
     Trails = new TrailsObject(baseTrailsObject, startingTrailId);
-    Toolbar.updateToolbarWithTrails(Trails);
+    Toolbar.initializeToolbarWithTrails(Trails);
 }
 
 function getTrailDataFromLocalStorage(callback){

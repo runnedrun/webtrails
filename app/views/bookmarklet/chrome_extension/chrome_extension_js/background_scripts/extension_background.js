@@ -1,9 +1,9 @@
-//domain = "http://localhost:3000";
-//domain_name = "localhost";
-//resourceDownloaderAddress = "http://localhost:5000";
-resourceDownloaderAddress = "http://gentle-atoll-5058.herokuapp.com";
-domain = "http://www.webtrails.co";
-domain_name = "webtrails.co";
+domain = "http://localhost:3000";
+domain_name = "localhost";
+resourceDownloaderAddress = "http://localhost:5000";
+//resourceDownloaderAddress = "http://gentle-atoll-5058.herokuapp.com";
+//domain = "http://www.webtrails.co";
+//domain_name = "webtrails.co";
 message_sending = {}
 
 
@@ -118,24 +118,13 @@ function getToolbarIframeHtml(callback) {
         success: function(html) {
             toolbarDoc.innerHTML = html;
             var $html = $(toolbarDoc);
-            addTagsToHead($html, [bootstrapCss, toolbarCss, fontAwesomeCss])
+            addTagsToHead($html, [bootstrapCss, toolbarCss, fontAwesomeCss, messageScreenCss])
         }
     });
 
-    var deferredMessageScreenHtml = $.ajax({
-        url: "/html/message_screen.html",
-        type: "get",
-        success: function(html) {
-            messageScreenDoc.innerHTML = html;
-            var $html = $(messageScreenDoc);
-            addTagsToHead($html, [bootstrapCss, messageScreenCss, fontAwesomeCss]);
-        }
-    });
-
-    $.when.apply($, [deferredToolbarHtml, deferredMessageScreenHtml]).always(function(){
+    $.when.apply($, [deferredToolbarHtml]).always(function(){
         var fullToolbarHtml = encodeURI(toolbarDoc.outerHTML);
-        var fullMessageScreenHtml = encodeURI(messageScreenDoc.outerHTML);
-        callback(fullToolbarHtml, fullMessageScreenHtml);
+        callback(fullToolbarHtml);
     });
 }
 
@@ -198,11 +187,10 @@ chrome.runtime.onMessage.addListener(
         }
         if (request.getToolbarHtml) {
             console.log("getting toolbar html");
-            getToolbarIframeHtml(function(fullToolbarHtml, fullMessageScreenHtml){
+            getToolbarIframeHtml(function(fullToolbarHtml){
                 console.log("sending html response");
                 chrome.tabs.sendRequest(sender.tab.id, {htmlObject: {
                     toolbarHtml: fullToolbarHtml,
-                    messageScreenHtml: fullMessageScreenHtml
                 }});
             })
         }

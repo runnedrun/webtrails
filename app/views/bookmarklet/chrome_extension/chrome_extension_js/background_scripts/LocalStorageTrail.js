@@ -82,8 +82,9 @@ LocalStorageTrailAccess = new function(){
 
     this.onTrailDataChange = function(callback) {
         chrome.storage.onChanged.addListener(function(changes, namespace) {
-            for (key in changes) {
+            console.log("trail data changed, checking if we should fire callback");
 
+            for (key in changes) {
                 // only fire callback for trail object changes if there are not
                 // new notes or sites. Otherwise, wait for the revision html change
                 // to fire
@@ -99,18 +100,20 @@ LocalStorageTrailAccess = new function(){
                         $.each(newTrails, function(trailId, trailObject) {
                             if (oldTrails[trailId]){
                                 var oldSites = oldTrails[trailId].sites;
-                                var newSites = trailObject.sites;
-                                if (newSites.order !== oldSites.order) {
+                                var possiblyNewSites = trailObject.sites;
+                                var newSiteIds = arrayDiff(possiblyNewSites.order, oldSites.order)
+                                if (newSiteIds.length > 0) {
                                     fireCallback = false;
                                     return false
                                 }
 
                                 // check for new notes
-                                $.each(newSites.siteObjects, function(siteId, siteObject) {
+                                $.each(possiblyNewSites.siteObjects, function(siteId, siteObject) {
                                     if (oldSites.siteObjects[siteId]) {
-                                        var oldNotes = oldSites[siteId].notes;
-                                        var newNotes = siteObject.notes
-                                        if (newNotes.order !== oldNotes.order) {
+                                        var oldNotes = oldSites.siteObjects[siteId].notes;
+                                        var possiblyNewNotes = siteObject.notes;
+                                        var newNoteIds = arrayDiff(possiblyNewNotes.order, oldNotes.order)
+                                        if (newNoteIds.length > 0) {
                                             fireCallback = false;
                                             return false
                                         }
@@ -119,14 +122,19 @@ LocalStorageTrailAccess = new function(){
                             }
                         });
                         if (fireCallback) {
+                            console.log("firing trail change callback")
                             callback(storageChange.newValue);
                         }
                     }
                 } else {
+                    console.log("firing trail change callback")
                     LocalStorageTrailAccess.getTrails().done(callback);
                 }
             }
         })
+        function arrayDiff(a1, a2) {
+            return a1.filter(function(i) {return a2.indexOf(i) < 0;})
+        }
     };
 
     this.getSiteRevisionHtml = function(siteId, revisionNumber) {

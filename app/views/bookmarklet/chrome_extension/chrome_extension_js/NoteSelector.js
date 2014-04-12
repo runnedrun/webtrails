@@ -60,6 +60,10 @@ var NoteSelector = function(selectorContainer, background, trailPreview, viewpor
 
     }
 
+    this.remove = function() {
+        selectorContainer.html("")
+    }
+
     function insertNoteIntoSelector(note) {
         console.log("inserting note with id " + note.id);
         var noteElement = HTML.noteElement(note);
