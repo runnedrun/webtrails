@@ -82,7 +82,7 @@ function insertSaveButtonIntoNodeContent(highlightedTextRange){
     var firstHalfOfNode =  textNodeContent.slice(0,endOffset);
     var secondHalfOfNode =  textNodeContent.slice(endOffset);
     var saveSpan = $("<span class='inlineSaveButton webtrails'></span>");
-    saveSpan.html("Save note");
+    //    saveSpan.html("Save note");
     saveSpan.css("width", "0");
 
     var nodeToHighlight;

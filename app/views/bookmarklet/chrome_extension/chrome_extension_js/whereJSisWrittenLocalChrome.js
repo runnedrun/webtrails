@@ -41,12 +41,11 @@ function initToolbar(initializationObject, htmlObject){
         }
         if (request.logInAllTabs){
             console.log("signing in");
-            wt_auth_token = request.logInAllTabs[0]
-            var startingTrailId = request.logInAllTabs[1]
+            wt_auth_token = request.logInAllTabs.authToken;
+            var startingTrailId = request.logInAllTabs.startingTrailId;
+            var trailsObject = request.logInAllTabs.trailsObject;
             Toolbar.initSignedInExperience();
-            getTrailDataFromLocalStorage(function(trails) {
-                initializeTrails(trails, startingTrailId);
-            })
+            initializeTrails(trailsObject, startingTrailId);
         }
     });
 

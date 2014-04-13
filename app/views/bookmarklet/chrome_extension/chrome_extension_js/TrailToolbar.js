@@ -345,7 +345,7 @@ function WtToolbar(toolbarHtml) {
         console.log("initing signed out experience");
         var previewLoginButton = H.logInButton;
         showMessageScreen(T.loggedOutMessage(previewLoginButton));
-        i$.find("." + S.helpDiv + ".preview-login-button").click(signIn);
+        i$("." + S.helpDiv + ".preview-login-button").click(signIn);
 
         trailNameContainer.val("choose a trail");
         clearFaviconHolder();

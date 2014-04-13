@@ -1,3 +1,5 @@
+var extensionId = "licjjfdkiaomppkgbnodndielanmemej";
+
 $(function() {
   $("#trail-create-button").click(makeTrail);
     $("#trail-name").keypress(function(e) {
@@ -118,7 +120,10 @@ $(function() {
         data: {
             "id" : trailID
         },
-        success: function(){deleteTrailLocally(trailID);}
+        success: function(){
+            chrome.runtime.sendMessage(extensionId, {updateTrailsObject: true});
+            deleteTrailLocally(trailID);
+        }
     });
   }
 
@@ -149,6 +154,7 @@ function makeTrail(){
         },
         success: function(data) {
           // TODO: popup display of trail created or something
+          chrome.runtime.sendMessage(extensionId, {updateTrailsObject: true})
           location.reload(true);
         }
     });

@@ -1,7 +1,7 @@
 
 // the intitialization code for the trail display page
 // the rest of the functionality is split up in the various trail_display_<functionality>.js files
-
+var extensionId = "licjjfdkiaomppkgbnodndielanmemej";
 var currentSiteIndex=0;
 var currentSite;
 var Notes = {};

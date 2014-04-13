@@ -196,6 +196,18 @@ chrome.runtime.onMessage.addListener(
         }
     }
 );
+chrome.runtime.onMessageExternal.addListener(
+    function(request, sender, sendResponse) {
+        if (request.logInFromWebsite) {
+            console.log("getting a request to log in from the website");
+            signIn(request.logInFromWebsite);
+        }
+
+        if (request.updateTrailsObject) {
+            retrieveTrailData();
+        }
+    }
+);
 
 function retrieveTrailData(prefetchedHtml){
     console.log("fetching trail data now!");
@@ -258,9 +270,15 @@ function signOut(){
 }
 
 function signIn(wt_auth_token){
-    LocalStorageTrailAccess.setAuthToken(wt_auth_token);
-    setWtAuthTokenCookie(wt_auth_token);
-    sendSignInMessageToAllTabs();
+    LocalStorageTrailAccess.getAuthToken().done(function(auth_token) {
+        if(!auth_token) {
+            console.log("sending signed in message to all tabs");
+            retrieveTrailData();
+            LocalStorageTrailAccess.setAuthToken(wt_auth_token);
+            setWtAuthTokenCookie(wt_auth_token);
+            sendSignInMessageToAllTabs();
+        }
+    })
 }
 
 function signOutIfSignedOutOfWebpage(cookie){
@@ -275,7 +293,11 @@ function sendSignOutMessageToAllTabs(){
 
 function sendSignInMessageToAllTabs(){
     LocalStorageTrailAccess.getExtensionInitializationData().done(function(initObject) {
-        sendMessageToAllTabs({"logInAllTabs":[initObject.authToken, initObject.currentTrailId]})
+        sendMessageToAllTabs({"logInAllTabs":{
+            authToken: initObject.authToken,
+            startingTrailId: initObject.currentTrailId,
+            trailsObject: initObject.trails
+        }})
     })
 }
 

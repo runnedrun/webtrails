@@ -1,13 +1,13 @@
 CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, siteDocument) {
 
-    function saveNoteAndRefreshAWS(comment, noteOffsets){
+    function saveNoteAndRefreshAWS(comment, noteOffsets, clientSideId){
         var newNote = {
             site_id: currentNote.site.id,
             content: noteContent,
             comment: comment,
             comment_location_x: leftPosition,
             comment_location_y: topPosition,
-            client_side_id: "deprecated",
+            client_side_id: clientSideId,
             scroll_x: noteOffsets.left,
             scroll_y: noteOffsets.top,
             site_revision_number: currentNote.site.getNextRevisionNumber()
@@ -28,7 +28,8 @@ CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, si
         var clickedNode = $(e.target);
         if (clickedNode != commentOverlay && ($.inArray(e.target,commentOverlay.children())==-1)){
             closeOverlay(commentOverlay);
-            saveNoteAndRefreshAWS(commentOverlay.find("textarea").val());
+            var noteOffsets = $siteDocument.find("wtHighlight.highlightMe").first().offset();
+            saveNoteAndRefreshAWS(commentOverlay.find("textarea").val(), noteOffsets, clientSideId);
         }
     }
 
@@ -39,7 +40,7 @@ CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, si
             comment = commentOverlay.find("textarea").val();
             var noteOffsets = $siteDocument.find("wtHighlight.highlightMe").first().offset();
             closeOverlay();
-            saveNoteAndRefreshAWS(comment, noteOffsets);
+            saveNoteAndRefreshAWS(comment, noteOffsets, clientSideId);
         } else if(code == 27){
             closeOverlay();
         }
@@ -58,7 +59,7 @@ CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, si
             var unhighlighted_append = contents.slice(end_offset,contents.length);
 
             var new_marker = siteDocument.createElement("wtHighlight")
-            $(new_marker).addClass("highlightMe current-highlight").attr("data-trail-id", currentNote.site.trail.id);
+            $(new_marker).addClass("highlightMe current-highlight " + clientSideId).attr("data-trail-id", currentNote.site.trail.id);
 
             new_marker.innerHTML = highlighted_contents;
             var node_to_replace = node;
@@ -103,6 +104,12 @@ CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, si
 
         newNoteDisplay.click(clickJumpToNote);
         newNoteDisplay.find(".noteComment").click(makeNoteCommentEditable);
+    }
+
+    function generateClientSideId() {
+        var noteCount = Trails.getCurrentTrail().currentSiteNoteCount;
+        Trails.incrementNoteCount();
+        return "website-gen-client-side-id-" + noteCount;
     }
 
     function cleanHtmlForSaving() {
@@ -186,6 +193,9 @@ CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, si
     $(commentOverlay).append(commentDescription);
     $(commentOverlay).append(commentBox);
     var noteContent = String(highlightedRange);
+
+
+    var clientSideId = generateClientSideId()
 
     commentBox.keydown(postNoteAndComment);
     $siteDocument.mousedown(clickAway);

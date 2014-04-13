@@ -1,26 +1,30 @@
 console.log("loaded pre-processing");
 
+function removeNodes(nodes) {
+    var nodeList = [].slice.call(nodes, 0)
+    for (i in nodeList) { nodeList[i].remove() }
+}
+
 // Edits in-place
-function removeToolbarFromPage($htmlClone) {
-    $htmlClone.find('.webtrails').remove();
-    $htmlClone.find("body").css({
-        "margin-top": Toolbar.bodyMarginTop,
-        "position": Toolbar.bodyPosition,
-    });
+function removeToolbarFromPage(htmlClone) {
+    removeNodes(htmlClone.querySelectorAll('.webtrails'));
+    var body = htmlClone.querySelector("body");
+    body.style["margin-top"] = Toolbar.bodyMarginTop;
+    body.style["position"] = Toolbar.bodyPosition;
 }
 
 function removeAllUnusedTags($htmlClone){
-    $htmlClone.find("script").remove();
-    $htmlClone.find("noscript").remove();
-    $htmlClone.find("meta").remove();
+    removeNodes($htmlClone.querySelectorAll("script"));
+    removeNodes($htmlClone.querySelectorAll("noscript"));
+    removeNodes($htmlClone.querySelectorAll("meta"));
 }
 
 function getCurrentSiteHTML(){
-    var htmlElement = document.getElementsByTagName('html')[0];
-    var htmlClone = $(htmlElement).clone();
+    var htmlElement = document.querySelector('html');
+    var htmlClone = htmlElement.cloneNode(true);
     if (!(typeof Toolbar === "undefined")) removeToolbarFromPage(htmlClone); // edits in-place
     removeAllUnusedTags(htmlClone);
-    var processedHtml = htmlClone[0]; //gets the element, not the jquery object
+    var processedHtml = htmlClone; //gets the element, not the jquery object
     return processedHtml.outerHTML;
 }
 
@@ -32,18 +36,24 @@ function parsePageBeforeSavingSite(resp){
     var currentHTML = getCurrentSiteHTML();
     var html_attributes = {};
 
-    $.each($("html")[0].attributes,function(i,attribute){
-        html_attributes[attribute.name] = attribute.value;
-    });
+    var realHtmlAttributes = document.querySelector("html").attributes
 
-    $.each($.makeArray(document.styleSheets),function(i,stylesheet){
-        var owner = stylesheet.ownerNode
+    for (var attr, i=0, attrs=realHtmlAttributes, l=attrs.length; i<l; i++){
+        attr = attrs.item(i)
+        html_attributes[attr.nodeName] = attr.nodeValue;
+    }
+
+    var styleSheets = document.styleSheets;
+    var styleSheetList = [].slice.call(styleSheets, 0);
+    for (i in styleSheetList) {
+        var styleSheet = styleSheetList[i];
+        var owner = styleSheet.ownerNode
         if (owner.nodeName == "LINK"){
             stylesheetHrefs.push(owner.href);
         }else if(owner.nodeName == "STYLE"){
             stylesheetContents.push(owner.innerHTML);
         }
-    });
+    }
 
     chrome.runtime.sendMessage({
         parseAndResolve:{
@@ -64,8 +74,8 @@ function parsePageBeforeSavingSite(resp){
         }
     }, function(response){
         console.log("page_preprocessing. parseAndResolve came back!");
-        if (resp.update_on_finish) {
-            updateTrailDataInLocalStorage();
-        }
+//        if (resp.update_on_finish) {
+//            updateTrailDataInLocalStorage();
+//        }
     });
 }

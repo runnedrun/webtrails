@@ -62,6 +62,7 @@ Request = new function(){
             },
             success: function(resp) {
                 thisRequest.mirrorHtml(newNote, currentNote, currentHtml, function() {
+                    chrome.runtime.sendMessage(extensionId, {updateTrailsObject: true});
                     callback(resp)
                 })
             }
@@ -72,6 +73,7 @@ Request = new function(){
         $.ajax({
             url: ResourceDowloaderDomain + "/resource_downloader",
             type: "post",
+            beforeSend: signRequestWithWtAuthTokenInHeader,
             data: {
                 "siteID": currentNote.site.id, //this is probably unnecesary
                 "html": {html: currentHtml},
@@ -95,4 +97,9 @@ Request = new function(){
             }
         })
     };
+
+    function signRequestWithWtAuthTokenInHeader(xhr){
+        xhr.setRequestHeader("WT_AUTH_TOKEN", readCookie("wt_auth_token"));
+        xhr.setRequestHeader("Accept","application/json");
+    }
 }();
