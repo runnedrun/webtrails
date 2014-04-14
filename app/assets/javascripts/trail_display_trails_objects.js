@@ -4,10 +4,10 @@ TrailsObject = function(trailsObject, currentTrailId){
     var trails = {}
     var thisTrailsObject = this;
 
-    this.switchToTrail = function(newTrailId){
+    this.switchToTrail = function(newTrailId, startingSiteId, startingNoteId){
         currentTrailId = newTrailId;
         console.log("switching to trail:", newTrailId);
-        TrailPreview.initWithTrail(this.getCurrentTrail());
+        TrailPreview.initWithTrail(this.getCurrentTrail(), startingSiteId, startingNoteId);
     }
 
     this.getTrail = function(trailId) {

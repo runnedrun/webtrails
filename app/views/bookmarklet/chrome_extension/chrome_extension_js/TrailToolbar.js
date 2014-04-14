@@ -271,7 +271,6 @@ function WtToolbar(toolbarHtml) {
         siteSavingSpinner.css({
             "visibility": "hidden"
         });
-        siteSavingSpinner.hide();
         saveSiteButton.click(function() {
             open(webTrailsUrl + "/trails/" + trailId + "#" + siteId, "_blank");
         });
@@ -296,7 +295,7 @@ function WtToolbar(toolbarHtml) {
 
     function showMessageScreen(message, explanation) {
         i$("." + S.helpMessage).html(message);
-        i$("." + S.helpExplanation).html(explanation);
+        i$("." + S.helpExplanation).html(explanation || "");
         // cant' use show, as the css styles may not have been applied yet
         i$("." + S.helpDiv).css({display: "block"});
     }
@@ -345,7 +344,7 @@ function WtToolbar(toolbarHtml) {
         console.log("initing signed out experience");
         var previewLoginButton = H.logInButton;
         showMessageScreen(T.loggedOutMessage(previewLoginButton));
-        i$("." + S.helpDiv + ".preview-login-button").click(signIn);
+        i$("." + S.helpMessage + " .preview-login-button").click(signIn);
 
         trailNameContainer.val("choose a trail");
         clearFaviconHolder();
@@ -419,10 +418,28 @@ function WtToolbar(toolbarHtml) {
             visibility: "hidden"
         });
         trailPreview.hide();
+        if (noteSelector) {
+            noteSelector.hide();
+        }
         shown = false;
         $(".inlineSaveButton").remove();
         siteBody.focus();
         closeOverlay();
+    }
+
+    function showOrHideNoteSelector() {
+        if (noteSelector && shown) {
+            if (noteSelector.shown) {
+                var selectedNote = noteSelector.getSelectedNote();
+                if (selectedNote && (selectedNote !== trailPreview.getCurrentNote())){
+                    trailPreview.displayNote(noteSelector.getSelectedNote());
+                    trailPreview.enableOrDisablePrevAndNextButtons(trailPreview.getCurrentNote());
+                }
+                noteSelector.hide();
+            } else {
+                noteSelector.show();
+            }
+        }
     }
 
     function clearFaviconHolder() {
@@ -430,8 +447,11 @@ function WtToolbar(toolbarHtml) {
     }
 
     function checkForToolbarRelatedKeypress(e){
+        console.log("checking keypress");
         var code = (e.keyCode ? e.keyCode : e.which);
+        console.log("key is " + code);
         if (code == 27 && e.shiftKey) {    //tilda = 192, esc is code == 27
+            console.log("showing or hiding");
             showOrHide();
         }
 
@@ -458,10 +478,11 @@ function WtToolbar(toolbarHtml) {
         thisToolbar.initSignedOutExperience()
     }
 //
-    $(document.body).keydown(checkForToolbarRelatedKeypress);
-    $(document.body).keyup(checkForToolbarRelatedKeyup);
-    thisToolbar.getIDoc(toolbarFrame).keydown(checkForToolbarRelatedKeypress);
-    thisToolbar.getIDoc(toolbarFrame).keyup(checkForToolbarRelatedKeyup);
+//    $(document.body).keydown(checkForToolbarRelatedKeypress);
+//    $(document.body).keyup(checkForToolbarRelatedKeyup);
+//    thisToolbar.getIDoc(toolbarFrame).keydown(checkForToolbarRelatedKeypress);
+//    thisToolbar.getIDoc(toolbarFrame).keyup(checkForToolbarRelatedKeyup);
+
 
     chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         if (request.checkingDownloadStatus){
@@ -473,6 +494,12 @@ function WtToolbar(toolbarHtml) {
         if (request.downloadTimedOut) {
             butterBarNotification("Problem saving site, may not have saved correctly.");
             setSaveButtonToSaved();
+        }
+        if (request.openOrCloseToolbar) {
+            showOrHide();
+        }
+        if (request.showNoteScroller) {
+            showOrHideNoteSelector();
         }
     })
 

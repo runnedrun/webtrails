@@ -148,3 +148,7 @@ tr.buffer th {
     padding-right: 8px;
     height: 20px;
 }
+
+.note-selector .table {
+    margin-bottom: 0px;
+}

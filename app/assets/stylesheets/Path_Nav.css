@@ -105,7 +105,8 @@
 
 .siteFaviconsHolder{
     display:inline-block;
-    width: 300px;
+    width: 25%;
+    max-width: 300px;
     white-space: nowrap;
     overflow: hidden;
     vertical-align: middle;
@@ -114,7 +115,7 @@
 .siteFavicons{
     display:inline-block;
     position:relative;
-    min-width:300px;
+    width:100%;
     text-align:left;
     border: 1px solid #ccc;
     border-radius: 5px;

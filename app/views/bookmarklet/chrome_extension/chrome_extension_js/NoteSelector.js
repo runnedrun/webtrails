@@ -67,12 +67,25 @@ var NoteSelector = function(selectorContainer, background, trailPreview, viewpor
     function insertNoteIntoSelector(note) {
         console.log("inserting note with id " + note.id);
         var noteElement = HTML.noteElement(note);
+        noteElement.click(displayClickedNoteInTrailPreview);
         if (noNotesDisplay) {
             noNotesDisplay.remove();
             noNotesDisplay = undefined;
         }
         containerFooter.before(noteElement);
         noteElements.push(noteElement);
+    }
+
+    function displayClickedNoteInTrailPreview(e) {
+        var noteId = $(e.delegateTarget).data("note-id");
+        var siteId = $(e.delegateTarget).data("site-id");
+        var note = Trails.getCurrentTrail().getSite(siteId).getNote(noteId);
+        if (note) {
+            // note Id is not defined if the user clicks on a buffer element
+            trailPreview.displayNote(note);
+            trailPreview.enableOrDisablePrevAndNextButtons();
+            thisNoteSelector.hide();
+        }
     }
 
     function getNotePosition(scrollTop) {

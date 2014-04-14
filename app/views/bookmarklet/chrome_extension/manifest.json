@@ -48,6 +48,22 @@
     "externally_connectable": {
         "matches": ["*://*.webtrails.co/*", "http://localhost:3000/*"]
     },
+    "commands": {
+        "open-or-close-toolbar": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+P",
+                "mac": "Command+Shift+P"
+            },
+            "description": "Open or close the Webtrails toolbar."
+        },
+        "show-note-scroller": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+E",
+                "mac": "Command+Shift+E"
+            },
+            "description": "Show the note selection view."
+        }
+    },
     "web_accessible_resources" : ["chrome_extension_js/whereJSisWrittenLocalChrome.js","chrome_extension_js/toolbar_ui.js"
         ,"chrome_extension_js/ajax_fns.js","chrome_extension_js/smart_grab.js",
         "chrome_extension_js/search_and_highlight.js","chrome_extension_js/autoresize.js", "chrome_extension_js/ui_fns.js",

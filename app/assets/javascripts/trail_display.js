@@ -26,16 +26,17 @@ $(function(){
         return;
     }
 
-    fetchSiteHtml();
+    //    check for hash to set correct site
+    var startingSiteId = false
+    if (window.location.hash) {
+        var hash = window.location.hash.substring(1).split("-");
+        var siteIdString = hash[0];
+        var noteIdString = hash[1];
+        var startingSiteId = siteIdString && parseInt(siteIdString);
+        var startingNoteId = noteIdString && parseInt(noteIdString);
+    }
 
-
-    //check for hash to set correct site
-//    if (window.location.hash) {
-//        var hash = window.location.hash.substring(1);
-//        var currentSiteIndex = parseInt(hash) || 0;
-//
-//    }
-//    var currentSiteID = String(siteIDs[currentSiteIndex]);
+    fetchSiteHtml(startingSiteId, startingNoteId);
 
     rangy.init();
     initializeAutoResize();
@@ -44,25 +45,13 @@ $(function(){
     makeNotesDragable();
 });
 
-function initializeNoteTaking(siteID){
-    console.log("initializing note taking")
-    var iframeDocumentBeingInitialized = $("#"+String(siteID))[0].contentWindow.document;
-    $(iframeDocumentBeingInitialized.body).mousedown(function() {
-        mouseDown=1;
-    });
-    $(iframeDocumentBeingInitialized.body).mouseup(function(){
-        mouseDown=0;
-    });
-    $(iframeDocumentBeingInitialized).mousedown(possibleHighlightStart);
-}
-
 function removeLoadingFromSite(siteID) {
     console.log("removing loading from site:", siteID);
     $('#loading-' + siteID).remove();
     $('iframe#' + siteID).css('background-image', 'none');
 }
 
-function fetchSiteHtml() {
+function fetchSiteHtml(startingSiteId, startingNoteId) {
     var deferreds = $.map(trailDisplayHash.sites.siteObjects, function(site,id){
         return $.map(site.revisionUrls, function(url, revisionNumber) {
             var deferred = $.Deferred();
@@ -84,7 +73,12 @@ function fetchSiteHtml() {
                         console.log("failed to fetch");
                         if (callCount > 2) {
                             console.log("more than two retries for each html, failing");
-                            trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] = "<div class='row'> <h1 class='please-reload'> Sometimes sites don't load the first time, refresh the page to view this trial!</h1> </div>";
+                            trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] =
+                                "<div class='row'>" +
+                                    " <h1 class='please-reload' style='text-align: center; margin-top: 200px;'>" +
+                                        "Sometimes sites don't load the first time, refresh the page to view this trail!" +
+                                    "</h1> " +
+                                "</div>";
                             deferred.resolve();
                         } else {
                             retrieveHtml();
@@ -110,18 +104,8 @@ function fetchSiteHtml() {
         PanelView = new PanelView(TrailPreview);
         NoteViewer = TrailPreview.noteViewer;
         Toolbar = new TToolBar(TrailPreview, PanelView, NoteViewer);
-        Trails.switchToTrail(Trail.id);
+        Trails.switchToTrail(Trail.id, startingSiteId, startingNoteId);
         $(".siteDisplayDiv").removeClass("loading");
-    })
-}
-
-
-// this is an attempt to fix the weird highligh/scroll bug which pops up when you go into not view mode
-function lockScrollPositionOfSiteDisplayDiv(){
-    console.log("locking scroll position");
-    $(".siteDisplayDiv").scroll(function(e){
-        console.log("scrolleddddd");
-//            e.target.scrollTop = 0;
     })
 }
 

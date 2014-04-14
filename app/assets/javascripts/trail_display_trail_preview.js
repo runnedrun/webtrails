@@ -115,10 +115,14 @@ TPreview = function(){
         });
     }
 
-    this.initWithTrail = function(trailToPreview) {
+    this.initWithTrail = function(trailToPreview, startingSiteId, startingNoteId) {
         currentTrail = trailToPreview;
         if (trailToPreview.getFirstSite()) {
-            currentNote = new BaseRevisionNote(trailToPreview.getFirstSite());
+            var startingSite =
+                (startingSiteId && trailToPreview.getSite(startingSiteId)) || trailToPreview.getFirstSite();
+            var currentNote =
+                (startingNoteId && startingSite.getNote(startingNoteId)) || new BaseRevisionNote(startingSite);
+
             this.displayNote(currentNote);
         } else if (currentSiteFrame){
             // for multitrail display, whenever I get around to making it
@@ -139,6 +143,7 @@ TPreview = function(){
         removeCommentsForAllNotesDisplay();
         var $iDoc = thisTrailPreview.switchToNoteRevision(note);
         currentNote = note;
+        window.location.hash = note.site.id + "-" + note.id;
         thisTrailPreview.noteViewer.highlightNoteInList(note);
         if (!note.isBase) {
             !overrideScroll && $iDoc.scrollTop(note.scrollY - 300).scrollLeft(note.scrollX);
@@ -146,14 +151,16 @@ TPreview = function(){
             runWhenLoaded(function() {
                 var noteElements = thisTrailPreview.highlightSingleNote(note);
                 var noteLocation = noteElements.first().offset();
-                var scrollTop = noteLocation.top;
-                var scrollLeft = noteLocation.left;
-                if ((Math.abs(noteLocation.top - note.scrollY) > 10) || (Math.abs(noteLocation.left - note.scrollX) > 10)){
-                    console.log("correcting scroll", noteLocation.top, note.scrollY);
-                    console.log(noteLocation.left, note.scrollX);
-                    !overrideScroll && $iDoc.scrollTop(scrollTop - 300).scrollLeft(scrollLeft);
-                    currentComment.remove();
-                    currentComment = displayComment(noteLocation.top, noteLocation.left);
+                if (noteLocation){
+                    var scrollTop = noteLocation.top;
+                    var scrollLeft = noteLocation.left;
+                    if ((Math.abs(noteLocation.top - note.scrollY) > 10) || (Math.abs(noteLocation.left - note.scrollX) > 10)){
+                        console.log("correcting scroll", noteLocation.top, note.scrollY);
+                        console.log(noteLocation.left, note.scrollX);
+                        !overrideScroll && $iDoc.scrollTop(scrollTop - 300).scrollLeft(scrollLeft);
+                        currentComment.remove();
+                        currentComment = displayComment(noteLocation.top, noteLocation.left);
+                    }
                 }
             }, $iDoc[0]);
         }

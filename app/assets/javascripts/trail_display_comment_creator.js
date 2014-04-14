@@ -107,9 +107,9 @@ CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, si
     }
 
     function generateClientSideId() {
-        var noteCount = Trails.getCurrentTrail().currentSiteNoteCount;
-        Trails.incrementNoteCount();
-        return "website-gen-client-side-id-" + noteCount;
+        var d = new Date();
+        var n = d.getTime();
+        return "client-side-id-" + n;
     }
 
     function cleanHtmlForSaving() {

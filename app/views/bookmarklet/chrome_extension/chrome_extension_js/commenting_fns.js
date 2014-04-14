@@ -153,7 +153,9 @@ function clickAway(e,content,commentOverlay,commentX, commentY, clientSideId){
 }
 
 function generateClientSideId() {
-    return "client-side-id-"+ Trails.getNoteCount();
+    var d = new Date();
+    var n = d.getTime();
+    return "client-side-id-" + n
 }
 
 function markNodeForHighlight(node,start_offset, end_offset, clientSideId){

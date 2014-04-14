@@ -194,8 +194,27 @@ chrome.runtime.onMessage.addListener(
                 }});
             })
         }
+        if (request.iframeToolBarKeyPress) {
+            chrome.tabs.sendRequest(sender.tab.id, {iframeToolBarKeyPress: request.iframeToolBarKeyPress});
+        }
     }
 );
+
+chrome.commands.onCommand.addListener(function(command) {
+    console.log('got command', command);
+    if (command == "open-or-close-toolbar") {
+        chrome.tabs.getSelected(function(tab) {
+            chrome.tabs.sendRequest(tab.id, {openOrCloseToolbar: true});
+        })
+    }
+
+    if (command == "show-note-scroller") {
+        chrome.tabs.getSelected(function(tab) {
+            chrome.tabs.sendRequest(tab.id, {showNoteScroller: true});
+        })
+    }
+});
+
 chrome.runtime.onMessageExternal.addListener(
     function(request, sender, sendResponse) {
         if (request.logInFromWebsite) {

@@ -33,6 +33,15 @@ if (!isTopFrame && !isWtElement) {
     })
 }
 
+//window.onkeyup = function(e) {
+//    console.log("picking up keypress from iframe");
+//    var code = (e.keyCode ? e.keyCode : e.which);
+//    if ((code == 27 || code == 18) && e.shiftKey) {    //tilda = 192, esc is code == 27
+//        chrome.runtime.sendMessage({iframeToolBarKeyPress: {keyCode: code, shiftKey: true}});
+//    }
+//}
+
+
 
 function extend(){
     for(var i=1; i<arguments.length; i++)
