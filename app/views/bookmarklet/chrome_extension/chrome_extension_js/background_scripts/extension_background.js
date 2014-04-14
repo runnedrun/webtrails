@@ -1,10 +1,10 @@
-domain = "http://localhost:3000";
-domain_name = "localhost";
-resourceDownloaderAddress = "http://localhost:5000";
-//resourceDownloaderAddress = "http://gentle-atoll-5058.herokuapp.com";
-//domain = "http://www.webtrails.co";
-//domain_name = "webtrails.co";
-//message_sending = {}
+//domain = "http://localhost:3000";
+//domain_name = "localhost";
+//resourceDownloaderAddress = "http://localhost:5000";
+resourceDownloaderAddress = "http://gentle-atoll-5058.herokuapp.com";
+domain = "http://www.webtrails.co";
+domain_name = "webtrails.co";
+message_sending = {}
 
 
 var scriptsToBeInjected = ["jquery.js", "dropdown.js", "disable_selection.js", "rangy-core.js", "page_preprocessing.js",

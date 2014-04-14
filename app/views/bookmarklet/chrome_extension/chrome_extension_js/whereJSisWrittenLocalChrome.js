@@ -3,8 +3,8 @@ console.log("initializing the toolbar");
 var faviconHolder,
     mouseDown = 0,
     TrailPreview = false,
-//    webTrailsUrl = "http://www.webtrails.co";
-    webTrailsUrl = "http://localhost:3000";
+    webTrailsUrl = "http://www.webtrails.co";
+//    webTrailsUrl = "http://localhost:3000";
     wt_auth_token = undefined;
 
 String.prototype.splice = function( idx, rem, s ) {
