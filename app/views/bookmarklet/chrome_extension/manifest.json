@@ -1,6 +1,6 @@
 {
     "name": "Webtrails",
-    "version": "3.0.8",
+    "version": "3.1.0",
     "manifest_version": 2,
     "description": "The chrome extension for webtrails.co",
     "browser_action": {
@@ -51,8 +51,8 @@
     "commands": {
         "open-or-close-toolbar": {
             "suggested_key": {
-                "default": "Ctrl+Shift+P",
-                "mac": "Command+Shift+P"
+                "default": "Ctrl+Shift+K",
+                "mac": "Command+Shift+K"
             },
             "description": "Open or close the Webtrails toolbar."
         },

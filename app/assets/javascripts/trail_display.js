@@ -62,7 +62,7 @@ function fetchSiteHtml(startingSiteId, startingNoteId) {
                     url: url,
                     type: "get",
                     dataType: "html",
-                    crossDomain: true,
+//                    crossDomain: true,
                     success: function(resp){
                         console.log("succceded in fetch");
                         trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] =  resp;

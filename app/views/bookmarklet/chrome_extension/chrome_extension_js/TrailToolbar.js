@@ -348,6 +348,7 @@ function WtToolbar(toolbarHtml) {
 
         trailNameContainer.val("choose a trail");
         clearFaviconHolder();
+        clearTrailDropdown();
 
         loginButton.show();
         logoutButton.hide();
@@ -444,6 +445,9 @@ function WtToolbar(toolbarHtml) {
 
     function clearFaviconHolder() {
         faviconContainer.html("");
+    }
+    function clearTrailDropdown() {
+        trailsDropdownList.html("")
     }
 
     function checkForToolbarRelatedKeypress(e){
