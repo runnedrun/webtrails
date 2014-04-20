@@ -32,14 +32,14 @@
 .viewTrailToolbar {
     background: #F0F0F0;
     border: none;
-    font-size: 14px;
+    /*font-size: 14px;*/
     color: #333;
-    width: 100%;
+    /*width: 100%;*/
     line-height: 25px;
-    height: 7%;
-    text-align: center;
-    position: fixed;
-    bottom: 0;
+    height: 44px;
+    /*text-align: center;*/
+    /*position: fixed;*/
+    /*bottom: 0;*/
     z-index: 1000;
 }
 
@@ -49,23 +49,27 @@
     font: inherit;
 }
 
-.viewTrailToolbar .btn{
-    margin: 0;
-    padding: 5;
+/*.viewTrailToolbar .btn{*/
+    /*margin: 0;*/
+    /*padding: 5;*/
+/*}*/
+
+.navigateButton.showList {
+    border: none;
 }
 
-.navigateButton.showList{
-    border: none;
+#show-all-notes-button {
+    border: solid, 2px;
 }
 
 .navigateButton#nextNote{
     border-color: #333;
-    margin-top: 2px;
+    /*margin-top: 2px;*/
 }
 
 .navigateButton#previousNote{
     border-color: #333;
-    margin-top: 2px;
+    /*margin-top: 2px;*/
 }
 
 .viewTrailToolbar .chevronButton {
@@ -73,7 +77,7 @@
 }
 
 .navigateButton#removeSite {
-
+    display: none;
 }
 
 .faviconContainer {
@@ -104,12 +108,10 @@
 }
 
 .siteFaviconsHolder{
-    display:inline-block;
-    width: 25%;
-    max-width: 300px;
     white-space: nowrap;
     overflow: hidden;
     vertical-align: middle;
+    margin-top:12px;
 }
 
 .siteFavicons{
@@ -242,7 +244,28 @@ iframe.shrunk {
     text-align: center;
 }
 
-/* overriding bootstrap default for buttons to enable toggling */
+.left-side-of-carousel {
+    float: left;
+}
+
+.right-side-of-carousel {
+    float: right;
+}
+
+.go-to-trails {
+    font-size: 18px;
+}
+
+#goToSite {
+    margin-left: 5px;
+}
+
+/* overriding bootstrap default for the trash icon */
+i.icon-trash.delete-site-icon {
+    margin-top: 0px;
+}
+
+/* overriding bootstrap default for buttons to nable toggling */
 
 .btn.toggle.inactive {
     background: none;

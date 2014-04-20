@@ -1,5 +1,5 @@
-//ResourceDowloaderDomain = "http://localhost:5000";
-ResourceDowloaderDomain = "http://webtrails.co";
+ResourceDowloaderDomain = "http://localhost:5000";
+//ResourceDowloaderDomain = "http://webtrails.co";
 
 Request = new function(){
     var thisRequest = this;

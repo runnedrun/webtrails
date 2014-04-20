@@ -116,14 +116,8 @@ Comment = function(note, top, left, trailPreview, $siteDocument) {
             commentContainer.append(editButton);
         }
 
-    //    var overlayWidth = getComputedStyleOfElementInIframe(commentOverlay,"width");
-//        var overlayHeightString = getComputedStyleOfElementInIframe(commentContainer[0],"height");
-//        var overlayHeightFloat = parseFloat(overlayHeightString.slice(0,overlayHeightString.length -2));
-
         var topPosition  =  top - spacing;
-    //    if (topPosition < 0) {
-    //        topPosition = yPos + spacing * 2;
-    //    }
+
         var offsetFromBottom = $siteDocument.height() - top + spacing;
 
         var leftPosition = left;

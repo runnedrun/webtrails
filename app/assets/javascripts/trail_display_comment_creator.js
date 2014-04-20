@@ -96,16 +96,6 @@ CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, si
         $siteDocument.find("wtHighlight.highlightMe").removeClass("highlightMe").css("background","none");
     }
 
-    function addNoteToNoteList(siteID, noteHtml){
-        console.log("note html",noteHtml);
-        var noteDisplays = $(".noteInfo[data-site-id="+String(siteID)+"]");
-        //insert the new note after the last note with the same siteID
-        var newNoteDisplay = noteDisplays.last().after(noteHtml);
-
-        newNoteDisplay.click(clickJumpToNote);
-        newNoteDisplay.find(".noteComment").click(makeNoteCommentEditable);
-    }
-
     function generateClientSideId() {
         var d = new Date();
         var n = d.getTime();

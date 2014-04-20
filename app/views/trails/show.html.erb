@@ -35,29 +35,64 @@
           <%- end %>
       </table>
     </div>
-<div class="viewTrailToolbar">
+<nav class="navbar navbar-justified viewTrailToolbar navbar-fixed-bottom" role="navigation">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <!--<div class="navbar-header">-->
 
-<a class="btn btn-mini navigateButton" id="goToAll" href="<%= Webtrails::Application::AJAX_REQUEST_URL %>" target="_blank">All Trails</a>
-<button class="btn btn-mini chevronButton" id="previousSite"> <i class="icon-chevron-left"> </i> </button>
-<div class="siteFaviconsHolder">
-  <div class="siteFavicons">
-      <%- @favicon_urls_with_ids_and_titles.each_with_index do |favicon_id_and_title,i| %>
-          <div class="faviconContainer favicon<%= favicon_id_and_title[1]%>">
-            <img class="faviconImage click-to-change-site" src="<%= favicon_id_and_title[0] %>" id="favicon<%= favicon_id_and_title[1] %>" data-site-id="<%= favicon_id_and_title[1] %>" data-ot="<%= @sites[i].title%>" data-ot-delay="0" data-ot-tip-joint="bottom" data-ot-style="dark" data-site-url="<%= @sites[i].url%>" data-site-index="<%= i %>"/>
-          </div>
-      <%- end %>
+      <!--</div>-->
+
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav navbar-left">
+            <li>
+              <a class="navbar-link go-to-trails glyphicon glyphicon-user" href="<%= Webtrails::Application::AJAX_REQUEST_URL %>" target="_blank">
+              </a>
+            </li>
+            <li>
+                <p class="navbar-text">
+                  <%= @trail.name %>
+                </p>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+              <button class="btn btn-xs navbar-btn" id="goToSite">Visit Site</button>
+            </li>
+
+            <li>
+              <button class="btn btn-danger btn-xs navbar-btn" id="removeSite">
+                <span class="glyphicon glyphicon-trash"></span> Site
+              </button>
+            </li>
+              <li>
+                <button class="btn btn-info btn-sm navbar-btn" id="previousNote">Previous</button>
+              </li>
+              <li>
+                <button class="btn btn-success btn-sm navbar-btn" id="nextNote"><b>Next</b></button>
+              </li>
+              <li>
+                <button id="show-all-notes-button" class="btn btn-info btn-sm toggle inactive  navbar-btn"> Show All Notes </button>
+              </li>
+
+              <li>
+                <button id="showAllSitesButton" class="btn btn-warning btn-sm showList navbar-btn">Show All Sites</button>
+              </li>
+
+              <li>
+                <button class="btn btn-warning btn-sm showList navbar-btn" id="noteViewMode" href="#">Research View</button>
+              </li>
+        </ul>
+            <div class="siteFaviconsHolder">
+              <div class="siteFavicons">
+                <%- @favicon_urls_with_ids_and_titles.each_with_index do |favicon_id_and_title,i| %>
+                    <div class="faviconContainer favicon<%= favicon_id_and_title[1]%>">
+                      <img class="faviconImage click-to-change-site" src="<%= favicon_id_and_title[0] %>" id="favicon<%= favicon_id_and_title[1] %>" data-site-id="<%= favicon_id_and_title[1] %>" data-ot="<%= @sites[i].title%>" data-ot-delay="0" data-ot-tip-joint="bottom" data-ot-style="dark" data-site-url="<%= @sites[i].url%>" data-site-index="<%= i %>"/>
+                    </div>
+                <%- end %>
+              </div>
+            </div>
+            </div>
+        </div>
+    </nav>
   </div>
-</div>
-<button class="btn btn-mini chevronButton" id="nextSite"> <i class="icon-chevron-right"> </i> </button>
-
-<button class="btn btn-mini navigateButton" id="goToSite">Visit Site</button>
-<button class="btn btn-danger btn-mini navigateButton" id="removeSite"><i class="icon-trash"> </i> Remove</button>
-
-<button class="btn btn-info navigateButton" id="previousNote">Previous</button>
-<button class="btn btn-success navigateButton" id="nextNote"><b>Next</b></button>
-<span class="note-count navigateButton">loading...</span>
-<button id="show-all-notes-button" class="btn btn-info toggle inactive"> Show All Notes </button>
-<button id="showAllSitesButton" class="btn btn-warning navigateButton showList">Show All Sites</button>
-<button class="btn btn-warning navigateButton showList" id="noteViewMode" href="#">Research View</button>
-
 </div>

@@ -1,11 +1,11 @@
-TToolBar  = function(trailPreview, panelView, noteViewer){
+TToolBar  = function(trailPreview, panelView, noteViewer, canEdit){
     var allNotesShown = false;
 
     var thisToolbar = this;
     var nextNoteButton = $("#nextNote").click(trailPreview.showNextNote);
     var previousNoteButton = $("#previousNote").click(trailPreview.showPreviousNote);
-    var nextSiteButton = $("#nextSite").click(trailPreview.showNextSite);
-    var previousSiteButton = $("#previousSite").click(trailPreview.showPreviousSite);
+//    var nextSiteButton = $("#nextSite").click(trailPreview.showNextSite);
+//    var previousSiteButton = $("#previousSite").click(trailPreview.showPreviousSite);
     var showCommentButton = $(".showCommentButton").click(trailPreview.toggleOrUntoggleCommentBox);
     var removeSiteButton = $("#removeSite").click(trailPreview.deleteCurrentSite);
     var visitSiteButton = $("#goToSite").click(function() {
@@ -26,6 +26,10 @@ TToolBar  = function(trailPreview, panelView, noteViewer){
         update: changeSiteOrder
     });
     var noteViewModeButton = $("#noteViewMode").click(noteViewer.initOrDisableNoteView);
+
+    if (canEdit) {
+        removeSiteButton.show();
+    }
 
     $(document).on("showAllNotesOn", function() {
         allNotesShown = true;
@@ -69,7 +73,7 @@ TToolBar  = function(trailPreview, panelView, noteViewer){
             nextNoteButton.disable();
         }
 
-        if(currentNote && !(currentNote.previousNote() == "base")) {
+        if(currentNote && currentNote.previousNote()) {
             console.log("enabling previous note");
             previousNoteButton.enable();
         } else {
@@ -84,6 +88,12 @@ TToolBar  = function(trailPreview, panelView, noteViewer){
             removeSiteButton.disable();
             visitSiteButton.disable();
             showAllSitesbutton.disable();
+        }
+
+        if (currentNote.site.getFirstNote()) {
+            showAllNotesButton.enable();
+        } else {
+            showAllNotesButton.disable();
         }
     }
 
@@ -130,9 +140,8 @@ TToolBar  = function(trailPreview, panelView, noteViewer){
 
     showAllSitesbutton.disable =
         visitSiteButton.disable =
-        removeSiteButton.disable =
-            nextNoteButton.disable =
-                previousNoteButton.disable = function() {
+            previousNoteButton.disable =
+                showAllNotesButton.disable = function() {
         this.prop('disabled', true);
         this.removeClass("btn-info").css("opacity",".5");
         this.enabled = false;
@@ -140,11 +149,34 @@ TToolBar  = function(trailPreview, panelView, noteViewer){
 
     showAllSitesbutton.enable =
         visitSiteButton.enable =
-        removeSiteButton.enable =
-            nextNoteButton.enable =
-                previousNoteButton.enable = function() {
+            previousNoteButton.enable =
+                showAllNotesButton.enable = function() {
         this.prop('disabled', false);
         this.addClass("btn-info").css("opacity",1);
+        this.enabled = true;
+    };
+
+    nextNoteButton.enable = function() {
+        this.prop('disabled', false);
+        this.addClass("btn-success").css("opacity",1);
+        this.enabled = true;
+    };
+
+    nextNoteButton.disable = function() {
+        this.prop('disabled', true);
+        this.removeClass("btn-success").css("opacity",".5");
+        this.enabled = false;
+    };
+
+    removeSiteButton.disable = function() {
+        this.prop('disabled', true);
+        this.removeClass("btn-danger").css("opacity",".5");
+        this.enabled = false;
+    };
+
+    removeSiteButton.enable = function() {
+        this.prop('disabled', false);
+        this.addClass("btn-danger").css("opacity",1);
         this.enabled = true;
     };
 

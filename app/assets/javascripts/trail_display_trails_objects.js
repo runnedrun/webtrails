@@ -261,7 +261,7 @@ Site = function(siteObject, parentTrail){
     }
 
     this.previousNoteFromBase = function() {
-        var previousSite = this.previousSite()
+        var previousSite = this.previousSite();
         while (previousSite) {
             if (previousSite.getLastNote()) return previousSite.getLastNote();
             previousSite = previousSite.previousSite();
@@ -343,18 +343,10 @@ Note = function(baseNoteObject, parentSite){
         } else {
             var newSite = thisNoteObject.site.nextSite();
 
-            if (!newSite){
-                return false
-            }
-
-            while (newSite.nextSite() && !newSite.getFirstNote()){
-                newSite = newSite.nextSite();
-            }
-
             if (newSite.getFirstNote()){
                 return newSite.getFirstNote();
             } else {
-                return false;
+                return new BaseRevisionNote(newSite);
             }
         }
     };
@@ -369,13 +361,14 @@ Note = function(baseNoteObject, parentSite){
 
             if (!newSite){
                 return false;
+            } else {
+                // return the first note for a site, if it has notes, else return the base note for the site
+                if (newSite.getFirstNote()){
+                    return newSite.getFirstNote();
+                } else {
+                    return new BaseRevisionNote(newSite);
+                }
             }
-
-            while (newSite.previousSite() && !newSite.getLastNote()){
-                newSite = newSite.previousSite();
-            }
-
-            return newSite.getLastNote();
         }
     };
 
@@ -402,4 +395,24 @@ Note = function(baseNoteObject, parentSite){
     this.update(baseNoteObject);
 
     parentSite.trail.registerNote(thisNoteObject);
+}
+
+// the note like class which is used for displaying base revisiosn
+BaseRevisionNote = function(site){
+    this.site = site;
+    this.nextNote = function() {
+        return site.nextNoteFromBase();
+    };
+    this.previousNote = function() {
+        return site.previousNoteFromBase();
+    };
+    this.getSiteRevisionHtml = function() {
+        return site.getBaseRevisionHtml();
+    };
+    this.getPositionInSite = function() {
+        return 0;
+    }
+
+    this.id = "base";
+    this.isBase = true;
 }

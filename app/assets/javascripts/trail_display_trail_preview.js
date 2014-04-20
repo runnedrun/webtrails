@@ -121,7 +121,9 @@ TPreview = function(){
             var startingSite =
                 (startingSiteId && trailToPreview.getSite(startingSiteId)) || trailToPreview.getFirstSite();
             var currentNote =
-                (startingNoteId && startingSite.getNote(startingNoteId)) || new BaseRevisionNote(startingSite);
+                (startingNoteId && startingSite.getNote(startingNoteId))
+                    || startingSite.getFirstNote()
+                    || new BaseRevisionNote(startingSite);
 
             this.displayNote(currentNote);
         } else if (currentSiteFrame){
@@ -353,24 +355,4 @@ TPreview = function(){
         }
     }
 
-}
-
-// the note like class which is used for displaying base revisiosn
-BaseRevisionNote = function(site){
-    this.site = site;
-    this.nextNote = function() {
-        return site.nextNoteFromBase();
-    };
-    this.previousNote = function() {
-        return site.previousNoteFromBase() || "base";
-    };
-    this.getSiteRevisionHtml = function() {
-        return site.getBaseRevisionHtml();
-    };
-    this.getPositionInSite = function() {
-        return 0;
-    }
-
-    this.id = "base";
-    this.isBase = true;
 }

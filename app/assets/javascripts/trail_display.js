@@ -103,7 +103,7 @@ function fetchSiteHtml(startingSiteId, startingNoteId) {
         TrailPreview = new TPreview();
         PanelView = new PanelView(TrailPreview);
         NoteViewer = TrailPreview.noteViewer;
-        Toolbar = new TToolBar(TrailPreview, PanelView, NoteViewer);
+        Toolbar = new TToolBar(TrailPreview, PanelView, NoteViewer, canEdit());
         Trails.switchToTrail(Trail.id, startingSiteId, startingNoteId);
         $(".siteDisplayDiv").removeClass("loading");
     })
