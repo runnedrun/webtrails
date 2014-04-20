@@ -1,46 +1,54 @@
-<div class="row-fluid">
-  <div class="span10 offset1 centered trails-display">
+<div class="row">
+  <div class="col-md-12 text-center trails-display">
     <%- trails.each_with_index do |trail,i|%>
-        <div class= "row-fluid" id="trail-container-<%= trail.id %>">
-          <div class="span1"></div>
-          <div class="trail-container span10 <%= "last-trail-container" if i == trails.length - 1%>">
-            <div class="trail-name centered">
-              <div class="row-fluid">
-                <div class = "offset4 span4 centered">
-                  <a class="" href="<%= request.protocol + (request.port.blank? ? request.host : request.host_with_port) %>/trails/<%= trail.id%>">
-                    <h3 id="trail-name-<%= trail.id%>"><%= trail.name %></h3>
-                  </a>
-                </div>
-                <% if editAccess %>
-                  <div class="offset2 span2 centered">
-                    <button class="btn btn-info edit-trail-button" data-trail-id="<%= trail.id %>" id="edit-trail-<%= trail.id %>"><i class="icon-pencil"></i></button>
-                    <button class="btn btn-danger remove-trail-button" data-trail-id="<%= trail.id %>"><i class="icon-trash"></i></button>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-            <div class="sites-display-container" id="sites-display-container-<%= i %>" data-index="<%= i %>">
-              <div class="sites-display" data-trail-id="<%= trail.id %>">
-                  <%- favicon_urls[i].each_with_index do |favicon_url, i| %>
-                    <div class="site-display" data-site-id=<%=trail.sites[i].id%> >
-                      <!--<a class="site-link" href="<%= request.protocol + (request.port.blank? ? request.host : request.host_with_port) %>/trails/<%= trail.id%>#<%= i%>">-->
-                      <a class="site-link" href="/trails/<%= trail.id%>#<%= i%>">
-                        <img src="<%= favicon_url %>" class="siteFavicon"/>
-                        <span><%= trail.sites[i].title%></span>
-                        <%- trail.sites[i].notes.each_with_index do |note, i| %>
-                          <div class="note-container">
-                            <div class="note-content"><%= note.content%></div>
-                            <% if note.comment != ""%>
-                              <div class="note-comment"><%= note.comment%></div>
-                            <% end %>
-                          </div>
-                        <%- end %>
+        <div class="row" id="trail-container-<%= trail.id %>">
+          <div class="col-md-12">
+            <div class="trail-container <%= "last-trail-container" if i == trails.length - 1%>">
+                <div class="trail-header row">
+                    <div class = "col-md-offset-4 col-md-4 text-center">
+                      <a class="" href="<%= request.protocol + (request.port.blank? ? request.host : request.host_with_port) %>/trails/<%= trail.id%>">
+                        <h3 id="trail-name-<%= trail.id%>"><%= trail.name %></h3>
                       </a>
                     </div>
-                  <%- end %>
+                    <% if editAccess %>
+                      <div class="col-md-2 col-md-offset-2 text-center pull-right">
+                        <button class="btn btn-info edit-trail-button" data-trail-id="<%= trail.id %>" id="edit-trail-<%= trail.id %>">
+                          <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                        <button class="btn btn-danger remove-trail-button" data-trail-id="<%= trail.id %>">
+                          <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                      </div>
+                    <% end %>
+                </div>
+                <div class="sites-display-container" id="sites-display-container-<%= i %>" data-index="<%= i %>">
+                  <div class="sites-display col-md-12 text-center" data-trail-id="<%= trail.id %>">
+                      <%- favicon_urls[i].each_with_index do |favicon_url, i| %>
+                        <div class="site-display" data-site-id=<%=trail.sites[i].id%> >
+                            <div>
+                                <img src="<%= favicon_url %>" class="siteFavicon"/>
+                                <a data-site-id="<%=trail.sites[i].id%>" class="delete-site-button btn btn-xs btn-danger glyphicon glyphicon-trash pull-right"></a>
+                            </div>
+                            <a class="site-link" href="/trails/<%= trail.id%>#<%= trail.sites[i].id %>">
+                              <div class="site-title"><%= trail.sites[i].title%></div>
+                            </a>
+                            <%- trail.sites[i].notes.each_with_index do |note, i| %>
+                              <a class="note-link" data-note-id="<%= note.id %>" href="/trails/<%= trail.id%>#<%= note.site.id %>-<%= note.id %>"
+                                  <div class="note-container">
+                                    <div class="note-content"><%= note.content%></div>
+                                    <% if note.comment != ""%>
+                                      <div class="note-comment"><%= note.comment%></div>
+                                    <% end %>
+                                  </div>
+                              </a>
+                            <%- end %>
+                          </a>
+                        </div>
+                      <%- end %>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
         </div>
     <%- end %>
   </div>

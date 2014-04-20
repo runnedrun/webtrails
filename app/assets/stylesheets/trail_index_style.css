@@ -16,6 +16,8 @@
     margin-top:15px;
     background-color: #f0f0f0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin-right: 15px;
+    margin-left: 15px;
 }
 
 .last-trail-container{
@@ -30,10 +32,10 @@
     overflow: hidden;
 }
 
-.sites-display {
+.sites-display-container .sites-display {
     max-height: 500px;
     min-height: 50px;
-    /*position: relative;*/
+    position: initial;
     left: 0px;
 }
 
@@ -92,4 +94,8 @@
 
 .edit-trail-button {
     margin-top: 15px;
+}
+
+.dragging-clone {
+
 }

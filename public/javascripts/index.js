@@ -9,6 +9,7 @@ $(function() {
     })
   setupTrailScrolling();
   makeSitesDraggable();
+  clampSiteTitles();
 
 
   $('.edit-trail-button').click(editTrailName);
@@ -50,12 +51,11 @@ $(function() {
     function makeSitesDraggable(){
         $(".user-trails .sites-display").addClass("drag-between").sortable({
             connectWith: ".drag-between",
-            zIndex: 9999,
+            zIndex: 99999,
             helper: createHelper,
             stop: moveSiteToNewTrail
         });
     }
-
 
     function moveSiteToNewTrail(event, ui){
         var siteThatWasDragged = ui.item;
@@ -66,7 +66,10 @@ $(function() {
         }).get();
         //replace the href so it goes to the new trail
         var siteLink = siteThatWasDragged.find(".site-link");
-        siteLink.attr("href", "/trails/"+String(trailID) + "#" + siteThatWasDragged.data().siteId);
+        var noteLink = siteThatWasDragged.find(".note-link");
+        siteLink.attr("href", "/trails/" + String(trailID) + "#" + siteThatWasDragged.data().siteId);
+        noteLink.attr("href",
+            "/trails/" + String(trailID) + "#" + siteThatWasDragged.data().siteId + "-" + noteLink.data().noteId);
         //saving the new positions server sid3
         $.ajax({
             url:"/trails/update_site_list",
@@ -128,11 +131,34 @@ $(function() {
   }
 
   function deleteTrailLocally(trailID) {
-    $("#trail-container-" + trailID).animate({"opacity" : "0"}, 1000,
-      function(){ $("#trail-container-" + trailID).remove();}
-    );
+   $("#trail-container-" + trailID).remove()
   }
 
+    $('.delete-site-button').click(function(e) {
+        $(this).attr('disabled', 'disabled');
+        $(this).addClass('disabled');
+        deleteSite($(this).data("site-id"));
+        e.preventDefault();
+        $(this).unbind();
+    });
+
+    function deleteSite(siteId) {
+        $.ajax({
+          url: "/sites/delete",
+          type: "post",
+          data: {
+              "id" : siteId
+          },
+          success: function(){
+              chrome.runtime.sendMessage(extensionId, {updateTrailsObject: true});
+              deleteSiteLocally(siteId);
+          }
+        });
+    }
+
+    function deleteSiteLocally(siteId) {
+        $(".site-display[data-site-id=" + siteId + "]").remove();
+    }
 });
 
 function makeTrail(){
@@ -195,5 +221,11 @@ function setupTrailScrolling() {
         $this.scrollLeft(destLeft);
       }
     }, 100);
-  }); 
+  });
+}
+
+function clampSiteTitles() {
+    $(".site-title").each(function(i, site) {
+        $clamp(site, {clamp:2})
+    });
 }

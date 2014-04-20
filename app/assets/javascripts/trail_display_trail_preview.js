@@ -225,7 +225,7 @@ TPreview = function(){
     };
 
     this.getNoteElements = function(note, siteIDoc) {
-        return $("wtHighlight[data-trail-id="+Trails.getCurrentTrailId()+"]." + note.clientSideId, siteIDoc)
+        return $("."+note.clientSideId, siteIDoc)
     }
 
     this.showNextNote = function() {

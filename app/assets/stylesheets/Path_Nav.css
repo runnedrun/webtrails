@@ -260,6 +260,17 @@ iframe.shrunk {
     margin-left: 5px;
 }
 
+.nav-group {
+    margin-right: 5px;
+}
+
+.trail-name {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* overriding bootstrap default for the trash icon */
 i.icon-trash.delete-site-icon {
     margin-top: 0px;

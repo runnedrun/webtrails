@@ -343,10 +343,12 @@ Note = function(baseNoteObject, parentSite){
         } else {
             var newSite = thisNoteObject.site.nextSite();
 
-            if (newSite.getFirstNote()){
+            if (newSite && newSite.getFirstNote()){
                 return newSite.getFirstNote();
-            } else {
+            } else if(newSite) {
                 return new BaseRevisionNote(newSite);
+            } else {
+                return false
             }
         }
     };
@@ -359,15 +361,12 @@ Note = function(baseNoteObject, parentSite){
         } else {
             var newSite = thisNoteObject.site.previousSite();
 
-            if (!newSite){
-                return false;
+            if (newSite && newSite.getLastNote()){
+                return newSite.getLastNote();
+            } else if(newSite) {
+                return new BaseRevisionNote(newSite);
             } else {
-                // return the first note for a site, if it has notes, else return the base note for the site
-                if (newSite.getFirstNote()){
-                    return newSite.getFirstNote();
-                } else {
-                    return new BaseRevisionNote(newSite);
-                }
+                return false
             }
         }
     };

@@ -220,6 +220,7 @@ Site = function(siteObject, parentTrail){
     this.trail = parentTrail;
     this.faviconUrl = siteObject.faviconUrl;
     this.url = siteObject.url;
+    this.baseRevisionNumber = siteObject.baseRevisionNumber;
 
     var thisSiteObject = this;
 

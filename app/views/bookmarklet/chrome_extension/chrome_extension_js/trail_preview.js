@@ -133,7 +133,7 @@ function TPreview(
 
     this.getNoteElements = function(note) {
         var siteIDoc = getSiteIDoc(note.site);
-        return $("wtHighlight[data-trail-id="+note.site.trail.id+"].current-highlight", siteIDoc)
+        return $("."+ site.clientSideId", siteIDoc)
     }
 
     this.showNextNote = function() {

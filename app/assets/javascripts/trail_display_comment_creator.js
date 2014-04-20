@@ -59,7 +59,7 @@ CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, si
             var unhighlighted_append = contents.slice(end_offset,contents.length);
 
             var new_marker = siteDocument.createElement("wtHighlight")
-            $(new_marker).addClass("highlightMe current-highlight " + clientSideId).attr("data-trail-id", currentNote.site.trail.id);
+            $(new_marker).addClass("highlightMe current-highlight " + clientSideId);
 
             new_marker.innerHTML = highlighted_contents;
             var node_to_replace = node;
