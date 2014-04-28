@@ -4,10 +4,12 @@ body {
     overflow: hidden;
 }
 
-.toolbar {
+nav.navbar.toolbar {
     background: #F0F0F0;
-    width:100%;
     -webkit-user-select: none;
+    border-bottom: 1px solid grey;
+    height:45px;
+    min-height: 45px;
 }
 
 .toolbar-buttons {
@@ -21,15 +23,11 @@ body {
     padding-bottom: 3px
 }
 
-.toolbar-element {
-    padding-top: 5px;
-    padding-bottom: 5px;
-}
 
 .fa-spinner.site-saving-spinner {
-    margin-left: 15px;
-    margin-top: 8px;
-    visibility: hidden;
+    margin-top: 16px;
+    width: 0px;
+    overflow: hidden;
 }
 
 .save-site-button.saving {
@@ -41,7 +39,20 @@ body {
 }
 
 .favicons {
-    padding-top: 8px;
+    padding-top: 14px;
+}
+
+.favicon-img {
+    height: 18px;
+    vertical-align: top;
+    margin: 0px 5px;
+    display: block;
+    border: none;
+    float: left;
+}
+
+.active.favicon-img {
+    height: 21px;
 }
 
 .help-frame {
@@ -54,7 +65,9 @@ body {
 
 .info-display {
     position: relative;
-    height: 150px; /* make sure to sync this value with the one in TrailToolbar.js */
+    height: 0px;
+    overflow: hidden;
+    border-bottom: 1px solid;
 }
 
 .trail-preview-container {
@@ -87,6 +100,22 @@ body {
     background: white;
 }
 
+.no-notes-butter-bar {
+    text-align: center;
+    padding: 8px 120px 8px 120px;
+}
+
+.no-notes-butter-bar-container {
+    text-align: center;
+    position: absolute;
+    top: 8px;
+    z-index: 10;
+    height: 0;
+    overflow: hidden;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
 /* note selector styles */
 
 .snap {
@@ -102,6 +131,7 @@ body {
     max-height: 1.2em;
     line-height: 1.2em;
     overflow: hidden;
+    padding-left: 20px;
 }
 
 .note-comment {
@@ -151,4 +181,36 @@ tr.buffer th {
 
 .note-selector .table {
     margin-bottom: 0px;
+}
+
+nav .nav-group {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-left: 5px;
+    margin-right: 0px;
+}
+
+/* needs to be fixed width in order to show up properly in the navbar element */
+.trail-selector-and-name {
+    width: 200px;
+}
+
+.icon-button {
+    height:30px;
+}
+
+/* small chevron */
+.glyphicon.mini-chevron {
+    font-size: 9px;
+}
+
+.add-trail-dropdown-item {
+    padding-left: 20px;
+    padding-right: 20px;
+    width: 100%;
+}
+
+.trail-dropdown-list .form-control.add-trail-dropdown-input {
+    min-width: 100px;
+    width: 100%;
 }

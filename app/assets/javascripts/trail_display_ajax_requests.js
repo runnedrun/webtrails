@@ -11,7 +11,10 @@ Request = new function(){
             data: {
                 "id" : site.id
             },
-            success: callback
+            success: function() {
+                chrome.runtime.sendMessage(extensionId, {updateTrailsObject: true});
+                callback
+            }
         });
     };
 
@@ -48,7 +51,10 @@ Request = new function(){
             data: {
                 "id" : note.id
             },
-            success: function(e){ console.log("note deleted"), callback(e)}
+            success: function(e){
+                chrome.runtime.sendMessage(extensionId, {updateTrailsObject: true});
+                console.log("note deleted"), callback(e)
+            }
         })
     };
 
@@ -59,11 +65,14 @@ Request = new function(){
             data: {
                 "site[id]": currentNote.site.id, //this is probably unnecesary
                 "site[trail_id]": currentNote.site.trail.id,
-                "note": newNote,
+                "note": newNote
             },
             success: function(resp) {
                 thisRequest.mirrorHtml(newNote, currentNote, currentHtml, function() {
-                    chrome.runtime.sendMessage(extensionId, {updateTrailsObject: true});
+//                    chrome.runtime.sendMessage(extensionId, {updateTrailsObject: true});
+                    // sending the message here doesn't work because the revision number has not yet been added
+                    // because the mirroring happens asynchronously. I need to use the same download tracker that
+                    // I user for the extension.
                     callback(resp)
                 })
             }

@@ -57,8 +57,8 @@ TrailsObject = function(trailsObject, currentTrailId){
         })
         $.each(trails, function(trailId, trail) {
             if (!localStorageTrailsObject[trailId]) {
-                $(document).trigger({type:"trailDeleted", trail: trail});
                 delete trails[trailId];
+                $(document).trigger({type:"trailDeleted", trail: trail});
             }
         })
     };
@@ -121,13 +121,22 @@ Trail = function(trailObject, trailsCollection){
         var sitesInOrder = [];
         $.each(siteOrder,function(i,siteId){
             sitesInOrder.push(sites[siteId]);
-        })
+        });
         return sitesInOrder;
     }
 
     this.getSite = function(siteId) {
         return sites[siteId];
     }
+
+    this.deleteSite = function(site) {
+        if (sites[site.id] && delete sites[site.id]){
+            siteOrder.splice(siteOrder.indexOf(String(site.id)),1);
+            if (site.id == currentSiteId) {
+                currentSiteId = false;
+            }
+        }
+    };
 
     this.getCurrentSiteId = function() {
        return currentSiteId
@@ -179,6 +188,13 @@ Trail = function(trailObject, trailsCollection){
             }
             return siteToUpdate;
         });
+
+        $.each(thisTrailObject.getSites(), function(i, site) {
+            if (!newTrailObject.sites.siteObjects[site.id]) {
+                site.delete();
+            }
+        });
+
         siteOrder = newTrailObject.sites.order;
         $.each(newAndUpdatedSites, function(i, site) {
             site.fireNewNoteEvents();
@@ -220,7 +236,7 @@ Site = function(siteObject, parentTrail){
     this.trail = parentTrail;
     this.faviconUrl = siteObject.faviconUrl;
     this.url = siteObject.url;
-    this.baseRevisionNumber = siteObject.baseRevisionNumber;
+    baseRevisionNumber = siteObject.baseRevisionNumber;
 
     var thisSiteObject = this;
 
@@ -237,6 +253,20 @@ Site = function(siteObject, parentTrail){
         delete notes[note.id];
         noteOrder.splice(noteOrder.indexOf(note.id),1);
     };
+
+    this.delete = function() {
+
+        var nextSite = thisSiteObject.nextSite();
+        var previousSite = thisSiteObject.previousSite();
+
+        thisSiteObject.trail.deleteSite(this);
+
+        var copy = $.extend(thisSiteObject, {
+            nextSite: function() { return  nextSite },
+            prevSite: function() { return  previousSite }
+        })
+        $(document).trigger({type:"siteDeleted", site: copy});
+    }
 
     this.isCurrentSite = function() {
         return thisSiteObject.id == thisSiteObject.trail.getCurrentSiteId();
@@ -292,6 +322,29 @@ Site = function(siteObject, parentTrail){
         }
     };
 
+    this.getBaseRevisionNote = function() {
+        return new BaseRevisionNote(thisSiteObject);
+    }
+
+    this.nextNoteFromBase = function() {
+        if(this.getFirstNote()) return this.getFirstNote();
+        var nextSite = this.nextSite()
+        while (nextSite) {
+            if (nextSite.getFirstNote()) return nextSite.getFirstNote();
+            nextSite = nextSite.nextSite();
+        }
+        return false
+    }
+
+    this.previousNoteFromBase = function() {
+        var previousSite = this.previousSite();
+        while (previousSite) {
+            if (previousSite.getLastNote()) return previousSite.getLastNote();
+            previousSite = previousSite.previousSite();
+        }
+        return false
+    };
+
     this.getNoteCount = function() {
         return noteOrder.length;
     };
@@ -313,11 +366,18 @@ Site = function(siteObject, parentTrail){
                 notes[noteId].update(newBaseNoteObject);
             }
         });
+
+        $.each(thisSiteObject.getNotes(), function(i, note) {
+            if (!newSiteBaseObject.notes.noteObjects[note.id]) {
+                note.delete();
+            }
+        });
+
         noteOrder = newSiteBaseObject.notes.order;
     };
 
     this.getRevisionHtml = function(revisionNumber){
-        return LocalStorageTrailAccess.getSiteRevisionHtml(thisSiteObject.id, revisionNumber);
+        return LocalStorageTrailAccess.getSiteRevisionHtml(thisSiteObject.id, revisionNumber) || "site failed to load";
     };
 
     this.getFirstRevisionHtml = function() {
@@ -326,6 +386,10 @@ Site = function(siteObject, parentTrail){
         } else {
             return false
         }
+    };
+
+    this.getBaseRevisionHtml = function() {
+        return this.getRevisionHtml(baseRevisionNumber);
     };
 
     this.fireNewNoteEvents = function() {
@@ -344,17 +408,19 @@ Note = function(baseNoteObject, parentSite){
     var thisNoteObject = this;
     var newNote = true;  //used to know if a new note event should be fired, from site.
     this.site = parentSite;
+
     this.getSiteRevisionHtml = function() {
         return this.site.getRevisionHtml(siteRevisionNumber)
     }
 
+
     this.nextNote = function(){
-        var notesInOrder = this.site.getNotes();
+        var notesInOrder = thisNoteObject.site.getNotes();
         var currentIndex = notesInOrder.indexOf(this);
         if (currentIndex < (notesInOrder.length - 1)){
-            return this.site.getNote(notesInOrder[currentIndex+1].id);
+            return thisNoteObject.site.getNote(notesInOrder[currentIndex+1].id);
         } else {
-            var newSite = this.site.nextSite();
+            var newSite = thisNoteObject.site.nextSite();
 
             if (!newSite){
                 return false
@@ -369,16 +435,25 @@ Note = function(baseNoteObject, parentSite){
             } else {
                 return false;
             }
+
+            // this version returns the base note if the next site has no notes
+//            if (newSite && newSite.getFirstNote()){
+//                return newSite.getFirstNote();
+//            } else if(newSite) {
+//                return new BaseRevisionNote(newSite);
+//            } else {
+//                return false
+//            }
         }
     };
 
     this.previousNote = function(){
-        var notesInOrder = this.site.getNotes();
-        var currentIndex = notesInOrder.indexOf(this);
+        var notesInOrder = thisNoteObject.site.getNotes();
+        var currentIndex = notesInOrder.indexOf(thisNoteObject);
         if (currentIndex > 0){
-            return this.site.getNote(notesInOrder[currentIndex-1].id);
+            return thisNoteObject.site.getNote(notesInOrder[currentIndex-1].id);
         } else {
-            var newSite = this.site.previousSite();
+            var newSite = thisNoteObject.site.previousSite();
 
             if (!newSite){
                 return false;
@@ -389,6 +464,15 @@ Note = function(baseNoteObject, parentSite){
             }
 
             return newSite.getLastNote();
+
+            // this version will return the base note if there are no notes on the next site
+//            if (newSite && newSite.getLastNote()){
+//                return newSite.getLastNote();
+//            } else if(newSite) {
+//                return new BaseRevisionNote(newSite);
+//            } else {
+//                return false
+//            }
         }
     };
 
@@ -406,7 +490,22 @@ Note = function(baseNoteObject, parentSite){
     };
 
     this.delete = function() {
+
+        // we need to make a static snapshot of the note so that certain attributes can be used by the UI
+        // after the note is already deleted.
+
+        var positionInSite = thisNoteObject.getPositionInSite();
+        var previousNote = thisNoteObject.previousNote();
+        var nextNote = thisNoteObject.nextNote();
+
         this.site.removeNote(this);
+
+        var copy = $.extend(thisNoteObject, {
+            getPositionInSite: function() { return positionInSite },
+            previousNote: function() { return previousNote },
+            nextNote: function() { return nextNote }
+        });
+        $(document).trigger({type:"noteDeleted", note: copy});
     };
 
     this.update(baseNoteObject);
@@ -420,4 +519,24 @@ Note = function(baseNoteObject, parentSite){
             });
         }
     };
+}
+
+// the note like class which is used for displaying base revisiosn
+BaseRevisionNote = function(site){
+    this.site = site;
+    this.nextNote = function() {
+        return site.nextNoteFromBase();
+    };
+    this.previousNote = function() {
+        return site.previousNoteFromBase();
+    };
+    this.getSiteRevisionHtml = function() {
+        return site.getBaseRevisionHtml();
+    };
+    this.getPositionInSite = function() {
+        return 0;
+    }
+
+    this.id = "base";
+    this.isBase = true;
 }

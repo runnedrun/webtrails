@@ -6,55 +6,73 @@
     <link href="/css/toolbar.css" rel="stylesheet" media="screen">
 </head>
 <body>
-    <div class="container-fluid toolbar">
-        <div class="row toolbar-buttons">
-            <div class="col-md-4 trail-actions">
-                <div class="col-md-4">
-                    <div class="col-md-8">
-                        <button class="btn btn-sm btn-primary toolbar-element save-site-button fade-on-logout">Save Site</button>
+
+
+    <nav class="navbar navbar-justified navbar-fixed-top toolbar" role="navigation">
+        <div class="container-fluid">
+            <!--<div class="collapse navbar-collapse">-->
+            <ul class="nav navbar-nav navbar-left">
+                <li>
+                    <div class="btn-group btn-group-sm nav-group">
+                        <button class="btn btn-primary navbar-btn toolbar-element save-site-button fade-on-logout nav-group">
+                            Save Site
+                        </button>
                     </div>
-                    <div class="col-md-4">
+                </li>
+                <li>
+                    <div class="btn-group btn-group-sm nav-group">
                         <i class="fa fa-lg fa-spinner fa-spin site-saving-spinner"></i>
                     </div>
-                </div>
-                <div class="dropdown col-md-6 trail-dropdown">
-                    <div class="input-group">
+                </li>
+                <li>
+                    <div class="input-group navbar-form trail-selector-and-name nav-group">
                         <div class="input-group-btn">
-                            <button class="toolbar-element trail-dropdown-button btn btn-sm dropdown-toggle btn-primary fade-on-logout" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                            <button class="trail-dropdown-button btn btn-sm dropdown-toggle btn-primary fade-on-logout" type="button" data-toggle="dropdown">
                                 Trails
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu trail-dropdown-list" role="menu" aria-labelledby="dLabel">
+                                <li>
+                                    <div class="input-group input-group add-trail-dropdown-item">
+                                        <input type="text" class="form-control add-trail-dropdown-input" placeholder="Create a trail">
+                                    </div>
+                                </li>
+                                <li role="presentation" class="divider"></li>
                             </ul>
                         </div>
                         <input type="text" class="trail-name form-control input-sm" value="No trails" readonly>
                     </div>
-                </div>
-
-                <div class="col-md-2">
-                    <button class="btn btn-sm btn-default toolbar-element view-trail-button fade-on-logout">View Trail</button>
-                </div>
-            </div>
-            <div class="col-md-8">
-                <div class="col-md-3 favicons">
-
-                </div>
-                <div class="col-md-9">
-                    <div class="col-md-11">
-                        <div class="btn-group btn-group-sm">
-                            <button type="button" class="btn btn-default toolbar-element prev-note-button only-fade-on-logout">Prev Note</button>
-                            <button type="button" class="btn btn-default toolbar-element next-note-button only-fade-on-logout">Next Note</button>
-                        </div>
-                        <div class="btn-group btn-group-sm">
-                            <button type="button" class="btn btn-default toolbar-element show-comment-button fade-on-logout">Show Comment</button>
-                            <button type="button" class="btn btn-default toolbar-element visit-site-button fade-on-logout">Visit Site</button>
-                            <button type="button" class="btn btn-danger btn-md toolbar-element delete-note-button fade-on-logout">
-                                <span class="glyphicon glyphicon-trash"></span> Delete Note
-                            </button>
-                        </div>
+                </li>
+                <li>
+                    <div class="btn-group btn-group-sm nav-group">
+                        <button class="btn btn-default navbar-btn view-trail-button fade-on-logout nav-group">View Trail</button>
                     </div>
-                    <div class="col-md-1 dropdown">
-                        <button class="toolbar-element settings-dropdown-button btn btn-sm dropdown-toggle btn-default pull-right" type="button" data-toggle="dropdown">
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <div class="btn-group btn-group-sm nav-group">
+                        <button type="button" class="btn navbar-btn btn-default prev-note-button only-fade-on-logout">Prev</button>
+                        <button type="button" class="btn navbar-btn btn-default note-selector-button icon-button only-fade-on-logout">
+                            <span class="glyphicon glyphicon-th-list"></span>
+                        </button>
+                        <button type="button" class="btn navbar-btn btn-danger btn-md toolbar-element icon-button delete-note-button fade-on-logout">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                        <button type="button" class="btn navbar-btn btn-default next-note-button only-fade-on-logout">Next</button>
+                    </div>
+                </li>
+                <li>
+                    <div class="btn-group btn-group-sm nav-group">
+                        <button type="button" class="btn navbar-btn btn-default show-preview-button fade-on-logout"></button>
+                        <button type="button" class="btn navbar-btn btn-default visit-site-button fade-on-logout">View In Trail</button>
+
+                    </div>
+                </li>
+
+                <li>
+                    <div class="dropdown navbar-btn nav-group">
+                        <button class="toolbar-element settings-dropdown-button btn btn-sm dropdown-toggle btn-default" type="button" data-toggle="dropdown">
                             <span class="glyphicon glyphicon-list"></span>
                             <span class="caret"></span>
                         </button>
@@ -63,46 +81,57 @@
                             <li role="presentation"><a class="login-button" role="menuitem" tabindex="-1" href="#">Log in</a></li>
                         </ul>
                     </div>
+                </li>
+            </ul>
+            <div class="favicons">
+
+            </div>
+        </div>
+    </nav>
+
+    <div class="row info-display">
+        <div class="no-notes-butter-bar-container">
+            <h2 class="no-notes-butter-bar"> No Notes on this site </h2>
+            <div class="row text-center">
+                <button type="button" class="btn btn-danger btn-md icon-button delete-site-button">
+                    <span class="glyphicon glyphicon-trash"></span>  Delete Site
+                </button>
+                <button type="button" class="btn btn-default btn-md icon-button info-view-site-button">
+                    View In Trail
+                </button>
+            </div>
+        </div>
+
+        <div class="note-selector-background">
+
+        </div>
+        <div class="note-selector">
+            <table class="table">
+                <tr class="buffer">
+                    <th colspan="2">
+                        no more notes!
+                    </th>
+                </tr>
+                <tr class="buffer note-selector-footer">
+                    <th colspan="2">
+                        no more notes!
+                    </th>
+                </tr>
+            </table>
+        </div>
+        <div class="trail-preview-container">
+
+        </div>
+        <div class="help-div">
+            <div class="container-fluid">
+                <div class="row">
+                    <h1 class="col-md-12 message-box">
+
+                    </h1>
                 </div>
-            </div>
-        </div>
-        <div class="comment-box">
-            <div class="comment-text">
+                <div class="row">
+                    <div class="col-md-12 explanation">
 
-            </div>
-        </div>
-        <div class="row info-display">
-            <div class="note-selector-background">
-
-            </div>
-            <div class="note-selector">
-                <table class="table">
-                    <tr class="buffer">
-                        <th colspan="2">
-                            no more notes!
-                        </th>
-                    </tr>
-                    <tr class="buffer note-selector-footer">
-                        <th colspan="2">
-                            no more notes!
-                        </th>
-                    </tr>
-                </table>
-            </div>
-            <div class="trail-preview-container">
-
-            </div>
-            <div class="help-div">
-                <div class="container-fluid">
-                    <div class="row">
-                        <h1 class="col-md-12 message-box">
-
-                        </h1>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 explanation">
-
-                        </div>
                     </div>
                 </div>
             </div>

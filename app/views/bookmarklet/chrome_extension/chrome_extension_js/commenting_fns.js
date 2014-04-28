@@ -46,8 +46,8 @@ function makeCommentOverlay(xPos, yPos, spacing, highlightedRange){
     });
 
     var commentBox = $(document.createElement("textarea"));
-    applyDefaultCSS(commentBox);
-    commentBox.css({
+    applyDefaultCSS(commentTextArea);
+    commentTextArea.css({
         "font-size":"12px",
         "overflow": "hidden",
         "resize": "none",
@@ -90,17 +90,17 @@ function makeCommentOverlay(xPos, yPos, spacing, highlightedRange){
 
     $(document.body).append(commentOverlay);
     $(commentOverlay).append(commentDescription);
-    $(commentOverlay).append(commentBox);
+    $(commentOverlay).append(commentTextArea);
     commentOverlay.offset({top: topPosition, left: leftPosition});
 
-    commentBox.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,leftPosition,topPosition, clientSideId));
+    commentTextArea.keydown(postNoteAndCommentWithClosure(noteContent,commentOverlay,leftPosition,topPosition, clientSideId));
     $(document).mousedown(clickAwayWithClosure(noteContent,commentOverlay,leftPosition,topPosition, clientSideId));
-    commentBox.autosize();
-    commentBox.focus();
+    commentTextArea.autosize();
+    commentTextArea.focus();
     // the start offset indicates the offset from the beginning of the first text node,
     // if the range does not begin with a text node we have to walk the range until we find one.
 
-    return commentBox;
+    return commentTextArea;
 }
 
 function postNoteAndComment(e,content,commentOverlay,xPos,yPos, clientSideId){
@@ -131,7 +131,8 @@ function saveNoteAndRefreshAWS(content,comment, commentLocationX, commentLocatio
         comment_location_x: commentLocationX,
         comment_location_y: commentLocationY,
         client_side_id: clientSideId,
-        scroll_x: noteOffsets.left, scroll_y: noteOffsets.top  - (TrailPreview.shown ?  TrailPreview.height + 25 : 0)}
+        scroll_x: noteOffsets.left,
+        scroll_y: noteOffsets.top}
     );
 }
 

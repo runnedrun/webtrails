@@ -63,7 +63,7 @@ CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, si
 
             new_marker.innerHTML = highlighted_contents;
             var node_to_replace = node;
-            node_to_replace.parentNode.replaceChild(new_marker,node_to_replace);
+            node_to_replace.parentNode.replaceChild(new_marker, node_to_replace);
 
             if (unhighlighted_prepend.length !== 0 ){
                 var text_before_marker = $(siteDocument.createTextNode(unhighlighted_prepend));
@@ -130,7 +130,7 @@ CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, si
             "margin-top": "3px",
             "display": "block"
        },
-       commentBox: {
+       commentTextArea: {
            "font-size":"12px",
            "overflow": "hidden",
            "resize": "none",
@@ -157,9 +157,9 @@ CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, si
          .html("Hit enter, click away or type a comment here")
          .css(CSS.commentDescription);
      },
-     commentBox: function(height, width) {
+     commentTextArea: function(height, width) {
          return applyDefaultCSS($("<textarea></textarea>"))
-         .css(CSS.commentBox)
+         .css(CSS.commentTextArea)
          .css({"height": String(height)+"px", "width": String(width)+"px"});
      }
     };
@@ -175,23 +175,23 @@ CommentCreator = function(xPos, yPos, spacing, highlightedRange, currentNote, si
 
     var commentOverlay = HTML.commentOverlay(topPosition, leftPosition);
     var commentDescription = HTML.commentDescription();
-    var commentBox = HTML.commentBox(overlayHeight, overlayWidth);
+    var commentBox = HTML.commentTextArea(overlayHeight, overlayWidth);
 
     var comment;
 
     $siteBody.append(commentOverlay);
     $(commentOverlay).append(commentDescription);
-    $(commentOverlay).append(commentBox);
+    $(commentOverlay).append(commentTextArea);
     var noteContent = String(highlightedRange);
 
 
     var clientSideId = generateClientSideId()
 
-    commentBox.keydown(postNoteAndComment);
+    commentTextArea.keydown(postNoteAndComment);
     $siteDocument.mousedown(clickAway);
 
-    commentBox.autosize();
-    commentBox.focus();
+    commentTextArea.autosize();
+    commentTextArea.focus();
 
     var nodes = highlightedRange.getNodes();
 

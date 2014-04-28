@@ -15,32 +15,28 @@ LocalStorageTrailAccess = new function(){
     };
 
     function saveSiteHtmlForTrail(trailObject, prefetchedHtml) {
-        return getUnhydratedTrails().then(function(oldTrailObjects) {
-            var oldTrailObject = oldTrailObjects[trailObject.id];
-            return $.map(trailObject.sites.siteObjects || [], function(siteObject, siteId) {
-                var oldSiteRevisionMap;
+        return $.map(trailObject.sites.siteObjects || [], function(siteObject, siteId) {
+            return $.map(siteObject.notes.noteObjects, function(note, i) {
 
-                if (oldTrailObject && oldTrailObject.sites.siteObjects[siteId]) {
-                    oldSiteRevisionMap = oldTrailObject.sites.siteObjects[siteId].revisionUrls;
-                } else {
-                    oldSiteRevisionMap = {};
-                }
+                var revisionNumber = note.siteRevisionNumber;
 
-                return $.map(siteObject.revisionUrls, function(revisionUrl, revisionNumber) {
-                    var revisionAlreadyExistsInStorage = oldSiteRevisionMap[revisionNumber];
-                    if (!revisionAlreadyExistsInStorage && !prefetchedHtml[siteObject.id + revisionNumber]){
-                        console.log("getting new revision");
-                        var deferred = $.ajax({
-                            url: revisionUrl,
-                            type: "get",
-                            success: function(html){
-                                setSiteRevisionHtml(siteId, revisionNumber, html);
-                            }
-                        });
-                        return deferred
+                return LocalStorageTrailAccess.getSiteRevisionHtml(siteId, revisionNumber).then(function(html) {
+                    if (!html && !prefetchedHtml[siteId + revisionNumber]){
+                        var url = siteObject.revisionUrls[revisionNumber];
+                        console.log("getting new revision from url: " + url);
+                        if (url) {
+                            return $.ajax({
+                                url: url,
+                                type: "get",
+                                success: function(html1){
+                                    setSiteRevisionHtml(siteId, revisionNumber, html1);
+                                }
+                            });
+                        }
+
                     }
                 })
-            });
+            })
         });
     }
 
@@ -126,7 +122,7 @@ LocalStorageTrailAccess = new function(){
                             callback(storageChange.newValue);
                         }
                     }
-                } else {
+                } else if(key.split(":")[0] == "revisionHtml") {
                     console.log("firing trail change callback")
                     LocalStorageTrailAccess.getTrails().done(callback);
                 }
@@ -141,7 +137,7 @@ LocalStorageTrailAccess = new function(){
         var key = "revisionHtml:" + siteId + ":" + revisionNumber;
         var deferred = $.Deferred();
         chrome.storage.local.get(key, function(htmlObject) {
-            deferred.resolve(htmlObject[key] || "site failed to load");
+            deferred.resolve(htmlObject[key] || false);
         });
         return deferred.promise();
     }
@@ -172,10 +168,22 @@ LocalStorageTrailAccess = new function(){
 
     this.getExtensionInitializationData = function() {
         var deferred = $.Deferred();
-        chrome.storage.local.get(["trails", "currentTrailId", "authToken"], function(initializationObject) {
+        chrome.storage.local.get(["trails", "currentTrailId", "authToken", "previewShown"], function(initializationObject) {
             var returnObject = $.extend({trails: {}}, initializationObject);
             deferred.resolve(returnObject);
         });
         return deferred.promise()
+    }
+
+    this.setPreviewShown = function(state) {
+        chrome.storage.local.set({"previewShown": state})
+    }
+
+    this.getPreviewShown = function() {
+        var deferred = $.Deferred();
+        chrome.storage.local.get("previewShown", function(stateObject) {
+            deferred.resolve(stateObject.previewShown);
+        })
+        return deferred;
     }
 }()

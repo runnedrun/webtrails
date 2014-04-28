@@ -92,4 +92,12 @@ class User < ActiveRecord::Base
     return SecureRandom.uuid
   end
 
+  def get_update_hash
+    update_hash = {}
+    trails.each do |trail|
+      update_hash[trail.id] = trail.get_update_hash()
+    end
+    update_hash
+  end
+
 end

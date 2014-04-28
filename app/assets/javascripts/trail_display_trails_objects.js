@@ -169,6 +169,7 @@ Site = function(siteObject, parentTrail){
     var notes = {};
     var noteOrder = [];
     var baseRevisionNumber = siteObject.baseRevisionNumber;
+
     this.revisions = siteObject.html;
     this.id = siteObject.id;
     this.trail = parentTrail;
@@ -412,6 +413,6 @@ BaseRevisionNote = function(site){
         return 0;
     }
 
-    this.id = "base";
-    this.isBase = true;
+    this.id = -1;
+    this.baseNote = true;
 }

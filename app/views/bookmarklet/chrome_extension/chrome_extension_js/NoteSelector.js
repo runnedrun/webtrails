@@ -9,7 +9,7 @@ var NoteSelector = function(selectorContainer, background, trailPreview, viewpor
     var noteHeight = 50;
     var bottomLimit;
     var containerFooter = selectorContainer.find(".buffer.note-selector-footer");
-    var noNotesDisplay = false;
+    var noNotesDisplay = undefined;
 
     var HTML = {
         noteElement: function(note) {
@@ -70,7 +70,7 @@ var NoteSelector = function(selectorContainer, background, trailPreview, viewpor
         noteElement.click(displayClickedNoteInTrailPreview);
         if (noNotesDisplay) {
             noNotesDisplay.remove();
-            noNotesDisplay = undefined;
+            noNotesDisplay = false;
         }
         containerFooter.before(noteElement);
         noteElements.push(noteElement);
@@ -83,7 +83,6 @@ var NoteSelector = function(selectorContainer, background, trailPreview, viewpor
         if (note) {
             // note Id is not defined if the user clicks on a buffer element
             trailPreview.displayNote(note);
-            trailPreview.enableOrDisablePrevAndNextButtons();
             thisNoteSelector.hide();
         }
     }
@@ -106,19 +105,28 @@ var NoteSelector = function(selectorContainer, background, trailPreview, viewpor
 
     function scrollToCurrentNote() {
         var newPosition = false;
-        $.each(noteElements, function(i, elem) {
-            console.log("looking at note with id: " + elem.data("note-id"));
-            if (elem.data("note-id") === trailPreview.getCurrentNote().id) {
-                newPosition = i;
-                return false
-            }
-        });
+        var currentNote = trailPreview.getCurrentNote();
+        var noteToShow;
+
+        if (currentNote.isBase) {
+            noteToShow = currentNote.previousNote() || currentNote.nextNote() || false
+        }
+        if (noteToShow)  {
+            $.each(noteElements, function(i, elem) {
+                console.log("looking at note with id: " + elem.data("note-id"));
+                if (elem.data("note-id") === noteToShow.id) {
+                    newPosition = i;
+                    return false
+                }
+            });
+        }
+
         if (newPosition !== false) {
             if (currentNotePosition !== newPosition) {
                 selectorContainer.scrollTop(newPosition * 50);
                 switchToPosition(newPosition);
             }
-        } else if(!noNotesDisplay) {
+        } else if(noNotesDisplay === undefined && noteElements.length === 0) {
             // no notes right now
             noNotesDisplay = HTML.noNotesInfo;
             containerFooter.before(noNotesDisplay);
@@ -155,8 +163,8 @@ var NoteSelector = function(selectorContainer, background, trailPreview, viewpor
     });
 
     selectorContainer.scroll(function(e) {
+        var currentScroll = selectorContainer.scrollTop();
         if (!noNotesDisplay) {
-            var currentScroll = selectorContainer.scrollTop();
             var newNotePosition = getNotePosition(currentScroll);
 
             if (newNotePosition === noteElements.length + 1) {
@@ -168,12 +176,13 @@ var NoteSelector = function(selectorContainer, background, trailPreview, viewpor
             switchToPosition(newNotePosition);
         }
         if (snapped.snapped) {
+            console.log(bottomLimit);
             if ((currentScroll > 10) && currentScroll < bottomLimit) {
                 console.log("snapped set to false");
                 snapped.snapped = false;
             }
         }
-    })
+    });
 
     $(document).on("newNote", function(e) {
         insertNoteIntoSelector(e.note);

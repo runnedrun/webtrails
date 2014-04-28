@@ -1,18 +1,23 @@
 console.log('toolbar ui loaded');
-function WtToolbar(toolbarHtml) {
+function WtToolbar(toolbarHtml, previewShown) {
     var thisToolbar = this;
     var toolbarFrame;
     var toolbarBody;
-    var toolbarHeight;
+    var toolbarHeight = 45; // 45 for the height of the toolbar, + 1px border
     var trailPreview;
     var previewContainer;
     var previewHeight = 150;
     var loggedIn = false;
     var siteBody = $(document.body);
     var shown = false;
+    var infoDisplayShown = false;
     var noteSelector;
     var hasTrails = false;
     var hasBeenShown = false;
+
+    this.toolbarInducedOffset = function() {
+        return toolbarHeight + previewHeight
+    }
 
     this.bodyMarginTop = siteBody.css("margin-top");
     this.bodyPosition = siteBody.css("position");
@@ -25,7 +30,6 @@ function WtToolbar(toolbarHtml) {
     }
 
     var T = {
-        noNotesOnSiteMessage: "No saved notes on this site. Hit the visit site button to go to the live version.",
         noNotesInTrailMessage: "No saved notes in this Trail. View this trail to see sites you've saved without notes.",
         noTrailsMessage: '<a target="_blank" href="http://www.webtrails.co">Create a Trail</a> to use the toolbar </br>',
         toolbarExplanation:
@@ -37,7 +41,9 @@ function WtToolbar(toolbarHtml) {
         loggedOutMessage: function(logInButton) {
             return "You are now logged out. " + logInButton[0].outerHTML + " with Google."
         },
-        noTrailsDropdownText: "No trails" // make sure to sync this with toolbar.html
+        noTrailsDropdownText: "No trails", // make sure to sync this with toolbar.html
+        hidePreview: "Note Preview <span class='glyphicon glyphicon-chevron-up mini-chevron'></span>",
+        showPreview: "Note Preview <span class='glyphicon glyphicon-chevron-down mini-chevron'></span>"
     };
     var C = {
         toolbarFrame: {
@@ -46,16 +52,9 @@ function WtToolbar(toolbarHtml) {
             top: "0px",
             left: "0px",
             "z-index": "2147483644",
-            "border-bottom": "2px solid grey",
-            "visibility": "hidden"
-        },
-        faviconImg: {
-            "height":"18px",
-            "vertical-align":"top",
-            "margin": "0px 2px",
-            "display": "block",
             "border": "none",
-            "float": "left"
+            "visibility": "hidden",
+            "height": toolbarHeight + "px"
         },
         helpDiv: {
             height: previewHeight + "px"
@@ -65,8 +64,8 @@ function WtToolbar(toolbarHtml) {
         toolbarFrame: $("<iframe class='wt-toolbar-frame webtrails'></iframe>").
             attr({'src': "about:blank", 'frameborder': 0}).
             css(C.toolbarFrame),
-        faviconImg: function(faviconUrl) {
-            return $("<img src='"+ faviconUrl + "' class=\"webtrails\">").css(C.faviconImg)
+        faviconImg: function(site) {
+            return $("<img src='"+ site.faviconUrl + "' class='webtrails favicon-img' data-site-id='" + site.id + "'>")
         },
         trailDropdownItem: function(trailName, trailId) {
             return $(
@@ -88,10 +87,15 @@ function WtToolbar(toolbarHtml) {
 
     thisToolbar.runWhenLoaded(function(doc) {
         var $doc = $(doc);
-        var toolbarHeight = $doc.find(".toolbar-buttons").outerHeight();
-        console.log("loaded with height" + toolbarHeight + "px");
-        toolbarFrame.css({height: toolbarHeight + previewHeight + "px"});
-        $doc.find("body").css({height: toolbarHeight + previewHeight + "px"});
+        $doc.find(".info-display").css({top: toolbarHeight});
+        var frameHeight = toolbarHeight + previewHeight;
+        $doc.find("body").css({height: frameHeight});
+
+        if(previewShown) {
+            showInfoDisplay();
+        } else {
+            hideInfoDisplay();
+        }
     }, thisToolbar.getIDoc(toolbarFrame)[0]);
 
     toolbarBody = i$('body');
@@ -107,42 +111,93 @@ function WtToolbar(toolbarHtml) {
     var trailNameContainer = i$(".trail-name");
     var viewTrailButton = i$(".view-trail-button");
     var faviconContainer = i$(".favicons");
-    var nextNoteButton = i$(".next-note-button")
-    var previousNoteButton = i$(".prev-note-button")
-    var showCommentButton = i$(".show-comment-button");
-    var visitSiteButton = i$(".visit-site-button");
+    var nextNoteButton = i$(".next-note-button");
+    var noteSelectorButton = i$(".note-selector-button");
     var deleteNoteButton = i$(".delete-note-button");
+    var previousNoteButton = i$(".prev-note-button")
+    var viewInTrailButton = i$(".visit-site-button");
     var settingsDropdownButton = i$(".settings-dropdown-button");
     var settingsDropdownList = i$(".settings-dropdown-list");
-    var commentBox = i$(".comment-box");
+    var addTrailDropdownInput = i$(".add-trail-dropdown-input");
     var logoutButton = i$(".logout-button");
     var loginButton = i$(".login-button");
+    var showOrHideInfoDisplayButton = i$(".show-preview-button ");
 
+    var infoDisplay = i$(".info-display");
     var noteSelectorContainer = i$(".note-selector");
     var noteSelectorBackground = i$(".note-selector-background");
 
-    commentBox.css({
-        "margin-top": toolbarHeight,
-        height: previewHeight
-    });
+    viewInTrailButton.disable = noteSelectorButton.disable = nextNoteButton.disable = previousNoteButton.disable = function() {
+        this.prop('disabled', true);
+        this.css({
+            color: "grey"
+        })
+        this.enabled = false;
+    };
+
+    viewInTrailButton.enable = noteSelectorButton.enable = nextNoteButton.enable = previousNoteButton.enable = function() {
+        this.prop('disabled', false);
+        this.css({
+            color: "black"
+        })
+        this.enabled = true;
+    };
+
+    deleteNoteButton.enable = function() {
+        this.prop('disabled', false);
+        this.css({
+            color: "white"
+        })
+        this.enabled = true;
+    };
+
+    deleteNoteButton.disable = function() {
+        this.prop('disabled', true);
+        this.enabled = false;
+    };
 
     var previewContainer = i$(".trail-preview-container");
     trailPreview = new TPreview(
-        previewContainer, previewHeight, nextNoteButton, previousNoteButton, showCommentButton, deleteNoteButton,
-        commentBox, checkForToolbarRelatedKeypress, checkForToolbarRelatedKeyup, closeDropdowns, thisToolbar
+        previewContainer, previewHeight, nextNoteButton, previousNoteButton, deleteNoteButton,
+        clickOffDropdowns, thisToolbar
     );
 
     saveSiteButton.click(function() {
         saveSiteToTrail(false);
     });
 
-    visitSiteButton.click(function() {
-        open(trailPreview.getCurrentNote().site.url, "_blank");
+    viewInTrailButton.click(function() {
+        viewNoteInTrail(trailPreview.getCurrentNote());
     });
+
+    function viewNoteInTrail(note) {
+        if (note) {
+            var trailId = note.site.trail.id;
+            var siteId = note.site.id;
+            var noteId = note.id;
+            open(webTrailsUrl + "/trails/" + trailId + "#" + siteId + "-" + noteId, "_blank");
+        }
+    }
+
+    addTrailDropdownInput.keydown(function(e) {
+        console.log("verifiing keypress");
+        var code = e.keyCode;
+        if (code === 13){
+            // enter has been pressed
+            newTrail(addTrailDropdownInput.val(), function(resp) {
+                addTrailDropdownInput.val("");
+                Trails.updateTrails(resp.updateHash);
+            });
+        }
+    })
 
     trailsDropdownButton.click(openOrCloseDropdown);
 
     settingsDropdownButton.click(openOrCloseDropdown);
+
+    showOrHideInfoDisplayButton.click(showOrHideInfoDisplay);
+
+    noteSelectorButton.click(showOrHideNoteSelector);
 
     logoutButton.click(signOut);
     loginButton.click(signIn);
@@ -150,27 +205,45 @@ function WtToolbar(toolbarHtml) {
     function openOrCloseDropdown(e) {
         var dropdown = $(e.delegateTarget).next();
         var open = dropdown.hasClass("open");
-        if (open) {
-            dropdown.removeClass("open");
-            dropdown.hide();
-        } else {
+        if (!open) {
             dropdown.addClass("open");
-            dropdown.show()
+            dropdown.show();
+            adjustFrameHeightForDropdown(dropdown);
+        } else {
+            closeDropdowns();
         }
         return false
     }
 
-    function closeDropdowns(e) {
-        if(!$(e.target).hasClass("dropdown-toggle")){
-            trailsDropdownList.removeClass("open");
-            settingsDropdownList.removeClass("open");
-            trailsDropdownList.hide();
-            settingsDropdownList.hide();
+    function adjustFrameHeightForDropdown(dropdown) {
+        // need a bit of buffer on the bottom so that when a new trail is added it doesn't go below the fold
+        toolbarFrame.css({height: Math.max(dropdown.height(), previewHeight) + toolbarHeight + 100 + "px"});
+    }
+
+    function closeDropdowns() {
+        trailsDropdownList.removeClass("open");
+        settingsDropdownList.removeClass("open");
+        trailsDropdownList.hide();
+        settingsDropdownList.hide();
+
+        addTrailDropdownInput.val("")
+
+        if (infoDisplayShown) {
+            toolbarFrame.css({height: previewHeight + toolbarHeight + "px"});
+        } else {
+            toolbarFrame.css({height: toolbarHeight});
         }
     }
 
-    siteBody.click(closeDropdowns);
-    thisToolbar.getIDoc(toolbarFrame).click(closeDropdowns);
+    function clickOffDropdowns(e) {
+        var target = $(e.target);
+        if (!target.hasClass("dropdown-toggle") && !target.hasClass("add-trail-dropdown-input")) {
+            closeDropdowns()
+        }
+    }
+
+    siteBody.click(clickOffDropdowns);
+    thisToolbar.getIDoc(toolbarFrame).click(clickOffDropdowns);
 
     this.switchToTrail = function(trail) {
         clearFaviconHolder();
@@ -244,7 +317,6 @@ function WtToolbar(toolbarHtml) {
             } else {
                 hasTrails = false;
                 trailPreview.clear();
-                trailPreview.enableOrDisablePrevAndNextButtons;
                 trailNameContainer.val(T.noTrailsDropdownText)
                 createNewNoteSelector();
                 showNoTrailsHelp();
@@ -261,7 +333,7 @@ function WtToolbar(toolbarHtml) {
     function setSaveButtonToSaving() {
         saveSiteButton.html("Saving").addClass("saving");
         siteSavingSpinner.css({
-            "visibility": "visible"
+            "width": "20px"
         });
         saveSiteButton.unbind("click", saveSiteToTrail);
     };
@@ -269,7 +341,7 @@ function WtToolbar(toolbarHtml) {
     function setSaveButtonToSaved(siteId, trailId) {
         saveSiteButton.html("Site saved");
         siteSavingSpinner.css({
-            "visibility": "hidden"
+            "width": "0px"
         });
         saveSiteButton.click(function() {
             open(webTrailsUrl + "/trails/" + trailId + "#" + siteId, "_blank");
@@ -278,22 +350,23 @@ function WtToolbar(toolbarHtml) {
 
 
     this.addFavicon = function(site) {
-        var faviconImg = H.faviconImg(site.faviconUrl);
+        var faviconImg = H.faviconImg(site);
         faviconImg.click(function() {
-            if (site.getLastNote()) {
-                trailPreview.displayNote(site.getLastNote());
-                trailPreview.enableOrDisablePrevAndNextButtons(site.getLastNote());
-            } else {
-                var noNoteFakeNote = new NoNoteNote(site, trailPreview.getCurrentNote());
-                trailPreview.displayNote(noNoteFakeNote);
-                trailPreview.enableOrDisablePrevAndNextButtons(noNoteFakeNote);
-                showNoNotesOnSiteHelp();
+            if (infoDisplayShown) {
+                trailPreview.displayNote(site.getFirstNote() || site.getBaseRevisionNote());
             }
         });
         faviconContainer.append(faviconImg);
     }
 
+    function removeFavicon(siteDeletedEvent) {
+        var site = siteDeletedEvent.site
+        i$(".favicon-img[data-site-id=" + site.id + "]").remove();
+    }
+    $(document).on("siteDeleted", removeFavicon);
+
     function showMessageScreen(message, explanation) {
+        trailPreview.displayNote(false);
         i$("." + S.helpMessage).html(message);
         i$("." + S.helpExplanation).html(explanation || "");
         // cant' use show, as the css styles may not have been applied yet
@@ -306,20 +379,16 @@ function WtToolbar(toolbarHtml) {
     }
     $(document).on("noteDisplayed", hideMessageScreen);
 
-    function showNoNotesOnSiteHelp() {
-        showMessageScreen(T.noNotesOnSiteMessage, T.toolbarExplanation);
-    };
-
     function showNoTrailsHelp() {
-        showMessageScreen(T.noTrailsMessage, T.toolbarExplanation);
+        showMessageScreen(T.noTrailsMessage);
     };
 
     this.showNoNotesInTrailHelp = function() {
-        showMessageScreen(T.noNotesInTrailMessage, T.toolbarExplanation);
+        showMessageScreen(T.noNotesInTrailMessage);
     };
 
     this.showNoSitesInTrailHelp = function() {
-        showMessageScreen(T.noSitesInTrailMessage, T.toolbarExplanation);
+        showMessageScreen(T.noSitesInTrailMessage);
     };
 
     this.initSignedInExperience = function() {
@@ -330,14 +399,14 @@ function WtToolbar(toolbarHtml) {
 
         i$(".fade-on-logout").prop('disabled', false);
 
-        $(document).mousedown(function() {
-            mouseDown = true
-            possibleHighlightStart()
-        });
+//        $(document).mousedown(function() {
+//            mouseDown = true
+//            possibleHighlightStart()
+//        });
 
-        $(document).mouseup(function() {
-            mouseDown = false
-        });
+//        $(document).mouseup(function() {
+//            mouseDown = false
+//        });
     }
 
     this.initSignedOutExperience = function () {
@@ -358,6 +427,43 @@ function WtToolbar(toolbarHtml) {
         loggedIn = false;
     }
 
+    function updateToolbarUiOnNoteChange(noteDisplayEvent) {
+        var currentNote = noteDisplayEvent && noteDisplayEvent.note;
+
+        if (currentNote){
+            if(currentNote.nextNote()) {
+                nextNoteButton.enable();
+            } else {
+                nextNoteButton.disable();
+            }
+            if(currentNote.previousNote()) {
+                console.log("enabling previous note");
+                previousNoteButton.enable();
+            } else {
+                previousNoteButton.disable();
+            }
+
+            i$(".favicon-img.active").removeClass("active");
+            i$(".favicon-img[data-site-id=" + currentNote.site.id + "]").addClass("active");
+            if (currentNote.isBase) {
+                showNoNotesOverlay(currentNote.site);
+                deleteNoteButton.disable();
+            } else {
+                hideNoNotesOverlay();
+                deleteNoteButton.enable();
+            }
+        } else {
+            nextNoteButton.disable();
+            previousNoteButton.disable();
+            viewInTrailButton.disable();
+            deleteNoteButton.disable();
+            noteSelectorButton.disable();
+            hideNoNotesOverlay();
+        }
+    }
+    $(document).on("noteDisplayed", updateToolbarUiOnNoteChange);
+    $(document).on("trailPreviewCleared", function() { updateToolbarUiOnNoteChange(false) });
+
     function signOut() {
         console.log("signing out");
         chrome.runtime.sendMessage({logout:"now!"}, function(response) {
@@ -372,6 +478,26 @@ function WtToolbar(toolbarHtml) {
             // no response handling needed, the background will send a message
             // to all tabs.
         });
+    }
+
+    function showNoNotesOverlay(site) {
+        var overlay = i$(".no-notes-butter-bar-container");
+        overlay.css({height: previewHeight});
+
+        i$(".delete-site-button").click(function(e) {
+            deleteSite(site, function() {
+                site.delete();
+            })
+        });
+
+        i$(".info-view-site-button").click(function(e) {
+            viewNoteInTrail(new BaseRevisionNote(site));
+        });
+    }
+
+    function hideNoNotesOverlay() {
+        var overlay = i$(".no-notes-butter-bar-container");
+        overlay.css({height: 0});
     }
 
     function showOrHide(){
@@ -394,14 +520,16 @@ function WtToolbar(toolbarHtml) {
         toolbarBody.css({
             visibility: "visible"
         });
-        trailPreview.show();
         if (loggedIn) {
             if (!mouseDown) { // if the mouse is not pressed (not highlighting)
                 highlightedTextDetect(); // check to see if they highlighted anything for the addnote button
             } else { // mouse is down, must be highlighting
-                possibleHighlightStart(); // get that highlight start event so when done highlighting, addnote appears
+//                possibleHighlightStart(); // get that highlight start event so when done highlighting, addnote appears
             }
             if (!hasBeenShown) {
+                if (infoDisplayShown) {
+                    trailPreview.initializeView();
+                }
                 Trails.requestTrailsUpdate();
             }
         }
@@ -418,7 +546,6 @@ function WtToolbar(toolbarHtml) {
         toolbarBody.css({
             visibility: "hidden"
         });
-        trailPreview.hide();
         if (noteSelector) {
             noteSelector.hide();
         }
@@ -429,12 +556,11 @@ function WtToolbar(toolbarHtml) {
     }
 
     function showOrHideNoteSelector() {
-        if (noteSelector && shown) {
+        if (noteSelector && shown && infoDisplayShown) {
             if (noteSelector.shown) {
                 var selectedNote = noteSelector.getSelectedNote();
                 if (selectedNote && (selectedNote !== trailPreview.getCurrentNote())){
                     trailPreview.displayNote(noteSelector.getSelectedNote());
-                    trailPreview.enableOrDisablePrevAndNextButtons(trailPreview.getCurrentNote());
                 }
                 noteSelector.hide();
             } else {
@@ -443,37 +569,57 @@ function WtToolbar(toolbarHtml) {
         }
     }
 
+    function showOrHideInfoDisplay() {
+        if (infoDisplayShown) {
+            hideInfoDisplay();
+        } else {
+            showInfoDisplay();
+        }
+    }
+
+    function showInfoDisplay() {
+        toolbarFrame.css({height: toolbarHeight + previewHeight + "px"});
+        infoDisplay.css({height: previewHeight + "px"});
+        infoDisplay.css({"border-bottom": "1px solid"});
+
+        showOrHideInfoDisplayButton.html(T.hidePreview);
+
+        nextNoteButton.enable();
+        previousNoteButton.enable();
+        deleteNoteButton.enable();
+        noteSelectorButton.enable();
+        viewInTrailButton.enable();
+
+        if (shown && !trailPreview.viewInitialized()) {
+            trailPreview.initializeView();
+        }
+
+        infoDisplayShown = true;
+        LocalStorageTrailAccess.setPreviewShown(true);
+    }
+
+    function hideInfoDisplay() {
+        toolbarFrame.css({height: toolbarHeight + "px"});
+        infoDisplay.css({height: "0"});
+        infoDisplay.css({"border-bottom": "none"});
+
+        showOrHideInfoDisplayButton.html(T.showPreview);
+
+        nextNoteButton.disable();
+        previousNoteButton.disable();
+        deleteNoteButton.disable();
+        noteSelectorButton.disable();
+        viewInTrailButton.disable();
+
+        infoDisplayShown = false;
+        LocalStorageTrailAccess.setPreviewShown(false);
+    }
+
     function clearFaviconHolder() {
         faviconContainer.html("");
     }
     function clearTrailDropdown() {
         trailsDropdownList.html("")
-    }
-
-    function checkForToolbarRelatedKeypress(e){
-        console.log("checking keypress");
-        var code = (e.keyCode ? e.keyCode : e.which);
-        console.log("key is " + code);
-        if (code == 27 && e.shiftKey) {    //tilda = 192, esc is code == 27
-            console.log("showing or hiding");
-            showOrHide();
-        }
-
-        if (code == 18 && e.shiftKey && shown && noteSelector) {
-            noteSelector.show();
-        }
-    }
-
-    function checkForToolbarRelatedKeyup(e) {
-        var code = (e.keyCode ? e.keyCode : e.which);
-        if (code == 18 && noteSelector && noteSelector.shown) {
-            var selectedNote = noteSelector.getSelectedNote();
-            if (selectedNote && (selectedNote !== trailPreview.getCurrentNote())){
-                trailPreview.displayNote(noteSelector.getSelectedNote());
-                trailPreview.enableOrDisablePrevAndNextButtons(trailPreview.getCurrentNote());
-            }
-            noteSelector.hide();
-        }
     }
 
     if (wt_auth_token){

@@ -12,6 +12,8 @@ String.prototype.splice = function( idx, rem, s ) {
 };
 
 $(function() {
+    Highlights = new HighlightManager(document);
+
     console.log("initializing the extension");
     var deferredData = LocalStorageTrailAccess.getExtensionInitializationData();
     chrome.runtime.sendMessage({getToolbarHtml: true});
@@ -32,7 +34,14 @@ function initToolbar(initializationObject, htmlObject){
     console.log("init extension");
     initializeAutoResize();
 
-    Toolbar = new WtToolbar(decodeURI(htmlObject.toolbarHtml));
+    var showPreview;
+    if (initializationObject.previewShown === undefined) {
+        showPreview = true // always show the preview the first time a user opens the toolbar
+    } else {
+        showPreview =initializationObject.previewShown
+    }
+
+    Toolbar = new WtToolbar(decodeURI(htmlObject.toolbarHtml), initializationObject.previewShown);
 
     chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         if (request.logOutAllTabs){
@@ -49,7 +58,6 @@ function initToolbar(initializationObject, htmlObject){
         }
     });
 
-    $(document.body).keydown(verifyKeypress);
     if (wt_auth_token) {
         initializeTrails(initializationObject.trails, initializationObject.currentTrailId);
     }
@@ -61,12 +69,6 @@ function initializeTrails(baseTrailsObject, startingTrailId) {
     Toolbar.initializeToolbarWithTrails(Trails);
 }
 
-function getTrailDataFromLocalStorage(callback){
-    LocalStorageTrailAccess.getTrails().done(function(trails) {
-        callback && callback(trails)
-    })
-}
-
 function updateTrailDataInLocalStorage(){
     console.log("send update message");
     chrome.runtime.sendMessage({updateTrailsObject:"update it!"}, function(response) {
@@ -74,13 +76,13 @@ function updateTrailDataInLocalStorage(){
     });
 }
 
-function verifyKeypress(e){
-    console.log("verifiing keypress");
-    var code = (e.keyCode ? e.keyCode : e.which);
-    if (e.altKey){
-        displaySaveButtonWhileKeyIsPressed()
-    }
-}
+//function verifyKeypress(e){
+//    console.log("verifiing keypress");
+//    var code = (e.keyCode ? e.keyCode : e.which);
+//    if (e.altKey){
+//        displaySaveButtonWhileKeyIsPressed()
+//    }
+//}
 
 // if error returns null
 function getComputedStyleOfElement(element,stylename){

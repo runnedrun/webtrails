@@ -79,10 +79,10 @@ Comment = function(note, top, left, trailPreview, $siteDocument) {
     this.createCommentContainer = function() {
         var commentContainer = HTML.commentContainer();
 
-        var commentOverlay = commentTextElement = HTML.commentOverlay(note.comment);
+        var commentOverlay = commentTextElement = HTML.commentOverlay(note.comment || "");
         commentOverlay.attr("data-note-id",note.id);
 
-        var closeCommentContainer = HTML.closeCommentContainer()
+        var closeCommentContainer = HTML.closeCommentContainer();
         closeCommentContainer.click(this.remove);
 
         var closeCommentX = HTML.closeCommentX();

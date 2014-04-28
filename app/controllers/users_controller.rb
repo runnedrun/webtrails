@@ -45,11 +45,7 @@ class UsersController < ApplicationController
   end
 
   def get_all_trail_data
-    trail_site_hash = {}
-    @user.trails.each do |trail|
-      trail_site_hash[trail.id] = trail.get_update_hash()
-    end
-    render :json => {:trail_hash => trail_site_hash, :user_id => @user.id}
+    render :json => {:trail_hash => @user.get_update_hash, :user_id => @user.id}
   end
 
 end

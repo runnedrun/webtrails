@@ -34,7 +34,8 @@ class NotesController < ApplicationController
       render :json => {:note_content => @note.content, :note_id => @note.id}, :status => 200
     rescue
       puts "create note failed with error:"
-      $!.message
+      puts $!.message
+      puts $!.backtrace.to_a
       render_server_error_ajax
     end
   end

@@ -26,11 +26,7 @@ class TrailsController < ApplicationController
     begin
       puts "creating trail"
       trail = Trail.create(:owner => @user, :name => params[:name])
-      puts "setting cookie"
-      cookies['wt_new_trail_name'] = URI::escape(trail.name)
-      cookies['wt_new_trail_id'] = URI::escape(trail.id.to_s)
-      puts "cookies set"
-      render :json => {:message => "trail created"}, :status => 200
+      render :json => {:updateHash => @user.get_update_hash}, :status => 200
     rescue
       puts $!.message
       render_server_error_ajax

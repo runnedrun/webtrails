@@ -14,9 +14,7 @@
     "background": {
         "scripts": ["chrome_extension_js/jquery.js","oauth2/oauth2.js","chrome_extension_js/background_scripts/extension_background.js",
             "third_party_scripts/jquery_url_parser.js", "third_party_scripts/URI.js", "chrome_extension_js/background_scripts/parse_page_and_resolve_urls.js",
-            "chrome_extension_js/background_scripts/site_storage_accessors.js",
             "chrome_extension_js/background_scripts/misc_storage_accessors.js","chrome_extension_js/background_scripts/auth_storage_accessors.js",
-            "chrome_extension_js/background_scripts/note_storage_accessors.js","chrome_extension_js/background_scripts/trail_storage_accessors.js",
             "chrome_extension_js/background_scripts/LocalStorageTrail.js", "chrome_extension_js/background_scripts/DownloadStatusChecker.js"]
     },
     "content_scripts": [
@@ -29,12 +27,12 @@
             "matches": ["<all_urls>"],
             "exclude_globs": ["http://localhost:3000/*", "http://*.webtrails.co/*"],
             "js": ["third_party_scripts/jquery.js", "third_party_scripts/scrollsnap.js","third_party_scripts/dotDotDot.js",
-                "chrome_extension_js/page_preprocessing.js", "chrome_extension_js/dropdown.js", "chrome_extension_js/rangy-core.js",
+                "chrome_extension_js/page_preprocessing.js", "chrome_extension_js/rangy-core.js",
                 "chrome_extension_js/background_scripts/LocalStorageTrail.js",
                 "chrome_extension_js/iframe_manager.js", "chrome_extension_js/trails_objects.js","chrome_extension_js/trail_preview.js",
                 "chrome_extension_js/TrailToolbar.js", "chrome_extension_js/ajax_fns.js", "chrome_extension_js/autoresize.js",
-                "chrome_extension_js/css_property_defaults.js", "chrome_extension_js/inline_save_button_fns.js",
-                "chrome_extension_js/ui_fns.js","chrome_extension_js/commenting_fns.js","chrome_extension_js/whereJSisWrittenLocalChrome.js",
+                "chrome_extension_js/css_property_defaults.js", "chrome_extension_js/HighlightManager.js",
+                "chrome_extension_js/ui_fns.js","chrome_extension_js/Comment.js","chrome_extension_js/whereJSisWrittenLocalChrome.js",
                 "chrome_extension_js/NoteSelector.js"]
         },
         {   "matches": ["<all_urls>"],
