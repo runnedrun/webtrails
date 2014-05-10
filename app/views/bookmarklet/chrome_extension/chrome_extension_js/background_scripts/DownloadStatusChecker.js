@@ -1,6 +1,6 @@
 DownloadStatusChecker = function(archiveLocation, tabId, siteId, revisionNumber) {
     var retries = 0;
-    var maxRetries = 15;
+    var maxRetries = 20;
 
     alertTabOfDownloadStart();
     checkStatus()

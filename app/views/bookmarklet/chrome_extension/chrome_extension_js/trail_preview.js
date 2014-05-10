@@ -2,12 +2,11 @@ console.log("trail preview injected");
 
 function TPreview(
     previewContainer, height, nextNoteButton, previousNoteButton, deleteNoteButton, iframeClickHandler, parentToolbar
-    ) {
+) {
     var currentTrail = false;
     var currentNote = false;
     var currentSiteFrame = false;
     var thisTrailPreview = this;
-    height = 200;
 
     var initialized = false;
 

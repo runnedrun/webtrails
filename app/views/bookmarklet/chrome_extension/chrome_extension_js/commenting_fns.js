@@ -136,15 +136,6 @@ function saveNoteAndRefreshAWS(content,comment, commentLocationX, commentLocatio
     );
 }
 
-function closeOverlay(){
-    var overlay = $(".commentOverlay")
-    $(document).unbind("mousedown");
-    $(document).mousedown(function(){mouseDown=1});
-    $(document).mousedown(possibleHighlightStart);
-    overlay.remove();
-    unhighlight_wtHighlights();
-}
-
 function clickAway(e,content,commentOverlay,commentX, commentY, clientSideId){
     var clickedNode = $(e.target);
     if (clickedNode != commentOverlay && ($.inArray(e.target,commentOverlay.children())==-1)){

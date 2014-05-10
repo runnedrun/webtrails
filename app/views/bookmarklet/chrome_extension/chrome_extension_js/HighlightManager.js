@@ -2,7 +2,7 @@ HighlightManager = function(trackedDoc) {
     var $doc = $(trackedDoc);
     var $body = $(trackedDoc.body);
 
-    var currentCommentBox;
+    var currentCommentCreator;
 
     function possibleHighlightStart(e){
         console.log("possible highlight start")
@@ -22,11 +22,11 @@ HighlightManager = function(trackedDoc) {
     }
 
     function addComment(highlightedTextRange){
-        currentCommentBox = new Comment(10, highlightedTextRange, trackedDoc);
-        if (currentCommentBox.canBeHighlighted()) {
+        currentCommentCreator = new CommentCreator(0, highlightedTextRange, trackedDoc);
+        if (currentCommentCreator.canBeHighlighted()) {
             $doc.mousedown(handleMouseDown);
             function handleMouseDown() {
-                currentCommentBox.remove();
+                currentCommentCreator.remove();
                 $doc.unbind("mousedown", handleMouseDown)
             }
         }
@@ -35,6 +35,10 @@ HighlightManager = function(trackedDoc) {
     function getHighlightedTextRange(){
         return rangy.getSelection().getRangeAt(0);
     }
+
+    $(document).on("noteSubmitted", function(submittedEvent) {
+        new Comment(submittedEvent.noteDetail.comment, submittedEvent.noteDetail.client_side_id);
+    });
 
     this.watchDocument = function() {
         $doc.mousedown(function() {

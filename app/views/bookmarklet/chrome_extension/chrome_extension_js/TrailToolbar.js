@@ -16,7 +16,7 @@ function WtToolbar(toolbarHtml, previewShown) {
     var hasBeenShown = false;
 
     this.toolbarInducedOffset = function() {
-        return toolbarHeight + previewHeight
+        return toolbarHeight + previewHeight + 2
     }
 
     this.bodyMarginTop = siteBody.css("margin-top");
@@ -61,7 +61,7 @@ function WtToolbar(toolbarHtml, previewShown) {
         }
     };
     var H = {
-        toolbarFrame: $("<iframe class='wt-toolbar-frame webtrails'></iframe>").
+        toolbarFrame: applyDefaultCSS($("<iframe class='wt-toolbar-frame webtrails'></iframe>")).
             attr({'src': "about:blank", 'frameborder': 0}).
             css(C.toolbarFrame),
         faviconImg: function(site) {
@@ -88,7 +88,7 @@ function WtToolbar(toolbarHtml, previewShown) {
     thisToolbar.runWhenLoaded(function(doc) {
         var $doc = $(doc);
         $doc.find(".info-display").css({top: toolbarHeight});
-        var frameHeight = toolbarHeight + previewHeight;
+        var frameHeight = thisToolbar.toolbarInducedOffset();
         $doc.find("body").css({height: frameHeight});
 
         if(previewShown) {
@@ -521,11 +521,6 @@ function WtToolbar(toolbarHtml, previewShown) {
             visibility: "visible"
         });
         if (loggedIn) {
-            if (!mouseDown) { // if the mouse is not pressed (not highlighting)
-                highlightedTextDetect(); // check to see if they highlighted anything for the addnote button
-            } else { // mouse is down, must be highlighting
-//                possibleHighlightStart(); // get that highlight start event so when done highlighting, addnote appears
-            }
             if (!hasBeenShown) {
                 if (infoDisplayShown) {
                     trailPreview.initializeView();
@@ -552,7 +547,6 @@ function WtToolbar(toolbarHtml, previewShown) {
         shown = false;
         $(".inlineSaveButton").remove();
         siteBody.focus();
-        closeOverlay();
     }
 
     function showOrHideNoteSelector() {
@@ -578,8 +572,8 @@ function WtToolbar(toolbarHtml, previewShown) {
     }
 
     function showInfoDisplay() {
-        toolbarFrame.css({height: toolbarHeight + previewHeight + "px"});
-        infoDisplay.css({height: previewHeight + "px"});
+        toolbarFrame.css({height: thisToolbar.toolbarInducedOffset() + "px"});
+        infoDisplay.css({height: previewHeight + 2 + "px"});
         infoDisplay.css({"border-bottom": "1px solid"});
 
         showOrHideInfoDisplayButton.html(T.hidePreview);
