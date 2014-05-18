@@ -1,4 +1,4 @@
-DownloadStatusChecker = function(archiveLocation, tabId, siteId, revisionNumber) {
+DownloadStatusChecker = function(archiveLocation, tabId, siteId, revisionNumber, noteId, clientSideId) {
     var retries = 0;
     var maxRetries = 20;
 
@@ -29,13 +29,25 @@ DownloadStatusChecker = function(archiveLocation, tabId, siteId, revisionNumber)
     }
 
     function alertTabOfDownloadComplete(html) {
-        chrome.tabs.sendRequest(tabId, {downloadComplete: true});
+        console.log("sending downlaod compplete");
+        chrome.tabs.sendRequest(tabId, {
+            downloadComplete: {
+                revisionNumber: revisionNumber,
+                clientSideId: clientSideId,
+                noteId: noteId
+            }
+        });
         var prefetched = {};
         prefetched[siteId + revisionNumber] = {html: html, siteId: siteId, revisionNumber: revisionNumber};
         retrieveTrailData(prefetched);
     }
 
     function alertTabOfDownloadTimeout() {
-        chrome.tabs.sendRequest(tabId, {downloadTimedOut: true})
+        chrome.tabs.sendRequest(tabId, {
+            downloadTimedOut:  {
+                noteId: noteId,
+                clientSideId: clientSideId,
+            }
+        })
     }
 }

@@ -107,3 +107,14 @@ function getNodeLineHeight(element) {
 function isTextNode(node) {
     return node.nodeType == 3;
 }
+
+chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+    if (request.downloadComplete) {
+        console.log("got download complete event from background");
+        $(document).trigger({type:"downloadComplete", noteDetails: request.downloadComplete});
+    }
+    if (request.downloadTimedOut) {
+        butterBarNotification("Problem saving, may not have saved correctly.");
+        $(document).trigger({type:"downloadTimedOut", noteDetails: request.downloadTimedOut});
+    }
+})

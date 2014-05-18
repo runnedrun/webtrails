@@ -23,13 +23,6 @@ HighlightManager = function(trackedDoc) {
 
     function addComment(highlightedTextRange){
         currentCommentCreator = new CommentCreator(0, highlightedTextRange, trackedDoc);
-        if (currentCommentCreator.canBeHighlighted()) {
-            $doc.mousedown(handleMouseDown);
-            function handleMouseDown() {
-                currentCommentCreator.remove();
-                $doc.unbind("mousedown", handleMouseDown)
-            }
-        }
     }
 
     function getHighlightedTextRange(){
@@ -37,7 +30,7 @@ HighlightManager = function(trackedDoc) {
     }
 
     $(document).on("noteSubmitted", function(submittedEvent) {
-        new Comment(submittedEvent.noteDetail.comment, submittedEvent.noteDetail.client_side_id);
+        new Comment(trackedDoc, submittedEvent.noteDetail.comment, submittedEvent.noteDetail.client_side_id);
     });
 
     this.watchDocument = function() {

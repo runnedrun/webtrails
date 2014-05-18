@@ -49,10 +49,7 @@ class NotesController < ApplicationController
         render_not_authorized
       else
         note.delete
-        previous_note = site.reload.notes.find(:first, :order => "created_at DESC")
-        previous_note_id = previous_note ? previous_note.id : "none"
-        previous_note_content = previous_note ? previous_note.content : "none"
-        render :json => {"note_id" => previous_note_id, "note_content" => previous_note_content}
+        render :json => {"update_hash" => @user.get_update_hash}
       end
     rescue
       puts $!.message

@@ -35,6 +35,13 @@ function saveSiteToTrail(note){
             },
             success: function(resp){
 //                Trails.switchToTrail(resp.current_trail_id);
+                $(document).trigger({
+                    type: "noteIdReceived",
+                    noteDetails: {
+                        noteId: resp.note_id,
+                        clientSideId: note.client_side_id
+                    }
+                });
                 Trails.getTrail(resp.current_trail_id).setCurrentSiteId(resp.current_site_id);
                 parsePageBeforeSavingSite($.extend(resp, {
                     isBaseRevision: true,
@@ -57,7 +64,8 @@ function saveSiteToTrail(note){
                     current_trail_id: Trails.getCurrentTrailId(),
                     shallow_save: true,
                     revision_number: currentRevisionNumber,
-                    update_on_finish: true
+                    update_on_finish: true,
+                    client_side_id: note.client_side_id
                 }));
 //                updateTrailDataWhenNoteReady(resp.note_id);
             }
@@ -84,7 +92,7 @@ function fetchFavicons(){
     });
 }
 
-function deleteNote(note, callback){
+function deleteNoteRequest(note, callback){
     $.ajax({
         url: webTrailsUrl + "/notes/delete",
         type: "post",
@@ -93,7 +101,10 @@ function deleteNote(note, callback){
         data: {
             "id": note.id
         },
-        success: function(resp) { updateTrailDataInLocalStorage(); callback(resp); },
+        success: function(resp) {
+            LocalStorageTrailAccess.addOrUpdateTrails(resp.update_hash);
+            callback && callback(resp)
+        },
         error: function(){ butterBarNotification("Failed to delete note, please try again") }
     });
 }
@@ -121,4 +132,17 @@ function newTrail(trailName, callback) {
         success: callback
     });
 }
+
+function updateNoteText(newComment, id, callback) {
+    $.ajax({
+        url:  webTrailsUrl + "/notes/update",
+        type: "post",
+        data: {
+            "id" : id,
+            "comment": newComment
+        },
+        success: function(e) { console.log("note saved"); callback(e) }
+    });
+}
+
 

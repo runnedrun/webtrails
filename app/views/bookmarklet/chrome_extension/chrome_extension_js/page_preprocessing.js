@@ -13,10 +13,14 @@ function removeToolbarFromPage(htmlClone) {
     body.style["position"] = Toolbar.bodyPosition;
 }
 
-function removeAllUnusedTags($htmlClone){
-    removeNodes($htmlClone.querySelectorAll("script"));
-    removeNodes($htmlClone.querySelectorAll("noscript"));
-    removeNodes($htmlClone.querySelectorAll("meta"));
+function removeAllUnusedTags(htmlClone) {
+    removeNodes(htmlClone.querySelectorAll("script"));
+    removeNodes(htmlClone.querySelectorAll("noscript"));
+    removeNodes(htmlClone.querySelectorAll("meta"));
+}
+
+function removeStylingFromWtHighlights($htmlClone) {
+    $htmlClone.find("wthighlight").attr("style", "");
 }
 
 function getCurrentSiteHTML(){
@@ -24,6 +28,7 @@ function getCurrentSiteHTML(){
     var htmlClone = htmlElement.cloneNode(true);
     if (!(typeof Toolbar === "undefined")) removeToolbarFromPage(htmlClone); // edits in-place
     removeAllUnusedTags(htmlClone);
+    removeStylingFromWtHighlights($(htmlClone));
     var processedHtml = htmlClone; //gets the element, not the jquery object
     return processedHtml.outerHTML;
 }
@@ -70,7 +75,8 @@ function parsePageBeforeSavingSite(resp){
             revision: resp.revision_number,
             is_base_revision: resp.isBaseRevision || false,
             character_encoding: document.characterSet,
-            note_id: resp.note_id || undefined
+            note_id: resp.note_id || undefined,
+            client_side_id: resp.client_side_id
         }
     }, function(response){
         console.log("page_preprocessing. parseAndResolve came back!");

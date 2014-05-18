@@ -42,6 +42,7 @@ function parse_page_and_resolve_urls(siteInfo, tabId){
         characterEncoding: characterEncoding,
         noteId: siteInfo.note_id,
         tabId: tabId,
+        clientSideId: siteInfo.client_side_id
     };
 
     $.each(stylesheetHrefs,function(i,href){
@@ -169,7 +170,10 @@ function checkIfAllResourcesAreParsed(callbackTracker){
                             resp.archive_location,
                             callbackTracker.tabId,
                             callbackTracker.siteID,
-                            callbackTracker.revision);
+                            callbackTracker.revision,
+                            callbackTracker.noteId,
+                            callbackTracker.clientSideId
+                        );
                     }
                 },
                 error: function(){

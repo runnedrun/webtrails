@@ -482,7 +482,7 @@ function WtToolbar(toolbarHtml, previewShown) {
 
     function showNoNotesOverlay(site) {
         var overlay = i$(".no-notes-butter-bar-container");
-        overlay.css({height: previewHeight});
+        overlay.css({height: previewHeight - 2});
 
         i$(".delete-site-button").click(function(e) {
             deleteSite(site, function() {

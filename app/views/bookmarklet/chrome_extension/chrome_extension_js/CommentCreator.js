@@ -7,20 +7,14 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
     var clientSideId = generateClientSideId();
     var nodes = highlightedRange.getNodes();
     var commentText;
+    var $trackedDocument = $(trackedDocument);
     var $body = $(trackedDocument.body);
     var commentOverlay;
+    var hiddenCommentOverlay;
     var commentOverlayShown = false;
+    var trailNameTypeahead = false;
 
     var thisComment = this;
-
-    this.remove = function() {
-        revertNodes();
-        removeCommentOverlay();
-    }
-
-    this.canBeHighlighted = function() {
-        return selectedNodes.length > 0
-    }
 
     var CSS = {
         commentOverlay: {
@@ -35,17 +29,57 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
             "border-radius": "5px",
             "max-width" : "200px",
             "word-wrap" : "break-word"
+        },
+        hiddenCommentOverlay: {
+            "font-size":"12px",
+            "color": "#333",
+            "z-index": "2147483647",
+            "padding": "5px",
+            "background-color": "white",
+            "position": "absolute",
+            "border": "1px solid",
+            "border-radius": "5px",
+            "max-width" : "200px",
+            "word-wrap" : "break-word",
+            "visibility": "hidden"
         }
     };
     var HTML = {
+        hiddenCommentOverlay: function() {
+            return applyDefaultCSS($("<span></span>"))
+                .css(CSS.commentOverlay)
+                .addClass("hiddenCommentOverlay")
+                .addClass("webtrails");
+        },
         commentOverlay: function(top, left) {
-            return applyDefaultCSS($("<span contentEditable='true'></span>"))
+            return applyDefaultCSS($("<textarea></textarea>"))
                 .css(CSS.commentOverlay)
                 .css({"top": top + "px", "left": left + "px"})
                 .addClass("commentOverlay")
                 .addClass("webtrails");
         }
     };
+
+    function unbindAllWatchers() {
+        $trackedDocument.unbind("mousedown", removeAndRevert);
+        $trackedDocument.unbind("keypress", modifyOverlayOnFirstKeypress);
+        $trackedDocument.unbind("keyup", checkForEmptyCommentOverlayOnKeypress);
+        $trackedDocument.unbind("keydown", checkForNotePostKeypress);
+    }
+
+    function removeAndRevert() {
+        revertNodes();
+        removeCommentOverlay();
+        unbindAllWatchers();
+    }
+
+    function hideOverlayAndRevert() {
+        hideCommentOverlay();
+        $trackedDocument.keypress(modifyOverlayOnFirstKeypress);
+        commentOverlay.unbind("keypress", checkForEmptyCommentOverlayOnKeypress);
+        commentOverlay.blur();
+        reHighlightNodes();
+    }
 
     function highlight() {
         $.each(nodesToHighlight, function(i, highlightedNode) {
@@ -72,9 +106,10 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
         console.log("checking for note post keypress");
         var code = (e.keyCode ? e.keyCode : e.which);
         if (code == 13 && !e.shiftKey){
-            commentText = commentOverlay.html();
+            commentText = getTextInOverlay();
             var noteOffsets = selectedNodes[0].getWtHighlight().offset();
             removeCommentOverlay();
+            unbindAllWatchers();
             saveNote(noteContent, commentText, noteOffsets, clientSideId);
         } else if(code == 27){
             hideOverlayAndRevert();
@@ -101,30 +136,56 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
     }
 
     function checkForEmptyCommentOverlayOnKeypress() {
-        var content = commentOverlay.html();
-        if (content === "") {
+        var content = commentOverlay.val();
+
+        console.log("content in overlay is " + content);
+
+        console.log("trailNameTypeahead " + (trailNameTypeahead && trailNameTypeahead.isEmpty()));
+
+        if ((!content || content === "")) {
             hideOverlayAndRevert()
         }
     }
 
-    function hideOverlayAndRevert() {
-        hideCommentOverlay();
-        $(trackedDocument).keypress(modifyOverlayOnFirstKeypress);
-        commentOverlay.blur();
-        reHighlightNodes();
+    function resizeTextArea(e) {
+        console.log("resizing text area");
+        var currentContent = commentOverlay.val();
+        hiddenCommentOverlay.html(currentContent);
+        commentOverlay.css({
+            height: hiddenCommentOverlay.height() + "px",
+            width: hiddenCommentOverlay.width() + "px"
+        })
     }
 
     function modifyOverlayOnFirstKeypress(e) {
-        console.log("picking up key[ress");
-        showCommentOverlay();
-        $(trackedDocument).unbind("keypress", modifyOverlayOnFirstKeypress);
-        commentOverlay.focus();
-        moveCursorToEndOfOverlay();
-        highlight();
+        if (e.charCode) {
+            highlight();
+            showCommentOverlay();
+            commentOverlay.focus();
+            $(trackedDocument).unbind("keypress", modifyOverlayOnFirstKeypress);
+            commentOverlay.keyup(checkForEmptyCommentOverlayOnKeypress);
+            commentOverlay.({highlight: true}, {source: dataSource});
+        }
     }
 
-    function moveCursorToEndOfOverlay()
-    {
+    function dataSource(query, cb) {
+        cb({value: "cool beans"});
+    }
+
+    function typeaheadCompleteCallback() {
+        trailNameTypeahead = false
+    }
+
+    function stringFromCharcode(charcode) {
+        if (charcode > 0xFFFF) {
+            charcode -= 0x10000;
+            return String.fromCharCode(0xD800 + (charcode >> 10), 0xDC00 + (charcode & 0x3FF));
+        } else {
+            return String.fromCharCode(charcode);
+        }
+    }
+
+    function moveCursorToEndOfOverlay() {
         var range = document.createRange();
         range.selectNodeContents(commentOverlay[0]);
         range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
@@ -132,7 +193,6 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
         selection.removeAllRanges();
         selection.addRange(range);
     }
-
 
     function generateClientSideId() {
         var d = new Date();
@@ -209,15 +269,7 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
 
     function removeCommentOverlay() {
         commentOverlay && commentOverlay.remove();
-    }
-
-    function stringFromCharcode(charcode) {
-        if (charcode > 0xFFFF) {
-            charcode -= 0x10000;
-            return String.fromCharCode(0xD800 + (charcode >> 10), 0xDC00 + (charcode & 0x3FF));
-        } else {
-            return String.fromCharCode(charcode);
-        }
+        hiddenCommentOverlay && hiddenCommentOverlay.remove();
     }
 
     function noteSubmitEvent(noteDetail) {
@@ -279,13 +331,17 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
             var leftPosition = offsets.left;
 
             commentOverlay = HTML.commentOverlay(topPosition, leftPosition);
+            hiddenCommentOverlay = HTML.hiddenCommentOverlay();
 
             $body.append(commentOverlay);
+            $body.append(hiddenCommentOverlay);
 
             commentOverlay.keydown(checkForNotePostKeypress);
-            commentOverlay.keyup(checkForEmptyCommentOverlayOnKeypress);
-
+            commentOverlay.on("input", resizeTextArea);
+//
             $(trackedDocument).keypress(modifyOverlayOnFirstKeypress);
+//
+            $(trackedDocument).mousedown(removeAndRevert);
 
             reHighlightNodes();
         }
@@ -356,6 +412,7 @@ SelectedNode = function(node, start_offset, end_offset, clientSideId, trackedDoc
     }
 
     this.unHighlight = function() {
+
         if(canBeHighlighted) {
             $(wtHighlight).css({background: "inherit"});
             highlighted = false
@@ -388,14 +445,29 @@ SelectedNode = function(node, start_offset, end_offset, clientSideId, trackedDoc
     }
 
     function tryToReplaceNode(nodeToInsert, nodeToReplace) {
-        var parent = nodeToInsert[0].parentNode;
+        var parent = nodeToReplace.parentNode;
         parent && parent.replaceChild(nodeToInsert, nodeToReplace);
     }
 
     function tryToRemoveNode(nodeToRemove) {
-        var parent = nodeToRemove[0].parentNode;
+        var parent = nodeToRemove.parentNode;
         parent && parent.removeChild(nodeToRemove);
     }
+
+//    // this is used to make a wtHighlight for the final character alone
+//    // so we can insert things at the end of the highlight
+//    this.splitFinalCharacter = function() {
+//        if (canBeHighlighted) {
+//            var node = thisSelectedNode.getNode();
+//            var contents = node.nodeValue;
+//
+//            var finalChar  = contents[]
+//
+//            thisSelectedNode.getWtHighlight();
+//        } else {
+//            return false
+//        }
+//    }
 
     this.getWtHighlight = function () {
         return $(wtHighlight);

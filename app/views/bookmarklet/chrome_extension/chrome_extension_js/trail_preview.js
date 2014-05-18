@@ -7,6 +7,7 @@ function TPreview(
     var currentNote = false;
     var currentSiteFrame = false;
     var thisTrailPreview = this;
+    var currentComment;
 
     var initialized = false;
 
@@ -85,34 +86,18 @@ function TPreview(
         if (note.baseNote) return;
 
         deferredIdoc.done(function($iDoc) {
+            currentComment && currentComment.remove();
+
             var body = $iDoc.find("body");
-            body.scrollTop(note.scrollY-50).scrollLeft(note.scrollX);
-            thisTrailPreview.runWhenLoaded(function() {
-                if (currentNote == note) {
-                    var noteElements = thisTrailPreview.highlightSingleNote(note);
-                    var noteLocation = noteElements.first().offset();
-                    if (noteLocation) {
-                        var scrollTop = noteLocation.top -50;
-                        var scrollLeft = noteLocation.left;
-                        if ((Math.abs(noteLocation.top - note.scrollY) > 10) || (Math.abs(noteLocation.left - note.scrollX) > 10)){
-                            console.log("correcting scroll", noteLocation.top, note.scrollY);
-                            console.log(noteLocation.left, note.scrollX);
-                            body.scrollTop(scrollTop).scrollLeft(scrollLeft);
-                        }
-                    }
-                }
-            },$iDoc[0]);
+            body.scrollTop(note.scrollY - 50).scrollLeft(note.scrollX);
+
+            var scrollToNote = function(topPosition, leftPosition) {
+                body.scrollTop(topPosition - 50).scrollLeft(leftPosition);
+            };
+
+            currentComment = new Comment($iDoc[0], note.comment, note.clientSideId, 0, note.id, scrollToNote);
         })
-    }
-
-    this.highlightSingleNote = function(note) {
-        return thisTrailPreview.highlightElements(thisTrailPreview.getNoteElements(note));
     };
-
-    this.getNoteElements = function(note) {
-        var siteIDoc = getSiteIDoc(note.site);
-        return $("." + note.clientSideId, siteIDoc)
-    }
 
     this.showNextNote = function() {
         var nextNote = currentNote.nextNote();
@@ -146,13 +131,7 @@ function TPreview(
         } else {
             previousNoteButton.disable();
         }
-    }
-
-    this.highlightElements = function($elements) {
-        return $elements.css({
-            "background": "yellow"
-        })
-    }
+    };
 
     this.clear = function() {
         currentNote = false;
@@ -208,7 +187,7 @@ function TPreview(
 
     function deleteCurrentNote(){
         var noteToBeDeleted = currentNote;
-        deleteNote(noteToBeDeleted, function() {
+        deleteNoteRequest(noteToBeDeleted, function() {
             noteToBeDeleted.delete();
         })
     }
