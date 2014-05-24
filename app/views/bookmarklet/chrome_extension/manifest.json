@@ -34,7 +34,9 @@
                 "chrome_extension_js/css_property_defaults.js", "chrome_extension_js/HighlightManager.js",
                 "chrome_extension_js/ui_fns.js","chrome_extension_js/Comment.js", "chrome_extension_js/CommentCreator.js",
                 "chrome_extension_js/whereJSisWrittenLocalChrome.js", "chrome_extension_js/NoteSelector.js",
-                "third_party_scripts/fuse.js", "chrome_extension_js/TrailNameTypeahead.js", "third_party_scripts/typeahead.js"]
+                "third_party_scripts/fuse.js", "chrome_extension_js/TrailNameTypeahead.js", "chrome_extension_js/InlineBootstrapStyles.js",
+                "third_party_scripts/textcomplete.js"
+                ]
         },
         {   "matches": ["<all_urls>"],
             "js": ["chrome_extension_js/get_iframe_content.js", "chrome_extension_js/page_preprocessing.js"],

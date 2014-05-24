@@ -6,6 +6,7 @@ var faviconHolder,
 //    webTrailsUrl = "http://www.webtrails.co";
     webTrailsUrl = "http://localhost:3000";
     wt_auth_token = undefined;
+    commentDropdownCssInserted = false;
 
 String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
