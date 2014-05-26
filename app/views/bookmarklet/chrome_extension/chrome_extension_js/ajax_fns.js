@@ -5,13 +5,15 @@ function signRequestWithWtAuthToken(xhr,ajaxRequest){
     xhr.setRequestHeader("Accept","application/json");
 }
 
-function saveSiteToTrail(note){
+function saveSiteToTrail(note, trailId){
+    var trailIdToSaveTo = trailId || Trails.getCurrentTrailId();
+
     var currentSite = window.location.href;
-    if (Trails.siteSavedDeeply() && !Trails.getCurrentSiteId()) {
-        console.log("saved already, but not returned yet");
-        setTimeout(function(){saveSiteToTrail(note)}, 100);
-        return
-    }
+//    if (Trails.siteSavedDeeply() && !Trails.getCurrentSiteId()) {
+//        console.log("saved already, but not returned yet");
+//        setTimeout(function(){saveSiteToTrail(note)}, 100);
+//        return
+//    }
 
     var currentRevisionNumber = Trails.getAndIncrementRevision();
     if (note) {
@@ -19,7 +21,7 @@ function saveSiteToTrail(note){
     }
 
     console.log("note is ", note);
-    if (!Trails.getCurrentSiteId()){
+    if (!Trails.getTrail(trailIdToSaveTo).getCurrentSiteId()){
         $.ajax({
             url: webTrailsUrl + "/sites/get_new_site_id",
             type: "post",
@@ -27,7 +29,7 @@ function saveSiteToTrail(note){
             beforeSend: signRequestWithWtAuthToken,
             data: {
                 "site[url]":currentSite,
-                "site[trail_id]":Trails.getCurrentTrailId(),
+                "site[trail_id]": trailIdToSaveTo,
                 "site[title]": document.title,
                 "site[domain]": document.domain,
                 "site[html_encoding]": document.characterSet,
@@ -60,8 +62,8 @@ function saveSiteToTrail(note){
             },
             success: function(resp){
                 parsePageBeforeSavingSite($.extend(resp,{
-                    current_site_id: Trails.getCurrentSiteId(),
-                    current_trail_id: Trails.getCurrentTrailId(),
+                    current_site_id: !Trails.getTrail(trailIdToSaveTo).getCurrentSiteId(),
+                    current_trail_id: trailIdToSaveTo,
                     shallow_save: true,
                     revision_number: currentRevisionNumber,
                     update_on_finish: true,
@@ -129,7 +131,10 @@ function newTrail(trailName, callback) {
             "name" : trailName
         },
         beforeSend: signRequestWithWtAuthToken,
-        success: callback
+        success: function(resp) {
+            Trails.updateTrails(resp.updateHash);
+            callback(resp)
+        }
     });
 }
 

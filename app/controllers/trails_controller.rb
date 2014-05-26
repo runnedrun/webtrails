@@ -26,7 +26,7 @@ class TrailsController < ApplicationController
     begin
       puts "creating trail"
       trail = Trail.create(:owner => @user, :name => params[:name])
-      render :json => {:updateHash => @user.get_update_hash}, :status => 200
+      render :json => {:updateHash => @user.get_update_hash, :newTrailId => trail.id}, :status => 200
     rescue
       puts $!.message
       render_server_error_ajax

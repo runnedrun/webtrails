@@ -10,9 +10,11 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
     var $trackedDocument = $(trackedDocument);
     var $body = $(trackedDocument.body);
     var commentOverlay;
+    var commentOverlayWrapper;
     var commentOverlayShown = false;
     var trailNameTypeahead = false;
-    var autoCompleteDropdownOpen = false;
+    var top;
+    var left;
 
     var thisComment = this;
 
@@ -20,36 +22,38 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
         commentOverlay: {
             "font-size":"12px",
             "color": "#333",
-            "z-index": "2147483647",
-            "padding": "5px",
+            "word-wrap": "break-word",
+            "padding": "2px"
+        },
+        commentOverlayWrapper: {
+            position: "absolute",
             "background-color": "white",
-            "position": "absolute",
             "display": "none",
+            "z-index": "2147483647",
             "border": "1px solid",
             "border-radius": "5px",
             "max-width": "200px",
-            "word-wrap": "break-word"
-        },
-        dropdownWrapper: {
-            "border": "1px solid",
-            "background-color": "background-color: #fff",
-            "border-collapse": "collapse",
-            "padding": "8px"
+            "padding": "1px 2px 4px 1px"
         }
     };
     var HTML = {
-        commentOverlay: function(top, left) {
-            return applyDefaultCSS($("<span contentEditable='true'></span>"))
+        commentOverlay:
+            applyDefaultCSS($("<span></span>"))
                 .css(CSS.commentOverlay)
-                .css({"top": top + "px", "left": left + "px"})
                 .addClass("commentOverlay")
+                .addClass("webtrails"),
+
+        commentOverlayWrapper: function(top,left) {
+            return applyDefaultCSS($("<span></span>"))
+                .css(CSS.commentOverlayWrapper)
+                .css({"top": top + "px", "left": left + "px"})
+                .addClass("commentOverlayWrapper")
                 .addClass("webtrails");
         },
-        dropdownWrapper: function(value) {
-            var dropdownItem = applyDefaultCSS($("<div></div>")).css(C.dropdownWrapper);
-            dropdownItem.append(value)
-            return dropdownItem
-        }
+        // this is need to keep the typeahead from breaking across multiple lines when the user types on long
+        // word in the comment overlay.
+        spacer: applyDefaultCSS($("<span></span>"))
+            .css({"display": "inline"})
     };
 
     function unbindAllWatchers() {
@@ -60,17 +64,19 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
     }
 
     function removeAndRevert() {
-//        revertNodes();
-//        removeCommentOverlay();
-//        unbindAllWatchers();
+        revertNodes();
+        removeCommentOverlay();
+        trailNameTypeahead && trailNameTypeahead.remove();
+        unbindAllWatchers();
     }
 
     function hideOverlayAndRevert() {
-//        hideCommentOverlay();
-//        $trackedDocument.keypress(modifyOverlayOnFirstKeypress);
-//        commentOverlay.unbind("keypress", checkForEmptyCommentOverlayOnKeypress);
-//        commentOverlay.blur();
-//        reHighlightNodes();
+        hideCommentOverlay();
+        trailNameTypeahead && trailNameTypeahead.hideDropdown();
+        $trackedDocument.keypress(modifyOverlayOnFirstKeypress);
+        commentOverlay.unbind("keypress", checkForEmptyCommentOverlayOnKeypress);
+        commentOverlay.blur();
+        reHighlightNodes();
     }
 
     function highlight() {
@@ -90,22 +96,36 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
             scroll_y: noteOffsets.top
         };
 
+        if (trailNameTypeahead) {
+            if (!trailNameTypeahead.getSelectedTrailId()) {
+                // make new trail with name in typeahead
+                newTrail(trailNameTypeahead.getSelectedTrailName(), function(resp) {
+                    saveSiteToTrail(newNote, resp.newTraiId);
+                });
+            } else {
+                // save to trail selected in typeahead
+                saveSiteToTrail(newNote, trailNameTypeahead.getSelectedTrailId());
+            }
+        } else {
+            // save to current trail
+            saveSiteToTrail(newNote);
+        }
+
         $(document).trigger(noteSubmitEvent(newNote));
-        saveSiteToTrail(newNote);
+
     }
 
     function checkForNotePostKeypress(e){
         console.log("checking for note post keypress");
         var code = (e.keyCode ? e.keyCode : e.which);
-        if (code == 13 && !e.shiftKey && !autoCompleteDropdownOpen){
-            commentText = getTextInOverlay();
+        if (code == 13 && !e.shiftKey){
+            commentText = commentOverlay.html();
             var noteOffsets = selectedNodes[0].getWtHighlight().offset();
             removeCommentOverlay();
             unbindAllWatchers();
             saveNote(noteContent, commentText, noteOffsets, clientSideId);
         } else if(code == 27){
             hideOverlayAndRevert();
-
         }
     }
 
@@ -128,80 +148,76 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
     }
 
     function checkForEmptyCommentOverlayOnKeypress() {
-        var content = getTextInOverlay();
+        var content = commentOverlay.html();
 
         console.log(content);
 
-        if (!content || content === "") {
-            hideOverlayAndRevert()
+        if (!trailNameTypeahead && (!content || content === "")) {
+            hideOverlayAndRevert();
         }
     }
-
-    function getTextInOverlay() {
-        return commentOverlay.contents().filter(function(){
-            return this.nodeType == 3;
-        })[0]
-    }
-
 
     function modifyOverlayOnFirstKeypress(e) {
         if (e.charCode) {
             highlight();
             showCommentOverlay();
-            commentOverlay.focus();
             $(trackedDocument).unbind("keypress", modifyOverlayOnFirstKeypress);
-            commentOverlay.keyup(checkForEmptyCommentOverlayOnKeypress);
-
-            var trailsList = []
-
-            $.each(Trails.getTrailHash(), function(trailId, trail) {
-                trailsList.push(trail.name)
-            })
-
-            var fuse = new Fuse(trailsList);
-
-            var strategies = [
-                {
-                    match:     /^@(\w*)$/,
-                    search:    function(term, cb) {
-                        console.log("searching for term: ", term);
-
-                        var results = fuse.search(term);
-
-                        if (results.indexOf(term) === -1) {
-                            // no exact match, append the option to create a new trail with query
-                            results.push("create new trail " + term);
-                            cb
-                        }
-
-
-
-
-
-                    },
-                    replace:   function (value) {
-                        return '$1@' + value + ' ';
-                    },
-                    index:1,
-                    template:  function(value) {
-                        return "<div>" + value + "</div>"
-                    }
+            if (stringFromCharcode(e.charCode) === "@") {
+                // if the user starts by tpying @ then lets just give them a fresh typeahead, or have them edit
+                // the existing
+                if (trailNameTypeahead) {
+                    trailNameTypeahead.focus()
+                } else {
+                    insertTypeahead().focus();
                 }
-            ];
-            var options = {
-                dropdownPadding: {top: 10},
-                activeStyle: InlineBootstrap.activeListItem,
-                itemStyle: {
-                    "padding-right": "5px",
-                    "padding-left": "5px"
-                },
-                classNamePrefix: "wt-"
+            } else {
+                // if the user does not start by typing @ then lets create a prefilled typeahead, indicating
+                // what trail the note is going to.
+                if (trailNameTypeahead) {
+                    focus();
+                } else {
+                    insertTypeahead().prefill(Trails.getCurrentTrail().name, Trails.getCurrentTrailId());
+                }
             }
+        }
+    }
 
-            commentOverlay.on("textComplete:show", function() { autoCompleteDropdownOpen = true });
-            commentOverlay.on("textComplete:hide", function() { autoCompleteDropdownOpen = false });
+    function insertTypeahead() {
+        var onEmpty =  function() {
+            trailNameTypeahead.remove();
+            trailNameTypeahead = false;
+            hideOverlayAndRevert();
+        }
 
-            commentOverlay.textcomplete(strategies, options);
+        commentOverlay.attr("contentEditable", "false");
+        trailNameTypeahead = new TrailNameTypeahead(
+            commentOverlayWrapper,
+            top,
+            left,
+            trackedDocument,
+            onEmpty,
+            focus);
+
+        trailNameTypeahead.$el().keyup(function(e) {
+            if (e.keyCode === 27) {
+                hideOverlayAndRevert();
+            }
+        })
+        return trailNameTypeahead
+    }
+
+    function checkForAtSignAsTheFirstCharacter(e) {
+        if(stringFromCharcode(e.charCode) === "@" && !trailNameTypeahead && getCursorPosition() === 0) {
+            console.log("@ sign is the first character, inserting typeahdea");
+            insertTypeahead();
+        }
+    }
+
+    function checkForTypeaheadDeleteOnKeydown(e) {
+        if (getCursorPosition() === 0 && e.keyCode === 8 && trailNameTypeahead) {
+            console.log("removing typeaehad");
+            trailNameTypeahead.remove();
+            trailNameTypeahead = false;
         }
     }
 
@@ -221,6 +237,17 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
         var selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
+    }
+
+    function getCursorPosition() {
+        var sel = window.getSelection();
+        return sel.baseOffset
+    }
+
+    function focus() {
+        commentOverlay.attr("contentEditable", "true");
+        commentOverlay.focus();
+        moveCursorToEndOfOverlay();
     }
 
     function generateClientSideId() {
@@ -288,16 +315,16 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
 
     function hideCommentOverlay() {
         commentOverlayShown = false;
-        commentOverlay.hide();
+        commentOverlayWrapper.hide();
     }
 
     function showCommentOverlay() {
         commentOverlayShown = true;
-        commentOverlay.show();
+        commentOverlayWrapper.show();
     }
 
     function removeCommentOverlay() {
-        commentOverlay && commentOverlay.remove();
+        commentOverlayWrapper && commentOverlayWrapper.remove();
     }
 
     function noteSubmitEvent(noteDetail) {
@@ -355,14 +382,21 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
 
             var offsets = finalHighlight.offset();
 
-            var topPosition  = offsets.top + finalHighlight.height() + spacing;
-            var leftPosition = offsets.left;
+            top  = offsets.top + finalHighlight.height() + spacing;
+            left = offsets.left;
 
-            commentOverlay = HTML.commentOverlay(topPosition, leftPosition);
+            var commentOverlayWrapper = HTML.commentOverlayWrapper(top, left);
+            commentOverlay = HTML.commentOverlay;
 
-            $body.append(commentOverlay);
+            commentOverlayWrapper.append(HTML.spacer);
+            commentOverlayWrapper.append(commentOverlay);
+
+            $body.append(commentOverlayWrapper);
 
             commentOverlay.keydown(checkForNotePostKeypress);
+            commentOverlay.keyup(checkForEmptyCommentOverlayOnKeypress);
+            commentOverlay.keypress(checkForAtSignAsTheFirstCharacter);
+            commentOverlay.keydown(checkForTypeaheadDeleteOnKeydown);
 
             $(trackedDocument).keypress(modifyOverlayOnFirstKeypress);
 
@@ -397,7 +431,7 @@ SelectedNode = function(node, start_offset, end_offset, clientSideId, trackedDoc
             wtHighlight = trackedDocument.createElement("wtHighlight")
             $(wtHighlight).addClass("highlightMe current-highlight " + clientSideId);
 
-            wtHighlight.innerHTML = highlighted_contents;
+            $(wtHighlight).text(highlighted_contents);
             var nodeToReplace = node;
             nodeToReplace.parentNode.replaceChild(wtHighlight, nodeToReplace);
 

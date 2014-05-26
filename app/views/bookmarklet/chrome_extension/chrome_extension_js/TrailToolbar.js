@@ -186,7 +186,6 @@ function WtToolbar(toolbarHtml, previewShown) {
             // enter has been pressed
             newTrail(addTrailDropdownInput.val(), function(resp) {
                 addTrailDropdownInput.val("");
-                Trails.updateTrails(resp.updateHash);
             });
         }
     })
