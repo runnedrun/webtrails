@@ -60,6 +60,11 @@ class Site < ActiveRecord::Base
     self.revision_numbers = self.get_revisions.push(revision_number).join(",")
   end
 
+  def remove_revision(revision_number)
+    new_revisions = self.get_revisions - [revision_number]
+    self.revision_numbers = new_revisions.join(",")
+  end
+
   def get_revisions()
     rev_nums = self.revision_numbers
     if rev_nums
@@ -69,9 +74,13 @@ class Site < ActiveRecord::Base
     end
   end
 
+  def get_revision_url(revision_number)
+    File.join(self.archive_location, revision_number.to_s)
+  end
+
   def get_revision_urls()
     get_revisions.map do |revision|
-      File.join(self.archive_location, revision.to_s)
+      get_revision_url(revision.to_s)
     end
   end
 

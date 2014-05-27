@@ -27,6 +27,8 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
         var noteElement = $(noteElementString);
         $(".noteWrapper[data-site-id=" + note.site.id + "]").append(noteElement);
         noteElement.click(clickJumpToNote);
+        noteElement.find(".noteContent").dotdotdot();
+        noteElement.find(".noteComment").dotdotdot();
         if (canEdit()) {
             makeNoteElementDragable(noteElement);
             noteElement.find(".note-view-comment").click(editNoteIfSelected);
@@ -54,7 +56,7 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
     function editNoteIfSelected(e){
         console.log("editing note");
         var noteComment = $(e.delegateTarget);
-        if (noteComment.parent().parent().hasClass("selected-note")){
+        if (noteComment.parent().closest(".noteInfo").hasClass("selected-note")){
             editCommentText(noteComment);
             return false
         }
@@ -125,13 +127,13 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
                 "cursor": "text"
             })
 
-            var contentElement = $noteElement.find(".noteContent");
-            contentElement.trigger("destroy.dot").css("max-height","none");
+            var commentElement = $noteElement.find(".noteComment");
+            commentElement.trigger("destroy.dot").css("max-height","none");
         }
     };
 
     function unhighlightCurrentNoteInList(){
-        $(".selected-note").removeClass("selected-note").find(".noteContent").css("max-height","").dotdotdot();
+        $(".selected-note").removeClass("selected-note").find(".noteComment").css("max-height","").dotdotdot();
     }
 
     function showNoteList(){
@@ -139,6 +141,8 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
             "width": 100-(halfPageViewScale * 100)+"%"
         });
         $(".noteContent").dotdotdot();
+        $(".noteComment").dotdotdot();
+        $(".note-header-wrapper").dotdotdot();
     }
 
     function hideNoteList(){

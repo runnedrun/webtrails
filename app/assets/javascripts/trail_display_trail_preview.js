@@ -7,7 +7,7 @@ TPreview = function(){
     var shown = false;
     var thisTrailPreview = this;
     var commentBoxToggled = false;
-    var halfPageViewScale = .6
+    var halfPageViewScale = .85
     var currentComment;
     var allNotesDisplayComments = {};
 
@@ -26,14 +26,14 @@ TPreview = function(){
         return currentSiteFrame;
     };
     this.getCurrentIDoc = function() {
-        return getNoteIDoc(currentNote);
+        return getIDoc(currentSiteFrame)
     };
     this.getCurrentComment = function() {
         return currentComment;
     }
     this.enableHalfPageView = function() {
             halfPageFrame(currentSiteFrame);
-            disableSelectionInIframe(currentSiteFrame[0]);
+//            disableSelectionInIframe(currentSiteFrame[0]);
             halfPageViewToggled = true;
     };
     this.disableHalfPageView = function() {
@@ -52,6 +52,13 @@ TPreview = function(){
         return $iframe[0].contentWindow.document;
     }
 
+    function getCurrentScrollPosition() {
+        return {
+            top: getIDoc(currentSiteFrame).scrollTop(),
+            left: getIDoc(currentSiteFrame).scrollLeft()
+        }
+    }
+
     function addEmptyIframeToPreview(note, hideIframe) {
         var siteHtmlIframe = $("<iframe data-trail-id='" + note.site.trail.id + "' data-site-id='" + note.site.id +"' data-note-id=" + note.id + " seamless='seamless' class='wt-site-preview webtrails'>");
         console.log("iframe", siteHtmlIframe);
@@ -59,7 +66,8 @@ TPreview = function(){
         siteHtmlIframe.css({
             width:"100%",
             height: "100%",
-            "z-index": "2147483645"
+            "z-index": "2147483645",
+            "visibility":"hidden"
         });
 
         $(document.body).find(".siteDisplayDiv").append(halfPageViewToggled ? halfPageFrame(siteHtmlIframe) : siteHtmlIframe);
@@ -133,39 +141,45 @@ TPreview = function(){
     }
 
     this.switchToNoteRevision = function(note) {
-        currentSiteFrame && currentSiteFrame.remove();
+//        currentSiteFrame && currentSiteFrame.remove();
+        var oldFrame = currentSiteFrame;
         var siteHtmlIframe = addEmptyIframeToPreview(note);
         var iframeDocument = thisTrailPreview.setIframeContent(siteHtmlIframe, note.getSiteRevisionHtml() || "Uh oh");
         currentSiteFrame = siteHtmlIframe;
-        new SaveButtonCreator(note, iframeDocument, currentSiteFrame[0]);
-        return $(iframeDocument);
+        new HighlightManager(iframeDocument, currentSiteFrame[0], note.site);
+        return oldFrame
     }
 
     this.displayNote = function(note, overrideScroll) {
         removeCommentsForAllNotesDisplay();
-        var $iDoc = thisTrailPreview.switchToNoteRevision(note);
+        var oldSiteFrame = thisTrailPreview.switchToNoteRevision(note);
+        var $iDoc = thisTrailPreview.getCurrentIDoc();
+
         currentNote = note;
         window.location.hash = note.site.id + "-" + note.id;
+
         thisTrailPreview.noteViewer.highlightNoteInList(note);
+
+        // scroll to and display the comment
         if (!note.isBase) {
-            !overrideScroll && $iDoc.scrollTop(note.scrollY - 300).scrollLeft(note.scrollX);
-            currentComment = displayComment(note.scrollY, note.scrollX);
-            runWhenLoaded(function() {
-                var noteElements = thisTrailPreview.highlightSingleNote(note);
-                var noteLocation = noteElements.first().offset();
-                if (noteLocation){
-                    var scrollTop = noteLocation.top;
-                    var scrollLeft = noteLocation.left;
-                    if ((Math.abs(noteLocation.top - note.scrollY) > 10) || (Math.abs(noteLocation.left - note.scrollX) > 10)){
-                        console.log("correcting scroll", noteLocation.top, note.scrollY);
-                        console.log(noteLocation.left, note.scrollX);
-                        !overrideScroll && $iDoc.scrollTop(scrollTop - 300).scrollLeft(scrollLeft);
-                        currentComment.remove();
-                        currentComment = displayComment(noteLocation.top, noteLocation.left);
-                    }
-                }
-            }, $iDoc[0]);
+            var scrollTop = overrideScroll ? overrideScroll.top : note.scrollY - 300;
+            var scrollLeft = overrideScroll ? overrideScroll.left : note.scrollX - 300;
+
+            $iDoc.scrollTop(scrollTop).scrollLeft(scrollLeft);
+            currentComment && currentComment.remove();
+
+            var scrollToNote = function(topPosition, leftPosition) {
+                !overrideScroll && $iDoc.scrollTop(topPosition - 50).scrollLeft(leftPosition);
+                currentSiteFrame.css({"visibility": "visible"});
+                oldSiteFrame && oldSiteFrame.remove();
+            };
+
+            currentComment = new Comment($iDoc[0], note, note.clientSideId, 0, scrollToNote);
+        } else {
+            currentSiteFrame.css({"visibility": "visible"});
+            oldSiteFrame && oldSiteFrame.remove();
         }
+
         Toolbar.update(currentNote)
     };
 
@@ -181,8 +195,13 @@ TPreview = function(){
             $(document).trigger({type:"showAllNotesOn"});
         }
         var currentScroll = thisTrailPreview.getCurrentIDoc().scrollTop();
-        var $iDoc = thisTrailPreview.switchToNoteRevision(lastNote);
+        var oldSiteFrame = thisTrailPreview.switchToNoteRevision(lastNote);
+        oldSiteFrame && oldSiteFrame.remove();
+
+        var $iDoc = thisTrailPreview.getCurrentIDoc();
         $iDoc.scrollTop(currentScroll);
+
+        currentSiteFrame.css({"visibility": "visible"});
 
         currentComment && currentComment.remove() ;
         $.each(site.getNotes(), function(i, note) {
@@ -190,25 +209,17 @@ TPreview = function(){
                 var noteElements = thisTrailPreview.getNoteElements(note, $iDoc);
                 if (noteElements.length > 0) {
                     thisTrailPreview.highlightElements(noteElements);
-                    runWhenLoaded(function() {
-                        // the user may have switched to another site while waiting for this one to load
-                        if (allNotesDisplayComments[site.id]) {
-                            var noteLocation = noteElements.first().offset();
-                            var scrollTop = noteLocation.top;
-                            var scrollLeft = noteLocation.left;
-                            var comment = new Comment(note, scrollTop, scrollLeft, thisTrailPreview, $iDoc);
-                            allNotesDisplayComments[site.id][note.id] = comment;
-                        }
-                    }, $iDoc[0])
+                    if (allNotesDisplayComments[site.id]) {
+                        var comment = new Comment($iDoc[0], note, note.clientSideId, 0, function(){});
+                        allNotesDisplayComments[site.id][note.id] = comment;
+                    }
                 }
             }
         });
     };
 
     this.turnOffAllNotesDisplay = function() {
-        var currentScroll = getIDoc(currentSiteFrame).scrollTop();
-        thisTrailPreview.displayNote(currentNote, true); // override scroll, so the page stays in the same position
-        getIDoc(currentSiteFrame).scrollTop(currentScroll);
+        thisTrailPreview.displayNote(currentNote, getCurrentScrollPosition()); // override scroll, so the page stays in the same position
     }
 
     function removeCommentsForAllNotesDisplay() {
@@ -269,8 +280,8 @@ TPreview = function(){
         }
     }
 
-    this.showSite = function(site) {
-        thisTrailPreview.displayNote(new BaseRevisionNote(site))
+    this.showSite = function(site, overrideScroll) {
+        thisTrailPreview.displayNote(new BaseRevisionNote(site), overrideScroll);
     }
 
     this.highlightElements = function($elements) {
@@ -289,7 +300,7 @@ TPreview = function(){
         this.noteViewer.addNote(newNote, noteRowForViewer);
         if (!currentNote || (parseInt(currentNote.site.id) <= parseInt(newNote.site.id))){
             currentNote = newNote;
-            thisTrailPreview.displayNote(currentNote);
+            thisTrailPreview.displayNote(currentNote, getCurrentScrollPosition());
         } else {
             Toolbar.update(currentNote);
         }
@@ -323,17 +334,13 @@ TPreview = function(){
         if (canEdit()) {
             var noteToBeDeleted = note;
             Request.deleteNote(noteToBeDeleted, function() {
-                thisTrailPreview.showSite(note.site);
+                thisTrailPreview.showSite(note.site, getCurrentScrollPosition());
                 thisTrailPreview.noteViewer.removeNoteFromNoteList(noteToBeDeleted);
                 noteToBeDeleted.delete();
                 Toolbar.update(currentNote);
             })
         }
     };
-
-    function displayComment(scrollY, scrollX) {
-        return new Comment(currentNote, scrollY, scrollX, thisTrailPreview, getNoteIDoc(currentNote))
-    }
 
     function getNoteIDoc(note) {
         return getIDoc($(".wt-site-preview[data-note-id='" + note.id + "']"));

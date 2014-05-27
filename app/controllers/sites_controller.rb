@@ -116,16 +116,25 @@ class SitesController < ApplicationController
                     }, :status => 200)
   end
 
-  def show
-    site = Site.find(params[:id])
-    puts site.base_archive_location
-    if site.archive_location.nil?
-      render :template => 'trails/loading'
-    else
-      @html = open(site.base_archive_location).read.html_safe
+  def get_site_html
+    begin
+      site = Site.find(params[:id])
+      revision_number = params[:revision_number]
       puts site.base_archive_location
-      render :layout => false, :text => @html
-    end
+      if site.archive_location.nil?
+        render :template => 'trails/loading'
+      else
+        @html = open(site.get_revision_url(revision_number)).read.html_safe
+        puts site.base_archive_location
+        render :layout => false, :text => @html
+      end
+    rescue
+      puts "failed to get the html from s3"
+      puts $!.message
+      puts $!.backtrace
+      render :status => 404
+  end
+
   end
 
   def exists

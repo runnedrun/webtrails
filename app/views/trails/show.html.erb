@@ -22,10 +22,12 @@
           <%- i = 0  %>
           <%- @site_note_hash.each do |site_id, notes| %>
           <table class="noteWrapper table table-bordered" data-site-id="<%= site_id %>">
-            <tr class="note-list-header click-to-change-site" data-site-id="<%= site_id %>">
-              <th colspan="2">
-                <img class="faviconImage" src="<%= @favicon_urls_with_ids_and_titles[i][0] %>" />
-                <span><%= @sites[i].title%></span>
+            <tr class="note-list-header-row click-to-change-site" data-site-id="<%= site_id %>">
+              <th colspan="2" class="note-list-header">
+                <div class="note-header-wrapper">
+                  <img class="faviconImage" src="<%= @favicon_urls_with_ids_and_titles[i][0] %>" />
+                  <span><%= @sites[i].title%></span>
+                </div>
               </th>
             </tr>
                 <%- notes.each do |note| %>

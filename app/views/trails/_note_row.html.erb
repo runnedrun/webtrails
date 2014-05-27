@@ -1,4 +1,10 @@
 <tr class=noteInfo data-note-id="<%= note.id %>" data-site-id="<%= site_id %>">
-  <td class=noteContentCell><div class="noteContent"><%= note.content %></div></td>
-  <td><div class="noteComment note-view-comment" data-note-id="<%= note.id %>"><%= raw note.comment %></div></td>
+  <td class=noteContentCell>
+    <div class="note-table-item">
+      <div class="noteContent">
+        <%= note.content %>
+      </div>
+      <div class="noteComment note-view-comment" data-note-id="<%= note.id %>"><%= raw note.comment %></div>
+    </div>
+  </td>
 </tr>

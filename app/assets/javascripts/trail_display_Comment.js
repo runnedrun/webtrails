@@ -1,11 +1,10 @@
 // this object does not deal directly with note objects, as it may be initalized before a note is fully saved.
 
-Comment = function(displayDoc, noteComment, clientSideId, spacing, noteId, onCommentDisplayed) {
+Comment = function(displayDoc, note, clientSideId, spacing, onCommentDisplayed) {
     var commentOverlay;
     var overlayContainer;
     var commentOverlayShown = false;
     var elementsToHighlight;
-    var noteId = noteId;
     var spacing = spacing || 0;
     var $displayDoc = $(displayDoc);
     var $body = $(displayDoc.body);
@@ -59,10 +58,11 @@ Comment = function(displayDoc, noteComment, clientSideId, spacing, noteId, onCom
 
     this.remove = function() {
         overlayContainer && overlayContainer.remove();
-        $(document).unbind("downloadComplete", hideSavingSpinnerIfNecessary);
-        $(document).unbind("downloadTimedOut", hideSavingSpinnerIfNecessary);
-        $(document).unbind("noteIdReceived", setNoteIdIfNecessary);
         elementsToHighlight && elementsToHighlight.attr("style", "");
+    }
+
+    this.update = function() {
+        commentOverlay.html(note.comment);
     }
 
     function runWhenLoaded(fn, doc) {
@@ -99,32 +99,14 @@ Comment = function(displayDoc, noteComment, clientSideId, spacing, noteId, onCom
         if (code == 13 && !e.shiftKey){
             var newNoteContent = commentOverlay.html();
             commentOverlay.blur();
-            updateNoteText(newNoteContent, noteId, function(){ console.log("not submitted successfully") });
+            Request.updateNoteComment(note, newNoteContent, function(){ console.log("note submitted successfully") });
         } else if(code == 27){
             commentOverlay.blur();
         }
     }
 
     function deleteNote() {
-        // we submit a fake note object here
-        deleteNoteRequest({id: noteId}, function(){
-            thisComment.remove();
-        });
-    }
-
-    function hideSavingSpinnerIfNecessary(event) {
-        console.log("checking if we should hide spinner");
-        if (event.noteDetails.clientSideId === clientSideId) {
-            console.log("hiding spinner");
-        }
-    }
-
-    function setNoteIdIfNecessary(event) {
-        if (event.noteDetails.clientSideId == clientSideId) {
-            noteId = event.noteDetails.noteId;
-            commentOverlay.attr("contentEditable", true);
-            commentOverlay.keypress(checkForNoteUpdateKeyPress);
-        }
+        TrailPreview.deleteNote(note);
     }
 
     elementsToHighlight = $displayDoc.find("wtHighlight." + clientSideId);
@@ -139,9 +121,9 @@ Comment = function(displayDoc, noteComment, clientSideId, spacing, noteId, onCom
             var topPosition  = commentOffsets.top + finalHighlight.height() + spacing;
             var leftPosition = commentOffsets.left;
 
-            commentOverlay = H.commentOverlay(!!noteId);
+            commentOverlay = H.commentOverlay(true);
 
-            var comment = (!noteComment || noteComment === "") ? "no comment" : noteComment
+            var comment = (!note.comment || note.comment === "") ? "no comment" : note.comment
 
             commentOverlay.html(comment);
 
@@ -158,12 +140,12 @@ Comment = function(displayDoc, noteComment, clientSideId, spacing, noteId, onCom
 
             var noteOffsets = $(elementsToHighlight[0]).offset();
 
+            commentOverlay.keypress(checkForNoteUpdateKeyPress)
+
             onCommentDisplayed && onCommentDisplayed(noteOffsets.top, noteOffsets.left);
         }, displayDoc);
+    } else {
+        onCommentDisplayed && onCommentDisplayed(0, 0);
     }
-
-    $(document).on("downloadComplete", hideSavingSpinnerIfNecessary);
-    $(document).on("downloadTimedOut", hideSavingSpinnerIfNecessary);
-    $(document).on("noteIdReceived", setNoteIdIfNecessary);
 }
 

@@ -58,17 +58,17 @@ Request = new function(){
         })
     };
 
-    this.addNote = function(newNote, currentNote, currentHtml, callback) {
+    this.addNote = function(newNote, currentSite, currentHtml, callback) {
         $.ajax({
             url: "/sites/new_note_from_view_page",
             type: "post",
             data: {
-                "site[id]": currentNote.site.id, //this is probably unnecesary
-                "site[trail_id]": currentNote.site.trail.id,
+                "site[id]": currentSite.id, //this is probably unnecesary
+                "site[trail_id]": currentSite.trail.id,
                 "note": newNote
             },
             success: function(resp) {
-                thisRequest.mirrorHtml(newNote, currentNote, currentHtml, function() {
+                thisRequest.mirrorHtml(newNote, currentSite, currentHtml, function() {
 //                    chrome.runtime.sendMessage(extensionId, {updateTrailsObject: true});
                     // sending the message here doesn't work because the revision number has not yet been added
                     // because the mirroring happens asynchronously. I need to use the same download tracker that
@@ -79,13 +79,13 @@ Request = new function(){
         });
     };
 
-    this.mirrorHtml = function(newNote, currentNote, currentHtml, callback) {
+    this.mirrorHtml = function(newNote, currentSite, currentHtml, callback) {
         $.ajax({
             url: ResourceDowloaderDomain + "/resource_downloader",
             type: "post",
             beforeSend: signRequestWithWtAuthTokenInHeader,
             data: {
-                "siteID": currentNote.site.id, //this is probably unnecesary
+                "siteID": currentSite.id, //this is probably unnecesary
                 "html": {html: currentHtml},
                 "revision": newNote.site_revision_number,
                 "isIframe": "false"

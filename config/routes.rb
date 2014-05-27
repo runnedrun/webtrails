@@ -74,7 +74,7 @@ Webtrails::Application.routes.draw do
   match 'users/sign_out', :controller => 'users', :action => "sign_out"
   match 'users/get_all_trail_data', :controller => 'users', :action => "get_all_trail_data"
 
-  resources :sites, :only=>[:create,:show]
+  resources :sites, :only=>[:create]
   match '/sites', :controller => 'sites', :action => 'options', :constraints => {:method => 'OPTIONS'}
   match '/async_site_load', :controller => 'sites', :action => 'async_site_load'
   match '/site/exists', :controller => 'sites', :action => 'options', :constraints => {:method => 'OPTIONS'}
@@ -83,6 +83,7 @@ Webtrails::Application.routes.draw do
   match '/sites/new_note_from_view_page', :controller => "sites", :action => "new_note_from_view_page", :constraints => {:method => 'POST'}
   match 'sites/update_note_list', :controller => 'sites', :action => 'update_note_list', :constraints => {:method => 'POST'}
   match '/sites/get_new_site_id', :controller => 'sites', :action => 'generate_site_id', :constraints => {:method => 'POST'}
+  match '/sites/get_site_html', :controller => 'sites', :action => 'get_site_html', :constraints => {:method => 'GET'}
 
   resources :notes, :only=>[:create]
   match '/notes', :controller => 'notes', :action => 'options', :constraints => {:method => 'OPTIONS'}

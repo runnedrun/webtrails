@@ -33,7 +33,7 @@
                               <div class="site-title"><%= trail.sites[i].title%></div>
                             </a>
                             <%- trail.sites[i].notes.each_with_index do |note, i| %>
-                              <a class="note-link" data-note-id="<%= note.id %>" href="/trails/<%= trail.id%>#<%= note.site.id %>-<%= note.id %>"
+                              <a class="note-link" data-note-id="<%= note.id %>" href="/trails/<%= trail.id%>#<%= note.site.id %>-<%= note.id %>">
                                   <div class="note-container">
                                     <div class="note-content"><%= note.content%></div>
                                     <% if note.comment != ""%>

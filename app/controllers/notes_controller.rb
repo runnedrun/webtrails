@@ -48,6 +48,7 @@ class NotesController < ApplicationController
       if trail.owner != @user
         render_not_authorized
       else
+        note.delete_note_revision_from_site
         note.delete
         render :json => {"update_hash" => @user.get_update_hash}
       end

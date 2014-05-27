@@ -9,6 +9,11 @@ class Note < ActiveRecord::Base
     self.save!()
   end
 
+  def delete_note_revision_from_site
+    self.site.remove_revision(self.site_revision_number)
+    self.site.save
+  end
+
   def get_update_hash()
     {
         :clientSideId => self.client_side_id,

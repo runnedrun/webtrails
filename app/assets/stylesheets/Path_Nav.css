@@ -18,9 +18,9 @@
 
 .siteDisplayDiv {
     width: 100%;
-    height: 93%;
+    height: 94%;
     overflow:hidden;
-    border-bottom: 3px grey
+    border-bottom: 3px grey;
 }
 
 .highlight {
@@ -29,9 +29,9 @@
 
 /* TOOLBAR */
 
-.viewTrailToolbar {
-    background: #F0F0F0;
-    border: none;
+nav.navbar.viewTrailToolbar {
+    background: #FAFAFA;
+    border-top: #aaa solid 2px;
     /*font-size: 14px;*/
     color: #333;
     /*width: 100%;*/
@@ -151,7 +151,7 @@
     right: 0;
     z-index: 0;
     /*float: right;*/
-    height: 93%;
+    height: 94%;
     width: 50%;
     background-color: #FAFAFA;
     border: #aaa solid 2px;
@@ -159,6 +159,7 @@
     /*display: inline-block;*/
     display: none;
     overflow: scroll;
+    padding-bottom: 20px;
 }
 
 .noteWrapper {
@@ -212,15 +213,31 @@ iframe.shrunk {
     color: #333;
 }
 
+.noteWrapper.table .noteInfo td.noteContentCell {
+    padding: 5px 0;
+    border: none;
+}
+
+.noteWrapper.table .note-list-header-row .note-list-header {
+    border: none;
+}
+
 .noteContent {
     max-height: 2.4em;
     line-height: 1.2em;
     overflow: hidden;
-    text-overflow: ellipsis;
+    padding: 3px;
+    border-bottom: 1px solid #bbb;
+    border-top: 1px solid #bbb;
+    background: white;
+    text-align: center;
 }
 
 .noteComment {
     line-height: 1.2em;
+    max-height: 3.6em;
+    overflow: hidden;
+    padding: 3px;
 }
 
 .noteComment:focus {
@@ -231,13 +248,21 @@ iframe.shrunk {
     width: 50%;
 }
 
-.selected-note{
-    outline: 2px solid #9ecaed;
+.selected-note .noteContent {
+    /*outline: 2px solid #9ecaed;*/
+    border-bottom: 2px solid #9ecaed;
+    border-top: 2px solid #9ecaed;
 }
 
 .noteListHeader {
     background-color: #E1E1E1;
     cursor: pointer;
+}
+
+.note-header-wrapper {
+    line-height: 1.2em;
+    max-height: 1.2em;
+    overflow: hidden;
 }
 
 .please-reload {

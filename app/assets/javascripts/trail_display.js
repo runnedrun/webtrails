@@ -42,7 +42,6 @@ $(function(){
     initializeAutoResize();
 
     makeFaviconsDragable();
-    makeNotesDragable();
 });
 
 function removeLoadingFromSite(siteID) {
@@ -52,7 +51,7 @@ function removeLoadingFromSite(siteID) {
 }
 
 function fetchSiteHtml(startingSiteId, startingNoteId) {
-    var deferreds = $.map(trailDisplayHash.sites.siteObjects, function(site,id){
+    var deferreds = $.map(trailDisplayHash.sites.siteObjects, function(site, id){
         return $.map(site.revisionUrls, function(url, revisionNumber) {
             var deferred = $.Deferred();
             var callCount = 0;
@@ -69,20 +68,7 @@ function fetchSiteHtml(startingSiteId, startingNoteId) {
                         deferred.resolve()
                     },
                     error: function(resp){
-                        callCount += 1;
-                        console.log("failed to fetch");
-                        if (callCount > 2) {
-                            console.log("more than two retries for each html, failing");
-                            trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] =
-                                "<div class='row'>" +
-                                    " <h1 class='please-reload' style='text-align: center; margin-top: 200px;'>" +
-                                        "Sometimes sites don't load the first time, refresh the page to view this trail!" +
-                                    "</h1> " +
-                                "</div>";
-                            deferred.resolve();
-                        } else {
-                            retrieveHtml();
-                        }
+                        getSiteHtmlFromWebTrailsServer(id, revisionNumber, deferred);
                     }
                 })
             }
@@ -106,6 +92,35 @@ function fetchSiteHtml(startingSiteId, startingNoteId) {
         Toolbar = new TToolBar(TrailPreview, PanelView, NoteViewer, canEdit());
         Trails.switchToTrail(Trail.id, startingSiteId, startingNoteId);
         $(".siteDisplayDiv").removeClass("loading");
+    })
+}
+
+function getSiteHtmlFromWebTrailsServer(id, revisionNumber, deferred) {
+    console.log("getting site html for id: " + id + " from server.");
+    $.ajax({
+        url: "/sites/get_site_html",
+        type: "get",
+        dataType: "html",
+        data: {
+            id: id,
+            revision_number: revisionNumber
+        },
+        success: function(resp){
+            console.log("got html from server for id: " + id);
+            debugger;
+            trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] =  resp;
+            deferred.resolve()
+        },
+        error: function(resp){
+            console.log("failed to fetch html from server");
+            trailDisplayHash.sites.siteObjects[id]["html"][revisionNumber] =
+                "<div class='row'>" +
+                    " <h1 class='please-reload' style='text-align: center; margin-top: 200px;'>" +
+                    "We're having trouble loading this site right now. Try again later!" +
+                    "</h1> " +
+                "</div>";
+            deferred.resolve();
+        }
     })
 }
 
