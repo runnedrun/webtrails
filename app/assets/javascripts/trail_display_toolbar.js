@@ -123,6 +123,7 @@ TToolBar  = function(trailPreview, panelView, noteViewer, canEdit){
         if (panelView.isShown()) {
             panelView.update();
         }
+        trailPreview.noteViewer.highlightNoteInList(currentNote);
     };
 
     function toggle(onFunction, offFunction) {

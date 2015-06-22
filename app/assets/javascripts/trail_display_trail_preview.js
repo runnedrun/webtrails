@@ -7,9 +7,8 @@ TPreview = function(){
     var shown = false;
     var thisTrailPreview = this;
     var commentBoxToggled = false;
-    var halfPageViewScale = .85
-    var currentComment;
-    var allNotesDisplayComments = {};
+    var halfPageViewScale = .85;
+    var commentManager = new CommentManager(thisTrailPreview);
 
     this.height = 200;
     var halfPageViewToggled = false;
@@ -118,8 +117,7 @@ TPreview = function(){
             "-o-transform-origin": "top left",
             "-ms-transform-origin": "top left",
             "transform-origin": "top left",
-            "height": String($(window).height() *.93*2)+"px",
-            //        "width": String($(window).width())+"px"
+            "height": String($(window).height() * .94 * 2)+"px"
         });
     }
 
@@ -151,93 +149,31 @@ TPreview = function(){
     }
 
     this.displayNote = function(note, overrideScroll) {
-        removeCommentsForAllNotesDisplay();
         var oldSiteFrame = thisTrailPreview.switchToNoteRevision(note);
         var $iDoc = thisTrailPreview.getCurrentIDoc();
+
+        commentManager.showAllCommentsOnSite(note.site);
 
         currentNote = note;
         window.location.hash = note.site.id + "-" + note.id;
 
-        thisTrailPreview.noteViewer.highlightNoteInList(note);
-
-        // scroll to and display the comment
-        if (!note.isBase) {
-            var scrollTop = overrideScroll ? overrideScroll.top : note.scrollY - 300;
-            var scrollLeft = overrideScroll ? overrideScroll.left : note.scrollX - 300;
-
-            $iDoc.scrollTop(scrollTop).scrollLeft(scrollLeft);
-            currentComment && currentComment.remove();
-
-            var scrollToNote = function(topPosition, leftPosition) {
-                !overrideScroll && $iDoc.scrollTop(topPosition - 50).scrollLeft(leftPosition);
-                currentSiteFrame.css({"visibility": "visible"});
-                oldSiteFrame && oldSiteFrame.remove();
-            };
-
-            currentComment = new Comment($iDoc[0], note, note.clientSideId, 0, scrollToNote);
-        } else {
+        var showDoc = function() {
             currentSiteFrame.css({"visibility": "visible"});
             oldSiteFrame && oldSiteFrame.remove();
+        };
+
+        // scroll to the comment, and display the doc.
+        if (overrideScroll) {
+            $iDoc.scrollTop(overrideScroll.top).scrollLeft(overrideScroll.left);
+            showDoc();
+        } else if (!note.isBase) {
+            commentManager.scrollToComment(note, 300, showDoc);
+        } else {
+            showDoc();
         }
 
         Toolbar.update(currentNote)
     };
-
-    this.displayAllNotes = function() {
-        var site = thisTrailPreview.getCurrentNote().site;
-        allNotesDisplayComments[site.id] = {};
-        var lastNote = site.getLastNote();
-
-        if (!lastNote) {
-            // there are no notes for this site
-            return
-        } else {
-            $(document).trigger({type:"showAllNotesOn"});
-        }
-        var currentScroll = thisTrailPreview.getCurrentIDoc().scrollTop();
-        var oldSiteFrame = thisTrailPreview.switchToNoteRevision(lastNote);
-        oldSiteFrame && oldSiteFrame.remove();
-
-        var $iDoc = thisTrailPreview.getCurrentIDoc();
-        $iDoc.scrollTop(currentScroll);
-
-        currentSiteFrame.css({"visibility": "visible"});
-
-        currentComment && currentComment.remove() ;
-        $.each(site.getNotes(), function(i, note) {
-            if (!note.isBase) {
-                var noteElements = thisTrailPreview.getNoteElements(note, $iDoc);
-                if (noteElements.length > 0) {
-                    thisTrailPreview.highlightElements(noteElements);
-                    if (allNotesDisplayComments[site.id]) {
-                        var comment = new Comment($iDoc[0], note, note.clientSideId, 0, function(){});
-                        allNotesDisplayComments[site.id][note.id] = comment;
-                    }
-                }
-            }
-        });
-    };
-
-    this.turnOffAllNotesDisplay = function() {
-        thisTrailPreview.displayNote(currentNote, getCurrentScrollPosition()); // override scroll, so the page stays in the same position
-    }
-
-    function removeCommentsForAllNotesDisplay() {
-        $.each(allNotesDisplayComments, function(siteId, notesAndComments) {
-            $.each(notesAndComments, function(noteId, comment) {
-                comment.remove();
-            });
-        });
-        $(document).trigger({type:"showAllNotesOff"});
-    }
-
-    this.highlightSingleNote = function(note) {
-        return thisTrailPreview.highlightElements(thisTrailPreview.getNoteElements(note, getNoteIDoc(note)));
-    };
-
-    this.getNoteElements = function(note, siteIDoc) {
-        return $("."+note.clientSideId, siteIDoc)
-    }
 
     this.showNextNote = function() {
         var nextNote = currentNote.nextNote();
@@ -282,18 +218,6 @@ TPreview = function(){
 
     this.showSite = function(site, overrideScroll) {
         thisTrailPreview.displayNote(new BaseRevisionNote(site), overrideScroll);
-    }
-
-    this.highlightElements = function($elements) {
-        return $elements.css({
-            "background": "yellow"
-        })
-    }
-
-    this.unHighlightElements = function($elements) {
-        return $elements.css({
-            "background": "none"
-        })
     }
 
     this.updateWithNewNote = function(newNote, noteRowForViewer) {
@@ -362,4 +286,27 @@ TPreview = function(){
         }
     }
 
+}
+
+CommentManager = function(trailPreview) {
+    var comments = {};
+
+    this.showAllCommentsOnSite = function(site) {
+        comments[site.id] = {};
+
+        var currentDoc = trailPreview.getCurrentIDoc()[0];
+
+        $.each(site.getNotes(), function(i, note) {
+            if (!note.isBase) {
+                if (!comments[site.id][note.id]) {
+                    var comment = new Comment(currentDoc, note, 0);
+                    comments[site.id][note.id] = comment;
+                }
+            }
+        });
+    }
+
+    this.scrollToComment = function(note, scrollOffset, onScrolled) {
+        comments[note.site.id][note.id].scrollToComment(scrollOffset, onScrolled);
+    }
 }

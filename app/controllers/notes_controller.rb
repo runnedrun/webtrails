@@ -69,7 +69,7 @@ class NotesController < ApplicationController
       else
         note.comment = params[:comment]
         note.save!
-        render :json => {"content" => note.content, "comment" => note.comment}
+        render :json => {"updateHash" => note.get_update_hash, "content" => note.content, "comment" => note.comment}
       end
     rescue
       render_server_error_ajax

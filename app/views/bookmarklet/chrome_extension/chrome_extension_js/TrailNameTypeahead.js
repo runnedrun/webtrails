@@ -1,4 +1,4 @@
-TrailNameTypeahead = function(parentElement, top, left, trackedDoc, onEmptyTypeahead, onTypeheadComplete) {
+TrailNameTypeahead = function(parentElement, top, left, trackedDoc, defaultTrail, onTypeheadComplete) {
     var typeaheadSelector = "trail-name-typeahead";
     var dropdown;
     var trailsList;
@@ -29,21 +29,11 @@ TrailNameTypeahead = function(parentElement, top, left, trackedDoc, onEmptyTypea
 
     var H = {
         typeaheadSpan:
-            applyDefaultCSS($("<span class='" + typeaheadSelector + "' contentEditable='true'></span>"))
-            .css(C.typeaheadSpan),
-    }
-
-    function isEmpty() {
-        return typeaheadInput.html() === ""
+            applyDefaultCSS($("<span class='.webtrails " + typeaheadSelector + "' contentEditable='true'></span>"))
+            .css(C.typeaheadSpan)
     }
 
     this.selector = typeaheadSelector;
-
-    function checkForEmptyTypeahead() {
-        if (isEmpty()) {
-            onEmptyTypeahead();
-        }
-    }
 
     function moveCursorToEndOfTypeahead() {
         var range = document.createRange();
@@ -57,7 +47,13 @@ TrailNameTypeahead = function(parentElement, top, left, trackedDoc, onEmptyTypea
     function generateResults() {
         var truncated = truncateInputTo30Characters();
         console.log("generating results");
-        var query = typeaheadInput.html().slice(1); //we don't want the @ sign at the beginngin
+        var currentName = typeaheadInput.html()
+        var query;
+        if (currentName[0] == "@") {
+            query = typeaheadInput.html().slice(1); //we don't want the @ sign at the beginning
+        } else {
+            query = currentName
+        }
 
         // it may fail if an old trail name is longer than 30 characters
         try {
@@ -89,13 +85,13 @@ TrailNameTypeahead = function(parentElement, top, left, trackedDoc, onEmptyTypea
         var keyCode = e.keyCode;
         if (keyCode === 38) {
             dropdown.selectUp();
-            return false;
+            e.preventDefault()
         } else if (keyCode === 40) {
             dropdown.selectDown();
-            return false;
+            e.preventDefault()
         } else if (keyCode === 13 || keyCode === 9) {
             completeTypeahead(dropdown.getSelectedItem());
-            return false
+            e.preventDefault()
         }
     }
 
@@ -112,7 +108,6 @@ TrailNameTypeahead = function(parentElement, top, left, trackedDoc, onEmptyTypea
     this.remove = function() {
         dropdown.remove();
         typeaheadInput.remove();
-        typeaheadInput.unbind("keyup", checkForEmptyTypeahead);
         typeaheadInput.unbind("keydown", checkForTypeaheadSelectionKeypress);
         typeaheadInput.unbind("input", generateResults);
     }
@@ -132,15 +127,15 @@ TrailNameTypeahead = function(parentElement, top, left, trackedDoc, onEmptyTypea
         moveCursorToEndOfTypeahead();
     };
 
-    this.prefill = function(trailName, trailId) {
-       completeTypeahead({name: trailName, id: trailId});
+    this.displayDefault = function() {
+       completeTypeahead(defaultTrail);
     }
 
     var typeaheadInput = H.typeaheadSpan;
 
     parentElement.prepend(typeaheadInput)
 
-    var dropdown = new TypeAheadDropdown(top + lineHeight + 10, left + 4, trackedDoc);
+    var dropdown = new TypeAheadDropdown(top + lineHeight + 10, left + 4, trackedDoc, defaultTrail);
 
     trailsList = []
 
@@ -155,13 +150,12 @@ TrailNameTypeahead = function(parentElement, top, left, trackedDoc, onEmptyTypea
 
     var fuse = new Fuse(trailsList, options);
 
-    typeaheadInput.keyup(checkForEmptyTypeahead);
-    typeaheadInput.keydown(checkForTypeaheadSelectionKeypress);
+    EventHandler.keydown({node: typeaheadInput[0], callback: checkForTypeaheadSelectionKeypress});
     typeaheadInput.on("input", generateResults);
-    typeaheadInput.keypress(preventMoreThan30Characters);
+    EventHandler.keypress({node: typeaheadInput, callback: preventMoreThan30Characters});
 }
 
-TypeAheadDropdown = function(top, left, trackedDoc) {
+TypeAheadDropdown = function(top, left, trackedDoc, defaultTrail) {
     var selectedIndex = 0;
 
     var currentItems = [];
@@ -251,13 +245,13 @@ TypeAheadDropdown = function(top, left, trackedDoc) {
     }
 
     this.getSelectedItem = function() {
-        if (currentItems) {
+        if (currentItems && currentItems.length) {
             return {
                 name: currentItems[selectedIndex].data("name"),
                 id: currentItems[selectedIndex].data("id") // will be false if it's a new trail
             };
         } else {
-            return false
+            return defaultTrail
         }
     }
 

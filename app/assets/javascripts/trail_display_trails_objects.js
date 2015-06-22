@@ -379,9 +379,12 @@ Note = function(baseNoteObject, parentSite){
     this.update = function(baseNoteObject){
         this.id = baseNoteObject.id;
         this.comment = baseNoteObject.comment;
-        this.clientSideId = baseNoteObject.clientSideId
+        this.content = baseNoteObject.content;
+        this.clientSideId = baseNoteObject.clientSideId;
         this.scrollX = baseNoteObject.scrollX;
         this.scrollY = baseNoteObject.scrollY;
+        this.nodeIndex = baseNoteObject.nodeIndex
+        $(document).trigger({type: "note.update", note: thisNoteObject});
     };
 
     this.updateComment = function(newComment) {
@@ -412,6 +415,8 @@ BaseRevisionNote = function(site){
     this.getPositionInSite = function() {
         return 0;
     }
+
+    this.isBase = true
 
     this.id = -1;
     this.baseNote = true;

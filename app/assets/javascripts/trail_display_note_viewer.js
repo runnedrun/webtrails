@@ -1,11 +1,21 @@
 NoteViewer = function (trailPreview, halfPageViewScale) {
     var noteViewActive = false;
+    var fullCommentsToggled = false
     var $toggleNoteViewButton = $("#showNoteList");
+    var $toggleFullCommentsButton = $(".show-full-comments");
+    var $noteViewerToolbar = $(".note-viewer-toolbar");
+    var $noteViewerToolbarMouseOverTarget = $(".note-viewer-toolbar-mouseover-target");
+
+    $toggleFullCommentsButton.click(toggleFullComments);
+    $noteViewerToolbarMouseOverTarget.mouseenter(showNoteViewerToolbar);
+    $noteViewerToolbar.mouseleave(hideNoteViewerToolbar);
+
     var Statics = {
         untoggledButtonText: "Research View",
         toggledButtonText: "Presentation View"
     }
     var $noteList = $(".noteViewer");
+    var $noteViewerToolbar = $(".note-viewer-toolbar");
     $(".noteInfo").click(clickJumpToNote);
 
     if (canEdit()) {
@@ -69,42 +79,58 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
 
         $commentElement.attr("contentEditable","true");
 
-        $(document).click(function(e) {
+        function updateNoteOnClick(e) {
             if ((e.target != $commentElement[0])){
                 Request.updateNoteComment(note, $commentElement.html(), function(resp) {
                     noteUpdateCallback(resp, $commentElement);
                 });
+                unbindEditEvents()
             }
-        });
+        }
 
-        $commentElement.keypress(function(e){
+        function updateNoteOnKeypress(e) {
             console.log("got keypress");
             var code = (e.keyCode ? e.keyCode : e.which);
             if (code == 13 && !e.shiftKey){
                 Request.updateNoteComment(note, $commentElement.html(), function(resp){
                     noteUpdateCallback(resp, $commentElement);
                 });
+                unbindEditEvents()
                 return false
             }
-        });
+        }
 
+        function unbindEditEvents() {
+            $(document).unbind("click", updateNoteOnClick);
+            $commentElement.unbind("keypress", updateNoteOnKeypress);
+        }
+
+        $commentElement.keypress(updateNoteOnKeypress);
+        $(document).click(updateNoteOnClick);
         $commentElement.focus();
         return false
     }
 
     function noteUpdateCallback(resp, $commentElement) {
-        var newComment = resp.comment || $commentElement.html();
+        console.log("updated content of notes");
+        var newComment = resp.updateHash.comment || $commentElement.html();
 
         $commentElement.attr("contentEditable","false");
         $commentElement.click(editNoteIfSelected);
         $commentElement.blur(); // lose focus, and blue highlight
         var note = Trail.getNote($commentElement.data("note-id"));
-        note.updateComment(newComment);
-        trailPreview.getCurrentComment().update();
+        var currentComment = trailPreview.getCurrentComment();
+
+        // TODO: Just use the event triggered by the note update to update the inline comment
+        // it may be that the user has changed to a new comment, in which we don't need to update anything
+        if (currentComment.sourceNote == note) {
+            currentComment.update()
+        }
+
         $commentElement.html(newComment);
     }
 
-    function clickJumpToNote(e){
+    function clickJumpToNote(e) {
         var noteWrapper = $(e.delegateTarget);
         if (!noteWrapper.hasClass("selected-note")) {
             var noteId = noteWrapper.data("note-id");
@@ -112,27 +138,56 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
         }
     }
 
+    function toggleFullComments() {
+        if (fullCommentsToggled) {
+            hideFullComments();
+        } else {
+            showFullComments();
+        }
+        fullCommentsToggled = !fullCommentsToggled;
+    }
+
+    function showFullComments() {
+        $(".note-view-comment").trigger("destroy.dot").css("max-height","none");
+        $toggleFullCommentsButton.val("Hide Full Comments")
+    }
+
+    function hideFullComments() {
+        // ellipsize all the comments except the selected one
+        $(".noteInfo:not(.selected-note)").find(".note-view-comment").css("max-height","").dotdotdot();
+        $toggleFullCommentsButton.val("Show Full Comments")
+    }
+
+    function showNoteViewerToolbar() {
+        console.log("showing the toolbar");
+        $noteViewerToolbar.animate({"top": "0"}, 100);
+    }
+
+     function hideNoteViewerToolbar() {
+         console.log("hiding the toolbar");
+        // make sure to sync the top with the height of the element in css
+         $noteViewerToolbar.animate({"top": "-32px"}, 100);
+    }
+
     this.highlightNoteInList = function(note){
-        unhighlightCurrentNoteInList();
+        unhighlightNoteInList();
         if(note.isBase) {
-            $(".note-list-header[data-site-id=" + note.site.id + "]").addClass("selected-note");
+            // selecting a site
+            $(".note-list-header [data-site-id=" + note.site.id + "]").addClass("selected-note");
         } else {
             var $noteElement = $(".noteInfo[data-note-id=" + note.id + "]");
             $noteElement.addClass("selected-note");
-
-            $(".noteComment").css({
-                "cursor":"pointer"
-            })
-            $noteElement.find(".noteComment").css({
-                "cursor": "text"
-            })
 
             var commentElement = $noteElement.find(".noteComment");
             commentElement.trigger("destroy.dot").css("max-height","none");
         }
     };
 
-    function unhighlightCurrentNoteInList(){
+    function updateNote(note) {
+        $("[data-note-id="+note.id+"].noteComment").html(note.comment);
+    }
+
+    function unhighlightNoteInList(selector){
         $(".selected-note").removeClass("selected-note").find(".noteComment").css("max-height","").dotdotdot();
     }
 
@@ -140,6 +195,13 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
         $noteList.show().css({
             "width": 100-(halfPageViewScale * 100)+"%"
         });
+        $noteViewerToolbar.css({
+            "width": 100-(halfPageViewScale * 100)+"%"
+        });
+        $noteViewerToolbarMouseOverTarget.css({
+            "width": 100-(halfPageViewScale * 100)+"%"
+        });
+
         $(".noteContent").dotdotdot();
         $(".noteComment").dotdotdot();
         $(".note-header-wrapper").dotdotdot();
@@ -184,4 +246,8 @@ NoteViewer = function (trailPreview, halfPageViewScale) {
         Toolbar.update(trailPreview.getCurrentNote());
         Request.updateNoteOrder(noteArray, siteId);
     }
+
+    $(document).on("note.update", function(event) {
+        updateNote(event.note);
+    })
 }

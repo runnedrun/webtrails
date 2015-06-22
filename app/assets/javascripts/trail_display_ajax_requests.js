@@ -40,7 +40,11 @@ Request = new function(){
                 "id" : note.id,
                 "comment": newComment
             },
-            success: function(e) { console.log("note saved"); callback(e) }
+            success: function(resp) {
+                console.log("note saved");
+                note.update(resp.updateHash);
+                callback(resp);
+            }
         });
     };
 

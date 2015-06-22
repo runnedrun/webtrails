@@ -1,6 +1,7 @@
 HighlightManager = function(trackedDoc) {
     var $doc = $(trackedDoc);
     var $body = $(trackedDoc.body);
+    var commentCreator = new CommentCreator(trackedDoc);
 
     var currentCommentCreator;
 
@@ -22,7 +23,7 @@ HighlightManager = function(trackedDoc) {
     }
 
     function addComment(highlightedTextRange){
-        currentCommentCreator = new CommentCreator(0, highlightedTextRange, trackedDoc);
+        currentCommentCreator = commentCreator.fromRange(0, highlightedTextRange);
     }
 
     function getHighlightedTextRange(){

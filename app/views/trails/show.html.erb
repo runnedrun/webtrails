@@ -19,23 +19,29 @@
     <div id="siteClickDivs"></div>
 
     <div class="noteViewer">
-          <%- i = 0  %>
-          <%- @site_note_hash.each do |site_id, notes| %>
-          <table class="noteWrapper table table-bordered" data-site-id="<%= site_id %>">
-            <tr class="note-list-header-row click-to-change-site" data-site-id="<%= site_id %>">
-              <th colspan="2" class="note-list-header">
-                <div class="note-header-wrapper">
-                  <img class="faviconImage" src="<%= @favicon_urls_with_ids_and_titles[i][0] %>" />
-                  <span><%= @sites[i].title%></span>
-                </div>
-              </th>
-            </tr>
-                <%- notes.each do |note| %>
+      <div class="note-viewer-toolbar-mouseover-target"></div>
+      <div class="note-viewer-toolbar">
+        <input type="button" class="show-full-comments btn btn-xs btn-primary" value="Show Full Comments"/>
+      </div>
+      <div class="note-viewer-tables">
+        <%- i = 0  %>
+        <%- @site_note_hash.each do |site_id, notes| %>
+            <table class="noteWrapper table table-bordered" data-site-id="<%= site_id %>">
+              <tr class="note-list-header-row click-to-change-site" data-site-id="<%= site_id %>">
+                <th colspan="2" class="note-list-header">
+                  <div class="note-header-wrapper">
+                    <img class="faviconImage" src="<%= @favicon_urls_with_ids_and_titles[i][0] %>" />
+                    <span><%= @sites[i].title%></span>
+                  </div>
+                </th>
+              </tr>
+              <%- notes.each do |note| %>
                   <%= render :partial => "note_row", :locals => {:note => note, :site_id => site_id} %>
-                <%-	end %>
-            <%- i += 1 %>
-          <%- end %>
-      </table>
+              <%-	end %>
+              <%- i += 1 %>
+        <%- end %>
+        </table>
+      </div>
     </div>
     <nav class="navbar navbar-justified viewTrailToolbar navbar-fixed-bottom" role="navigation">
         <div class="container-fluid">

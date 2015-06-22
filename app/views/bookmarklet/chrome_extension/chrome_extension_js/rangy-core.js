@@ -2433,6 +2433,7 @@ rangy.createModule("DomUtil", function(api, module) {
 });rangy.createModule("WrappedSelection", function(api, module) {
     // This will create a selection object wrapper that follows the Selection object found in the WHATWG draft DOM Range
     // spec (http://html5.org/specs/dom-range.html)
+//    debugger;
 
     api.requireModules( ["DomUtil", "DomRange", "WrappedRange"] );
 
@@ -3223,4 +3224,4 @@ rangy.createModule("DomUtil", function(api, module) {
     });
 });
 
-rangy.init();
+//rangy.init();

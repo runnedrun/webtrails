@@ -90,6 +90,8 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument, currentSit
     }
 
     function saveNote(content, comment, noteOffsets, clientSideId){
+        var nodeIndex = calculateNodeIndex(trackedDocument, nodesToHighlight[0].getNode());
+
         var newNote = {
             site_id: currentSite.id,
             content: content,
@@ -99,7 +101,8 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument, currentSit
             client_side_id: clientSideId,
             scroll_x: noteOffsets.left,
             scroll_y: noteOffsets.top,
-            site_revision_number: currentSite.getNextRevisionNumber()
+            site_revision_number: currentSite.getNextRevisionNumber(),
+            node_index: nodeIndex
         };
 
         var cleanHtml = cleanHtmlForSaving();
@@ -188,6 +191,70 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument, currentSit
         var d = new Date();
         var n = d.getTime();
         return "client-side-id-" + n;
+    }
+
+    function calculateNodeIndex(trackedDoc, firstNode) {
+        var node = $(trackedDoc).find("body")[0];
+        var index = 0;
+
+        function isTextNode(node) {
+            return node.nodeType === 3;
+        }
+
+        // collect text and index-node pairs iteratively
+        var iNode = 0,
+            nNodes = node.childNodes.length,
+            stack = [],
+            child, nChildren,
+            state;
+
+
+        for (;;){
+            while (iNode<nNodes){
+                child = node.childNodes[iNode++];
+                // text: collect and save index-node pair
+                if (isTextNode(child)){
+                    var nodeText = child.nodeValue;
+                    if (nodeText !== "\n"){
+                        index += nodeText.length;
+                    }
+                    if (firstNode === child) {
+                        break
+                    }
+                }
+                // element: collect text of child elements,
+                // except from script or style tags
+                else if (child.nodeType === 1){
+                    // skip style/script tags
+                    if (child.tagName.search(/^(script|style)$/i)>=0){
+                        continue;
+                    }
+                    // add extra space for tags which fall naturally on word boundaries
+                    if (child.tagName.search(/^(a|b|basefont|bdo|big|em|font|i|s|small|span|strike|strong|su[bp]|tt|u)$/i)<0){
+                        index++;
+                    }
+                    // save parent's loop state
+                    nChildren = child.childNodes.length;
+                    if (nChildren){
+                        stack.push({n:node, l:nNodes, i:iNode});
+                        // initialize child's loop
+                        node = child;
+                        nNodes = nChildren;
+                        iNode = 0;
+                    }
+                }
+            }
+            // restore parent's loop state
+            if (!stack.length){
+                break;
+            }
+            state = stack.pop();
+            node = state.n;
+            nNodes = state.l;
+            iNode = state.i;
+        }
+
+        return index
     }
 
     function reHighlightNodes() {
@@ -291,8 +358,7 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument, currentSit
                 }
 
                 highlightedNode =
-                    new SelectedNode(node, highlightedRange.startOffset, endOffset, clientSideId, trackedDocument);
-
+                    new SelectedNode(node, highlightedRange.startOffset, endOffset, clientSideId, trackedDocument)
             }
             else if (isLastNode){
                 highlightedNode = new SelectedNode(node, 0, highlightedRange.endOffset, clientSideId, trackedDocument);
@@ -308,7 +374,7 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument, currentSit
         });
 
         nodesToHighlight = selectedNodes.filter(function(node, i) {
-            return node.canBeHighlighted();
+            return node.constructWtHighlight();
         });
 
         if (nodesToHighlight.length > 0) {
@@ -348,32 +414,35 @@ SelectedNode = function(node, start_offset, end_offset, clientSideId, trackedDoc
     var parentNode = node.parentNode;
     var thisSelectedNode = this
 
-    if (isTextNode(node)){
-        var contents = node.nodeValue;
-        var highlighted_contents = contents.slice(start_offset, end_offset);
-        var whiteSpaceRegex = /^\s*$/;
-        if(!highlighted_contents || whiteSpaceRegex.test(highlighted_contents)){
-            console.log("nothing inside this node, not replacing");
-        } else {
-            var unhighlighted_prepend = contents.slice(0, start_offset);
-            var unhighlighted_append = contents.slice(end_offset,contents.length);
+    this.constructWtHighlight = function() {
+        if (isTextNode(node)){
+            var contents = node.nodeValue;
+            var highlighted_contents = contents.slice(start_offset, end_offset);
+            var whiteSpaceRegex = /^\s*$/;
+            if(!highlighted_contents || whiteSpaceRegex.test(highlighted_contents)){
+                console.log("nothing inside this node, not replacing");
+            } else {
+                var unhighlighted_prepend = contents.slice(0, start_offset);
+                var unhighlighted_append = contents.slice(end_offset,contents.length);
 
-            wtHighlight = trackedDocument.createElement("wtHighlight")
-            $(wtHighlight).addClass("highlightMe current-highlight " + clientSideId);
+                wtHighlight = trackedDocument.createElement("wtHighlight")
+                $(wtHighlight).addClass("highlightMe current-highlight " + clientSideId);
 
-            $(wtHighlight).text(highlighted_contents);
-            var nodeToReplace = node;
-            nodeToReplace.parentNode.replaceChild(wtHighlight, nodeToReplace);
+                $(wtHighlight).text(highlighted_contents);
+                var nodeToReplace = node;
+                nodeToReplace.parentNode.replaceChild(wtHighlight, nodeToReplace);
 
-            if (unhighlighted_prepend.length !== 0 ){
-                newPrependedTextNode = $(trackedDocument.createTextNode(unhighlighted_prepend));
-                newPrependedTextNode.insertBefore(wtHighlight);
+                if (unhighlighted_prepend.length !== 0 ){
+                    newPrependedTextNode = $(trackedDocument.createTextNode(unhighlighted_prepend));
+                    newPrependedTextNode.insertBefore(wtHighlight);
+                }
+                if (unhighlighted_append.length !== 0){
+                    newAppendedTextNode = $(trackedDocument.createTextNode(unhighlighted_append));
+                    newAppendedTextNode.insertAfter(wtHighlight);
+                }
+                canBeHighlighted = true;
+                return true
             }
-            if (unhighlighted_append.length !== 0){
-                newAppendedTextNode = $(trackedDocument.createTextNode(unhighlighted_append));
-                newAppendedTextNode.insertAfter(wtHighlight);
-            }
-            canBeHighlighted = true;
         }
     }
 

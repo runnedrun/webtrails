@@ -22,7 +22,8 @@ class Note < ActiveRecord::Base
         :id => self.id,
         :scrollX => self.scroll_x,
         :scrollY => self.scroll_y,
-        :siteRevisionNumber => self.site_revision_number
+        :siteRevisionNumber => self.site_revision_number,
+        :node_index => self.node_index
     }
   end
 

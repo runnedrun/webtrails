@@ -8,13 +8,14 @@ var faviconHolder,
     wt_auth_token = undefined;
     commentDropdownCssInserted = false;
 
+Highlights = new HighlightManager(document);
+
 String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
 };
 
 $(function() {
-    Highlights = new HighlightManager(document);
-
+    rangy.init();
     console.log("initializing the extension");
     var deferredData = LocalStorageTrailAccess.getExtensionInitializationData();
     chrome.runtime.sendMessage({getToolbarHtml: true});

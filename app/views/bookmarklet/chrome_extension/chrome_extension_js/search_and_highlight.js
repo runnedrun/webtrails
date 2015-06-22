@@ -11,10 +11,10 @@ function doHighlight(node,className,searchFor,which){
     // normalize search arguments, here is what is accepted:
     // - single string
     // - single regex (optionally, a 'which' argument, default to 0)
-    if (typeof searchFor === 'string') {
+    if (typeof searchTerm === 'string') {
         // rhill 2012-01-29: escape regex chars first
         // http://stackoverflow.com/questions/280793/case-insensitive-string-replacement-in-javascript
-        searchFor = new RegExp(searchFor.replace(/[.*+?|()\[\]{}\\$^]/g,'\\$&'),'ig');
+        searchTerm = new RegExp(searchTerm.replace(/[.*+?|()\[\]{}\\$^]/g,'\\$&'),'ig');
     }
     which = which || 0;
 
@@ -98,7 +98,7 @@ function doHighlight(node,className,searchFor,which){
     for (;;){
 
         // find matching text, stop if none
-        matchingText = searchFor.exec(text);
+        matchingText = searchTerm.exec(text);
         if (!matchingText || matchingText.length<=which || !matchingText[which].length){
             break;
         }
@@ -174,8 +174,4 @@ function doHighlight(node,className,searchFor,which){
             }
         }
     }
-}
-
-function unHighlight(){
-    $(".trailHighlight").attr("style","").removeClass("trailHighlight");
 }

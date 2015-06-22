@@ -1,6 +1,6 @@
 // this object does not deal directly with note objects, as it may be initalized before a note is fully saved.
 
-Comment = function(displayDoc, note, clientSideId, spacing, onCommentDisplayed) {
+Comment = function(displayDoc, note, spacing) {
     var commentOverlay;
     var overlayContainer;
     var commentOverlayShown = false;
@@ -8,6 +8,7 @@ Comment = function(displayDoc, note, clientSideId, spacing, onCommentDisplayed) 
     var spacing = spacing || 0;
     var $displayDoc = $(displayDoc);
     var $body = $(displayDoc.body);
+    var finalHighlight;
     var thisComment = this;
 
     var C = {
@@ -54,26 +55,91 @@ Comment = function(displayDoc, note, clientSideId, spacing, onCommentDisplayed) 
                 .hide()
         },
         deleteButton: $("<img></img>").attr("src", C.trashCanDataUrl).css(C.deleteButton)
-    }
+    };
 
     this.remove = function() {
         overlayContainer && overlayContainer.remove();
         elementsToHighlight && elementsToHighlight.attr("style", "");
-    }
+    };
 
     this.update = function() {
-        commentOverlay.html(note.comment);
+        commentOverlay && commentOverlay.html(note.comment);
+    };
+
+    this.sourceNote = function() {
+        return note
+    };
+
+    this.scrollToComment = function(scrollOffset, onScrolled) {
+        if(docIsLoaded(displayDoc)) {
+            scrollToNoteWithoutCheck();
+        } else {
+            var scrollTop = note.scrollY - scrollOffset;
+            var scrollLeft = note.scrollX;
+
+            $displayDoc.scrollTop(scrollTop).scrollLeft(scrollLeft);
+
+            runWhenLoaded(function() {
+                scrollToNoteWithoutCheck();
+            }, displayDoc);
+        }
+
+        function scrollToNoteWithoutCheck() {
+            var offsets = getCommentOffsets();
+            $displayDoc.scrollTop(offsets.top - scrollOffset).scrollLeft(offsets.left);
+            onScrolled && onScrolled();
+        }
+    }
+
+    function getCommentOffsets() {
+        var commentOffsets = finalHighlight.offset();
+
+        return {
+            top: commentOffsets.top + finalHighlight.height() + spacing,
+            left: commentOffsets.left
+        }
+    }
+
+    function insertCommentOverlay() {
+        runWhenLoaded(function() {
+            var offsets = getCommentOffsets();
+
+            commentOverlay = H.commentOverlay(true);
+
+            var comment = (!note.comment || note.comment === "") ? "no comment" : note.comment
+
+            commentOverlay.html(comment);
+
+            var deleteButton = H.deleteButton;
+            deleteButton.click(deleteNote);
+
+            overlayContainer = H.overlayContainer(offsets.top, offsets.left, commentOverlay, deleteButton);
+
+            $body.append(overlayContainer);
+
+            elementsToHighlight.click(openOrCloseCommentOverlay);
+
+            elementsToHighlight.css({cursor: "pointer"});
+
+            var noteOffsets = $(elementsToHighlight[0]).offset();
+
+            commentOverlay.keypress(checkForNoteUpdateKeyPress)
+        }, displayDoc);
     }
 
     function runWhenLoaded(fn, doc) {
         var doc = doc || document;
         var loadedCheck = setInterval(function(){
-            if (doc.readyState === "complete"){
+            if (docIsLoaded(doc)){
                 clearInterval(loadedCheck);
                 fn(doc);
             }
         }, 50);
     };
+
+    function docIsLoaded(doc) {
+        return doc.readyState === "complete";
+    }
 
     function highlight() {
         elementsToHighlight.css({"background": "yellow"});
@@ -99,7 +165,7 @@ Comment = function(displayDoc, note, clientSideId, spacing, onCommentDisplayed) 
         if (code == 13 && !e.shiftKey){
             var newNoteContent = commentOverlay.html();
             commentOverlay.blur();
-            Request.updateNoteComment(note, newNoteContent, function(){ console.log("note submitted successfully") });
+            Request.updateNoteComment(note, newNoteContent, function(){});
         } else if(code == 27){
             commentOverlay.blur();
         }
@@ -109,43 +175,37 @@ Comment = function(displayDoc, note, clientSideId, spacing, onCommentDisplayed) 
         TrailPreview.deleteNote(note);
     }
 
-    elementsToHighlight = $displayDoc.find("wtHighlight." + clientSideId);
-    var finalHighlight = $(elementsToHighlight[elementsToHighlight.length - 1]);
+    elementsToHighlight = $displayDoc.find("wtHighlight." + note.clientSideId);
+    finalHighlight = $(elementsToHighlight[elementsToHighlight.length - 1]);
 
-    if (finalHighlight.length > 0) {
+    if (false) {
         highlight();
-
-        runWhenLoaded(function() {
-            var commentOffsets = finalHighlight.offset();
-
-            var topPosition  = commentOffsets.top + finalHighlight.height() + spacing;
-            var leftPosition = commentOffsets.left;
-
-            commentOverlay = H.commentOverlay(true);
-
-            var comment = (!note.comment || note.comment === "") ? "no comment" : note.comment
-
-            commentOverlay.html(comment);
-
-            var deleteButton = H.deleteButton;
-            deleteButton.click(deleteNote);
-
-            overlayContainer = H.overlayContainer(topPosition, leftPosition, commentOverlay, deleteButton);
-
-            $body.append(overlayContainer);
-
-            elementsToHighlight.click(openOrCloseCommentOverlay);
-
-            elementsToHighlight.css({cursor: "pointer"});
-
-            var noteOffsets = $(elementsToHighlight[0]).offset();
-
-            commentOverlay.keypress(checkForNoteUpdateKeyPress)
-
-            onCommentDisplayed && onCommentDisplayed(noteOffsets.top, noteOffsets.left);
-        }, displayDoc);
+        insertCommentOverlay();
     } else {
-        onCommentDisplayed && onCommentDisplayed(0, 0);
+        var textFinder = new SiteTextFinder(displayDoc);
+        var possibleMatchedNodes = textFinder.findString(note.content);
+
+        if (possibleMatchedNodes) {
+            // find the match which is closest to where we expect this note to be.
+            var sortedMatches = possibleMatchedNodes.sort(function(nodeIndexAndSelectedNodes) {
+                var nodeIndex = nodeIndexAndSelectedNodes[0];
+                return Math.abs(nodeIndex - note.nodeIndex);
+            });
+
+            var nodesToHighlight = sortedMatches[0][1];
+
+            elementsToHighlight = $(nodesToHighlight.map(function(node, i) {
+                node.constructWtHighlight();
+                return node.getWtHighlight()[0];
+            }));
+
+            finalHighlight = $(elementsToHighlight[elementsToHighlight.length - 1]);
+
+            highlight();
+            insertCommentOverlay();
+        } else {
+            console.log("could not find note on page!!")
+        }
     }
 }
 

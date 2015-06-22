@@ -18,7 +18,7 @@
 
 .siteDisplayDiv {
     width: 100%;
-    height: 94%;
+    height: 94%; /* make sure to keep this synced with the value in the iframe scaler in trailPreview */
     overflow:hidden;
     border-bottom: 3px grey;
 }
@@ -212,7 +212,7 @@ iframe.shrunk {
     font-size: 12px;
     color: #333;
 }
-
+/* Note Viewew */
 .noteWrapper.table .noteInfo td.noteContentCell {
     padding: 5px 0;
     border: none;
@@ -220,6 +220,10 @@ iframe.shrunk {
 
 .noteWrapper.table .note-list-header-row .note-list-header {
     border: none;
+}
+
+.note-viewer-tables {
+    /*margin-top: 32px *//* to accomodate the note viewer toolbar */
 }
 
 .noteContent {
@@ -254,9 +258,33 @@ iframe.shrunk {
     border-top: 2px solid #9ecaed;
 }
 
-.noteListHeader {
-    background-color: #E1E1E1;
+.selected-note .noteComment {
+    cursor: text;
+}
+
+.note-list-header {
     cursor: pointer;
+}
+
+.note-viewer-toolbar {
+    border-bottom: 2px solid #bbb;
+    position: fixed;
+    top: -32px;
+    height: 32px;
+    padding: 5px 3px;
+    text-align: center;
+    background: lightgrey;
+    z-index: 200;
+}
+
+.note-viewer-toolbar-mouseover-target {
+    height: 5px;
+    position: fixed;
+    top: 0;
+}
+
+.btn.show-full-comments {
+    height: 20px;
 }
 
 .note-header-wrapper {

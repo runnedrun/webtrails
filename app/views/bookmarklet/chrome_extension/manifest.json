@@ -28,15 +28,15 @@
             "exclude_globs": ["http://localhost:3000/*", "http://*.webtrails.co/*"],
             "js": ["third_party_scripts/jquery.js", "third_party_scripts/scrollsnap.js","third_party_scripts/dotDotDot.js",
                 "chrome_extension_js/page_preprocessing.js", "chrome_extension_js/rangy-core.js",
-                "chrome_extension_js/background_scripts/LocalStorageTrail.js",
+                "chrome_extension_js/background_scripts/LocalStorageTrail.js", "chrome_extension_js/EventHandler.js",
                 "chrome_extension_js/iframe_manager.js", "chrome_extension_js/trails_objects.js","chrome_extension_js/trail_preview.js",
                 "chrome_extension_js/TrailToolbar.js", "chrome_extension_js/ajax_fns.js", "chrome_extension_js/autoresize.js",
                 "chrome_extension_js/css_property_defaults.js", "chrome_extension_js/HighlightManager.js",
                 "chrome_extension_js/ui_fns.js","chrome_extension_js/Comment.js", "chrome_extension_js/CommentCreator.js",
                 "chrome_extension_js/whereJSisWrittenLocalChrome.js", "chrome_extension_js/NoteSelector.js",
                 "third_party_scripts/fuse.js", "chrome_extension_js/TrailNameTypeahead.js", "chrome_extension_js/InlineBootstrapStyles.js",
-                "third_party_scripts/textcomplete.js"
-                ]
+                ],
+            "run_at": "document_start"
         },
         {   "matches": ["<all_urls>"],
             "js": ["chrome_extension_js/get_iframe_content.js", "chrome_extension_js/page_preprocessing.js"],

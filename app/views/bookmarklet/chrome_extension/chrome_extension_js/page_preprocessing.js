@@ -19,8 +19,8 @@ function removeAllUnusedTags(htmlClone) {
     removeNodes(htmlClone.querySelectorAll("meta"));
 }
 
-function removeStylingFromWtHighlights($htmlClone) {
-    $htmlClone.find("wthighlight").attr("style", "");
+function removeStylingFromWtHighlights(htmlClone) {
+    htmlClone.querySelectorAll("wthighlight").setAttribute("style", "");
 }
 
 function getCurrentSiteHTML(){
@@ -28,7 +28,7 @@ function getCurrentSiteHTML(){
     var htmlClone = htmlElement.cloneNode(true);
     if (!(typeof Toolbar === "undefined")) removeToolbarFromPage(htmlClone); // edits in-place
     removeAllUnusedTags(htmlClone);
-    removeStylingFromWtHighlights($(htmlClone));
+    removeStylingFromWtHighlights(htmlClone);
     var processedHtml = htmlClone; //gets the element, not the jquery object
     return processedHtml.outerHTML;
 }

@@ -1,18 +1,20 @@
-CommentCreator = function(spacing, highlightedRange, trackedDocument) {
-    var noteContent = String(highlightedRange);
-    var selectedNodes = [];
-    var nodesToHighlight = [];
-    var originalStartIndex = highlightedRange.startOffset;
-    var originalEndIndex = highlightedRange.endOffset;
-    var clientSideId = generateClientSideId();
-    var nodes = highlightedRange.getNodes();
-    var commentText;
+CommentCreator = function(trackedDocument) {
     var $trackedDocument = $(trackedDocument);
-    var $body = $(trackedDocument.body);
+    $trackedDocument
+    var $body;
+    $(function() { $body = $(trackedDocument.body); });
+    var noteContent;
+    var selectedNodes;
+    var nodesToHighlight = [];
+    var originalStartIndex;
+    var originalEndIndex;
+    var clientSideId;
+    var nodes;
+    var commentText;
     var commentOverlay;
     var commentOverlayWrapper;
-    var commentOverlayShown = false;
-    var trailNameTypeahead = false;
+    var commentOverlayShown;
+    var trailNameTypeahead;
     var top;
     var left;
 
@@ -50,7 +52,7 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
                 .addClass("commentOverlayWrapper")
                 .addClass("webtrails");
         },
-        // this is need to keep the typeahead from breaking across multiple lines when the user types on long
+        // this is needed to keep the typeahead from breaking across multiple lines when the user types on long
         // word in the comment overlay.
         spacer: applyDefaultCSS($("<span></span>"))
             .css({"display": "inline"})
@@ -58,25 +60,25 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
 
     function unbindAllWatchers() {
         $trackedDocument.unbind("mousedown", removeAndRevert);
-        $trackedDocument.unbind("keypress", modifyOverlayOnFirstKeypress);
-        $trackedDocument.unbind("keyup", checkForEmptyCommentOverlayOnKeypress);
-        $trackedDocument.unbind("keydown", checkForNotePostKeypress);
+        EventHandler.removeKeydown({node: commentOverlay[0], callback: checkForNotePostKeypress});
+        EventHandler.removeKeydown({node: commentOverlay[0], callback: checkForTypeaheadDeleteOnKeydown});
+        EventHandler.removeKeypress({callback: showAndModifyOverlayOnFirstKeypress});
     }
 
     function removeAndRevert() {
-        revertNodes();
         removeCommentOverlay();
+        revertNodes();
         trailNameTypeahead && trailNameTypeahead.remove();
         unbindAllWatchers();
+        EventHandler.blockEvents = false
     }
 
     function hideOverlayAndRevert() {
         hideCommentOverlay();
-        trailNameTypeahead && trailNameTypeahead.hideDropdown();
-        $trackedDocument.keypress(modifyOverlayOnFirstKeypress);
-        commentOverlay.unbind("keypress", checkForEmptyCommentOverlayOnKeypress);
         commentOverlay.blur();
         reHighlightNodes();
+        trailNameTypeahead && trailNameTypeahead.hideDropdown();
+        EventHandler.blockEvents = true
     }
 
     function highlight() {
@@ -85,15 +87,20 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
         })
     }
 
-    function saveNote(content, comment, noteOffsets, clientSideId){
+    function saveNote(){
+        commentText = commentOverlay.html();
+        var noteOffsets = selectedNodes[0].getWtHighlight().offset();
+        var nodeIndex = calculateNodeIndex(nodesToHighlight[0].getNode());
+
         var newNote = {
-            content: content,
-            comment: comment,
+            content: noteContent,
+            comment: commentText,
             comment_location_x: noteOffsets.left,
             comment_location_y: noteOffsets.top,
             client_side_id: clientSideId,
             scroll_x: noteOffsets.left,
-            scroll_y: noteOffsets.top
+            scroll_y: noteOffsets.top,
+            node_index: nodeIndex
         };
 
         if (trailNameTypeahead) {
@@ -116,15 +123,18 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
     }
 
     function checkForNotePostKeypress(e){
-        console.log("checking for note post keypress");
         var code = (e.keyCode ? e.keyCode : e.which);
         if (code == 13 && !e.shiftKey){
-            commentText = commentOverlay.html();
-            var noteOffsets = selectedNodes[0].getWtHighlight().offset();
             removeCommentOverlay();
             unbindAllWatchers();
-            saveNote(noteContent, commentText, noteOffsets, clientSideId);
-        } else if(code == 27){
+            saveNote();
+        }
+    }
+
+    function checkForOverlayHideOnKeypress(e)  {
+        console.log("checking if we shoudl hide the overlay")
+        var code = (e.keyCode ? e.keyCode : e.which);
+        if(code == 27){
             hideOverlayAndRevert();
         }
     }
@@ -147,22 +157,14 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
         return isDefaultEditable || isContentEditable
     }
 
-    function checkForEmptyCommentOverlayOnKeypress() {
-        var content = commentOverlay.html();
-
-        console.log(content);
-
-        if (!trailNameTypeahead && (!content || content === "")) {
-            hideOverlayAndRevert();
-        }
-    }
-
-    function modifyOverlayOnFirstKeypress(e) {
+    function showAndModifyOverlayOnFirstKeypress(e) {
+        console.log("showing an modifying the overlay on the first keypress.")
         if (e.charCode) {
             highlight();
             showCommentOverlay();
-            $(trackedDocument).unbind("keypress", modifyOverlayOnFirstKeypress);
-            if (stringFromCharcode(e.charCode) === "@") {
+            var initialChar = stringFromCharcode(e.charCode);
+
+            if (initialChar === "@") {
                 // if the user starts by tpying @ then lets just give them a fresh typeahead, or have them edit
                 // the existing
                 if (trailNameTypeahead) {
@@ -173,20 +175,18 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
             } else {
                 // if the user does not start by typing @ then lets create a prefilled typeahead, indicating
                 // what trail the note is going to.
-                if (trailNameTypeahead) {
-                    focus();
-                } else {
-                    insertTypeahead().prefill(Trails.getCurrentTrail().name, Trails.getCurrentTrailId());
+                if (!trailNameTypeahead) {
+                    insertTypeahead().displayDefault();
                 }
+                focus();
             }
         }
     }
 
     function insertTypeahead() {
-        var onEmpty =  function() {
-            trailNameTypeahead.remove();
-            trailNameTypeahead = false;
-            hideOverlayAndRevert();
+        var defaultTrail = {
+            name: Trails.getCurrentTrail().name,
+            id: Trails.getCurrentTrailId()
         }
 
         commentOverlay.attr("contentEditable", "false");
@@ -195,14 +195,9 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
             top,
             left,
             trackedDocument,
-            onEmpty,
+            defaultTrail,
             focus);
 
-        trailNameTypeahead.$el().keyup(function(e) {
-            if (e.keyCode === 27) {
-                hideOverlayAndRevert();
-            }
-        })
         return trailNameTypeahead
     }
 
@@ -217,7 +212,8 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
         if (getCursorPosition() === 0 && e.keyCode === 8 && trailNameTypeahead) {
             console.log("removing typeaehad");
             trailNameTypeahead.remove();
-            trailNameTypeahead = false;
+            trailNameTypeahead = insertTypeahead("");
+            trailNameTypeahead.focus();
         }
     }
 
@@ -233,7 +229,7 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
     function moveCursorToEndOfOverlay() {
         var range = document.createRange();
         range.selectNodeContents(commentOverlay[0]);
-        range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+        range.collapse(false); //collapse the range to the end point. false means collapse to end rather than the start
         var selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
@@ -245,6 +241,7 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
     }
 
     function focus() {
+        console.log("focugin on the overlay")
         commentOverlay.attr("contentEditable", "true");
         commentOverlay.focus();
         moveCursorToEndOfOverlay();
@@ -254,6 +251,70 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
         var d = new Date();
         var n = d.getTime();
         return "client-side-id-" + n;
+    }
+
+    function calculateNodeIndex(firstNode) {
+        var node = $body[0];
+        var index = 0;
+
+        function isTextNode(node) {
+            return node.nodeType === 3;
+        }
+
+        // collect text and index-node pairs iteratively
+        var iNode = 0,
+            nNodes = node.childNodes.length,
+            stack = [],
+            child, nChildren,
+            state;
+
+
+        for (;;){
+            while (iNode<nNodes){
+                child = node.childNodes[iNode++];
+                // text: collect and save index-node pair
+                if (isTextNode(child)){
+                    var nodeText = child.nodeValue;
+                    if (nodeText !== "\n"){
+                        index += nodeText.length;
+                    }
+                    if (firstNode === child) {
+                        return index
+                    }
+                }
+                // element: collect text of child elements,
+                // except from script or style tags
+                else if (child.nodeType === 1){
+                    // skip style/script tags
+                    if (child.tagName.search(/^(script|style)$/i)>=0){
+                        continue;
+                    }
+                    // add extra space for tags which fall naturally on word boundaries
+                    if (child.tagName.search(/^(a|b|basefont|bdo|big|em|font|i|s|small|span|strike|strong|su[bp]|tt|u)$/i)<0){
+                        index++;
+                    }
+                    // save parent's loop state
+                    nChildren = child.childNodes.length;
+                    if (nChildren){
+                        stack.push({n:node, l:nNodes, i:iNode});
+                        // initialize child's loop
+                        node = child;
+                        nNodes = nChildren;
+                        iNode = 0;
+                    }
+                }
+            }
+            // restore parent's loop state
+            if (!stack.length){
+                break;
+            }
+            state = stack.pop();
+            node = state.n;
+            nNodes = state.l;
+            iNode = state.i;
+        }
+
+        return index
     }
 
     function reHighlightNodes() {
@@ -316,11 +377,13 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
     function hideCommentOverlay() {
         commentOverlayShown = false;
         commentOverlayWrapper.hide();
+        EventHandler.keypress({callback: showAndModifyOverlayOnFirstKeypress});
     }
 
     function showCommentOverlay() {
         commentOverlayShown = true;
         commentOverlayWrapper.show();
+        EventHandler.removeKeypress({callback: showAndModifyOverlayOnFirstKeypress});
     }
 
     function removeCommentOverlay() {
@@ -335,74 +398,89 @@ CommentCreator = function(spacing, highlightedRange, trackedDocument) {
         }
     }
 
-    if (!isEditableElement($(document.activeElement))) {
+    this.fromRange = function(spacing, highlightedRange) {
+        noteContent = String(highlightedRange);
+        selectedNodes = [];
+        nodesToHighlight = [];
+        originalStartIndex = highlightedRange.startOffset;
+        originalEndIndex = highlightedRange.endOffset;
+        clientSideId = generateClientSideId();
+        nodes = highlightedRange.getNodes();
+        commentOverlayShown = false;
+        trailNameTypeahead = false;
 
-        // the start offset indicates the offset from the beginning of the first text node,
-        // if the range does not begin with a text node we have to walk the range until we find one.
-        var reachedFirstTextNode = false;
+        if (!isEditableElement($(document.activeElement))) {
 
-        $.each(nodes, function(i, node){
-            var highlightedNode;
+            // the start offset indicates the offset from the beginning of the first text node,
+            // if the range does not begin with a text node we have to walk the range until we find one.
+            var reachedFirstTextNode = false;
 
-            var isLastNode = i === (nodes.length-1);
-            var isFirstNode = i === 0;
+            $.each(nodes, function(i, node){
+                var highlightedNode;
 
-            if ((isFirstNode || !reachedFirstTextNode)){
-                var endOffset;
+                var isLastNode = i === (nodes.length-1);
+                var isFirstNode = i === 0;
 
-                if (isLastNode) {
-                    endOffset = highlightedRange.endOffset;
-                } else {
-                    endOffset = node.length;
+                if ((isFirstNode || !reachedFirstTextNode)){
+                    var endOffset;
+
+                    if (isLastNode) {
+                        endOffset = highlightedRange.endOffset;
+                    } else {
+                        endOffset = node.length;
+                    }
+
+                    highlightedNode =
+                        new SelectedNode(node, highlightedRange.startOffset, endOffset, clientSideId, trackedDocument);
+
+                }
+                else if (isLastNode){
+                    highlightedNode = new SelectedNode(node, 0, highlightedRange.endOffset, clientSideId, trackedDocument);
+                }
+                else {
+                    highlightedNode = new SelectedNode(node, 0, node.length, clientSideId, trackedDocument);
                 }
 
-                highlightedNode =
-                    new SelectedNode(node, highlightedRange.startOffset, endOffset, clientSideId, trackedDocument);
+                if (highlightedNode.isBaseNode()) {
+                    reachedFirstTextNode = true;
+                    selectedNodes.push(highlightedNode);
+                }
+            });
 
+            nodesToHighlight = selectedNodes.filter(function(node, i) {
+                return node.canBeHighlighted();
+            });
+
+            if (nodesToHighlight.length > 0) {
+                EventHandler.blockEvents = true
+                var finalHighlight = nodesToHighlight[nodesToHighlight.length - 1].getWtHighlight();
+
+                var offsets = finalHighlight.offset();
+
+                top  = offsets.top + finalHighlight.height() + spacing;
+                left = offsets.left;
+
+                commentOverlayWrapper = HTML.commentOverlayWrapper(top, left);
+                commentOverlay = HTML.commentOverlay;
+
+                commentOverlayWrapper.append(HTML.spacer);
+                commentOverlayWrapper.append(commentOverlay);
+
+                $body.append(commentOverlayWrapper);
+
+                // bind the key events which let us delete the typeahead lozenge on keydown, and submit the no
+                // on keydown
+                EventHandler.keypress({node: commentOverlay[0], callback: checkForNotePostKeypress});
+                EventHandler.keydown({node: commentOverlay[0], callback: checkForOverlayHideOnKeypress});
+                EventHandler.keydown({node: commentOverlay[0], callback: checkForTypeaheadDeleteOnKeydown});
+
+                // if a key is pressed while text is highlighted, pop up the comment overlay.
+                EventHandler.keypress({callback: showAndModifyOverlayOnFirstKeypress});
+
+                // when the mouse is pressed outside of the overlay box remove the box and any highlights.
+                $(trackedDocument).mousedown(removeAndRevert);
+                reHighlightNodes();
             }
-            else if (isLastNode){
-                highlightedNode = new SelectedNode(node, 0, highlightedRange.endOffset, clientSideId, trackedDocument);
-            }
-            else {
-                highlightedNode = new SelectedNode(node, 0, node.length, clientSideId, trackedDocument);
-            }
-
-            if (highlightedNode.isBaseNode()) {
-                reachedFirstTextNode = true;
-                selectedNodes.push(highlightedNode);
-            }
-        });
-
-        nodesToHighlight = selectedNodes.filter(function(node, i) {
-            return node.canBeHighlighted();
-        });
-
-        if (nodesToHighlight.length > 0) {
-            var finalHighlight = nodesToHighlight[nodesToHighlight.length - 1].getWtHighlight();
-
-            var offsets = finalHighlight.offset();
-
-            top  = offsets.top + finalHighlight.height() + spacing;
-            left = offsets.left;
-
-            var commentOverlayWrapper = HTML.commentOverlayWrapper(top, left);
-            commentOverlay = HTML.commentOverlay;
-
-            commentOverlayWrapper.append(HTML.spacer);
-            commentOverlayWrapper.append(commentOverlay);
-
-            $body.append(commentOverlayWrapper);
-
-            commentOverlay.keydown(checkForNotePostKeypress);
-            commentOverlay.keyup(checkForEmptyCommentOverlayOnKeypress);
-            commentOverlay.keypress(checkForAtSignAsTheFirstCharacter);
-            commentOverlay.keydown(checkForTypeaheadDeleteOnKeydown);
-
-            $(trackedDocument).keypress(modifyOverlayOnFirstKeypress);
-
-            $(trackedDocument).mousedown(removeAndRevert);
-
-            reHighlightNodes();
         }
     }
 }

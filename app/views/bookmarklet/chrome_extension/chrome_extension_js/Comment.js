@@ -145,6 +145,8 @@ Comment = function(displayDoc, noteComment, clientSideId, spacing, noteId, onCom
 
             commentOverlay.html(comment);
 
+            commentOverlay.html(noteComment);
+
             var deleteButton = H.deleteButton;
             deleteButton.click(deleteNote);
 
