@@ -5,7 +5,7 @@
 * Explain your research
 * Annotations help you remember and others understand
 
-Blaze a Trail soon at [http://webtrails.co/](http://webtrails.co/)
+See Early demo here: https://www.youtube.com/watch?v=dcyespbCj3U&feature=youtu.be
 
 
 
