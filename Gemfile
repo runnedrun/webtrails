@@ -36,7 +36,7 @@ gem "daemons"
 gem 'rspec', :require => false
 gem "omniauth"
 gem 'omniauth-google-oauth2'
-gem 'rake', '10.0.3'
+gem 'rake', '12.3.3'
 gem 'open_uri_redirections'
 gem "workless", "~> 1.1.1"
 gem "em-http-request"
