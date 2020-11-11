@@ -81,7 +81,7 @@ GEM
     faraday (0.8.7)
       multipart-post (~> 1.1)
     fattr (2.2.1)
-    hashie (2.0.5)
+    hashie (3.6.0)
     heroku-api (0.3.11)
       excon (~> 0.22.1)
     hike (1.2.2)
@@ -111,9 +111,9 @@ GEM
       jwt (~> 0.1.4)
       multi_json (~> 1.0)
       rack (~> 1.2)
-    omniauth (1.1.4)
-      hashie (>= 1.2, < 3)
-      rack
+    omniauth (1.4.2)
+      hashie (>= 1.2, < 4)
+      rack (>= 1.0, < 3)
     omniauth-google-oauth2 (0.1.17)
       omniauth (~> 1.0)
       omniauth-oauth2
